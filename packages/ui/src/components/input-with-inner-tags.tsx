@@ -5,6 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { nanoid } from "nanoid";
 import { useId, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { cn } from "../utils/index";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { Input } from "./input";
@@ -118,7 +119,10 @@ export function InputWithInnerTags({
         {/* Input for new tags */}
         <div className="flex min-w-[80px] flex-1 items-center gap-2">
           <Input
-            className={`h-auto flex-1 border-none bg-transparent px-0 py-0 text-sm shadow-none outline-none placeholder:text-muted-foreground/70 focus:border-transparent focus:ring-0 focus:ring-offset-0 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed ${className || ""}`}
+            className={cn(
+              "h-auto flex-1 border-none bg-transparent px-0 py-0 text-sm shadow-none outline-none placeholder:text-muted-foreground/70 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed",
+              className,
+            )}
             disabled={disabled}
             id={id}
             onChange={(e) => setInputValue(e.target.value)}

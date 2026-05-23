@@ -6,14 +6,16 @@ import { toast } from "@strait/ui/toast";
 import copy from "copy-to-clipboard";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { cn } from "../utils/index";
 import { Button } from "./button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 interface IdCellProps {
   id: string;
+  className?: string;
 }
 
-export function IdCell({ id }: IdCellProps) {
+export function IdCell({ id, className }: IdCellProps) {
   const [isCopied, setIsCopied] = useState(false);
   const truncatedId = id.slice(0, 6);
 
@@ -29,7 +31,7 @@ export function IdCell({ id }: IdCellProps) {
   const Icon = isCopied ? Tick01Icon : Copy01Icon;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={cn("flex items-center gap-2", className)}>
       <Tooltip>
         <TooltipTrigger
           render={<span className="font-mono text-muted-foreground text-sm" />}

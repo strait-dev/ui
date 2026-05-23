@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { cn } from "../utils/index";
 
 const BAR_RADIUS = 4;
 
@@ -20,6 +21,7 @@ type BaseChartProps = {
   index: string;
   colors?: string[];
   valueFormatter?: (value: number) => string;
+  className?: string;
 };
 
 type LineChartProps = BaseChartProps & {
@@ -41,8 +43,9 @@ export const LineChart = ({
   index,
   colors = ["hsl(var(--primary))"],
   valueFormatter = (value) => value.toString(),
+  className,
 }: LineChartProps) => (
-  <ResponsiveContainer height={300} width="100%">
+  <ResponsiveContainer className={cn(className)} height={300} width="100%">
     <RechartsLineChart data={data}>
       <CartesianGrid vertical={false} />
       <XAxis
@@ -78,8 +81,9 @@ export const BarChart = ({
   colors = ["hsl(var(--primary))"],
   valueFormatter = (value) => value.toString(),
   layout = "horizontal",
+  className,
 }: BarChartProps) => (
-  <ResponsiveContainer height={300} width="100%">
+  <ResponsiveContainer className={cn(className)} height={300} width="100%">
     <RechartsBarChart
       data={data}
       layout={layout}
@@ -118,8 +122,9 @@ export const PieChart = ({
   category,
   index,
   colors = ["hsl(var(--primary))"],
+  className,
 }: PieChartProps) => (
-  <div className="aspect-square w-full">
+  <div className={cn("aspect-square w-full", className)}>
     <ResponsiveContainer height="100%" width="100%">
       <RechartsPieChart>
         <Pie

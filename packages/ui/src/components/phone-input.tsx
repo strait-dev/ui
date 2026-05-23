@@ -150,7 +150,10 @@ const CountrySelectOption = ({
       <span className="flex-1 text-sm">{countryName}</span>
       <span className="text-foreground/50 text-sm">{`+${getCountryCallingCode(country)}`}</span>
       <HugeiconsIcon
-        className={`ml-auto size-4 ${country === selectedCountry ? "opacity-100" : "opacity-0"}`}
+        className={cn(
+          "ml-auto size-4",
+          country === selectedCountry ? "opacity-100" : "opacity-0",
+        )}
         icon={Tick01Icon}
       />
     </CommandItem>

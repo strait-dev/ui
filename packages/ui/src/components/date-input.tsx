@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
+import { cn } from "../utils/index";
 
 // Date validation constants
 const MIN_DAY = 1;
@@ -16,6 +17,7 @@ const NUMERIC_REGEX = /^[0-9]$/;
 type DateInputProps = {
   value?: Date;
   onChange: (date: Date) => void;
+  className?: string;
 };
 
 type DateParts = {
@@ -24,7 +26,11 @@ type DateParts = {
   year: number;
 };
 
-const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
+const DateInput: React.FC<DateInputProps> = ({
+  value,
+  onChange,
+  className,
+}) => {
   const [date, setDate] = React.useState<DateParts>(() => {
     const d = value ? new Date(value) : new Date();
     return {
@@ -263,7 +269,12 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
     };
 
   return (
-    <div className="flex h-9 items-center rounded-md border border-input bg-input/20 px-2 text-sm dark:bg-input/30">
+    <div
+      className={cn(
+        "flex h-9 items-center rounded-md border border-input bg-input/20 px-2 text-sm dark:bg-input/30",
+        className,
+      )}
+    >
       <input
         className="w-6 border-none p-0 text-center outline-hidden"
         max={12}

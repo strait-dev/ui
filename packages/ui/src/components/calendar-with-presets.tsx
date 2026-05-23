@@ -4,6 +4,7 @@ import { addDays, format, subDays, subMonths, subYears } from "date-fns";
 import { useCallback, useMemo } from "react";
 import type { DateRange } from "react-day-picker";
 
+import { cn } from "../utils/index";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
 
@@ -189,7 +190,7 @@ export function CalendarWithPresets({
   );
 
   return (
-    <div className={className}>
+    <div className={cn(className)}>
       <div className="rounded-md border border-border">
         <div className="flex max-sm:flex-col">
           <div className="relative border-border py-4 max-sm:order-1 max-sm:border-t sm:w-48">
