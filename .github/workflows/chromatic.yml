@@ -1,0 +1,31 @@
+name: Chromatic
+on:
+  pull_request:
+  push:
+    branches: [main]
+concurrency:
+  group: chromatic-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    # Only runs when the project token secret is configured. Add it under
+    # Settings → Secrets and variables → Actions as CHROMATIC_PROJECT_TOKEN
+    # (get the token from your project at https://www.chromatic.com).
+    if: ${{ vars.CHROMATIC_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Chromatic needs full git history to detect baseline changes.
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Publish to Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: apps/storybook
+          buildScriptName: build-storybook
+          exitZeroOnChanges: true

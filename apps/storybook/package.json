@@ -8,7 +8,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "typecheck": "tsgo --noEmit",
-    "test-storybook": "vitest run --project=storybook"
+    "test-storybook": "vitest run --project=storybook",
+    "chromatic": "chromatic --build-script-name build-storybook --exit-zero-on-changes"
   },
   "dependencies": {
     "@strait/ui": "workspace:*",
@@ -30,6 +31,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "@vitest/browser": "^4.1.7",
     "@vitest/browser-playwright": "^4.1.7",
+    "chromatic": "^17.0.0",
     "playwright": "^1.60.0",
     "storybook": "^10.4.1",
     "vite": "^8.0.14",
