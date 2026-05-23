@@ -48,7 +48,7 @@ function DatePicker({
           render={
             <Button
               className={cn(
-                "h-9 w-full justify-start rounded-md! bg-transparent px-3 text-left font-normal text-sm shadow-xs hover:bg-transparent",
+                "h-8 w-full justify-start rounded-lg! bg-transparent px-3 text-left font-normal text-sm shadow-xs hover:bg-transparent",
                 !value && "text-muted-foreground/70",
                 error ? "border-destructive" : null,
               )}

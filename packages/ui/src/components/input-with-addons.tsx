@@ -16,7 +16,7 @@ function InputWithAddons({
   return (
     <div
       className={cn(
-        "group flex h-9 w-full overflow-hidden rounded-md border border-input bg-input/20 text-sm ring-offset-background focus-within:outline-hidden focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:ring-offset-2 dark:bg-input/30",
+        "group flex h-8 w-full overflow-hidden rounded-lg border border-input bg-input/20 text-sm ring-offset-background focus-within:outline-hidden focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:ring-offset-2 dark:bg-input/30",
         containerClassName,
       )}
       data-slot="input-with-addons"

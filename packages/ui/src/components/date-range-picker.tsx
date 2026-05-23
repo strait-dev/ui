@@ -120,7 +120,7 @@ export function DateRangePicker({
           ) : null}
           <Group
             className={cn(
-              "flex h-9 w-full items-center rounded-md border border-input bg-background text-sm ring-offset-background",
+              "flex h-8 w-full items-center rounded-lg border border-input bg-background text-sm ring-offset-background",
               "focus-within:outline-hidden focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:ring-offset-2",
               "disabled:cursor-not-allowed disabled:opacity-50",
             )}

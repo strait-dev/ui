@@ -73,7 +73,7 @@ function CalendarDropdown({
       value={String(props.value)}
     >
       <SelectTrigger
-        className="h-9 w-fit font-medium first:grow"
+        className="h-8 w-fit font-medium first:grow"
         data-slot="dropdown-trigger"
       >
         <SelectValue />
@@ -253,7 +253,7 @@ function DatePickerWithMonthYear({
                 "w-full justify-start text-left font-normal",
                 !selectedDate && "text-muted-foreground",
                 error ? "border-destructive" : null,
-                "h-9",
+                "h-8",
               )}
               data-slot="date-picker-trigger"
               disabled={disabled}
