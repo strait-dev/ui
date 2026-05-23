@@ -115,6 +115,11 @@
       "import": "./dist/components/badge.js",
       "default": "./dist/components/badge.js"
     },
+    "./components/bar-list": {
+      "types": "./dist/components/bar-list.d.ts",
+      "import": "./dist/components/bar-list.js",
+      "default": "./dist/components/bar-list.js"
+    },
     "./components/breadcrumb": {
       "types": "./dist/components/breadcrumb.d.ts",
       "import": "./dist/components/breadcrumb.js",
@@ -410,6 +415,11 @@
       "import": "./dist/components/label.js",
       "default": "./dist/components/label.js"
     },
+    "./components/leaderboard": {
+      "types": "./dist/components/leaderboard.d.ts",
+      "import": "./dist/components/leaderboard.js",
+      "default": "./dist/components/leaderboard.js"
+    },
     "./components/menubar": {
       "types": "./dist/components/menubar.d.ts",
       "import": "./dist/components/menubar.js",
@@ -579,6 +589,11 @@
       "types": "./dist/components/tooltip.d.ts",
       "import": "./dist/components/tooltip.js",
       "default": "./dist/components/tooltip.js"
+    },
+    "./components/tracker": {
+      "types": "./dist/components/tracker.d.ts",
+      "import": "./dist/components/tracker.js",
+      "default": "./dist/components/tracker.js"
     },
     "./components/id-cell": {
       "types": "./dist/components/id-cell.d.ts",
