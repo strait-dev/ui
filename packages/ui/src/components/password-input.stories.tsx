@@ -96,7 +96,7 @@ export const WithoutLabel: Story = {
 /** Invalid state — destructive border styling. */
 export const Invalid: Story = {
   render: (args) => (
-    <div className="w-72 flex flex-col gap-1.5">
+    <div className="flex w-72 flex-col gap-1.5">
       <PasswordInput {...args} aria-invalid id="pw-invalid" label="Password" />
       <p className="text-destructive text-sm">
         Incorrect password. Please try again.

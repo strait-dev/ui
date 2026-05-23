@@ -24,7 +24,7 @@ export const toast: Toast = {
           title={title}
         />
       ),
-      { duration: options?.duration ?? DEFAULT_SUCCESS_DURATION },
+      { duration: options?.duration ?? DEFAULT_SUCCESS_DURATION }
     ),
 
   error: (title, options) =>
@@ -38,7 +38,7 @@ export const toast: Toast = {
           title={title}
         />
       ),
-      { duration: options?.duration ?? DEFAULT_ERROR_DURATION },
+      { duration: options?.duration ?? DEFAULT_ERROR_DURATION }
     ),
 
   warning: (title, options) =>
@@ -52,7 +52,7 @@ export const toast: Toast = {
           title={title}
         />
       ),
-      { duration: options?.duration ?? DEFAULT_WARNING_DURATION },
+      { duration: options?.duration ?? DEFAULT_WARNING_DURATION }
     ),
 
   info: (title, options) =>
@@ -66,7 +66,7 @@ export const toast: Toast = {
           title={title}
         />
       ),
-      { duration: options?.duration ?? DEFAULT_INFO_DURATION },
+      { duration: options?.duration ?? DEFAULT_INFO_DURATION }
     ),
 
   loading: (title, options) =>
@@ -78,12 +78,12 @@ export const toast: Toast = {
           title={title}
         />
       ),
-      { duration: Number.POSITIVE_INFINITY },
+      { duration: Number.POSITIVE_INFINITY }
     ),
 
   promise: async <T,>(
     promise: Promise<T>,
-    options: PromiseToastOptions<T>,
+    options: PromiseToastOptions<T>
   ): Promise<T> => {
     const id = sonnerToast.custom(
       (toastId) => (
@@ -93,7 +93,7 @@ export const toast: Toast = {
           title={options.loading}
         />
       ),
-      { duration: Number.POSITIVE_INFINITY },
+      { duration: Number.POSITIVE_INFINITY }
     );
 
     try {
@@ -117,7 +117,7 @@ export const toast: Toast = {
             title={successTitle}
           />
         ),
-        { id, duration: DEFAULT_SUCCESS_DURATION },
+        { id, duration: DEFAULT_SUCCESS_DURATION }
       );
 
       return result;
@@ -140,7 +140,7 @@ export const toast: Toast = {
             title={errorTitle}
           />
         ),
-        { id, duration: DEFAULT_ERROR_DURATION },
+        { id, duration: DEFAULT_ERROR_DURATION }
       );
 
       throw error;
@@ -161,7 +161,7 @@ export const toast: Toast = {
           variant={options.variant}
         />
       ),
-      { duration: options.duration ?? Number.POSITIVE_INFINITY },
+      { duration: options.duration ?? Number.POSITIVE_INFINITY }
     ),
 
   dismiss: sonnerToast.dismiss,

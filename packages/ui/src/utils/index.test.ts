@@ -20,8 +20,8 @@ describe("cn", () => {
 
   it("dedupes conflicting Tailwind utilities, last one wins", () => {
     expect(cn("px-2", "px-4")).toBe("px-4");
-    expect(cn("text-sm text-muted-foreground", "text-base")).toBe(
-      "text-muted-foreground text-base",
+    expect(cn("text-muted-foreground text-sm", "text-base")).toBe(
+      "text-muted-foreground text-base"
     );
   });
 

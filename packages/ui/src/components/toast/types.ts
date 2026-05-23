@@ -51,11 +51,11 @@ export interface Toast {
   info: (title: string, options?: BaseToastOptions) => string | number;
   loading: (
     title: string,
-    options?: Omit<BaseToastOptions, "action">,
+    options?: Omit<BaseToastOptions, "action">
   ) => string | number;
   promise: <T>(
     promise: Promise<T>,
-    options: PromiseToastOptions<T>,
+    options: PromiseToastOptions<T>
   ) => Promise<T>;
   success: (title: string, options?: BaseToastOptions) => string | number;
   warning: (title: string, options?: BaseToastOptions) => string | number;

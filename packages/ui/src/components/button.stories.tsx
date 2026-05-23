@@ -295,7 +295,7 @@ export const IconButtons: Story = {
           >
             <HugeiconsIcon icon={PlusSignIcon} />
           </Button>
-        ),
+        )
       )}
     </div>
   ),

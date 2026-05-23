@@ -108,22 +108,22 @@ function InputPasswordWithStrengthIndicator({
         met: req.regex.test(password),
         text: req.text,
       })),
-    [password],
+    [password]
   );
 
   const strengthScore = useMemo(
     () => strength.filter((req) => req.met).length,
-    [strength],
+    [strength]
   );
 
   const strengthColor = useMemo(
     () => getStrengthColor(strengthScore),
-    [strengthScore],
+    [strengthScore]
   );
 
   const strengthText = useMemo(
     () => getStrengthText(strengthScore),
-    [strengthScore],
+    [strengthScore]
   );
 
   const handleChange = useCallback(
@@ -131,7 +131,7 @@ function InputPasswordWithStrengthIndicator({
       setPassword(e.target.value);
       onChange?.(e);
     },
-    [onChange],
+    [onChange]
   );
 
   const { onFocus } = props;
@@ -141,7 +141,7 @@ function InputPasswordWithStrengthIndicator({
       setIsTouched(true);
       onFocus?.(e);
     },
-    [onFocus],
+    [onFocus]
   );
 
   const inputProps = useMemo(
@@ -176,7 +176,7 @@ function InputPasswordWithStrengthIndicator({
       placeholder,
       isTouched,
       passwordStrengthId,
-    ],
+    ]
   );
 
   const buttonProps = useMemo(
@@ -189,7 +189,7 @@ function InputPasswordWithStrengthIndicator({
       "aria-pressed": isVisible,
       "aria-controls": id,
     }),
-    [id, isVisible, toggleVisibility],
+    [id, isVisible, toggleVisibility]
   );
 
   const shouldShowIndicator = showStrengthIndicator && isTouched && password;
@@ -244,7 +244,7 @@ function InputPasswordWithStrengthIndicator({
             <div
               className={cn(
                 "h-full transition-all duration-500 ease-out",
-                strengthColor,
+                strengthColor
               )}
               data-slot="strength-progress-bar"
               style={{
@@ -292,7 +292,7 @@ function InputPasswordWithStrengthIndicator({
                   <span
                     className={cn(
                       "text-sm",
-                      req.met ? "text-success-accent" : "text-muted-foreground",
+                      req.met ? "text-success-accent" : "text-muted-foreground"
                     )}
                     data-slot="strength-requirement-text"
                   >

@@ -111,7 +111,7 @@ export const Playground: Story = {
                       <span className="font-medium text-sm">{name}</span>
                     </NavigationMenuLink>
                   </li>
-                ),
+                )
               )}
             </ul>
           </NavigationMenuContent>

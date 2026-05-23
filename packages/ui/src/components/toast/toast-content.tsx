@@ -71,7 +71,7 @@ export function ToastContent({
     <div
       className={cn(
         "flex w-full max-w-[400px] items-center gap-3 rounded-md border border-border bg-background p-3 shadow-black/5 shadow-lg",
-        className,
+        className
       )}
     >
       <div className={cn("shrink-0", iconClassName)}>{icon}</div>

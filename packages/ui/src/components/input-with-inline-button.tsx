@@ -33,7 +33,7 @@ function InputWithInlineButton({
       <Input
         className={cn(
           "-me-px flex-1 rounded-e-none shadow-none focus-visible:z-10",
-          className,
+          className
         )}
         data-slot="input"
         {...props}

@@ -140,10 +140,10 @@ export const WithSelection: Story = {
               <CommandGroup heading="Frameworks">
                 {options.map((opt) => (
                   <CommandItem
-                    key={opt}
-                    value={opt}
                     data-checked={selected === opt || undefined}
+                    key={opt}
                     onSelect={() => setSelected(opt)}
+                    value={opt}
                   >
                     {opt}
                   </CommandItem>
@@ -207,7 +207,7 @@ export const DialogMode: Story = {
 
     return (
       <div className="flex flex-col items-center gap-4">
-        <Button variant="outline" onClick={() => setOpen(true)}>
+        <Button onClick={() => setOpen(true)} variant="outline">
           <HugeiconsIcon data-icon="inline-start" icon={Search01Icon} />
           Open Command Palette
           <span className="ml-2 rounded border px-1 font-mono text-muted-foreground text-xs">
@@ -215,7 +215,7 @@ export const DialogMode: Story = {
           </span>
         </Button>
 
-        <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandDialog onOpenChange={setOpen} open={open}>
           <Command>
             <CommandInput placeholder="Type a command…" />
             <CommandList>

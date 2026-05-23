@@ -38,14 +38,16 @@ if (idsArg) {
   // one story per component title
   const seen = new Set();
   targets = stories.filter((s) => {
-    if (seen.has(s.title)) return false;
+    if (seen.has(s.title)) {
+      return false;
+    }
     seen.add(s.title);
     return true;
   });
 }
 
 console.log(
-  `Scanning ${targets.length} stories against ${BASE}${theme ? ` (theme: ${theme})` : ""}`,
+  `Scanning ${targets.length} stories against ${BASE}${theme ? ` (theme: ${theme})` : ""}`
 );
 
 const browser = await chromium.launch();
@@ -59,7 +61,7 @@ for (const s of targets) {
   const page = await browser.newPage();
   await page.setViewportSize({ width: 1280, height: 900 });
   try {
-    await page.goto(url, { waitUntil: "load", timeout: 20000 });
+    await page.goto(url, { waitUntil: "load", timeout: 20_000 });
     // wait for the story root to have content or an error block
     await page
       .waitForFunction(
@@ -70,7 +72,7 @@ for (const s of targets) {
             (root && root.children.length > 0 && root.textContent.trim()) || err
           );
         },
-        { timeout: 8000 },
+        { timeout: 8000 }
       )
       .catch(() => {});
     // When scanning a non-default theme, wait until Storybook has actually
@@ -80,7 +82,7 @@ for (const s of targets) {
       await page
         .waitForFunction(
           () => document.documentElement.classList.contains("dark"),
-          { timeout: 5000 },
+          { timeout: 5000 }
         )
         .catch(() => {});
     }
@@ -111,7 +113,9 @@ for (const s of targets) {
       throw new Error("axe stayed busy after retries");
     });
     for (const v of results.violations) {
-      if (v.impact !== "serious" && v.impact !== "critical") continue;
+      if (v.impact !== "serious" && v.impact !== "critical") {
+        continue;
+      }
       const node = v.nodes[0];
       findings.push({
         id: s.id,
@@ -159,10 +163,12 @@ if (rows.length === 0) {
 }
 for (const [rule, info] of rows) {
   console.log(
-    `${rule}: ${info.nodes} nodes across ${info.stories.size} components`,
+    `${rule}: ${info.nodes} nodes across ${info.stories.size} components`
   );
-  for (const t of [...info.stories].slice(0, 12)) console.log(`    - ${t}`);
+  for (const t of [...info.stories].slice(0, 12)) {
+    console.log(`    - ${t}`);
+  }
 }
 console.log(
-  `\nFull report: scripts/a11y-report.json (${findings.length} findings)`,
+  `\nFull report: scripts/a11y-report.json (${findings.length} findings)`
 );

@@ -50,7 +50,7 @@ function DatePicker({
               className={cn(
                 "h-8 w-full justify-start rounded-lg! bg-transparent px-3 text-left font-normal text-sm shadow-xs hover:bg-transparent",
                 !value && "text-muted-foreground/70",
-                error ? "border-destructive" : null,
+                error ? "border-destructive" : null
               )}
               disabled={disabled}
               id={datePickerId}

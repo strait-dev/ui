@@ -172,7 +172,7 @@ export const Left: Story = {
                   type="checkbox"
                 />
               </div>
-            ),
+            )
           )}
         </div>
         <SheetFooter>

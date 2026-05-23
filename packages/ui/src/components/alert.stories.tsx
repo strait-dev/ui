@@ -65,7 +65,7 @@ export const Playground: Story = {
 /** Both variants side by side: `default` and `destructive`. */
 export const Variants: Story = {
   render: (args) => (
-    <div className="flex flex-col gap-4 max-w-lg w-full">
+    <div className="flex w-full max-w-lg flex-col gap-4">
       <Alert {...args} variant="default">
         <HugeiconsIcon icon={InformationCircleIcon} />
         <AlertTitle>Update available</AlertTitle>
@@ -88,7 +88,7 @@ export const Variants: Story = {
 /** Success and warning semantics implemented via icon colour overrides. */
 export const WithIntents: Story = {
   render: (args) => (
-    <div className="flex flex-col gap-4 max-w-lg w-full">
+    <div className="flex w-full max-w-lg flex-col gap-4">
       <Alert {...args} variant="default">
         <HugeiconsIcon
           className="text-emerald-500"
@@ -151,7 +151,7 @@ export const TitleOnly: Story = {
 /** With an `AlertAction` button in the top-right corner. */
 export const WithAction: Story = {
   render: (args) => (
-    <div className="flex flex-col gap-4 max-w-lg w-full">
+    <div className="flex w-full max-w-lg flex-col gap-4">
       <Alert {...args} variant="default">
         <HugeiconsIcon icon={InformationCircleIcon} />
         <AlertTitle>New feature available</AlertTitle>

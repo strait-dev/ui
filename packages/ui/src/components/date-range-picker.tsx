@@ -122,7 +122,7 @@ export function DateRangePicker({
             className={cn(
               "flex h-8 w-full items-center rounded-lg border border-input bg-background text-sm ring-offset-background",
               "focus-within:outline-hidden focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:ring-offset-2",
-              "disabled:cursor-not-allowed disabled:opacity-50",
+              "disabled:cursor-not-allowed disabled:opacity-50"
             )}
           >
             <DateInput className="flex flex-1 px-2" slot="start">
@@ -130,7 +130,7 @@ export function DateRangePicker({
                 <DateSegment
                   className={cn(
                     "focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:outline-hidden",
-                    "placeholder:text-muted-foreground",
+                    "placeholder:text-muted-foreground"
                   )}
                   segment={segment}
                 />
@@ -144,7 +144,7 @@ export function DateRangePicker({
                 <DateSegment
                   className={cn(
                     "focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:outline-hidden",
-                    "placeholder:text-muted-foreground",
+                    "placeholder:text-muted-foreground"
                   )}
                   segment={segment}
                 />
@@ -163,7 +163,7 @@ export function DateRangePicker({
               "data-[placement=bottom]:slide-in-from-top-2",
               "data-[placement=left]:slide-in-from-right-2",
               "data-[placement=right]:slide-in-from-left-2",
-              "data-[placement=top]:slide-in-from-bottom-2",
+              "data-[placement=top]:slide-in-from-bottom-2"
             )}
             offset={4}
           >

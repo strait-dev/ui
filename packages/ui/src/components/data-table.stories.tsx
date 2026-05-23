@@ -29,7 +29,7 @@ const projects: Project[] = [
     name: "Design System",
     status: "Active",
     owner: "Alice Martin",
-    budget: 12000,
+    budget: 12_000,
     updatedAt: "2025-05-01",
   },
   {
@@ -45,7 +45,7 @@ const projects: Project[] = [
     name: "Mobile App",
     status: "Active",
     owner: "Carol Singh",
-    budget: 32000,
+    budget: 32_000,
     updatedAt: "2025-05-15",
   },
   {
@@ -61,7 +61,7 @@ const projects: Project[] = [
     name: "Analytics Dashboard",
     status: "Active",
     owner: "Eva Kim",
-    budget: 15000,
+    budget: 15_000,
     updatedAt: "2025-05-12",
   },
   {
@@ -127,12 +127,12 @@ const projectColumns: ColumnDef<Project>[] = [
     enableHiding: false,
     cell: ({ row }) => (
       <DataTableRowActions
-        row={row.original}
         actions={[
           { label: "View details", onClick: () => {} },
           { label: "Edit", onClick: () => {} },
           { label: "Archive", onClick: () => {} },
         ]}
+        row={row.original}
       />
     ),
   },
@@ -188,9 +188,9 @@ export const WithoutPagination: Story = {
     <DataTable
       columns={projectColumns}
       data={projects}
-      showPagination={false}
       searchKey="name"
       searchPlaceholder="Filter projects…"
+      showPagination={false}
     />
   ),
 };
@@ -201,8 +201,8 @@ export const WithoutColumnVisibility: Story = {
     <DataTable
       columns={projectColumns}
       data={projects}
-      showColumnVisibility={false}
       searchKey="name"
+      showColumnVisibility={false}
     />
   ),
 };

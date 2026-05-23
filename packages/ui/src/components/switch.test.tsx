@@ -24,14 +24,14 @@ describe("Switch", () => {
     render(<Switch aria-label="Wifi" checked onCheckedChange={() => {}} />);
     expect(screen.getByRole("switch", { name: "Wifi" })).toHaveAttribute(
       "aria-checked",
-      "true",
+      "true"
     );
   });
 
   it("does not toggle while disabled", async () => {
     const onCheckedChange = vi.fn();
     render(
-      <Switch aria-label="Wifi" disabled onCheckedChange={onCheckedChange} />,
+      <Switch aria-label="Wifi" disabled onCheckedChange={onCheckedChange} />
     );
     const toggle = screen.getByRole("switch", { name: "Wifi" });
     await userEvent.click(toggle);
@@ -43,7 +43,7 @@ describe("Switch", () => {
     render(<Switch aria-label="Wifi" size="sm" />);
     expect(screen.getByRole("switch", { name: "Wifi" })).toHaveAttribute(
       "data-size",
-      "sm",
+      "sm"
     );
   });
 });

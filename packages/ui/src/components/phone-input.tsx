@@ -72,7 +72,7 @@ const CountrySelect = ({
         <HugeiconsIcon
           className={cn(
             "-mr-2 size-4 text-muted-foreground/80",
-            disabled ? "hidden" : "",
+            disabled ? "hidden" : ""
           )}
           icon={ArrowDown01Icon}
         />
@@ -102,7 +102,7 @@ const CountrySelect = ({
                 .filter(
                   ({ label }) =>
                     searchValue === "" ||
-                    label.toLowerCase().includes(searchValue.toLowerCase()),
+                    label.toLowerCase().includes(searchValue.toLowerCase())
                 )
                 .map(({ value, label }) =>
                   value ? (
@@ -114,7 +114,7 @@ const CountrySelect = ({
                       onSelectComplete={() => setIsOpen(false)}
                       selectedCountry={selectedCountry}
                     />
-                  ) : null,
+                  ) : null
                 )}
             </CommandGroup>
           </CommandList>
@@ -152,7 +152,7 @@ const CountrySelectOption = ({
       <HugeiconsIcon
         className={cn(
           "ml-auto size-4",
-          country === selectedCountry ? "opacity-100" : "opacity-0",
+          country === selectedCountry ? "opacity-100" : "opacity-0"
         )}
         icon={Tick01Icon}
       />

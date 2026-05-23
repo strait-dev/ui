@@ -1,5 +1,6 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "extends": ["ultracite/biome/core", "ultracite/biome/react"],
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -17,7 +18,20 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "complexity": {
+        "noImportantStyles": "off"
+      },
+      "correctness": {
+        "noNestedComponentDefinitions": "off"
+      },
+      "performance": {
+        "noBarrelFile": "off",
+        "noNamespaceImport": "off"
+      },
+      "style": {
+        "useConsistentTypeDefinitions": "off"
+      }
     }
   },
   "css": {
@@ -37,5 +51,32 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/*.stories.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "scripts/**"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useImageSize": "off"
+          },
+          "performance": {
+            "useTopLevelRegex": "off"
+          },
+          "style": {
+            "noNestedTernary": "off"
+          },
+          "suspicious": {
+            "noAlert": "off",
+            "noEmptyBlockStatements": "off"
+          }
+        }
+      }
+    }
+  ]
 }

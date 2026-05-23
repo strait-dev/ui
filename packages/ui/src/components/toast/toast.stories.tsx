@@ -291,7 +291,7 @@ export const PromiseToast: Story = {
         <Button
           onClick={() => {
             const p = new Promise<{ name: string }>((resolve) =>
-              setTimeout(() => resolve({ name: "report.pdf" }), 2000),
+              setTimeout(() => resolve({ name: "report.pdf" }), 2000)
             );
             toast.promise(p, {
               loading: "Uploading file…",
@@ -312,7 +312,7 @@ export const PromiseToast: Story = {
         <Button
           onClick={() => {
             const p = new Promise<void>((_, reject) =>
-              setTimeout(() => reject(new Error("Network error")), 2000),
+              setTimeout(() => reject(new Error("Network error")), 2000)
             );
             toast.promise(p, {
               loading: "Saving…",

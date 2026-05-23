@@ -72,7 +72,7 @@ export const Playground: Story = {
       <CollapsibleContent className="mt-2 space-y-2">
         {["Alice Johnson", "Bob Smith", "Carol White"].map((name) => (
           <div
-            className="rounded-md border px-4 py-2 text-sm font-mono"
+            className="rounded-md border px-4 py-2 font-mono text-sm"
             key={name}
           >
             {name}

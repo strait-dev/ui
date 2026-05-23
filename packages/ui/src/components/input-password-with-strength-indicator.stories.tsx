@@ -98,7 +98,7 @@ export const WithoutIndicator: Story = {
 /** Error state — forced destructive border (e.g. on form submit failure). */
 export const WithError: Story = {
   render: (args) => (
-    <div className="w-72 flex flex-col gap-1.5">
+    <div className="flex w-72 flex-col gap-1.5">
       <InputPasswordWithStrengthIndicator
         {...args}
         error

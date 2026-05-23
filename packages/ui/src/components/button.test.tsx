@@ -21,7 +21,7 @@ describe("Button", () => {
     render(<Button className="w-full">Save</Button>);
     expect(screen.getByRole("button", { name: "Save" })).toHaveClass(
       "w-full",
-      "bg-primary",
+      "bg-primary"
     );
   });
 
@@ -37,7 +37,7 @@ describe("Button", () => {
     render(
       <Button disabled onClick={onClick}>
         Save
-      </Button>,
+      </Button>
     );
     const button = screen.getByRole("button", { name: "Save" });
     expect(button).toBeDisabled();
@@ -50,7 +50,7 @@ describe("Button", () => {
       // biome-ignore lint/a11y/useAnchorContent: Button injects its children into the rendered anchor at runtime.
       <Button render={<a href="/home" />} variant="link">
         Home
-      </Button>,
+      </Button>
     );
     const link = screen.getByText("Home");
     expect(link.tagName).toBe("A");

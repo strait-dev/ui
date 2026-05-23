@@ -73,9 +73,9 @@ function CalendarGridComponent({ isRange = false }: { isRange?: boolean }) {
                     "after:pointer-events-none after:absolute after:start-1/2 after:bottom-1 after:z-10 after:size-[3px] after:-translate-x-1/2 after:rounded-md after:bg-primary",
                     isRange
                       ? "data-selection-end:after:bg-background data-selection-start:after:bg-background"
-                      : "data-selected:after:bg-background",
+                      : "data-selected:after:bg-background"
                   )
-                : null,
+                : null
             )}
             date={date}
           />

@@ -67,7 +67,7 @@ export const Playground: Story = {
   render: (args) => (
     <Stepper {...args} className="w-full max-w-2xl">
       {steps.map(({ step, title, description }, idx) => (
-        <StepperItem key={step} step={step} className="flex-1">
+        <StepperItem className="flex-1" key={step} step={step}>
           <StepperTrigger className="flex-col gap-1">
             <StepperIndicator />
             <div className="text-center">
@@ -90,9 +90,9 @@ export const Controlled: Story = {
 
     return (
       <div className="flex w-full max-w-2xl flex-col gap-6">
-        <Stepper value={active} onValueChange={setActive} className="w-full">
+        <Stepper className="w-full" onValueChange={setActive} value={active}>
           {steps.map(({ step, title }, idx) => (
-            <StepperItem key={step} step={step} className="flex-1">
+            <StepperItem className="flex-1" key={step} step={step}>
               <StepperTrigger>
                 <StepperIndicator />
                 <StepperTitle>{title}</StepperTitle>
@@ -110,9 +110,9 @@ export const Controlled: Story = {
 
         <div className="flex gap-2">
           <Button
-            variant="outline"
             disabled={active === 1}
             onClick={() => setActive((s) => Math.max(1, s - 1))}
+            variant="outline"
           >
             Back
           </Button>
@@ -133,9 +133,9 @@ export const Vertical: Story = {
   render: (args) => (
     <Stepper
       {...args}
-      orientation="vertical"
-      defaultValue={2}
       className="max-w-xs"
+      defaultValue={2}
+      orientation="vertical"
     >
       {steps.map(({ step, title, description }, idx) => (
         <StepperItem key={step} step={step}>
@@ -156,9 +156,9 @@ export const Vertical: Story = {
 /** All steps completed — every indicator shows the checkmark. */
 export const AllCompleted: Story = {
   render: (args) => (
-    <Stepper {...args} value={5} className="w-full max-w-2xl">
+    <Stepper {...args} className="w-full max-w-2xl" value={5}>
       {steps.map(({ step, title }, idx) => (
-        <StepperItem key={step} step={step} completed className="flex-1">
+        <StepperItem className="flex-1" completed key={step} step={step}>
           <StepperTrigger>
             <StepperIndicator />
             <StepperTitle>{title}</StepperTitle>
@@ -173,13 +173,13 @@ export const AllCompleted: Story = {
 /** Loading state on the active step — the indicator spins. */
 export const LoadingStep: Story = {
   render: (args) => (
-    <Stepper {...args} value={2} className="w-full max-w-2xl">
+    <Stepper {...args} className="w-full max-w-2xl" value={2}>
       {steps.map(({ step, title }, idx) => (
         <StepperItem
-          key={step}
-          step={step}
-          loading={step === 2}
           className="flex-1"
+          key={step}
+          loading={step === 2}
+          step={step}
         >
           <StepperTrigger>
             <StepperIndicator />
@@ -195,13 +195,13 @@ export const LoadingStep: Story = {
 /** Disabled steps are non-interactive and shown at reduced opacity. */
 export const WithDisabled: Story = {
   render: (args) => (
-    <Stepper {...args} value={1} className="w-full max-w-2xl">
+    <Stepper {...args} className="w-full max-w-2xl" value={1}>
       {steps.map(({ step, title }, idx) => (
         <StepperItem
+          className="flex-1"
+          disabled={step === 3}
           key={step}
           step={step}
-          disabled={step === 3}
-          className="flex-1"
         >
           <StepperTrigger>
             <StepperIndicator />
@@ -219,9 +219,9 @@ export const WithDisabled: Story = {
 /** Minimal stepper — indicators only, no text labels. */
 export const IndicatorsOnly: Story = {
   render: (args) => (
-    <Stepper {...args} value={2} className="w-full max-w-md">
+    <Stepper {...args} className="w-full max-w-md" value={2}>
       {steps.map(({ step }, idx) => (
-        <StepperItem key={step} step={step} className="flex-1">
+        <StepperItem className="flex-1" key={step} step={step}>
           <StepperTrigger aria-label={`Step ${step}`}>
             <StepperIndicator />
           </StepperTrigger>

@@ -165,7 +165,7 @@ export const BlockAddons: Story = {
         <Label>Message with character limit</Label>
         <InputGroup>
           <InputGroupAddon align="block-start">
-            <span className="text-xs font-medium">Subject</span>
+            <span className="font-medium text-xs">Subject</span>
           </InputGroupAddon>
           <InputGroupInput placeholder="Enter subject…" />
           <InputGroupAddon align="block-end">

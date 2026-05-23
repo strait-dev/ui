@@ -15,7 +15,7 @@ describe("Input", () => {
     render(<Input placeholder="Password" type="password" />);
     expect(screen.getByPlaceholderText("Password")).toHaveAttribute(
       "type",
-      "password",
+      "password"
     );
   });
 
@@ -23,7 +23,7 @@ describe("Input", () => {
     render(<Input className="max-w-xs" placeholder="Email" />);
     expect(screen.getByPlaceholderText("Email")).toHaveClass(
       "max-w-xs",
-      "rounded-lg",
+      "rounded-lg"
     );
   });
 
@@ -31,7 +31,7 @@ describe("Input", () => {
     render(<Input aria-invalid placeholder="Email" />);
     expect(screen.getByPlaceholderText("Email")).toHaveAttribute(
       "aria-invalid",
-      "true",
+      "true"
     );
   });
 

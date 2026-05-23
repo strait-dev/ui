@@ -27,7 +27,7 @@ const SelectedBadge: React.FC<SelectedBadgeProps> = ({
   <div
     className={cn(
       "relative inline-flex h-8 animate-fadeIn cursor-default items-center rounded-md border bg-background ps-3 pe-8 pl-3 font-medium text-secondary-foreground text-sm transition-all hover:bg-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 data-fixed:pe-3",
-      badgeClassName,
+      badgeClassName
     )}
     data-disabled={disabled || undefined}
     data-fixed={option.fixed}
@@ -108,7 +108,7 @@ const DropdownOption: React.FC<DropdownOptionProps> = ({
         "",
         option.disable
           ? "pointer-events-none cursor-not-allowed opacity-50"
-          : null,
+          : null
       )}
       disabled={option.disable}
       key={option.value}
@@ -147,7 +147,7 @@ function useClickOutside({
         inputRef.current.blur();
       }
     },
-    [dropdownRef, inputRef, onClose],
+    [dropdownRef, inputRef, onClose]
   );
 
   useEffect(() => {
@@ -283,7 +283,7 @@ function useAsyncSearch({
 // Hook to sync value from props
 function useSyncValue(
   value: Option[] | undefined,
-  setSelected: React.Dispatch<React.SetStateAction<Option[]>>,
+  setSelected: React.Dispatch<React.SetStateAction<Option[]>>
 ) {
   useEffect(() => {
     if (value) {
@@ -326,14 +326,14 @@ function useKeyDownHandler({
         input.blur();
       }
     },
-    [inputRef, handleUnselect, selected],
+    [inputRef, handleUnselect, selected]
   );
 }
 
 // Helper to create command filter
 function createCommandFilter(
   creatable: boolean,
-  commandPropsFilter?: (value: string, search: string) => number,
+  commandPropsFilter?: (value: string, search: string) => number
 ) {
   if (commandPropsFilter) {
     return commandPropsFilter;
@@ -410,7 +410,7 @@ const ClearAllButton: React.FC<ClearAllButtonProps> = ({
       aria-label="Clear all"
       className={cn(
         "absolute end-0 top-0 flex size-9 items-center justify-center rounded-md border border-transparent text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-        shouldHide ? "hidden" : null,
+        shouldHide ? "hidden" : null
       )}
       onClick={handleClear}
       type="button"
@@ -508,7 +508,7 @@ export function useDebounce<T>(value: T, delay?: number): T {
   useEffect(() => {
     const timer = setTimeout(
       () => setDebouncedValue(value),
-      delay || DEFAULT_DEBOUNCE_TIME,
+      delay || DEFAULT_DEBOUNCE_TIME
     );
 
     return () => {
@@ -545,7 +545,7 @@ function removePickedOption(groupOption: GroupOption, picked: Option[]) {
 
   for (const [key, value] of Object.entries(cloneOption)) {
     cloneOption[key] = value.filter(
-      (val) => !picked.find((p) => p.value === val.value),
+      (val) => !picked.find((p) => p.value === val.value)
     );
   }
   return cloneOption;
@@ -691,12 +691,12 @@ function MultipleSelector({
 
   const [selected, setSelected] = useState<Option[]>(value || []);
   const [options, setOptions] = useState<GroupOption>(
-    transToGroupOption(arrayDefaultOptions, groupBy),
+    transToGroupOption(arrayDefaultOptions, groupBy)
   );
   const [inputValue, setInputValue] = useState("");
   const debouncedSearchTerm = useDebounce(
     inputValue,
-    delay || DEFAULT_DEBOUNCE_TIME,
+    delay || DEFAULT_DEBOUNCE_TIME
   );
 
   // Use extracted hook for click outside behavior
@@ -745,7 +745,7 @@ function MultipleSelector({
       setSelected(newOptions);
       onChange?.(newOptions);
     },
-    [onChange, selected],
+    [onChange, selected]
   );
 
   const handleKeyDown = useKeyDownHandler({
@@ -756,12 +756,12 @@ function MultipleSelector({
 
   const selectables = useMemo<GroupOption>(
     () => removePickedOption(options, selected),
-    [options, selected],
+    [options, selected]
   );
 
   const commandFilter = useMemo(
     () => createCommandFilter(creatable, commandProps?.filter),
-    [creatable, commandProps?.filter],
+    [creatable, commandProps?.filter]
   );
 
   const handleTriggerClick = useCallback(() => {
@@ -777,7 +777,7 @@ function MultipleSelector({
       }
       inputProps?.onBlur?.(event);
     },
-    [onScrollbar, inputProps],
+    [onScrollbar, inputProps]
   );
 
   const handleInputFocus = useCallback(
@@ -788,7 +788,7 @@ function MultipleSelector({
       }
       inputProps?.onFocus?.(event);
     },
-    [triggerSearchOnFocus, onSearch, debouncedSearchTerm, inputProps],
+    [triggerSearchOnFocus, onSearch, debouncedSearchTerm, inputProps]
   );
 
   const handleInputValueChange = useCallback(
@@ -796,7 +796,7 @@ function MultipleSelector({
       setInputValue(val);
       inputProps?.onValueChange?.(val);
     },
-    [inputProps],
+    [inputProps]
   );
 
   const handleCommandKeyDown = useCallback(
@@ -804,7 +804,7 @@ function MultipleSelector({
       handleKeyDown(e);
       commandProps?.onKeyDown?.(e);
     },
-    [handleKeyDown, commandProps],
+    [handleKeyDown, commandProps]
   );
 
   const shouldFilterValue =
@@ -818,7 +818,7 @@ function MultipleSelector({
       {...commandProps}
       className={cn(
         "h-auto overflow-visible bg-transparent",
-        commandProps?.className,
+        commandProps?.className
       )}
       filter={commandFilter}
       onKeyDown={handleCommandKeyDown}
@@ -826,15 +826,16 @@ function MultipleSelector({
     >
       {/** biome-ignore lint/a11y/noStaticElementInteractions: wrapper only focuses the inner input on click. */}
       {/** biome-ignore lint/a11y/useKeyWithClickEvents: the inner combobox input is itself fully keyboard accessible. */}
+      {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: wrapper only focuses the inner input; the inner combobox input is itself fully keyboard accessible. */}
       <div
         className={cn(
-          "relative min-h-[42px] rounded-lg border border-input text-sm outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-disabled:opacity-50 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
+          "relative min-h-[42px] rounded-lg border border-input text-sm outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-aria-invalid:border-destructive has-disabled:opacity-50 has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
           {
             "p-1": selected.length !== 0,
             "cursor-text": !disabled && selected.length !== 0,
           },
           !hideClearAllButton && "pe-9",
-          className,
+          className
         )}
         onClick={handleTriggerClick}
       >
@@ -858,7 +859,7 @@ function MultipleSelector({
                 "px-3 py-2": selected.length === 0,
                 "ml-1": selected.length !== 0,
               },
-              inputProps?.className,
+              inputProps?.className
             )}
             disabled={disabled}
             onBlur={handleInputBlur}
@@ -886,7 +887,7 @@ function MultipleSelector({
           className={cn(
             "absolute top-2 z-10 w-full overflow-hidden rounded-md border border-input",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=open]:animate-in",
-            !open && "hidden",
+            !open && "hidden"
           )}
           data-state={open ? "open" : "closed"}
         >

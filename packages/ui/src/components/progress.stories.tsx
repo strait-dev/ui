@@ -46,7 +46,7 @@ export const Playground: Story = {
 /** Fixed values at 0 %, 25 %, 50 %, 75 %, and 100 %. */
 export const Values: Story = {
   render: (args) => (
-    <div className="flex flex-col gap-6 w-full max-w-sm">
+    <div className="flex w-full max-w-sm flex-col gap-6">
       {([0, 25, 50, 75, 100] as const).map((v) => (
         <div className="flex flex-col gap-1.5" key={v}>
           <span className="text-muted-foreground text-xs">{v} %</span>
@@ -60,7 +60,7 @@ export const Values: Story = {
 /** With a `ProgressLabel` and `ProgressValue` for a fully-labelled bar. */
 export const WithLabel: Story = {
   render: (args) => (
-    <div className="flex flex-col gap-6 w-full max-w-sm">
+    <div className="flex w-full max-w-sm flex-col gap-6">
       <Progress {...args} value={60}>
         <ProgressLabel>Uploading files</ProgressLabel>
         <ProgressValue>{(formatted) => formatted}</ProgressValue>

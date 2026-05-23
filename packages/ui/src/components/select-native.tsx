@@ -15,7 +15,7 @@ const SelectNative = ({
         props.multiple
           ? "py-1 *:px-3 *:py-1 [&_option:checked]:bg-accent"
           : "h-8 ps-3 pe-8",
-        className,
+        className
       )}
       data-slot="select-native"
       {...props}

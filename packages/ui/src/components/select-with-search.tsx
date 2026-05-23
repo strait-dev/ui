@@ -99,7 +99,7 @@ export function SelectWithSearch({
 
     // Find the index of the selected item
     const selectedIndex = options.findIndex(
-      (option) => option.value === selectedValue,
+      (option) => option.value === selectedValue
     );
 
     if (selectedIndex !== -1 && virtuosoRef.current) {
@@ -118,7 +118,7 @@ export function SelectWithSearch({
       setOpen(newOpen);
       onOpenChange?.(newOpen);
     },
-    [onOpenChange],
+    [onOpenChange]
   );
 
   const handleSelect = useCallback(
@@ -127,7 +127,7 @@ export function SelectWithSearch({
       onValueChange?.(currentValue);
       setOpen(false);
     },
-    [onValueChange],
+    [onValueChange]
   );
 
   const handleSearch = useCallback(
@@ -135,12 +135,12 @@ export function SelectWithSearch({
       setSearchInputValue(search);
       onSearchChange?.(search);
     },
-    [onSearchChange],
+    [onSearchChange]
   );
 
   const selectedOption = useMemo(
     () => options.find((option) => option.value === selectedValue),
-    [options, selectedValue],
+    [options, selectedValue]
   );
 
   const buttonContent = useMemo(
@@ -149,7 +149,7 @@ export function SelectWithSearch({
         <span
           className={cn(
             "truncate",
-            !selectedOption && "text-muted-foreground text-sm",
+            !selectedOption && "text-muted-foreground text-sm"
           )}
         >
           {(() => {
@@ -169,7 +169,7 @@ export function SelectWithSearch({
         />
       </>
     ),
-    [selectedOption, renderSelectedOption, placeholder],
+    [selectedOption, renderSelectedOption, placeholder]
   );
 
   const buttonClassName = useMemo(
@@ -178,9 +178,9 @@ export function SelectWithSearch({
         "w-full justify-between bg-transparent px-3 font-normal outline-offset-0 hover:bg-transparent focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20",
         !selectedValue && "text-muted-foreground",
         error ? "border-destructive" : undefined,
-        disabled ? "cursor-not-allowed opacity-50" : undefined,
+        disabled ? "cursor-not-allowed opacity-50" : undefined
       ),
-    [selectedValue, error, disabled],
+    [selectedValue, error, disabled]
   );
 
   // Item renderer for virtualized list
@@ -218,7 +218,7 @@ export function SelectWithSearch({
         </CommandItem>
       );
     },
-    [options, selectedValue, handleSelect, renderOption],
+    [options, selectedValue, handleSelect, renderOption]
   );
 
   // Footer component for showing loading state
@@ -252,8 +252,8 @@ export function SelectWithSearch({
       maxHeight,
       Math.max(
         minHeight,
-        Math.min(options.length * estimatedItemHeight, maxHeight),
-      ),
+        Math.min(options.length * estimatedItemHeight, maxHeight)
+      )
     );
 
     // Only include Footer component when actually fetching next page
@@ -297,7 +297,7 @@ export function SelectWithSearch({
           {required ? <span className="ml-1 text-destructive">*</span> : null}
         </Label>
       ) : null,
-    [label, id, name, error, required],
+    [label, id, name, error, required]
   );
 
   return (

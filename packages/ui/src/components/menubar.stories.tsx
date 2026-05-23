@@ -196,8 +196,8 @@ export const WithRadioItems: Story = {
           <MenubarContent>
             <MenubarLabel>Level</MenubarLabel>
             <MenubarRadioGroup
-              value={zoom}
               onValueChange={(v) => setZoom(v ?? zoom)}
+              value={zoom}
             >
               {["50", "75", "100", "150", "200"].map((level) => (
                 <MenubarRadioItem key={level} value={level}>

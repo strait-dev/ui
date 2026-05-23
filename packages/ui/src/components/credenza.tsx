@@ -48,7 +48,7 @@ const useCredenzaContext = () => {
   const context = useContext(CredenzaContext);
   if (!context) {
     throw new Error(
-      "Credenza components cannot be rendered outside the Credenza Context",
+      "Credenza components cannot be rendered outside the Credenza Context"
     );
   }
   return context;

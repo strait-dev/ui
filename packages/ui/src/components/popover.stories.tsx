@@ -198,7 +198,7 @@ export const FilterPanel: Story = {
                 <input className="size-3.5" type="checkbox" />
                 {filter}
               </label>
-            ),
+            )
           )}
         </div>
         <div className="flex gap-2 pt-1">
@@ -256,7 +256,7 @@ export const InvitePopover: Story = {
           <p className="mb-1 text-muted-foreground text-xs">
             Or share an invite link
           </p>
-          <Button size="sm" variant="outline" className="w-full">
+          <Button className="w-full" size="sm" variant="outline">
             <HugeiconsIcon data-icon="inline-start" icon={Copy01Icon} />
             Copy link
           </Button>

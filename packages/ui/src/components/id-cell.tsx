@@ -11,8 +11,8 @@ import { toast } from "./toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 interface IdCellProps {
-  id: string;
   className?: string;
+  id: string;
 }
 
 export function IdCell({ id, className }: IdCellProps) {

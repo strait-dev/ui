@@ -143,10 +143,10 @@ export const DesignCanvas: Story = {
     <ContextMenu>
       <ContextMenuTrigger>
         <div className="relative flex h-48 w-80 items-center justify-center rounded-xl border bg-muted/30 text-muted-foreground text-sm">
-          <div className="rounded-lg border bg-background px-6 py-4 shadow-sm text-foreground font-medium">
+          <div className="rounded-lg border bg-background px-6 py-4 font-medium text-foreground shadow-sm">
             Design element
           </div>
-          <span className="absolute bottom-2 right-3 text-muted-foreground text-xs">
+          <span className="absolute right-3 bottom-2 text-muted-foreground text-xs">
             Right-click to edit
           </span>
         </div>

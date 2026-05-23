@@ -14,7 +14,7 @@ describe("Badge", () => {
     render(<Badge variant="destructive">Error</Badge>);
     expect(screen.getByText("Error")).toHaveClass(
       "bg-destructive",
-      "text-destructive-foreground",
+      "text-destructive-foreground"
     );
   });
 

@@ -127,7 +127,7 @@ export const LineVariant: Story = {
 /** Vertical orientation — tab list stacks on the left, content on the right. */
 export const Vertical: Story = {
   render: (args) => (
-    <Tabs {...args} orientation="vertical" className="w-full max-w-lg">
+    <Tabs {...args} className="w-full max-w-lg" orientation="vertical">
       <TabsList>
         <TabsTrigger value="account">Account</TabsTrigger>
         <TabsTrigger value="password">Password</TabsTrigger>
@@ -213,9 +213,9 @@ export const Controlled: Story = {
           Active tab: <strong>{value}</strong>
         </p>
         <Tabs
-          value={value}
-          onValueChange={(v) => setValue(v ?? "")}
           className="w-full"
+          onValueChange={(v) => setValue(v ?? "")}
+          value={value}
         >
           <TabsList>
             <TabsTrigger value="home">

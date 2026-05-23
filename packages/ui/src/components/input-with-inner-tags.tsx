@@ -67,7 +67,7 @@ export function InputWithInnerTags({
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [inputValue, tags],
+    [inputValue, tags]
   );
 
   useHotkeys(
@@ -88,7 +88,7 @@ export function InputWithInnerTags({
     {
       enableOnFormTags: true,
     },
-    [inputValue, tags],
+    [inputValue, tags]
   );
 
   return (
@@ -121,7 +121,7 @@ export function InputWithInnerTags({
           <Input
             className={cn(
               "h-auto flex-1 border-none bg-transparent px-0 py-0 text-sm shadow-none outline-none placeholder:text-muted-foreground/70 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed",
-              className,
+              className
             )}
             disabled={disabled}
             id={id}

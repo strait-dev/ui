@@ -78,7 +78,7 @@ export const CommonRatios: Story = {
               className="size-full object-cover"
               src={`https://picsum.photos/seed/${label}/400`}
             />
-            <span className="absolute bottom-1 right-2 rounded bg-black/60 px-1 py-0.5 font-mono text-white text-xs">
+            <span className="absolute right-2 bottom-1 rounded bg-black/60 px-1 py-0.5 font-mono text-white text-xs">
               {label}
             </span>
           </AspectRatio>
@@ -118,7 +118,7 @@ export const WithPlaceholder: Story = {
   render: () => (
     <div className="w-80">
       <AspectRatio
-        className="overflow-hidden rounded-xl bg-muted animate-pulse"
+        className="animate-pulse overflow-hidden rounded-xl bg-muted"
         ratio={16 / 9}
       >
         <span className="sr-only">Loading image…</span>

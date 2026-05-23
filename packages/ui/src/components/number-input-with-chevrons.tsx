@@ -54,7 +54,7 @@ function NumberInputWithChevrons({
       <Group
         className={cn(
           "relative inline-flex h-8 w-full items-center overflow-hidden whitespace-nowrap rounded-lg border border-input bg-input/20 text-sm shadow-black/5 shadow-xs ring-offset-background transition-shadow data-focus-within:border-ring data-disabled:opacity-50 data-focus-within:outline-hidden data-focus-within:ring-[3px] data-focus-within:ring-ring/50 data-focus-within:ring-offset-2 dark:bg-input/30",
-          containerClassName,
+          containerClassName
         )}
         data-slot="input-group"
       >
@@ -62,7 +62,7 @@ function NumberInputWithChevrons({
           aria-label={label || `${name} input`}
           className={cn(
             "min-w-0 flex-1 bg-transparent px-3 py-1 text-foreground tabular-nums focus:outline-hidden",
-            className,
+            className
           )}
           data-slot="input"
           {...props}

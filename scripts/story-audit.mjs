@@ -20,23 +20,27 @@ const fail = (msg) => {
 let index;
 try {
   const res = await fetch(`${BASE}/index.json`);
-  if (!res.ok) fail(`GET ${BASE}/index.json -> ${res.status}`);
+  if (!res.ok) {
+    fail(`GET ${BASE}/index.json -> ${res.status}`);
+  }
   index = await res.json();
 } catch (err) {
   fail(
-    `Could not reach Storybook at ${BASE}. Is the dev server running? (${err.message})`,
+    `Could not reach Storybook at ${BASE}. Is the dev server running? (${err.message})`
   );
 }
 
 const entries = Object.values(index.entries ?? {}).filter(
-  (e) => e.type === "story",
+  (e) => e.type === "story"
 );
 
 // Group by category (the part of the title before the first "/").
 const byCategory = new Map();
 for (const entry of entries) {
   const category = entry.title.split("/")[0];
-  if (!byCategory.has(category)) byCategory.set(category, new Set());
+  if (!byCategory.has(category)) {
+    byCategory.set(category, new Set());
+  }
   byCategory.get(category).add(entry.title);
 }
 
@@ -52,7 +56,7 @@ for (const category of categories) {
 console.log(
   `\n  Totals: ${categories.length} categories, ` +
     `${new Set(entries.map((e) => e.title)).size} components, ` +
-    `${entries.length} stories\n`,
+    `${entries.length} stories\n`
 );
 
 // Serve check: every story iframe returns 200.
@@ -70,8 +74,10 @@ await Promise.all(
       broken++;
       console.error(`  ✗ ${entry.id} -> ${err.message}`);
     }
-  }),
+  })
 );
 
-if (broken > 0) fail(`${broken} story iframe(s) failed to load`);
+if (broken > 0) {
+  fail(`${broken} story iframe(s) failed to load`);
+}
 console.log(`\x1b[32m✓ all ${entries.length} story iframes served\x1b[0m`);

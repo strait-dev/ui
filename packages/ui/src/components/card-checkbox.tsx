@@ -26,7 +26,7 @@ const cardCheckboxVariants = cva(
       layout: "default",
       disabled: false,
     },
-  },
+  }
 );
 
 const CardCheckboxGroup: React.FC<React.ComponentProps<"div">> = ({
@@ -62,7 +62,7 @@ const CardCheckboxItem: React.FC<CardCheckboxItemProps> = ({
 }) => (
   <div
     className={cn(
-      cardCheckboxVariants({ variant, layout, disabled, className }),
+      cardCheckboxVariants({ variant, layout, disabled, className })
     )}
     data-slot="card-checkbox-item"
   >
@@ -86,7 +86,7 @@ const CardCheckboxItem: React.FC<CardCheckboxItemProps> = ({
         <span
           className={cn(
             "font-medium text-sm leading-none",
-            disabled ? "text-muted-foreground" : null,
+            disabled ? "text-muted-foreground" : null
           )}
           id={id ? `${id}-label` : undefined}
         >
@@ -96,7 +96,7 @@ const CardCheckboxItem: React.FC<CardCheckboxItemProps> = ({
           <p
             className={cn(
               "text-sm",
-              disabled ? "text-muted-foreground/75" : "text-muted-foreground",
+              disabled ? "text-muted-foreground/75" : "text-muted-foreground"
             )}
             id={id ? `${id}-description` : undefined}
           >

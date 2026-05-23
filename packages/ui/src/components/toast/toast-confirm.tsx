@@ -47,7 +47,7 @@ export function ToastConfirm({
             "mt-0.5 shrink-0",
             variant === "destructive"
               ? "text-destructive"
-              : "text-warning-accent",
+              : "text-warning-accent"
           )}
         >
           <HugeiconsIcon className="size-4" icon={AlertDiamondIcon} />

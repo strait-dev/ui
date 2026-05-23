@@ -248,14 +248,14 @@ export const AsButton: Story = {
     <div className="flex gap-2">
       <Badge
         {...args}
-        render={<button type="button" onClick={() => alert("clicked")} />}
+        render={<button onClick={() => alert("clicked")} type="button" />}
         variant="primary-light"
       >
         Click me
       </Badge>
       <Badge
         {...args}
-        render={<button type="button" onClick={() => alert("clicked")} />}
+        render={<button onClick={() => alert("clicked")} type="button" />}
         variant="destructive-light"
       >
         Remove tag

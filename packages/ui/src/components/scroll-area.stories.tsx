@@ -105,7 +105,7 @@ export const Horizontal: Story = {
       <div className="flex gap-4 p-4">
         {tags.map((tag) => (
           <div
-            className="flex h-20 w-28 shrink-0 items-center justify-center rounded-md bg-muted text-center text-xs font-medium"
+            className="flex h-20 w-28 shrink-0 items-center justify-center rounded-md bg-muted text-center font-medium text-xs"
             key={tag}
           >
             {tag}
@@ -152,7 +152,7 @@ export const ChatThread: Story = {
               className={`flex flex-col gap-0.5 ${m.id % 2 === 0 ? "items-end" : "items-start"}`}
               key={m.id}
             >
-              <span className="text-muted-foreground text-[10px]">
+              <span className="text-[10px] text-muted-foreground">
                 {m.sender}
               </span>
               <div

@@ -242,7 +242,7 @@ export const Controlled: Story = {
 /** Trigger stretches to fill its container with `w-full`. */
 export const FullWidth: Story = {
   render: () => (
-    <div className="w-80 flex flex-col gap-1.5">
+    <div className="flex w-80 flex-col gap-1.5">
       <Label htmlFor="fw-select">Country</Label>
       <Select>
         <SelectTrigger className="w-full" id="fw-select">

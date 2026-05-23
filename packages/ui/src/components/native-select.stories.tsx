@@ -160,7 +160,7 @@ export const WithGroups: Story = {
 /** Wrap the component in a `w-full` container to stretch it. */
 export const FullWidth: Story = {
   render: () => (
-    <div className="w-80 flex flex-col gap-1.5">
+    <div className="flex w-80 flex-col gap-1.5">
       <Label htmlFor="fw-native">Role</Label>
       <NativeSelect className="w-full" id="fw-native">
         <NativeSelectOption value="">Select your role…</NativeSelectOption>

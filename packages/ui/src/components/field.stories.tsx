@@ -269,7 +269,7 @@ export const GroupedFields: Story = {
 /** Separator with text label between two sections. */
 export const SeparatorWithLabel: Story = {
   render: () => (
-    <div className="w-80 flex flex-col gap-4">
+    <div className="flex w-80 flex-col gap-4">
       <Field>
         <FieldLabel htmlFor="sep-email">Email</FieldLabel>
         <Input id="sep-email" placeholder="you@example.com" type="email" />

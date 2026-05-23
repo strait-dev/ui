@@ -109,7 +109,7 @@ export const Playground: Story = {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton size="lg" tooltip="Acme Inc.">
-                  <div className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-sm">
+                  <div className="flex size-8 items-center justify-center rounded-md bg-primary font-bold text-primary-foreground text-sm">
                     A
                   </div>
                   <span className="font-semibold">Acme Inc.</span>
@@ -177,7 +177,7 @@ export const NonCollapsible: Story = {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton size="lg">
-                  <div className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-sm">
+                  <div className="flex size-8 items-center justify-center rounded-md bg-primary font-bold text-primary-foreground text-sm">
                     S
                   </div>
                   <span className="font-semibold">Strait UI</span>

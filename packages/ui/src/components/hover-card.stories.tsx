@@ -159,7 +159,7 @@ export const Placements: Story = {
             }
           />
           <HoverCardContent side={side}>
-            <p className="text-sm font-medium">Placed on {side}</p>
+            <p className="font-medium text-sm">Placed on {side}</p>
             <p className="text-muted-foreground text-xs">
               Hover card appears on the {side} side of the trigger.
             </p>

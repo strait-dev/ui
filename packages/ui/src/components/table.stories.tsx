@@ -192,7 +192,7 @@ export const WideScrollable: Story = {
             {["ID", "Status", "Method", "Created", "Updated", "Amount"].map(
               (h) => (
                 <TableHead key={h}>{h}</TableHead>
-              ),
+              )
             )}
           </TableRow>
         </TableHeader>

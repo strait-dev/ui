@@ -53,14 +53,14 @@ function NumberInputWithButtons({
       <Group
         className={cn(
           "relative inline-flex h-8 w-full items-center overflow-hidden whitespace-nowrap rounded-lg border border-input bg-input/20 text-sm shadow-black/5 shadow-xs ring-offset-background transition-shadow data-focus-within:border-ring data-disabled:opacity-50 data-focus-within:outline-hidden data-focus-within:ring-[3px] data-focus-within:ring-ring/50 data-focus-within:ring-offset-2 dark:bg-input/30",
-          containerClassName,
+          containerClassName
         )}
         data-slot="input-group"
       >
         <Button
           aria-label="Decrease value"
           className={cn(
-            "-ms-px flex aspect-square h-[inherit] items-center justify-center rounded-s-md border border-input bg-transparent text-muted-foreground/80 text-sm ring-offset-background transition-shadow hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+            "-ms-px flex aspect-square h-[inherit] items-center justify-center rounded-s-md border border-input bg-transparent text-muted-foreground/80 text-sm ring-offset-background transition-shadow hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
           )}
           data-slot="decrement-button"
           slot="decrement"
@@ -75,7 +75,7 @@ function NumberInputWithButtons({
           aria-label={label || `${name} input`}
           className={cn(
             "w-full grow bg-transparent px-3 py-1 text-center text-foreground tabular-nums focus:outline-hidden",
-            className,
+            className
           )}
           data-slot="input"
           placeholder={placeholder}
@@ -84,7 +84,7 @@ function NumberInputWithButtons({
         <Button
           aria-label="Increase value"
           className={cn(
-            "-me-px flex aspect-square h-[inherit] items-center justify-center rounded-e-md border border-input bg-transparent text-muted-foreground/80 text-sm ring-offset-background transition-shadow hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+            "-me-px flex aspect-square h-[inherit] items-center justify-center rounded-e-md border border-input bg-transparent text-muted-foreground/80 text-sm ring-offset-background transition-shadow hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
           )}
           data-slot="increment-button"
           slot="increment"

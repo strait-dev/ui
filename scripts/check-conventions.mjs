@@ -8,7 +8,7 @@ const files = readdirSync(DIR).filter(
   (f) =>
     f.endsWith(".tsx") &&
     !f.endsWith(".stories.tsx") &&
-    !f.endsWith(".test.tsx"),
+    !f.endsWith(".test.tsx")
 );
 
 // Per-rule exemptions: { ruleId: Set<filename> }
@@ -37,19 +37,23 @@ for (const file of files) {
   // Rule: no raw palette colors (also catches bg-white / text-white in chrome)
   if (!EXEMPT.rawColor.has(file)) {
     lines.forEach((ln, i) => {
-      if (RAW_COLOR.test(ln))
+      if (RAW_COLOR.test(ln)) {
         add(file, "rawColor", `:${i + 1} ${ln.trim().slice(0, 80)}`);
-      if (/\b(?:bg|text)-white\b/.test(ln) && !/sr-only/.test(ln))
+      }
+      if (/\b(?:bg|text)-white\b/.test(ln) && !/sr-only/.test(ln)) {
         add(file, "rawColor", `:${i + 1} bg/text-white`);
+      }
     });
   }
 
   // Rule: focus ring must not use ring-2 or ring-offset for the visible ring
   lines.forEach((ln, i) => {
-    if (/focus-visible:ring-2\b/.test(ln))
+    if (/focus-visible:ring-2\b/.test(ln)) {
       add(file, "focusRing", `:${i + 1} ring-2 (use ring-3)`);
-    if (/focus-visible:ring-offset/.test(ln))
+    }
+    if (/focus-visible:ring-offset/.test(ln)) {
       add(file, "focusRing", `:${i + 1} ring-offset`);
+    }
   });
 
   // Rule: aria-invalid ring must include width when color present
@@ -57,8 +61,9 @@ for (const file of files) {
     if (
       /aria-invalid:ring-destructive\//.test(ln) &&
       !/aria-invalid:ring-3/.test(src)
-    )
+    ) {
       add(file, "ariaInvalid", `:${i + 1} missing aria-invalid:ring-3`);
+    }
   });
 
   // Rule: must import cn and merge className (skip pure re-exports)
@@ -67,43 +72,50 @@ for (const file of files) {
     usesClassName &&
     !EXEMPT.cn.has(file) &&
     !/from "\.\.\/utils\/index"/.test(src)
-  )
+  ) {
     add(
       file,
       "cn",
-      "uses className but does not import cn from ../utils/index",
+      "uses className but does not import cn from ../utils/index"
     );
-  if (/className=\{`/.test(src))
+  }
+  if (/className=\{`/.test(src)) {
     add(file, "cn", "template-literal className (use cn())");
+  }
 
   // Rule: "use client" present iff interactive
   const interactive =
     /\buse(State|Effect|Ref|Callback|Memo|Context|Reducer|Id)\b|onClick=|onChange=|onKeyDown=/.test(
-      src,
+      src
     );
   const hasDirective = /^["']use client["'];/.test(src.trimStart());
-  if (interactive && !hasDirective)
+  if (interactive && !hasDirective) {
     add(file, "useClient", 'interactive but missing "use client"');
+  }
 
   // Rule: root data-slot present (JSX attr `data-slot=` or, for useRender/
   // mergeProps components, the object-property form `"data-slot":`)
-  if (!EXEMPT.dataSlot.has(file) && !/data-slot["']?\s*[:=]/.test(src))
+  if (!(EXEMPT.dataSlot.has(file) || /data-slot["']?\s*[:=]/.test(src))) {
     add(file, "dataSlot", "no data-slot anywhere");
+  }
 
   // Rule: no React.HTMLAttributes / InputHTMLAttributes (prefer ComponentProps)
   lines.forEach((ln, i) => {
     if (
       /React\.(HTMLAttributes|InputHTMLAttributes|TextareaHTMLAttributes)</.test(
-        ln,
+        ln
       )
-    )
+    ) {
       add(file, "propTyping", `:${i + 1} prefer React.ComponentProps<...>`);
+    }
   });
 }
 
 if (violations.length) {
   console.error(`\n✗ ${violations.length} convention violations:\n`);
-  for (const v of violations) console.error(`  ${v}`);
+  for (const v of violations) {
+    console.error(`  ${v}`);
+  }
   process.exit(1);
 }
 console.log("✓ All components follow the component contract.");

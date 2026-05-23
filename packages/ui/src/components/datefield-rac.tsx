@@ -55,8 +55,8 @@ function DateSegment({ className, ...props }: DateSegmentProps) {
       className={composeRenderProps(className, (clssname) =>
         cn(
           "inline rounded-md p-0.5 text-foreground caret-transparent outline-hidden data-invalid:data-focused:bg-destructive data-focused:data-placeholder:text-foreground data-invalid:data-focused:text-destructive-foreground data-invalid:data-placeholder:text-destructive data-disabled:cursor-not-allowed data-focused:bg-accent data-[type=literal]:px-0 data-[type=literal]:text-muted-foreground/70 data-focused:text-foreground data-invalid:data-focused:data-placeholder:text-destructive-foreground data-invalid:text-destructive data-placeholder:text-muted-foreground/70 data-disabled:opacity-50",
-          clssname,
-        ),
+          clssname
+        )
       )}
       {...props}
       data-invalid
@@ -82,7 +82,7 @@ function DateInput({
     <div data-slot="date-input">
       <DateInputRac
         className={composeRenderProps(className, (clssname) =>
-          cn(!unstyled && dateInputStyle, clssname),
+          cn(!unstyled && dateInputStyle, clssname)
         )}
         {...props}
       >

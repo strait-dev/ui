@@ -112,7 +112,7 @@ export const WithIcon: Story = {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="#" aria-label="Home">
+          <BreadcrumbLink aria-label="Home" href="#">
             <HugeiconsIcon className="size-4" icon={Home01Icon} />
           </BreadcrumbLink>
         </BreadcrumbItem>

@@ -300,7 +300,7 @@ export const SettingsCard: Story = {
                 <span>{item}</span>
                 <Badge variant="success-light">On</Badge>
               </div>
-            ),
+            )
           )}
         </div>
       </CardContent>
