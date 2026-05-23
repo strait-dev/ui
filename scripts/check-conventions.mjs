@@ -9,10 +9,14 @@ const files = readdirSync(DIR).filter(
 );
 
 // Per-rule exemptions: { ruleId: Set<filename> }
+// Only headless components that render NO DOM of their own are exempt from
+// data-slot: direction.tsx is a provider re-export, and checkbox-tree.tsx is a
+// render-prop where the consumer owns all the markup. Every other rule applies
+// to every component with no exceptions.
 const EXEMPT = {
-  rawColor: new Set([]), // tighten to empty after Phase 1 fixes land
+  rawColor: new Set([]),
   dataSlot: new Set(["direction.tsx", "checkbox-tree.tsx"]),
-  cn: new Set(["direction.tsx"]),
+  cn: new Set([]),
 };
 
 const RAW_COLOR =

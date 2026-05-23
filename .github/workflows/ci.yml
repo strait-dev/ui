@@ -17,6 +17,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Biome
         run: bunx @biomejs/biome check .
+      - name: Component contract
+        run: bun scripts/check-conventions.mjs
       - name: Typecheck
         run: bun run --filter @strait/ui typecheck
       - name: Build Storybook
