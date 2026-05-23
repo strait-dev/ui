@@ -1,5 +1,6 @@
 import { AlertDiamondIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cn } from "../../utils/index";
 import { Button } from "../button";
 import type { ConfirmToastOptions } from "./types";
 
@@ -42,7 +43,12 @@ export function ToastConfirm({
     <div className="flex w-full max-w-[400px] flex-col gap-3 rounded-md border border-border bg-background p-3 shadow-black/5 shadow-lg">
       <div className="flex items-start gap-3">
         <div
-          className={`mt-0.5 shrink-0 ${variant === "destructive" ? "text-destructive" : "text-amber-500"}`}
+          className={cn(
+            "mt-0.5 shrink-0",
+            variant === "destructive"
+              ? "text-destructive"
+              : "text-warning-accent",
+          )}
         >
           <HugeiconsIcon className="size-4" icon={AlertDiamondIcon} />
         </div>
