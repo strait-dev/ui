@@ -2,12 +2,12 @@
 
 import { Copy01Icon, Tick01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { toast } from "./toast";
 import copy from "copy-to-clipboard";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
+import { toast } from "./toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 interface IdCellProps {

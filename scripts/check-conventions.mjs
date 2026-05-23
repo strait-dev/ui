@@ -5,7 +5,10 @@ import { join } from "node:path";
 
 const DIR = "packages/ui/src/components";
 const files = readdirSync(DIR).filter(
-  (f) => f.endsWith(".tsx") && !f.endsWith(".stories.tsx"),
+  (f) =>
+    f.endsWith(".tsx") &&
+    !f.endsWith(".stories.tsx") &&
+    !f.endsWith(".test.tsx"),
 );
 
 // Per-rule exemptions: { ruleId: Set<filename> }
