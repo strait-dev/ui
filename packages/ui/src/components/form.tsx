@@ -26,7 +26,7 @@ type FormFieldContextValue<
 };
 
 const FormFieldContext = createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
+  {} as FormFieldContextValue,
 );
 
 function FormField<
@@ -68,7 +68,7 @@ type FormItemContextValue = {
 };
 
 const FormItemContext = createContext<FormItemContextValue>(
-  {} as FormItemContextValue
+  {} as FormItemContextValue,
 );
 
 function FormItem({
@@ -127,7 +127,7 @@ function FormControl({
         "aria-invalid": !!error,
         id: formItemId,
       },
-      props
+      props,
     ),
     state: {
       slot: "form-control",

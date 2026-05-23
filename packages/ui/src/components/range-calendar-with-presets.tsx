@@ -162,7 +162,7 @@ export function RangeCalendarWithPresets({
         },
       },
     ],
-    [today]
+    [today],
   );
 
   const currentPresets = useMemo(() => defaultPresets, [defaultPresets]);
@@ -173,7 +173,7 @@ export function RangeCalendarWithPresets({
         onSelect(preset.value);
       }
     },
-    [onSelect]
+    [onSelect],
   );
 
   const disabledDates = useMemo(
@@ -183,7 +183,7 @@ export function RangeCalendarWithPresets({
         to: addDays(today, DAYS_IN_YEAR),
       },
     ],
-    [today]
+    [today],
   );
 
   const isSelectedPreset = useCallback(
@@ -210,14 +210,14 @@ export function RangeCalendarWithPresets({
         selectedToDate.getTime() === presetToDate.getTime()
       );
     },
-    [selected]
+    [selected],
   );
 
   return (
     <div
       className={cn(
         "flex flex-col gap-4 rounded-md border bg-popover p-4 text-popover-foreground shadow-md",
-        className
+        className,
       )}
     >
       <div className="grid grid-cols-4 gap-2">
@@ -226,7 +226,7 @@ export function RangeCalendarWithPresets({
             className={cn(
               selected && isSelectedPreset(preset)
                 ? "bg-accent text-accent-foreground"
-                : null
+                : null,
             )}
             key={preset.name}
             onClick={() => handlePresetClick(preset)}

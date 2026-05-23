@@ -11,8 +11,9 @@ function Slider({
   value,
   min = 0,
   max = 100,
+  "aria-label": ariaLabel,
   ...props
-}: SliderPrimitive.Root.Props) {
+}: SliderPrimitive.Root.Props & { "aria-label"?: string }) {
   const _values = React.useMemo(
     () =>
       Array.isArray(value)
@@ -20,7 +21,7 @@ function Slider({
         : Array.isArray(defaultValue)
           ? defaultValue
           : [min, max],
-    [value, defaultValue, min, max]
+    [value, defaultValue, min, max],
   );
 
   return (
@@ -46,8 +47,13 @@ function Slider({
         </SliderPrimitive.Track>
         {Array.from({ length: _values.length }, (_, index) => (
           <SliderPrimitive.Thumb
+            // Forward the root-level aria-label to each thumb (Base UI puts the
+            // accessible name on the thumb input, not the root). Omitted when
+            // undefined so a Field/FieldLabel association still works.
+            aria-label={ariaLabel}
             className="relative block size-3 shrink-0 select-none rounded-full border border-ring bg-white ring-ring/50 transition-[color,box-shadow] after:absolute after:-inset-2 hover:ring-3 focus-visible:outline-hidden focus-visible:ring-3 active:ring-3 disabled:pointer-events-none disabled:opacity-50"
             data-slot="slider-thumb"
+            // biome-ignore lint/suspicious/noArrayIndexKey: thumbs are positional and identically rendered; index is the stable identity.
             key={index}
           />
         ))}

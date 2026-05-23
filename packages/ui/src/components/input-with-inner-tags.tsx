@@ -66,7 +66,7 @@ export function InputWithInnerTags({
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [inputValue, tags]
+    [inputValue, tags],
   );
 
   useHotkeys(
@@ -87,7 +87,7 @@ export function InputWithInnerTags({
     {
       enableOnFormTags: true,
     },
-    [inputValue, tags]
+    [inputValue, tags],
   );
 
   return (

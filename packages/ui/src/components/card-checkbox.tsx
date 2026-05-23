@@ -26,7 +26,7 @@ const cardCheckboxVariants = cva(
       layout: "default",
       disabled: false,
     },
-  }
+  },
 );
 
 const CardCheckboxGroup: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
@@ -56,11 +56,12 @@ const CardCheckboxItem: React.FC<CardCheckboxItemProps> = ({
 }) => (
   <div
     className={cn(
-      cardCheckboxVariants({ variant, layout, disabled, className })
+      cardCheckboxVariants({ variant, layout, disabled, className }),
     )}
   >
     <Checkbox
       aria-describedby={description ? `${id}-description` : undefined}
+      aria-labelledby={id ? `${id}-label` : undefined}
       className="after:absolute after:inset-0"
       disabled={disabled}
       id={id}
@@ -78,8 +79,9 @@ const CardCheckboxItem: React.FC<CardCheckboxItemProps> = ({
         <span
           className={cn(
             "font-medium text-sm leading-none",
-            disabled ? "text-muted-foreground" : null
+            disabled ? "text-muted-foreground" : null,
           )}
+          id={id ? `${id}-label` : undefined}
         >
           {label}
         </span>
@@ -87,7 +89,7 @@ const CardCheckboxItem: React.FC<CardCheckboxItemProps> = ({
           <p
             className={cn(
               "text-sm",
-              disabled ? "text-muted-foreground/75" : "text-muted-foreground"
+              disabled ? "text-muted-foreground/75" : "text-muted-foreground",
             )}
             id={id ? `${id}-description` : undefined}
           >

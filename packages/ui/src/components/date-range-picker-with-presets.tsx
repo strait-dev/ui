@@ -64,7 +64,7 @@ export function DateRangePickerWithPresets({
   className,
 }: DateRangePickerWithPresetsProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange>(
-    value ?? defaultValue ?? { from: undefined, to: undefined }
+    value ?? defaultValue ?? { from: undefined, to: undefined },
   );
 
   // Update temp value when external value changes
@@ -77,7 +77,7 @@ export function DateRangePickerWithPresets({
   const overlayState = useOverlayTriggerState({});
   const { triggerProps, overlayProps } = useOverlayTrigger(
     { type: "dialog" },
-    overlayState
+    overlayState,
   );
 
   // Convert DateRange to React Aria's RangeValue<DateValue>
@@ -118,7 +118,7 @@ export function DateRangePickerWithPresets({
       }
       setTempDateRange(range);
     },
-    [defaultValue]
+    [defaultValue],
   );
 
   const handleApply = useCallback(() => {
@@ -159,7 +159,7 @@ export function DateRangePickerWithPresets({
           className={cn(
             "flex h-9 w-full items-center rounded-md border border-input bg-background text-sm ring-offset-background",
             "focus-within:outline-hidden focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-50"
+            "disabled:cursor-not-allowed disabled:opacity-50",
           )}
         >
           <DateInput className="flex flex-1 px-2" slot="start">
@@ -167,7 +167,7 @@ export function DateRangePickerWithPresets({
               <DateSegment
                 className={cn(
                   "focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:outline-hidden",
-                  "placeholder:text-muted-foreground"
+                  "placeholder:text-muted-foreground",
                 )}
                 segment={segment}
               />
@@ -181,7 +181,7 @@ export function DateRangePickerWithPresets({
               <DateSegment
                 className={cn(
                   "focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:outline-hidden",
-                  "placeholder:text-muted-foreground"
+                  "placeholder:text-muted-foreground",
                 )}
                 segment={segment}
               />
@@ -204,7 +204,7 @@ export function DateRangePickerWithPresets({
             "data-[placement=bottom]:slide-in-from-top-2",
             "data-[placement=left]:slide-in-from-right-2",
             "data-[placement=right]:slide-in-from-left-2",
-            "data-[placement=top]:slide-in-from-bottom-2"
+            "data-[placement=top]:slide-in-from-bottom-2",
           )}
           isOpen={overlayState.isOpen}
           offset={4}

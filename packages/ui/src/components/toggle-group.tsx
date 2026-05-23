@@ -34,9 +34,12 @@ function ToggleGroup({
   }) {
   return (
     <ToggleGroupPrimitive
+      // role="group" does not permit aria-orientation; strip the attribute
+      // Base UI's CompositeRoot would otherwise emit (fails axe aria-allowed-attr).
+      aria-orientation={undefined}
       className={cn(
         "group/toggle-group flex w-fit flex-row items-center gap-[--spacing(var(--gap))] rounded-lg data-vertical:flex-col data-vertical:items-stretch data-[size=sm]:rounded-[min(var(--radius-md),10px)]",
-        className
+        className,
       )}
       data-orientation={orientation}
       data-size={size}
@@ -72,7 +75,7 @@ function ToggleGroupItem({
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        className
+        className,
       )}
       data-size={context.size || size}
       data-slot="toggle-group-item"

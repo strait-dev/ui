@@ -49,7 +49,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
 
   const validateDate = (
     field: keyof DateParts,
-    inputValue: number
+    inputValue: number,
   ): boolean => {
     if (
       (field === "day" && (inputValue < MIN_DAY || inputValue > MAX_DAY)) ||
@@ -185,7 +185,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
 
   const handleArrowRight = (
     field: keyof DateParts,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (isAtEndOfInput(e.currentTarget)) {
       e.preventDefault();
@@ -200,7 +200,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
 
   const handleArrowLeft = (
     field: keyof DateParts,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (isAtStartOfInput(e.currentTarget)) {
       e.preventDefault();
@@ -215,7 +215,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange }) => {
 
   const handleArrowNavigation = (
     field: keyof DateParts,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (e.key === "ArrowRight") {
       handleArrowRight(field, e);

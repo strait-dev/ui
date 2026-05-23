@@ -87,7 +87,7 @@ export function CalendarWithPresets({
         value: subYears(today, 1),
       },
     ],
-    [today]
+    [today],
   );
 
   const defaultRangePresets = useMemo(
@@ -142,14 +142,14 @@ export function CalendarWithPresets({
         },
       },
     ],
-    [today]
+    [today],
   );
 
   const currentPresets = useMemo(
     () =>
       presets ??
       (mode === "single" ? defaultSinglePresets : defaultRangePresets),
-    [presets, mode, defaultSinglePresets, defaultRangePresets]
+    [presets, mode, defaultSinglePresets, defaultRangePresets],
   );
 
   const handlePresetClick = useCallback(
@@ -158,7 +158,7 @@ export function CalendarWithPresets({
         onSelect(preset.value as any);
       }
     },
-    [onSelect]
+    [onSelect],
   );
 
   const formatPresetDate = useCallback((preset: CalendarPreset) => {
@@ -181,7 +181,7 @@ export function CalendarWithPresets({
             },
           ]
         : undefined,
-    [disableFutureDates, today]
+    [disableFutureDates, today],
   );
 
   return (

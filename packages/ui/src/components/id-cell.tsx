@@ -44,6 +44,7 @@ export function IdCell({ id }: IdCellProps) {
         <TooltipTrigger
           render={
             <Button
+              aria-label="Copy ID"
               className="size-7"
               onClick={handleCopy}
               size="icon"

@@ -84,7 +84,7 @@ export function SelectWithSearchAndButton({
       onValueChange?.(newValue);
       setOpen(false);
     },
-    [selectedValue, onValueChange]
+    [selectedValue, onValueChange],
   );
 
   return (
@@ -104,7 +104,7 @@ export function SelectWithSearchAndButton({
                 "w-full justify-between bg-background px-3 font-normal outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20",
                 !selectedValue && "text-muted-foreground",
                 error ? "border-destructive" : null,
-                disabled ? "cursor-not-allowed opacity-50" : null
+                disabled ? "cursor-not-allowed opacity-50" : null,
               )}
               disabled={disabled}
               id={name}

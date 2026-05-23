@@ -26,7 +26,7 @@ export const NavigationRail = ({
     className={cn(
       "flex h-full w-20 flex-col border-r bg-background",
       orientation === "right" && "order-last border-r-0 border-l",
-      className
+      className,
     )}
     ref={ref}
     {...props}
@@ -62,7 +62,7 @@ export const NavigationRailItem = ({
           className={cn(
             "relative h-14 w-14 rounded-lg",
             isActive ? "bg-accent" : null,
-            disabled ? "pointer-events-none opacity-50" : null
+            disabled ? "pointer-events-none opacity-50" : null,
           )}
           disabled={disabled}
           onClick={onClick}
@@ -119,7 +119,7 @@ export const NavigationRailHeader = ({
   <div
     className={cn(
       "flex h-20 items-center justify-center border-b px-2",
-      className
+      className,
     )}
     ref={ref}
     {...props}
@@ -142,7 +142,7 @@ export const NavigationRailFooter = ({
   <div
     className={cn(
       "mt-auto flex flex-col items-center gap-2 border-t py-2",
-      className
+      className,
     )}
     ref={ref}
     {...props}

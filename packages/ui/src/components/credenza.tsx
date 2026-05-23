@@ -34,7 +34,8 @@ type RootCredenzaProps = BaseProps & {
   onOpenChange?: (open: boolean) => void;
 };
 
-type CredenzaProps = BaseProps & {
+type CredenzaProps = Omit<BaseProps, "children"> & {
+  children?: React.ReactNode;
   className?: string;
   render?: React.ReactElement;
 };
@@ -47,7 +48,7 @@ const useCredenzaContext = () => {
   const context = useContext(CredenzaContext);
   if (!context) {
     throw new Error(
-      "Credenza components cannot be rendered outside the Credenza Context"
+      "Credenza components cannot be rendered outside the Credenza Context",
     );
   }
   return context;
@@ -73,12 +74,20 @@ const CredenzaTrigger = ({
   ...props
 }: CredenzaProps) => {
   const { isDesktop } = useCredenzaContext();
-  const Component = isDesktop ? DialogTrigger : DrawerTrigger;
+
+  // Dialog (Base UI) consumes `render`; Drawer (vaul) consumes `asChild`.
+  if (isDesktop) {
+    return (
+      <DialogTrigger className={className} render={render} {...props}>
+        {children}
+      </DialogTrigger>
+    );
+  }
 
   return (
-    <Component className={className} render={render} {...props}>
-      {children}
-    </Component>
+    <DrawerTrigger asChild className={className} {...props}>
+      {render ?? children}
+    </DrawerTrigger>
   );
 };
 
@@ -89,12 +98,20 @@ const CredenzaClose = ({
   ...props
 }: CredenzaProps) => {
   const { isDesktop } = useCredenzaContext();
-  const Component = isDesktop ? DialogClose : DrawerClose;
+
+  // Dialog (Base UI) consumes `render`; Drawer (vaul) consumes `asChild`.
+  if (isDesktop) {
+    return (
+      <DialogClose className={className} render={render} {...props}>
+        {children}
+      </DialogClose>
+    );
+  }
 
   return (
-    <Component className={className} render={render} {...props}>
-      {children}
-    </Component>
+    <DrawerClose asChild className={className} {...props}>
+      {render ?? children}
+    </DrawerClose>
   );
 };
 

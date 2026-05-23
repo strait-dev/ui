@@ -24,3 +24,7 @@ bun-debug.log*
 # design-system extraction artifacts
 .extract-design-system/
 .playwright-mcp/
+
+# generated artifacts
+*.tsbuildinfo
+scripts/a11y-report.json

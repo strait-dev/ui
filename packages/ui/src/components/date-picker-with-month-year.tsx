@@ -59,7 +59,7 @@ function CalendarDropdown({
   props: DropdownProps;
   handleCalendarChange: (
     value: string | number,
-    e: React.ChangeEventHandler<HTMLSelectElement>
+    e: React.ChangeEventHandler<HTMLSelectElement>,
   ) => void;
 }) {
   return (
@@ -117,7 +117,7 @@ function DropdownWrapper({
 }: {
   handleCalendarChange: (
     value: string | number,
-    e: React.ChangeEventHandler<HTMLSelectElement>
+    e: React.ChangeEventHandler<HTMLSelectElement>,
   ) => void;
 }) {
   return function Dropdown(props: DropdownProps) {
@@ -164,7 +164,7 @@ function DatePickerWithMonthYear({
 }: DatePickerWithMonthYearProps) {
   // Use internal state if not controlled
   const [internalDate, setInternalDate] = useState<Date | undefined>(
-    defaultValue
+    defaultValue,
   );
 
   // Use either controlled value or internal state
@@ -182,7 +182,7 @@ function DatePickerWithMonthYear({
   const handleCalendarChange = useCallback(
     (
       _value: string | number,
-      _e: React.ChangeEventHandler<HTMLSelectElement>
+      _e: React.ChangeEventHandler<HTMLSelectElement>,
     ) => {
       const _event = {
         target: {
@@ -191,7 +191,7 @@ function DatePickerWithMonthYear({
       } as React.ChangeEvent<HTMLSelectElement>;
       _e(_event);
     },
-    []
+    [],
   );
 
   // Handle date selection
@@ -217,7 +217,7 @@ function DatePickerWithMonthYear({
         0,
         0,
         0,
-        0
+        0,
       );
 
       if (value === undefined) {
@@ -228,7 +228,7 @@ function DatePickerWithMonthYear({
         onChange(newDate);
       }
     },
-    [onChange, value]
+    [onChange, value],
   );
 
   // Calendar components for month/year dropdowns
@@ -237,7 +237,7 @@ function DatePickerWithMonthYear({
       DropdownNav,
       Dropdown: DropdownWrapper({ handleCalendarChange }),
     }),
-    [handleCalendarChange]
+    [handleCalendarChange],
   );
 
   return (
@@ -253,7 +253,7 @@ function DatePickerWithMonthYear({
                 "w-full justify-start text-left font-normal",
                 !selectedDate && "text-muted-foreground",
                 error ? "border-destructive" : null,
-                "h-9"
+                "h-9",
               )}
               data-slot="date-picker-trigger"
               disabled={disabled}

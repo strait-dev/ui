@@ -4,7 +4,7 @@ import { ToastContent } from "./toast-content";
 import type { ToastContentProps } from "./types";
 
 export function ToastLoading(
-  props: Omit<ToastContentProps, "action" | "dismissible">
+  props: Omit<ToastContentProps, "action" | "dismissible">,
 ) {
   return (
     <ToastContent
