@@ -11,7 +11,7 @@ import { cn } from "../utils/index";
  * {@link ResizablePanel} for content areas and {@link ResizableHandle} for
  * the drag handles between them. The group flex-direction is derived from
  * `aria-orientation` on the underlying element: horizontal by default,
- * vertical when `direction="vertical"` is set on the primitive.
+ * vertical when `orientation="vertical"` is set on the primitive.
  *
  * @remarks
  * - Panels must be given unique `id` props (or auto-generated ones) so the
@@ -21,7 +21,7 @@ import { cn } from "../utils/index";
  *
  * @example
  * ```tsx
- * <ResizablePanelGroup direction="horizontal">
+ * <ResizablePanelGroup orientation="horizontal">
  *   <ResizablePanel defaultSize={25}>Sidebar</ResizablePanel>
  *   <ResizableHandle withHandle />
  *   <ResizablePanel defaultSize={75}>Main</ResizablePanel>
