@@ -1,0 +1,92 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Getting Started/Contributing" />
+
+# Contributing
+
+Strait is a Bun + Turborepo monorepo. Components live in
+`packages/ui/src/components`, their stories sit beside them as
+`*.stories.tsx`, and Storybook (`apps/storybook`) is the reference site.
+
+## Setup
+
+```bash
+bun install        # install all workspace dependencies
+bun run storybook  # Storybook at http://localhost:6006
+```
+
+## The Component Contract
+
+Every component follows a shared contract so the system stays consistent — it's
+enforced in CI by `scripts/check-conventions.mjs` and documented in full in
+`docs/component-contract.md`. The essentials:
+
+- **Focus ring** is always `focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50`
+  (use `focus-within:` with the same values for composite wrappers). Variants may
+  re-tint, but the width stays `ring-3`.
+- **Disabled** state uses the shared disabled utilities; **invalid** state uses
+  `aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20`
+  (the ring width is mandatory — a colour with no width is invisible).
+- **Semantic tokens only** — `bg-primary`, `text-muted-foreground`, etc. Never raw
+  hex or named Tailwind colours.
+- **`className` merging** through `cn(...)` from `../utils/index` (clsx +
+  tailwind-merge). Never string-concatenate classes.
+- **`data-slot`** on the root (kebab-cased component name) and on each named
+  sub-part (`data-slot="card-header"`).
+- **`"use client"`** as the first line whenever a component uses React hooks or
+  interactive primitives. When in doubt, keep it.
+- **Typed props** — extend the underlying element/primitive props; expose
+  variations as typed `variant`/`size` props (via `cva`), not loose class strings.
+
+## Adding a story
+
+Stories are colocated and use **relative** imports to the source so they run
+without a build:
+
+```tsx
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { MyComponent } from "./my-component";
+
+const meta = {
+  title: "Forms/MyComponent",
+  component: MyComponent,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: { description: { component: "One paragraph on what it is and when to use it." } },
+  },
+  argTypes: {
+    /* describe each control */
+  },
+} satisfies Meta<typeof MyComponent>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Playground: Story = { args: {} };
+```
+
+Title each story `Category/Name` so it lands in the right sidebar group, give the
+`meta` a one-paragraph `docs.description.component`, describe every `argType`, and
+add a `Playground` plus dedicated stories for variants, sizes, and states. For
+behaviour that should be regression-tested, add a `play` function using
+`storybook/test`.
+
+## Quality gates
+
+Run these before opening a pull request:
+
+```bash
+bun run verify   # biome + contract check + build + typecheck + unit tests + build-storybook
+bun run test     # unit tests only (Vitest + Testing Library)
+bun run test:stories  # story interaction tests in headless Chromium
+```
+
+CI runs the same checks plus an a11y scan (light + dark) and, when configured, a
+Chromatic visual-regression build.
+
+## Commits
+
+Use [Conventional Commits](https://www.conventionalcommits.org)
+(`feat:`, `fix:`, `docs:`, `test:`, `ci:`, `refactor:`). Keep changes scoped and
+reviewable — prefer one logical change per commit.

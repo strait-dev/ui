@@ -1,0 +1,78 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Typography" />
+
+export const Row = ({ cls, size, line, sample }) => (
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "120px 1fr",
+      alignItems: "baseline",
+      gap: 24,
+      padding: "12px 0",
+      borderBottom: "1px solid var(--border)",
+    }}
+  >
+    <div style={{ fontSize: 12 }}>
+      <code>{cls}</code>
+      <div style={{ opacity: 0.6, marginTop: 2 }}>
+        {size} / {line}
+      </div>
+    </div>
+    <div style={{ fontSize: size, lineHeight: line }}>{sample}</div>
+  </div>
+);
+
+# Typography
+
+The interface font is **Inter** (loaded as a variable font and wired to
+Tailwind's `font-sans`); code and tabular figures use **JetBrains Mono**
+(`font-mono`). Set type with Tailwind's size utilities — they map to the scale
+below.
+
+## Font families
+
+<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+  <div>
+    <div style={{ fontSize: 12, opacity: 0.6, marginBottom: 4 }}>
+      <code>font-sans</code> — Inter
+    </div>
+    <div style={{ fontSize: 24, fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
+      The quick brown fox jumps over the lazy dog
+    </div>
+  </div>
+  <div>
+    <div style={{ fontSize: 12, opacity: 0.6, marginBottom: 4 }}>
+      <code>font-mono</code> — JetBrains Mono
+    </div>
+    <div style={{ fontSize: 24, fontFamily: "'JetBrains Mono Variable', ui-monospace, monospace" }}>
+      const answer = 42;
+    </div>
+  </div>
+</div>
+
+## Type scale
+
+Tailwind's default size scale, used verbatim across the system.
+
+<div>
+  <Row cls="text-xs" size="0.75rem" line="1rem" sample="The quick brown fox" />
+  <Row cls="text-sm" size="0.875rem" line="1.25rem" sample="The quick brown fox" />
+  <Row cls="text-base" size="1rem" line="1.5rem" sample="The quick brown fox" />
+  <Row cls="text-lg" size="1.125rem" line="1.75rem" sample="The quick brown fox" />
+  <Row cls="text-xl" size="1.25rem" line="1.75rem" sample="The quick brown fox" />
+  <Row cls="text-2xl" size="1.5rem" line="2rem" sample="The quick brown fox" />
+  <Row cls="text-3xl" size="1.875rem" line="2.25rem" sample="The quick brown fox" />
+  <Row cls="text-4xl" size="2.25rem" line="2.5rem" sample="The quick brown fox" />
+</div>
+
+## Weights
+
+Inter is variable, so any weight between 100–900 is available. The system
+leans on three.
+
+<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+  <div style={{ fontSize: 20, fontWeight: 400 }}>Regular · font-normal (400)</div>
+  <div style={{ fontSize: 20, fontWeight: 500 }}>Medium · font-medium (500)</div>
+  <div style={{ fontSize: 20, fontWeight: 600 }}>Semibold · font-semibold (600)</div>
+</div>

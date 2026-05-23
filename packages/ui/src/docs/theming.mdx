@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Getting Started/Theming" />
+
+# Theming
+
+Strait's appearance is driven entirely by CSS custom properties. Every colour,
+radius, and surface is a semantic token; components reference the token, never a
+raw value. Theming — including dark mode — is therefore a matter of redefining a
+handful of variables.
+
+## Token architecture
+
+Tokens live in two layers in `globals.css`:
+
+1. **`:root`** holds the light-theme values as `oklch` colours.
+2. **`.dark`** overrides the same variable names with their dark values.
+
+```css
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.216 0.006 56.043);
+  --brand: oklch(0.6696 0.222 37.42);
+  /* …surfaces, status intents, charts, radius… */
+}
+
+.dark {
+  --background: oklch(0.182 0.004 49.25);
+  --foreground: oklch(0.985 0.001 106.423);
+  /* same names, dark values */
+}
+```
+
+A Tailwind `@theme inline` block then maps each token to a utility, so
+`--primary` becomes `bg-primary`, `--muted-foreground` becomes
+`text-muted-foreground`, and so on. See **Foundations → Colors** for the full set.
+
+## Dark mode
+
+Dark mode is a `.dark` class on (or above) the element you want themed —
+typically `<html>`. Add or remove the class to switch themes; because the tokens
+cascade, every Strait component re-themes instantly.
+
+The recommended wiring is [`next-themes`](https://github.com/pacocoursey/next-themes):
+
+```tsx
+import { ThemeProvider } from "next-themes";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+Any approach that toggles a `.dark` class works — `next-themes` just handles
+system preference, persistence, and avoiding a flash on load.
+
+## Overriding tokens
+
+To rebrand, redefine the tokens after importing the stylesheet. Override only what
+you need; the rest inherits Strait's defaults.
+
+```css
+@import "@strait/ui/css";
+
+:root {
+  /* Make the brand colour your own */
+  --brand: oklch(0.62 0.21 264);
+  --brand-foreground: oklch(0.985 0.001 106.423);
+  /* Round things a little less */
+  --radius: 0.5rem;
+}
+
+.dark {
+  --brand: oklch(0.68 0.19 264);
+}
+```
+
+## Status & brand triads
+
+Brand and each status intent come as a triad so you can theme solid, soft, and
+outline emphasis consistently:
+
+- **`--<name>`** — the solid fill (e.g. a solid button background).
+- **`--<name>-foreground`** — text/icon colour drawn on top of the solid fill.
+- **`--<name>-accent`** — a readable text/border colour for soft and outline
+  variants on tinted (10%-opacity) surfaces, tuned to clear WCAG AA 4.5:1.
+
+The intents are `success`, `destructive`, `info`, and `warning`; `brand` and
+`primary` follow the same `base` / `-foreground` shape. Keep the triad in sync
+when you override so soft and outline variants stay legible.

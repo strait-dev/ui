@@ -16,6 +16,17 @@ const preview: Preview = {
       },
     },
     backgrounds: { disable: true },
+    options: {
+      storySort: {
+        order: [
+          "Getting Started",
+          ["Introduction", "Installation", "Theming", "Contributing"],
+          "Foundations",
+          ["Colors", "Typography", "Spacing", "Radius", "Shadows", "Icons"],
+          "*",
+        ],
+      },
+    },
   },
   decorators: [
     withThemeByClassName({

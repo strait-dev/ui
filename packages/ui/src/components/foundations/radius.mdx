@@ -1,0 +1,44 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Radius" />
+
+export const Sample = ({ name, varName, formula }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+    <div
+      style={{
+        height: 80,
+        background: "color-mix(in oklch, var(--brand) 16%, var(--card))",
+        border: "1px solid var(--border)",
+        borderRadius: `var(${varName})`,
+      }}
+    />
+    <code style={{ fontSize: 12 }}>{name}</code>
+    <span style={{ fontSize: 11, opacity: 0.7 }}>{formula}</span>
+  </div>
+);
+
+# Radius
+
+Corner rounding derives from a single base token, `--radius` (`0.625rem`, 10px),
+inspired by GitBook's soft geometry. The named steps are computed as multiples
+of that base, so changing one value rescales the whole system proportionally.
+Use the Tailwind `rounded-*` utilities, which map to these tokens.
+
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+    gap: 16,
+  }}
+>
+  <Sample name="rounded-sm" varName="--radius-sm" formula="base × 0.6 ≈ 6px" />
+  <Sample name="rounded-md" varName="--radius-md" formula="base × 0.8 ≈ 8px" />
+  <Sample name="rounded-lg" varName="--radius-lg" formula="base × 1.0 = 10px" />
+  <Sample name="rounded-xl" varName="--radius-xl" formula="base × 1.4 ≈ 14px" />
+  <Sample name="rounded-2xl" varName="--radius-2xl" formula="base × 1.8 ≈ 18px" />
+  <Sample name="rounded-3xl" varName="--radius-3xl" formula="base × 2.2 ≈ 22px" />
+  <Sample name="rounded-4xl" varName="--radius-4xl" formula="base × 2.6 ≈ 26px" />
+</div>
+
+For pills and circles, `rounded-full` applies an effectively infinite radius —
+used by avatars, badges, and toggle switches.
