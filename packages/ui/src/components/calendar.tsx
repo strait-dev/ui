@@ -16,6 +16,44 @@ import {
 import { cn } from "../utils/index";
 import { Button, buttonVariants } from "./button";
 
+/**
+ * A styled date-picker calendar built on top of `react-day-picker`'s
+ * `DayPicker`.
+ *
+ * Supports single-date, range, and multi-date selection modes (via
+ * the `mode` prop passed through to `DayPicker`).
+ *
+ * @remarks
+ * - `captionLayout` (`"label"` | `"dropdown"` | `"dropdown-months"`
+ *   | `"dropdown-years"`) controls whether the month/year caption
+ *   renders as plain text or native `<select>` dropdowns.
+ * - `buttonVariant` customises the appearance of the previous/next
+ *   navigation buttons (any {@link Button} `variant` is valid).
+ * - `locale` accepts a `react-day-picker` `Partial<Locale>` object;
+ *   it is also forwarded to `CalendarDayButton` so day cells display
+ *   the correct locale-formatted date attribute.
+ * - Day cells are rendered by {@link CalendarDayButton}; pass a
+ *   custom `components.DayButton` to override them.
+ * - Range selection applies `range_start`, `range_middle`, and
+ *   `range_end` modifier classes; the pseudo-element
+ *   `after:` fills the gap between edge cells and the track.
+ * - RTL: previous/next chevrons are automatically flipped via Tailwind
+ *   `rtl:` variants so no extra work is needed for RTL locales.
+ *
+ * @example
+ * ```tsx
+ * // Single date (uncontrolled)
+ * <Calendar mode="single" />
+ *
+ * // Date range (controlled)
+ * <Calendar
+ *   mode="range"
+ *   selected={range}
+ *   onSelect={setRange}
+ *   numberOfMonths={2}
+ * />
+ * ```
+ */
 function Calendar({
   className,
   classNames,
@@ -35,7 +73,11 @@ function Calendar({
     <DayPicker
       captionLayout={captionLayout}
       className={cn(
+        // CSS custom properties shared by all sub-parts for consistent
+        // sizing without prop drilling.
         "group/calendar bg-background in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent p-2 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)]",
+        // String.raw preserves the backslash-escaped class name that
+        // Tailwind needs to target the rdp-button elements in RTL mode.
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className
@@ -195,6 +237,28 @@ function Calendar({
   );
 }
 
+/**
+ * Individual day cell rendered inside {@link Calendar}.
+ *
+ * Wraps a {@link Button} and bridges `react-day-picker`'s `modifiers`
+ * to `data-*` attributes so Tailwind variant selectors apply the
+ * correct range / selected / focused styles.
+ *
+ * @remarks
+ * - `data-range-start`, `data-range-middle`, and `data-range-end` are
+ *   set from `modifiers` to drive range-highlight styles.
+ * - `data-selected-single` is `true` when the day is selected but is
+ *   not part of a range (single-date mode or endpoints coincide).
+ * - When `modifiers.focused` is `true`, the button is imperatively
+ *   focused via a ref so keyboard navigation inside the month grid
+ *   works correctly — `react-day-picker` manages focus state, but the
+ *   DOM focus must follow.
+ * - `locale` is forwarded to format the `data-day` attribute for
+ *   screen readers.
+ *
+ * Export this component to override only the day-button rendering
+ * while keeping all other {@link Calendar} structure intact.
+ */
 function CalendarDayButton({
   className,
   day,
@@ -205,6 +269,8 @@ function CalendarDayButton({
   const defaultClassNames = getDefaultClassNames();
 
   const ref = React.useRef<HTMLButtonElement>(null);
+  // react-day-picker sets modifiers.focused when keyboard focus should
+  // move to this cell; we imperative-focus to keep DOM focus in sync.
   React.useEffect(() => {
     if (modifiers.focused) {
       ref.current?.focus();

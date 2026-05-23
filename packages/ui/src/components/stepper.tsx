@@ -25,13 +25,20 @@ type StepItemContextValue = {
 type StepState = "active" | "completed" | "inactive" | "loading";
 
 // Contexts
+// Root context shared by Stepper and all descendant sub-components.
 const StepperContext = createContext<StepperContextValue | undefined>(
   undefined
 );
+// Per-step context provided by each StepperItem to its children.
 const StepItemContext = createContext<StepItemContextValue | undefined>(
   undefined
 );
 
+/**
+ * Returns the nearest {@link Stepper} context.
+ *
+ * Throws if called outside of a {@link Stepper} tree.
+ */
 const useStepper = () => {
   const context = useContext(StepperContext);
   if (!context) {
@@ -40,6 +47,11 @@ const useStepper = () => {
   return context;
 };
 
+/**
+ * Returns the nearest {@link StepperItem} context.
+ *
+ * Throws if called outside of a {@link StepperItem} tree.
+ */
 const useStepItem = () => {
   const context = useContext(StepItemContext);
   if (!context) {
@@ -56,6 +68,43 @@ type StepperProps = React.ComponentProps<"div"> & {
   orientation?: "horizontal" | "vertical";
 };
 
+/**
+ * A multi-step progress indicator that tracks which step is currently active.
+ *
+ * Each child should be a {@link StepperItem} with a unique `step` number
+ * (zero-based). Separate items with a {@link StepperSeparator} to render the
+ * connecting line between them.
+ *
+ * @remarks
+ * - Supports controlled (`value` + `onValueChange`) and uncontrolled
+ *   (`defaultValue`) modes; the internal state is updated via
+ *   {@link StepperTrigger} or programmatically through `onValueChange`.
+ * - `orientation` (`"horizontal"` | `"vertical"`) cascades to every
+ *   sub-component via a `data-orientation` attribute and Tailwind group
+ *   selectors; set it once on the root.
+ * - A step's visual state (`active`, `completed`, `inactive`, `loading`)
+ *   is derived automatically inside {@link StepperItem} by comparing the
+ *   item's `step` number with `activeStep`.
+ *
+ * @example
+ * ```tsx
+ * <Stepper defaultValue={0}>
+ *   <StepperItem step={0}>
+ *     <StepperTrigger>
+ *       <StepperIndicator />
+ *       <StepperTitle>Account</StepperTitle>
+ *     </StepperTrigger>
+ *   </StepperItem>
+ *   <StepperSeparator />
+ *   <StepperItem step={1}>
+ *     <StepperTrigger>
+ *       <StepperIndicator />
+ *       <StepperTitle>Details</StepperTitle>
+ *     </StepperTrigger>
+ *   </StepperItem>
+ * </Stepper>
+ * ```
+ */
 function Stepper({
   defaultValue = 0,
   value,
@@ -68,6 +117,7 @@ function Stepper({
 
   const setActiveStep = useCallback(
     (step: number) => {
+      // In controlled mode, skip internal state; caller manages it.
       if (value === undefined) {
         setInternalStep(step);
       }
@@ -76,6 +126,7 @@ function Stepper({
     [value, onValueChange]
   );
 
+  // Controlled value takes precedence over internal state.
   const currentStep = value ?? activeStep;
 
   return (
@@ -107,6 +158,18 @@ type StepperItemProps = React.ComponentProps<"div"> & {
   loading?: boolean;
 };
 
+/**
+ * Container for one step in a {@link Stepper}; derives and broadcasts its
+ * visual state to child components via `StepItemContext`.
+ *
+ * @remarks
+ * - State priority: `completed` prop (or `step < activeStep`) → `"completed"`;
+ *   `step === activeStep` → `"active"`; otherwise `"inactive"`.
+ * - `loading` is only active when `step === activeStep`; a loading step on a
+ *   non-active item has no visual effect.
+ * - `disabled` is forwarded to {@link StepperTrigger} via context to prevent
+ *   navigation to this step.
+ */
 function StepperItem({
   step,
   completed = false,
@@ -118,6 +181,7 @@ function StepperItem({
 }: StepperItemProps) {
   const { activeStep } = useStepper();
 
+  // Derive state: explicit completed prop or already past this step.
   let state: StepState;
   if (completed || step < activeStep) {
     state = "completed";
@@ -127,6 +191,7 @@ function StepperItem({
     state = "inactive";
   }
 
+  // Loading spinner only shows for the currently active step.
   const isLoading = loading && step === activeStep;
 
   return (
@@ -153,6 +218,14 @@ function StepperItem({
 type StepperTriggerProps = useRender.ComponentProps<"button"> &
   React.ButtonHTMLAttributes<HTMLButtonElement>;
 
+/**
+ * The interactive element that navigates to a step when clicked.
+ *
+ * Reads `step` and `isDisabled` from the nearest {@link StepperItem}
+ * context and calls `setActiveStep` from {@link Stepper}. Accepts a
+ * `render` prop to swap the element (e.g. to an `<a>` for URL-driven
+ * steppers).
+ */
 function StepperTrigger({
   render,
   className,
@@ -186,6 +259,16 @@ function StepperTrigger({
 // StepperIndicator
 type StepperIndicatorProps = React.ComponentProps<"span">;
 
+/**
+ * The circular badge that shows the step number, a tick (when completed),
+ * or a spinner (when loading) for a {@link StepperItem}.
+ *
+ * @remarks
+ * - If `children` are provided they fully replace the default number/tick/
+ *   spinner rendering — useful for custom icons.
+ * - The number, tick, and spinner use CSS scale/opacity transitions driven
+ *   by `data-state` and `data-loading` on the parent `group/step` element.
+ */
 function StepperIndicator({
   className,
   children,
@@ -205,14 +288,17 @@ function StepperIndicator({
     >
       {children ?? (
         <>
+          {/* Step number — scales out when completed or loading */}
           <span className="transition-all group-data-[state=completed]/step:scale-0 group-data-loading/step:scale-0 group-data-[state=completed]/step:opacity-0 group-data-loading/step:opacity-0 group-data-loading/step:transition-none">
             {step}
           </span>
+          {/* Tick icon — scales in when step is completed */}
           <HugeiconsIcon
             aria-hidden="true"
             className="absolute size-5 scale-0 opacity-0 transition-all group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100"
             icon={Tick02Icon}
           />
+          {/* Spinning loader — shown only while isLoading */}
           {isLoading ? (
             <span className="absolute transition-all">
               <HugeiconsIcon
@@ -229,6 +315,7 @@ function StepperIndicator({
 }
 
 // StepperTitle
+/** The step name, rendered as an `<h3>`, inside a {@link StepperTrigger}. */
 function StepperTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
@@ -240,6 +327,7 @@ function StepperTitle({ className, ...props }: React.ComponentProps<"h3">) {
 }
 
 // StepperDescription
+/** Muted supporting text for a step, placed below a {@link StepperTitle}. */
 function StepperDescription({
   className,
   ...props
@@ -254,6 +342,14 @@ function StepperDescription({
 }
 
 // StepperSeparator
+/**
+ * The connecting line between two {@link StepperItem}s; becomes primary
+ * colour when the preceding step is completed.
+ *
+ * Its dimensions adapt automatically via `data-orientation` group selectors:
+ * horizontal (full-width, 2 px tall) or vertical (fixed 48 px tall, 2 px
+ * wide).
+ */
 function StepperSeparator({
   className,
   ...props

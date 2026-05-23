@@ -9,6 +9,12 @@
 
 import { useCallback, useMemo, useState } from "react";
 
+/**
+ * A single node in the checkbox tree data model.
+ *
+ * Set `defaultChecked` to pre-select a node on mount. Nest
+ * `children` to build branch nodes; leaf nodes omit `children`.
+ */
 type TreeNode = {
   id: string;
   label: string;
@@ -16,6 +22,13 @@ type TreeNode = {
   children?: TreeNode[];
 };
 
+/**
+ * Internal hook that manages checked state for a {@link CheckboxTree}.
+ *
+ * Returns `isChecked` (which returns `true`, `false`, or
+ * `"indeterminate"` for branch nodes with partial selections) and
+ * `handleCheck` for toggling a node and all its descendants.
+ */
 function useCheckboxTree(initialTree: TreeNode) {
   const initialCheckedNodes = useMemo(() => {
     const checkedSet = new Set<string>();
@@ -36,14 +49,17 @@ function useCheckboxTree(initialTree: TreeNode) {
 
   const isChecked = useCallback(
     (node: TreeNode): boolean | "indeterminate" => {
+      // Leaf node: checked state comes directly from the Set.
       if (!node.children) {
         return checkedNodes.has(node.id);
       }
 
       const childrenChecked = node.children.map((child) => isChecked(child));
+      // All children checked → parent is checked.
       if (childrenChecked.every((status) => status === true)) {
         return true;
       }
+      // At least one child (or grandchild) checked → indeterminate.
       if (
         childrenChecked.some(
           (status) => status === true || status === "indeterminate"
@@ -66,12 +82,14 @@ function useCheckboxTree(initialTree: TreeNode) {
         } else {
           newCheckedNodes.delete(n.id);
         }
+        // Recursively cascade the new state to all descendants.
         for (const child of n.children || []) {
           toggleNode(child, check);
         }
       };
 
       const currentStatus = isChecked(node);
+      // Checked or indeterminate → uncheck; unchecked → check.
       const newCheck = currentStatus !== true;
 
       toggleNode(node, newCheck);
@@ -83,6 +101,7 @@ function useCheckboxTree(initialTree: TreeNode) {
   return { isChecked, handleCheck };
 }
 
+/** Props for {@link CheckboxTree}. */
 type CheckboxTreeProps = {
   tree: TreeNode;
   renderNode: (props: {
@@ -93,6 +112,40 @@ type CheckboxTreeProps = {
   }) => React.ReactNode;
 };
 
+/**
+ * A headless, renderless checkbox tree that manages tri-state
+ * (checked / unchecked / indeterminate) selection across a nested
+ * {@link TreeNode} hierarchy.
+ *
+ * @remarks
+ * Built for demo / proof-of-concept purposes; not hardened for
+ * production. State is managed by the internal
+ * {@link useCheckboxTree} hook. The component is fully headless —
+ * all rendering is delegated to the `renderNode` render-prop,
+ * which receives each node, its computed checked state, a toggle
+ * handler, and already-rendered children.
+ *
+ * Checking a branch node cascades the new state down to all
+ * descendants; a branch with only some descendants checked shows
+ * as `"indeterminate"`.
+ *
+ * @example
+ * ```tsx
+ * <CheckboxTree
+ *   tree={treeData}
+ *   renderNode={({ node, isChecked, onCheckedChange, children }) => (
+ *     <div key={node.id}>
+ *       <Checkbox
+ *         checked={isChecked}
+ *         onCheckedChange={onCheckedChange}
+ *         label={node.label}
+ *       />
+ *       <div className="pl-4">{children}</div>
+ *     </div>
+ *   )}
+ * />
+ * ```
+ */
 export function CheckboxTree({ tree, renderNode }: CheckboxTreeProps) {
   const { isChecked, handleCheck } = useCheckboxTree(tree);
 

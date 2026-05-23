@@ -6,6 +6,7 @@ import type React from "react";
 import { Button, Group, Input, NumberField } from "react-aria-components";
 import { cn } from "../utils/index";
 
+/** Props for {@link NumberInputWithButtons}. */
 export type NumberInputWithButtonsProps = Omit<
   React.ComponentProps<"input">,
   "value" | "onChange" | "defaultValue"
@@ -23,6 +24,32 @@ export type NumberInputWithButtonsProps = Omit<
   containerClassName?: string;
 };
 
+/**
+ * A stepper-style number input with flanking decrement (−) and
+ * increment (+) buttons rendered on the left and right edges.
+ *
+ * @remarks
+ * Built on React Aria Components `NumberField` + `Group` + `Input`.
+ * The decrement button uses the minus/cancel icon on the leading
+ * edge and the add icon on the trailing edge; both are wired to
+ * React Aria's `"decrement"` / `"increment"` slots so keyboard
+ * stepping, aria attributes, and min/max clamping work
+ * automatically.
+ *
+ * The text input is center-aligned to balance the two side buttons.
+ *
+ * @example
+ * ```tsx
+ * <NumberInputWithButtons
+ *   name="quantity"
+ *   label="Quantity"
+ *   min={1}
+ *   max={99}
+ *   value={qty}
+ *   onChange={setQty}
+ * />
+ * ```
+ */
 function NumberInputWithButtons({
   defaultValue,
   name,

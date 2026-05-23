@@ -13,9 +13,19 @@ import { cn } from "../utils/index";
 import { Input } from "./input";
 import { Label } from "./label";
 
+// Total number of password requirements; used to compute strength percentage.
 const MAX_STRENGTH = 4;
+// Multiplier converting a 0-1 fraction to a CSS percentage integer.
 const PERCENTAGE_TO_WIDTH = 100;
 
+/**
+ * Props for {@link InputPasswordWithStrengthIndicator}.
+ *
+ * @remarks
+ * `type` is omitted — the component manages `"password"` / `"text"` itself.
+ * `showStrengthIndicator` defaults to `true`; set it to `false` to render
+ * the field as a plain show/hide password input without the strength UI.
+ */
 export type InputPasswordWithStrengthIndicatorProps = Omit<
   React.ComponentProps<"input">,
   "type"
@@ -25,6 +35,10 @@ export type InputPasswordWithStrengthIndicatorProps = Omit<
   showStrengthIndicator?: boolean;
 };
 
+/**
+ * Ordered list of regex rules that constitute a strong password.
+ * Each entry contributes 1 point to the strength score (max {@link MAX_STRENGTH}).
+ */
 const requirements = [
   { regex: /.{8,}/, text: "At least 8 characters" },
   { regex: /[0-9]/, text: "At least 1 number" },
@@ -32,6 +46,11 @@ const requirements = [
   { regex: /[A-Z]/, text: "At least 1 uppercase letter" },
 ] as const;
 
+/**
+ * Maps a 0-4 strength score to a Tailwind background color token.
+ * 0 → border (empty), 1 → destructive (weak), 2 → warning/80,
+ * 3 → warning (medium), 4 → success (strong).
+ */
 const getStrengthColor = (score: number) => {
   const SCORE_THRESHOLDS = {
     WEAK: 1,
@@ -54,6 +73,10 @@ const getStrengthColor = (score: number) => {
   return "bg-success";
 };
 
+/**
+ * Maps a 0-4 strength score to a human-readable label displayed above the
+ * requirements checklist.
+ */
 const getStrengthText = (score: number) => {
   const SCORE_THRESHOLDS = {
     WEAK: 1,
@@ -73,6 +96,41 @@ const getStrengthText = (score: number) => {
   return "Strong password";
 };
 
+/**
+ * A password field that reveals a live strength meter and per-requirement
+ * checklist after the user first focuses the input.
+ *
+ * @remarks
+ * Composes the `Input` and `Label` primitives with:
+ * - A show/hide toggle button (same pattern as {@link PasswordInput}).
+ * - An animated progress bar whose width and color are driven by a 0-4
+ *   strength score computed from {@link requirements}.
+ * - A checklist (`<ul>`) listing each requirement with a tick/cross icon.
+ *
+ * Strength scoring: each regex in {@link requirements} that the current
+ * password satisfies adds 1 point. Color and text labels are derived by
+ * {@link getStrengthColor} and {@link getStrengthText}.
+ *
+ * The strength UI is only shown once `showStrengthIndicator` is `true`,
+ * the field has been focused (`isTouched`), and the field is non-empty —
+ * avoiding premature feedback on untouched forms.
+ *
+ * `aria-invalid` is set on the input whenever the password exists but does
+ * not meet all requirements, or when `error` is forced externally. The
+ * progress bar is exposed as `role="progressbar"` with `aria-valuenow`.
+ *
+ * An external form reset (`value=""`) clears internal state including the
+ * touched flag, resetting the UI back to its pre-interaction state.
+ *
+ * @example
+ * ```tsx
+ * <InputPasswordWithStrengthIndicator
+ *   id="new-password"
+ *   label="New password"
+ *   placeholder="Create a password"
+ * />
+ * ```
+ */
 function InputPasswordWithStrengthIndicator({
   className,
   label,

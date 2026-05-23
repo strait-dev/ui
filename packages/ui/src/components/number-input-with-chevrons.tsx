@@ -6,6 +6,7 @@ import type React from "react";
 import { Button, Group, Input, NumberField } from "react-aria-components";
 import { cn } from "../utils/index";
 
+/** Props for {@link NumberInputWithChevrons}. */
 export type NumberInputWithChevronsProps = Omit<
   React.ComponentProps<"input">,
   "value" | "onChange" | "defaultValue"
@@ -23,6 +24,34 @@ export type NumberInputWithChevronsProps = Omit<
   containerClassName?: string;
 };
 
+/**
+ * A number input with stacked up/down chevron buttons in a trailing
+ * column, supporting arbitrary `Intl.NumberFormatOptions` formatting.
+ *
+ * @remarks
+ * Built on React Aria Components `NumberField` + `Group` + `Input`.
+ * Unlike {@link NumberInputWithButtons} — which flanks the input —
+ * the chevrons here live in a dedicated right-hand column separated
+ * by a left border, matching a compact spinner layout.
+ *
+ * Pass `formatOptions` to apply any `Intl.NumberFormat` style (e.g.
+ * currency, unit, percent) directly through React Aria's formatter.
+ * Min/max clamping and keyboard stepping are handled by the
+ * underlying `NumberField`.
+ *
+ * @example
+ * ```tsx
+ * <NumberInputWithChevrons
+ *   name="price"
+ *   label="Price"
+ *   min={0}
+ *   step={0.01}
+ *   formatOptions={{ style: "currency", currency: "USD" }}
+ *   value={price}
+ *   onChange={setPrice}
+ * />
+ * ```
+ */
 function NumberInputWithChevrons({
   defaultValue,
   name,

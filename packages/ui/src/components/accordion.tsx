@@ -5,6 +5,36 @@ import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "../utils/index";
 
+/**
+ * A vertically stacked set of collapsible sections, each with a trigger
+ * and an animated content panel.
+ *
+ * Compose the root with its sub-parts: each section is an
+ * {@link AccordionItem} containing an {@link AccordionTrigger} and an
+ * {@link AccordionContent}. Built on Base UI's `Accordion` primitive, which
+ * manages keyboard navigation and ARIA attributes automatically.
+ *
+ * @remarks
+ * - Pass `type="single"` (default) to allow only one item open at a time,
+ *   or `type="multiple"` to allow multiple open simultaneously.
+ * - Use `defaultValue` / `value` + `onValueChange` for controlled mode.
+ * - The trigger renders a down arrow icon that swaps to an up arrow when
+ *   the item is expanded, via `group-aria-expanded` CSS selectors.
+ * - Custom icons can be placed inside the trigger with
+ *   `data-slot="accordion-trigger-icon"` to pick up automatic sizing.
+ *
+ * @example
+ * ```tsx
+ * <Accordion type="single" collapsible>
+ *   <AccordionItem value="item-1">
+ *     <AccordionTrigger>Is it accessible?</AccordionTrigger>
+ *     <AccordionContent>
+ *       Yes. It follows the WAI-ARIA design pattern.
+ *     </AccordionContent>
+ *   </AccordionItem>
+ * </Accordion>
+ * ```
+ */
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (
     <AccordionPrimitive.Root
@@ -15,6 +45,11 @@ function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   );
 }
 
+/**
+ * A single collapsible section inside an {@link Accordion}; wraps one
+ * {@link AccordionTrigger} and one {@link AccordionContent}.
+ * Renders a bottom border except on the last item.
+ */
 function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   return (
     <AccordionPrimitive.Item
@@ -25,6 +60,12 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   );
 }
 
+/**
+ * Clickable header button that expands or collapses an
+ * {@link AccordionItem}. Renders inside an implicit `<h3>` via
+ * `AccordionPrimitive.Header`, and toggles between a down and up arrow
+ * icon to reflect the open state.
+ */
 function AccordionTrigger({
   className,
   children,
@@ -58,6 +99,12 @@ function AccordionTrigger({
   );
 }
 
+/**
+ * Animated panel that reveals the body content of an {@link AccordionItem}.
+ * Slides open/closed via `animate-accordion-down` / `animate-accordion-up`
+ * keyframes driven by `data-open` and `data-closed` attributes from the
+ * Base UI primitive.
+ */
 function AccordionContent({
   className,
   children,

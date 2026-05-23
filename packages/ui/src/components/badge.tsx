@@ -4,6 +4,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "../utils/index";
 
+/**
+ * Class-variance-authority recipe for the {@link Badge}.
+ *
+ * Exposes two axes:
+ * - `variant` — colour and emphasis. Solid fills (`default`, `info`,
+ *   `success`, `warning`, `destructive`, `invert`, `secondary`), tinted
+ *   light fills (`*-light`), bordered outlines (`*-outline`), plus the
+ *   low-emphasis `ghost` and `link` options.
+ * - `size` — height/padding presets from `xs` through `xl`.
+ *
+ * Exported so consumers can apply the same visual style to non-`<span>`
+ * elements without deriving the class list manually.
+ */
 const badgeVariants = cva(
   "relative inline-flex w-fit shrink-0 items-center justify-center whitespace-nowrap rounded-4xl border border-transparent font-medium outline-none transition-shadow focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*=size-])]:size-3 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
@@ -61,17 +74,50 @@ const badgeVariants = cva(
   }
 );
 
+/**
+ * Props for {@link Badge}.
+ *
+ * Extends Base UI's `useRender` component props so the underlying element
+ * can be swapped via the `render` prop (e.g. render as a `<button>` or a
+ * framework `<Link>`).
+ */
 interface BadgeProps extends useRender.ComponentProps<"span"> {
   size?: VariantProps<typeof badgeVariants>["size"];
   variant?: VariantProps<typeof badgeVariants>["variant"];
 }
 
+/**
+ * Small status label used to categorise, tag, or annotate content.
+ *
+ * Rendered as a `<span>` by default; swap the underlying element with the
+ * `render` prop when interactive behaviour (e.g. a link or button) is
+ * needed. Styling is controlled by {@link badgeVariants} via `variant` and
+ * `size`.
+ *
+ * @remarks
+ * - The full range of semantic colours is available through the `variant`
+ *   prop: solid fills, tinted `*-light` fills, and bordered `*-outline`
+ *   options.
+ * - When rendered as an interactive element the badge gains a visible
+ *   focus ring via `focus-visible:ring-3`.
+ * - Embedded SVG icons are automatically sized to 12 × 12.
+ *
+ * @example
+ * ```tsx
+ * <Badge variant="success-light">Active</Badge>
+ * <Badge variant="destructive" size="sm">Error</Badge>
+ * <Badge variant="outline" render={<a href="/tags/design" />}>
+ *   Design
+ * </Badge>
+ * ```
+ */
 function Badge({ className, variant, size, render, ...props }: BadgeProps) {
   const defaultProps = {
     "data-slot": "badge",
     className: cn(badgeVariants({ variant, size, className })),
   };
 
+  // useRender lets the badge adopt any element while keeping its styles
   return useRender({
     defaultTagName: "span",
     render,

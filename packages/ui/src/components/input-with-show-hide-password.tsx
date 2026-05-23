@@ -7,11 +7,39 @@ import { useState } from "react";
 import { cn } from "../utils/index";
 import { Input } from "./input";
 
+/**
+ * Props for {@link InputWithShowHidePassword}.
+ *
+ * `type` is omitted — the component controls `"password"` / `"text"` via
+ * the inline toggle.
+ */
 type InputWithShowHidePasswordProps = Omit<
   React.ComponentProps<"input">,
   "type"
 >;
 
+/**
+ * A minimal password field with a trailing eye-icon toggle that switches the
+ * input between masked (`"password"`) and revealed (`"text"`) mode.
+ *
+ * @remarks
+ * A slimmer alternative to {@link PasswordInput} — no label or container
+ * class props; drop it directly in any form layout that manages its own
+ * label placement.
+ *
+ * The toggle button exposes `aria-pressed` to announce the current
+ * visibility state to screen readers, and its `aria-label` updates
+ * accordingly (`"Show password"` / `"Hide password"`).
+ *
+ * @example
+ * ```tsx
+ * <InputWithShowHidePassword
+ *   id="password"
+ *   placeholder="Password"
+ *   autoComplete="current-password"
+ * />
+ * ```
+ */
 function InputWithShowHidePassword({
   className,
   ...props

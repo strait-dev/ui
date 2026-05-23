@@ -7,6 +7,39 @@ import { Button } from "./button";
 import { Input } from "./input";
 import { Textarea } from "./textarea";
 
+/**
+ * A composite control that visually merges an input (or textarea)
+ * with leading/trailing addons, icons, buttons, or labels into a
+ * single bordered group.
+ *
+ * Compose it with {@link InputGroupInput} (or
+ * {@link InputGroupTextarea}) as the primary control and one or more
+ * {@link InputGroupAddon}s, {@link InputGroupButton}s, or
+ * {@link InputGroupText}s for decorations.
+ *
+ * @remarks
+ * - Focus, error (`aria-invalid`), and disabled styles are applied to
+ *   the wrapper `<div>` via child-targeting selectors, so the inner
+ *   input does not need its own ring styles.
+ * - Use `data-align="block-start"` / `data-align="block-end"` addons
+ *   for stacked (top / bottom) labels; `inline-start` / `inline-end`
+ *   for side addons.
+ * - Wrapping a `<textarea>` via {@link InputGroupTextarea} causes the
+ *   group to grow vertically (`h-auto`).
+ *
+ * @example
+ * ```tsx
+ * <InputGroup>
+ *   <InputGroupAddon align="inline-start">
+ *     <SearchIcon />
+ *   </InputGroupAddon>
+ *   <InputGroupInput placeholder="Search…" />
+ *   <InputGroupAddon align="inline-end">
+ *     <InputGroupButton>Go</InputGroupButton>
+ *   </InputGroupAddon>
+ * </InputGroup>
+ * ```
+ */
 function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     // biome-ignore lint/a11y/useSemanticElements: an input group bundles a control with addons; role="group" on a div is the intended pattern (no native element fits).
@@ -22,6 +55,15 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Class-variance-authority recipe for {@link InputGroupAddon}.
+ *
+ * Exposes one axis:
+ * - `align` — where the addon attaches to the {@link InputGroup}:
+ *   `"inline-start"` (left), `"inline-end"` (right), `"block-start"`
+ *   (top), or `"block-end"` (bottom). Block-aligned addons span the
+ *   full width and stack the group vertically.
+ */
 const inputGroupAddonVariants = cva(
   "flex h-auto cursor-text select-none items-center justify-center gap-2 py-1.5 font-medium text-muted-foreground text-sm group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
   {
@@ -43,6 +85,17 @@ const inputGroupAddonVariants = cva(
   }
 );
 
+/**
+ * Decorative zone attached to one edge of an {@link InputGroup};
+ * holds icons, text labels, {@link InputGroupButton}s, or `<kbd>`
+ * shortcuts.
+ *
+ * @remarks
+ * The `align` prop positions the addon relative to the group's
+ * primary control (see {@link inputGroupAddonVariants}). A click on
+ * the addon that doesn't hit a child `<button>` is forwarded to the
+ * group's `<input>` to keep the UX familiar.
+ */
 function InputGroupAddon({
   className,
   align = "inline-start",
@@ -68,6 +121,14 @@ function InputGroupAddon({
   );
 }
 
+/**
+ * Class-variance-authority recipe for {@link InputGroupButton}.
+ *
+ * Exposes one axis:
+ * - `size` — compact sizes designed to sit flush inside the group
+ *   boundary: `"xs"` (text button), `"sm"` (slightly taller),
+ *   `"icon-xs"` (square icon), `"icon-sm"` (larger square icon).
+ */
 const inputGroupButtonVariants = cva(
   "flex items-center gap-2 text-sm shadow-none",
   {
@@ -86,6 +147,16 @@ const inputGroupButtonVariants = cva(
   }
 );
 
+/**
+ * A compact {@link Button} tuned for placement inside an
+ * {@link InputGroupAddon}.
+ *
+ * @remarks
+ * Sizing comes from {@link inputGroupButtonVariants} rather than
+ * `buttonVariants`, so it uses a restricted `size` set. The `type`
+ * defaults to `"button"` to prevent accidental form submissions when
+ * the group is inside a `<form>`.
+ */
 function InputGroupButton({
   className,
   type = "button",
@@ -107,6 +178,11 @@ function InputGroupButton({
   );
 }
 
+/**
+ * Static muted text or icon decoration placed inside an
+ * {@link InputGroupAddon} — not interactive, unlike
+ * {@link InputGroupButton}.
+ */
 function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -119,6 +195,11 @@ function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
   );
 }
 
+/**
+ * The primary `<input>` control inside an {@link InputGroup}; strips
+ * its own border and ring so the group wrapper owns all focus/error
+ * styling.
+ */
 function InputGroupInput({
   className,
   ...props
@@ -135,6 +216,12 @@ function InputGroupInput({
   );
 }
 
+/**
+ * A multi-line `<textarea>` variant of {@link InputGroupInput};
+ * causes the parent {@link InputGroup} to grow vertically and resizes
+ * vertically only (`resize-y` is disabled to `resize-none` for
+ * predictable layout).
+ */
 function InputGroupTextarea({
   className,
   ...props

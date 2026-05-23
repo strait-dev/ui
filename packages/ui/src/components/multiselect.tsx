@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../utils/index";
 import { Command, CommandGroup, CommandItem, CommandList } from "./command";
 
+/** Default search debounce delay in milliseconds. */
 const DEFAULT_DEBOUNCE_TIME = 500;
 
 // Helper component to render selected option badges
@@ -424,6 +425,14 @@ const ClearAllButton: React.FC<ClearAllButtonProps> = ({
   );
 };
 
+/**
+ * A single selectable option used throughout {@link MultipleSelector}.
+ *
+ * `value` is the internal key; `label` is the display string.
+ * Mark `fixed: true` to prevent the option from being removed by the
+ * user (it is kept even when "Clear all" is invoked). Any extra key
+ * can be used with the `groupBy` prop to bucket options into groups.
+ */
 export type Option = {
   value: string;
   label: string;
@@ -495,6 +504,11 @@ type MultipleSelectorProps = {
   hideClearAllButton?: boolean;
 };
 
+/**
+ * Ref handle exposed by {@link MultipleSelector} for programmatic
+ * control — inspect the current selection, focus the input, or reset
+ * it from parent code.
+ */
 export type MultipleSelectorRef = {
   selectedValue: Option[];
   input: HTMLInputElement;
@@ -502,6 +516,11 @@ export type MultipleSelectorRef = {
   reset: () => void;
 };
 
+/**
+ * Returns a debounced copy of `value` that only updates after
+ * `delay` ms of inactivity. Used to throttle async search calls in
+ * {@link MultipleSelector}.
+ */
 export function useDebounce<T>(value: T, delay?: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -658,6 +677,49 @@ function CreatableItem({
   return;
 }
 
+/**
+ * A multi-value combobox that lets users select (and optionally
+ * create) multiple options from a searchable dropdown list.
+ *
+ * Built on top of `cmdk`'s `Command` primitive with badge-style
+ * chips for each selected value.
+ *
+ * @remarks
+ * **Option sources** — supply options one of three ways:
+ * - `options` — a static array kept in sync via `useSyncOptions`.
+ * - `defaultOptions` — initial options for uncontrolled usage.
+ * - `onSearch` / `onSearchSync` — async or sync search callbacks;
+ *   the input is debounced by `delay` (default 500 ms).
+ *
+ * **Controlled vs. uncontrolled** — pass `value` to control the
+ * selection externally; `onChange` fires whenever the selection
+ * changes.
+ *
+ * **Fixed options** — set `option.fixed = true` to prevent removal
+ * by the user or the "Clear all" button.
+ *
+ * **Creatable** — set `creatable={true}` to allow users to add
+ * options that don't exist yet; a `Create "…"` item appears when no
+ * match is found.
+ *
+ * **Grouping** — set `groupBy` to a key present on each
+ * {@link Option} object to bucket the dropdown items under labeled
+ * groups.
+ *
+ * Pair with a `<Label>` for accessible forms.
+ *
+ * @example
+ * ```tsx
+ * <MultipleSelector
+ *   options={[
+ *     { value: "react", label: "React" },
+ *     { value: "vue", label: "Vue" },
+ *   ]}
+ *   placeholder="Pick frameworks…"
+ *   onChange={(opts) => console.log(opts)}
+ * />
+ * ```
+ */
 function MultipleSelector({
   value,
   onChange,
@@ -754,11 +816,15 @@ function MultipleSelector({
     handleUnselect,
   });
 
+  // Derive the displayable options by subtracting already-selected
+  // values so they don't appear as duplicate choices.
   const selectables = useMemo<GroupOption>(
     () => removePickedOption(options, selected),
     [options, selected]
   );
 
+  // Build the cmdk filter function once; changes only when creatable
+  // mode or a custom filter is toggled.
   const commandFilter = useMemo(
     () => createCommandFilter(creatable, commandProps?.filter),
     [creatable, commandProps?.filter]
@@ -772,6 +838,9 @@ function MultipleSelector({
 
   const handleInputBlur = useCallback(
     (event: React.FocusEvent<HTMLInputElement>) => {
+      // Keep the dropdown open while the user is scrolling the list
+      // (onScrollbar is true), so clicking a scrollbar doesn't close
+      // the popup before the selection registers.
       if (!onScrollbar) {
         setOpen(false);
       }
@@ -807,6 +876,8 @@ function MultipleSelector({
     [handleKeyDown, commandProps]
   );
 
+  // When async search is active cmdk must NOT filter internally —
+  // the server/callback already returns the relevant subset.
   const shouldFilterValue =
     commandProps?.shouldFilter === undefined
       ? !onSearch

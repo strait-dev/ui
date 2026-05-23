@@ -3,6 +3,29 @@ import type * as React from "react";
 
 import { cn } from "../utils/index";
 
+/**
+ * A single-line text control for user input.
+ *
+ * Built on Base UI's `Input` primitive — every native `<input>` prop and ref
+ * is forwarded. Applies the design-system's focus ring, disabled, and
+ * `aria-invalid` visual states automatically.
+ *
+ * @remarks
+ * - Pair every `Input` with a {@link Label} (via `htmlFor` / `id`) for
+ *   accessibility. When using react-hook-form, prefer wrapping with
+ *   {@link FormControl} and {@link FormItem} so IDs, descriptions, and
+ *   validation states are wired up automatically.
+ * - `type="file"` is styled: the file button is displayed inline and matches
+ *   the foreground typography.
+ * - `aria-invalid` is set by {@link FormControl} when the field has an error;
+ *   the input shows a destructive ring automatically.
+ *
+ * @example
+ * ```tsx
+ * <Label htmlFor="email">Email</Label>
+ * <Input id="email" type="email" placeholder="you@example.com" />
+ * ```
+ */
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <InputPrimitive

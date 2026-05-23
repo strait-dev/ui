@@ -10,11 +10,20 @@ import { Badge } from "./badge";
 import { Button } from "./button";
 import { Input } from "./input";
 
+/** A single tag managed by {@link InputWithInnerTags}. */
 export type Tag = {
   id: string;
   text: string;
 };
 
+/**
+ * Props for {@link InputWithInnerTags}.
+ *
+ * @remarks
+ * The component is fully controlled: pass `tags` and update state in
+ * `onTagsChange`. Duplicate tag text (case-sensitive, trimmed) is silently
+ * ignored.
+ */
 type InputWithInnerTagsProps = {
   id?: string;
   placeholder?: string;
@@ -25,6 +34,35 @@ type InputWithInnerTagsProps = {
   containerClassName?: string;
 };
 
+/**
+ * A tag-input field that renders inline {@link Tag} badges inside the input
+ * area, letting users build a list of values within a single control.
+ *
+ * @remarks
+ * Composes the `Input`, `Badge`, and `Button` primitives inside a flex
+ * wrap container that mimics a standard input's focus ring and border.
+ *
+ * Keyboard interactions:
+ * - `Enter` — adds the trimmed input value as a new tag (duplicate text is
+ *   ignored); the hotkey is active only when the internal input is focused.
+ * - `Backspace` on an empty input — removes the last tag in the list.
+ *
+ * Each tag gets a `nanoid`-generated stable `id` so React reconciliation is
+ * unaffected by text changes elsewhere in the list.
+ *
+ * When `id` is not provided a stable generated id is used; in either case
+ * the id is attached to the `<Input>` so external `<label htmlFor>` works.
+ *
+ * @example
+ * ```tsx
+ * const [tags, setTags] = useState<Tag[]>([]);
+ * <InputWithInnerTags
+ *   tags={tags}
+ *   onTagsChange={setTags}
+ *   placeholder="Add a skill…"
+ * />
+ * ```
+ */
 export function InputWithInnerTags({
   id: providedId,
   placeholder = "Add a tag",

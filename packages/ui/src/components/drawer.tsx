@@ -4,30 +4,82 @@ import type * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { cn } from "../utils/index";
 
+/**
+ * Edge-anchored panel that slides in from any side of the viewport,
+ * powered by the Vaul library.
+ *
+ * Compose the parts as:
+ * `Drawer` → `DrawerTrigger` → `DrawerContent` (which internally mounts
+ * {@link DrawerPortal} and {@link DrawerOverlay}), then inside
+ * `DrawerContent`: {@link DrawerHeader} (holding {@link DrawerTitle} and
+ * {@link DrawerDescription}), body content, and {@link DrawerFooter}.
+ *
+ * @remarks
+ * - The slide direction is controlled by the `direction` prop on `Drawer`
+ *   (the Vaul root). `DrawerContent` reads the `data-vaul-drawer-direction`
+ *   attribute to apply the correct anchoring, sizing, and border.
+ * - A drag handle pill is rendered automatically at the top of the panel
+ *   when `direction="bottom"` (the default). It is hidden for other
+ *   directions.
+ * - For `bottom` and `top` drawers, the panel is capped at 80 vh to keep
+ *   the page partially visible underneath.
+ * - For `left` and `right` drawers, the panel is `w-3/4` and capped at
+ *   `sm:max-w-sm`.
+ * - Always include a {@link DrawerTitle} for screen-reader accessibility.
+ *
+ * @example
+ * ```tsx
+ * <Drawer>
+ *   <DrawerTrigger>Open</DrawerTrigger>
+ *   <DrawerContent>
+ *     <DrawerHeader>
+ *       <DrawerTitle>Filters</DrawerTitle>
+ *       <DrawerDescription>
+ *         Refine the list below.
+ *       </DrawerDescription>
+ *     </DrawerHeader>
+ *     <div className="px-4">…</div>
+ *     <DrawerFooter>
+ *       <DrawerClose>Done</DrawerClose>
+ *     </DrawerFooter>
+ *   </DrawerContent>
+ * </Drawer>
+ * ```
+ */
 function Drawer({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) {
   return <DrawerPrimitive.Root data-slot="drawer" {...props} />;
 }
 
+/** Button or element that opens the {@link Drawer} when activated. */
 function DrawerTrigger({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
 }
 
+/**
+ * Teleports {@link DrawerContent} outside the DOM tree into `document.body`,
+ * escaping overflow/stacking-context constraints.
+ */
 function DrawerPortal({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
 }
 
+/** Programmatic close control for the {@link Drawer}. */
 function DrawerClose({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Close>) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
 }
 
+/**
+ * Semi-transparent backdrop behind {@link DrawerContent}; fades in/out
+ * and applies a backdrop blur when the browser supports it.
+ */
 function DrawerOverlay({
   className,
   ...props
@@ -44,6 +96,18 @@ function DrawerOverlay({
   );
 }
 
+/**
+ * The sliding panel itself.
+ *
+ * Mounts {@link DrawerPortal} and {@link DrawerOverlay} automatically.
+ * Layout, sizing, border, and rounding all derive from the
+ * `data-vaul-drawer-direction` attribute set by the Vaul root.
+ *
+ * @remarks
+ * The drag-handle pill (`h-1 w-[100px]`) is only visible for
+ * `direction="bottom"` drawers; it is hidden via a group data selector
+ * for all other directions.
+ */
 function DrawerContent({
   className,
   children,
@@ -60,6 +124,7 @@ function DrawerContent({
         data-slot="drawer-content"
         {...props}
       >
+        {/* Drag handle — only visible for bottom-direction drawers */}
         <div className="mx-auto mt-4 hidden h-1 w-[100px] shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
         {children}
       </DrawerPrimitive.Content>
@@ -67,6 +132,11 @@ function DrawerContent({
   );
 }
 
+/**
+ * Top region of {@link DrawerContent} for {@link DrawerTitle} and
+ * {@link DrawerDescription}. Text is centred for `top`/`bottom` drawers
+ * and left-aligned for `left`/`right` drawers on `md+` screens.
+ */
 function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -80,6 +150,10 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Bottom action bar for {@link DrawerContent}; pushes to the end of
+ * the flex column with `mt-auto`.
+ */
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -90,6 +164,10 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Accessible heading for the {@link Drawer}, announced by screen readers
+ * when the panel opens. Always provide this for a11y.
+ */
 function DrawerTitle({
   className,
   ...props
@@ -103,6 +181,7 @@ function DrawerTitle({
   );
 }
 
+/** Muted supporting text beneath {@link DrawerTitle}. */
 function DrawerDescription({
   className,
   ...props

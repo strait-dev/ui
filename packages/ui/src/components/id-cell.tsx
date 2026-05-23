@@ -10,13 +10,41 @@ import { Button } from "./button";
 import { toast } from "./toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
+/** Props for {@link IdCell}. */
 interface IdCellProps {
   className?: string;
+  /** Full identifier string to display and copy. */
   id: string;
 }
 
+/**
+ * Table cell that displays a truncated identifier with a copy-to-clipboard
+ * button, intended for use inside a data table column definition.
+ *
+ * The `id` is shortened to its first 6 characters (followed by `…`); a
+ * tooltip on the truncated text reveals the full value on hover. A ghost
+ * icon button copies the full `id` to the system clipboard and shows a
+ * success toast, with an animated icon swap (copy → checkmark) that resets
+ * after 2 seconds.
+ *
+ * @remarks
+ * - The copy button carries `aria-label="Copy ID"` for screen-reader
+ *   accessibility.
+ * - The icon transition uses `motion/react` `AnimatePresence` with
+ *   `mode="wait"` so the exit animation completes before the enter plays.
+ *
+ * @example
+ * ```tsx
+ * // Inside a TanStack Table column definition:
+ * {
+ *   accessorKey: "id",
+ *   cell: ({ row }) => <IdCell id={row.original.id} />,
+ * }
+ * ```
+ */
 export function IdCell({ id, className }: IdCellProps) {
   const [isCopied, setIsCopied] = useState(false);
+  // Show only the first 6 chars to keep the column narrow.
   const truncatedId = id.slice(0, 6);
 
   const handleCopy = () => {

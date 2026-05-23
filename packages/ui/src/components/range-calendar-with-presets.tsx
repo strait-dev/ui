@@ -17,11 +17,13 @@ import { cn } from "../utils/index";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
 
+// Named constants that make preset offset arithmetic self-documenting.
 const ONE_DAY = 1;
 const SEVEN_DAYS = 7;
 const THIRTY_DAYS = 30;
 const DAYS_IN_YEAR = 365;
 
+/** A single preset entry in the {@link RangeCalendarWithPresets} grid. */
 type RangePreset = {
   name: string;
   value: DateRange;
@@ -89,6 +91,42 @@ type RangeCalendarWithPresetsProps = {
   showOutsideDays?: boolean;
 };
 
+/**
+ * A range calendar with a row of quick-select preset buttons and an optional
+ * apply/reset footer.
+ *
+ * Renders a 4-column grid of preset chips above a react-day-picker range
+ * `Calendar`. The active preset is highlighted when its `from`/`to` dates
+ * match `selected` (time-normalised to midnight). An optional footer with
+ * "Limpar" (reset) and "Aplicar" (apply) buttons can be shown by passing
+ * `showFooter`.
+ *
+ * @remarks
+ * - The built-in preset list covers: Hoje, Ontem, Últimos 7/30 dias,
+ *   Mês atual/anterior, Ano atual/anterior. All are computed relative to
+ *   `today` and memoised for the lifetime of the component.
+ * - Future dates are always blocked: the disabled range extends from tomorrow
+ *   to 365 days ahead. Pass a custom `presets` prop if the disabled logic
+ *   must change as well.
+ * - `showFooter=false` (default) is appropriate for uncontrolled inline
+ *   usage; set `showFooter=true` when embedding inside
+ *   {@link DateRangePickerWithPresets} where Apply controls popover close.
+ * - `_defaultRange` is declared on the type but not used in the current
+ *   implementation; it is reserved for a future reset-to-default behaviour.
+ *
+ * @example
+ * ```tsx
+ * const [range, setRange] = React.useState<DateRange | undefined>();
+ *
+ * <RangeCalendarWithPresets
+ *   selected={range}
+ *   onSelect={setRange}
+ *   showFooter
+ *   onApply={() => console.log("applied", range)}
+ *   onReset={() => setRange(undefined)}
+ * />
+ * ```
+ */
 export function RangeCalendarWithPresets({
   selected,
   onSelect,

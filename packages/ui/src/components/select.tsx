@@ -11,7 +11,14 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import * as React from "react";
 import { cn } from "../utils/index";
 
+/** Internal map of option value → display label, shared via context. */
 type ItemsMap = Map<string, string>;
+
+/**
+ * Internal context used by {@link Select} to pass the items registry
+ * down to {@link SelectValue} and {@link SelectItem} without prop
+ * drilling.
+ */
 const SelectItemsContext = React.createContext<{
   register: (value: string, label: string) => void;
   items: ItemsMap;
@@ -22,13 +29,51 @@ const SelectItemsContext = React.createContext<{
   items: new Map(),
 });
 
+/**
+ * Accessible single-value dropdown built on Base UI's `Select`
+ * primitive.
+ *
+ * Compose it with {@link SelectTrigger} (containing
+ * {@link SelectValue}), {@link SelectContent} (containing
+ * {@link SelectItem} / {@link SelectGroup} / {@link SelectLabel}),
+ * and the optional {@link SelectSeparator}.
+ *
+ * @remarks
+ * - `Select` maintains an internal registry that maps each option
+ *   `value` to its display label. {@link SelectValue} reads that
+ *   registry to show the human-readable label for the current
+ *   selection without re-traversing the React tree.
+ * - For accessible forms, pair the trigger with a `<Label>` whose
+ *   `htmlFor` points to the trigger's `id`.
+ * - To make the dropdown controlled, pass `value` and
+ *   `onValueChange` to the root. Uncontrolled usage relies on
+ *   `defaultValue`.
+ *
+ * @example
+ * ```tsx
+ * <Select defaultValue="react">
+ *   <SelectTrigger className="w-40">
+ *     <SelectValue placeholder="Pick a framework" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="react">React</SelectItem>
+ *     <SelectItem value="vue">Vue</SelectItem>
+ *     <SelectItem value="svelte">Svelte</SelectItem>
+ *   </SelectContent>
+ * </Select>
+ * ```
+ */
 function Select({ children, ...props }: SelectPrimitive.Root.Props<string>) {
   const itemsRef = React.useRef<ItemsMap>(new Map());
+  // Dummy counter used only to force a re-render when new items
+  // register themselves after the initial mount.
   const [, forceUpdate] = React.useState(0);
 
   const contextValue = React.useMemo(
     () => ({
       register: (value: string, label: string) => {
+        // Only update (and re-render) when the label actually changes,
+        // preventing infinite update loops.
         if (itemsRef.current.get(value) !== label) {
           itemsRef.current.set(value, label);
           forceUpdate((n) => n + 1);
@@ -47,6 +92,7 @@ function Select({ children, ...props }: SelectPrimitive.Root.Props<string>) {
   );
 }
 
+/** Container that visually groups related {@link SelectItem}s. */
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
     <SelectPrimitive.Group
@@ -57,6 +103,16 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   );
 }
 
+/**
+ * Renders the currently selected option's label inside
+ * {@link SelectTrigger}.
+ *
+ * @remarks
+ * Looks up the human-readable label from the internal items registry
+ * populated by each rendered {@link SelectItem}. Falls back to
+ * stringifying the raw value when no matching label is found.
+ * The `placeholder` is shown (muted) when no value is selected.
+ */
 function SelectValue({
   className,
   placeholder,
@@ -83,6 +139,14 @@ function SelectValue({
   );
 }
 
+/**
+ * The button that opens the {@link SelectContent} dropdown.
+ *
+ * @remarks
+ * The `size` prop (`"default" | "sm"`) adjusts height and border
+ * radius. Always place a {@link SelectValue} inside to display the
+ * current selection. The chevron icon is rendered automatically.
+ */
 function SelectTrigger({
   className,
   size = "default",
@@ -115,6 +179,20 @@ function SelectTrigger({
   );
 }
 
+/**
+ * Floating dropdown panel rendered via a portal inside
+ * {@link Select}.
+ *
+ * @remarks
+ * Wraps Base UI's `Positioner` + `Popup`. The `side`, `sideOffset`,
+ * `align`, and `alignOffset` props control placement. When
+ * `alignItemWithTrigger` is `true` (default), the popup scrolls so
+ * the selected item aligns with the trigger, matching native `<select>`
+ * behaviour.
+ *
+ * Embed {@link SelectItem}s directly or group them with
+ * {@link SelectGroup} / {@link SelectLabel} / {@link SelectSeparator}.
+ */
 function SelectContent({
   className,
   children,
@@ -157,6 +235,7 @@ function SelectContent({
   );
 }
 
+/** Muted section heading rendered above a {@link SelectGroup}. */
 function SelectLabel({
   className,
   ...props
@@ -170,6 +249,17 @@ function SelectLabel({
   );
 }
 
+/**
+ * A single selectable option inside {@link SelectContent}.
+ *
+ * @remarks
+ * On mount the item registers its `value` → label pair in the
+ * {@link SelectItemsContext} so {@link SelectValue} can display the
+ * correct label without traversing children. When `children` is a
+ * string it is used as the label; otherwise the raw `value` string
+ * is used as a fallback. A checkmark indicator appears on the
+ * selected item.
+ */
 function SelectItem({
   className,
   children,
@@ -178,6 +268,8 @@ function SelectItem({
 }: SelectPrimitive.Item.Props) {
   const { register } = React.useContext(SelectItemsContext);
 
+  // Register value → label so SelectValue can resolve the label
+  // without traversing the React tree.
   React.useEffect(() => {
     if (value != null) {
       const label = typeof children === "string" ? children : String(value);
@@ -213,6 +305,7 @@ function SelectItem({
   );
 }
 
+/** Thin horizontal divider between option groups in a {@link Select}. */
 function SelectSeparator({
   className,
   ...props
@@ -226,6 +319,10 @@ function SelectSeparator({
   );
 }
 
+/**
+ * Arrow button that appears at the top of {@link SelectContent} when
+ * the list is scrollable; clicking it scrolls the list up.
+ */
 function SelectScrollUpButton({
   className,
   ...props
@@ -244,6 +341,10 @@ function SelectScrollUpButton({
   );
 }
 
+/**
+ * Arrow button that appears at the bottom of {@link SelectContent}
+ * when the list is scrollable; clicking it scrolls the list down.
+ */
 function SelectScrollDownButton({
   className,
   ...props

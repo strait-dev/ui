@@ -17,12 +17,45 @@ import {
   InputGroupInput,
 } from "./input-group";
 
+/**
+ * Root state provider for the combobox. Wrap all other
+ * `Combobox*` parts inside it.
+ *
+ * @remarks
+ * A direct re-export of Base UI's `Combobox.Root`; pass `value` /
+ * `onValueChange` for controlled usage, or `defaultValue` for
+ * uncontrolled usage. Supports both single and multiple selection
+ * depending on the `multiple` prop from Base UI.
+ *
+ * For a combobox with chip-style multi-value display use
+ * {@link ComboboxChips} + {@link ComboboxChip} + {@link ComboboxChipsInput}.
+ * For a simple text-input trigger use {@link ComboboxInput}.
+ *
+ * @example
+ * ```tsx
+ * <Combobox>
+ *   <ComboboxInput placeholder="Search…" />
+ *   <ComboboxContent>
+ *     <ComboboxList>
+ *       <ComboboxItem value="react">React</ComboboxItem>
+ *       <ComboboxItem value="vue">Vue</ComboboxItem>
+ *       <ComboboxEmpty>No results.</ComboboxEmpty>
+ *     </ComboboxList>
+ *   </ComboboxContent>
+ * </Combobox>
+ * ```
+ */
 const Combobox = ComboboxPrimitive.Root;
 
+/** Renders the current value of a {@link Combobox}. */
 function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
   return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />;
 }
 
+/**
+ * Toggle button that opens or closes the {@link ComboboxContent}
+ * dropdown; appends a down-chevron icon after `children`.
+ */
 function ComboboxTrigger({
   className,
   children,
@@ -44,6 +77,11 @@ function ComboboxTrigger({
   );
 }
 
+/**
+ * Ghost icon-button that clears the current {@link Combobox} value;
+ * rendered as an {@link InputGroupButton} so it sits flush inside an
+ * {@link InputGroupAddon}.
+ */
 function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   return (
     <ComboboxPrimitive.Clear
@@ -61,6 +99,20 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   );
 }
 
+/**
+ * Text input for typing search queries inside a {@link Combobox},
+ * wrapped in an {@link InputGroup} with optional addon buttons.
+ *
+ * @remarks
+ * - `showTrigger` (default `true`) appends a {@link ComboboxTrigger}
+ *   button that toggles the dropdown without typing. The trigger is
+ *   hidden automatically when a {@link ComboboxClear} button is
+ *   present via the `group-has-data-[slot=combobox-clear]` selector.
+ * - `showClear` (default `false`) appends a {@link ComboboxClear}
+ *   button that resets the selected value.
+ * - Pass extra children (e.g. a leading icon addon) after the built-in
+ *   buttons; they are rendered after the inline-end addon.
+ */
 function ComboboxInput({
   className,
   children,
@@ -97,6 +149,22 @@ function ComboboxInput({
   );
 }
 
+/**
+ * Floating dropdown panel for a {@link Combobox}, rendered via a
+ * portal.
+ *
+ * @remarks
+ * Wraps Base UI's `Positioner` + `Popup`. The `side`, `sideOffset`,
+ * `align`, and `alignOffset` props control placement. When the
+ * `anchor` prop is provided (see {@link useComboboxAnchor}), the
+ * popup anchors to a custom element (e.g. a chips container) instead
+ * of the trigger, and a `data-chips` attribute enables chip-mode
+ * min-width styles.
+ *
+ * Place a {@link ComboboxList} (containing {@link ComboboxItem}s)
+ * inside, optionally preceded by an inline search
+ * {@link ComboboxInput}.
+ */
 function ComboboxContent({
   className,
   side = "bottom",
@@ -134,6 +202,10 @@ function ComboboxContent({
   );
 }
 
+/**
+ * Scrollable list container inside {@link ComboboxContent}; place
+ * {@link ComboboxItem}s or {@link ComboboxGroup}s directly inside.
+ */
 function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
   return (
     <ComboboxPrimitive.List
@@ -147,6 +219,10 @@ function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
   );
 }
 
+/**
+ * A single selectable option inside {@link ComboboxList}; renders a
+ * checkmark indicator when the item is selected.
+ */
 function ComboboxItem({
   className,
   children,
@@ -177,6 +253,10 @@ function ComboboxItem({
   );
 }
 
+/**
+ * Groups related {@link ComboboxItem}s; pair with
+ * {@link ComboboxLabel} to give the group an accessible heading.
+ */
 function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
   return (
     <ComboboxPrimitive.Group
@@ -187,6 +267,8 @@ function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
   );
 }
 
+/** Muted group heading rendered above a set of {@link ComboboxItem}s
+ *  inside a {@link ComboboxGroup}. */
 function ComboboxLabel({
   className,
   ...props
@@ -200,12 +282,22 @@ function ComboboxLabel({
   );
 }
 
+/**
+ * Virtualisation wrapper for large lists; pass your data array via
+ * Base UI's `Collection` API instead of mapping over
+ * {@link ComboboxItem}s manually.
+ */
 function ComboboxCollection({ ...props }: ComboboxPrimitive.Collection.Props) {
   return (
     <ComboboxPrimitive.Collection data-slot="combobox-collection" {...props} />
   );
 }
 
+/**
+ * Slot rendered (as `flex`) inside {@link ComboboxContent} when the
+ * filtered list is empty; hidden otherwise via the
+ * `group-data-empty/combobox-content` selector.
+ */
 function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
   return (
     <ComboboxPrimitive.Empty
@@ -219,6 +311,7 @@ function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
   );
 }
 
+/** Thin horizontal divider between item groups in {@link ComboboxList}. */
 function ComboboxSeparator({
   className,
   ...props
@@ -232,6 +325,17 @@ function ComboboxSeparator({
   );
 }
 
+/**
+ * Multi-value input container that shows the current selection as
+ * {@link ComboboxChip} badges and hosts a {@link ComboboxChipsInput}
+ * for filtering.
+ *
+ * @remarks
+ * Pair with {@link useComboboxAnchor} + {@link ComboboxContent}'s
+ * `anchor` prop so the dropdown aligns to this element rather than
+ * the default trigger. Focus ring and `aria-invalid` styles are
+ * applied to the wrapper rather than the inner input.
+ */
 function ComboboxChips({
   className,
   ...props
@@ -249,6 +353,15 @@ function ComboboxChips({
   );
 }
 
+/**
+ * A badge representing one selected value inside
+ * {@link ComboboxChips}.
+ *
+ * @remarks
+ * When `showRemove` is `true` (default), a ghost remove button is
+ * appended that deselects the option. Set `showRemove={false}` for
+ * non-removable chips (e.g. fixed / required options).
+ */
 function ComboboxChip({
   className,
   children,
@@ -284,6 +397,10 @@ function ComboboxChip({
   );
 }
 
+/**
+ * Inline text input rendered inside {@link ComboboxChips} that
+ * filters available options as the user types.
+ */
 function ComboboxChipsInput({
   className,
   ...props
@@ -297,6 +414,12 @@ function ComboboxChipsInput({
   );
 }
 
+/**
+ * Returns a stable `ref` object that can be passed as the `anchor`
+ * prop of {@link ComboboxContent} and attached to a custom anchor
+ * element (e.g. a {@link ComboboxChips} container) so the dropdown
+ * positions itself relative to that element.
+ */
 function useComboboxAnchor() {
   return React.useRef<HTMLDivElement | null>(null);
 }

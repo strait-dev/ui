@@ -9,6 +9,7 @@ import { Button } from "./button";
 import { Calendar } from "./calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
+/** Props for the {@link DatePicker} component. */
 type DatePickerProps = {
   value?: Date;
   onChange?: (date: Date | undefined) => void;
@@ -19,6 +20,32 @@ type DatePickerProps = {
   error?: boolean;
 };
 
+/**
+ * A single-date picker that reveals a calendar in a popover.
+ *
+ * Composes the design-system {@link Popover} with the react-day-picker
+ * `Calendar` (single mode). The trigger button displays the formatted date
+ * or a "Select a date" placeholder when no value is set.
+ *
+ * @remarks
+ * - An optional `label` renders above the trigger with an associated `htmlFor`
+ *   link; pass `isRequired` to append a red asterisk.
+ * - `error=true` applies a destructive border to the trigger.
+ * - The component is purely controlled — manage `value` and `onChange` in the
+ *   parent. To clear the selection pass `undefined` to `onChange`.
+ *
+ * @example
+ * ```tsx
+ * const [date, setDate] = React.useState<Date | undefined>();
+ *
+ * <DatePicker
+ *   label="Due date"
+ *   isRequired
+ *   value={date}
+ *   onChange={setDate}
+ * />
+ * ```
+ */
 function DatePicker({
   value,
   onChange,

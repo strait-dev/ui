@@ -19,14 +19,17 @@ import {
 import { Label } from "./label";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
+// Delay (ms) before scrolling the virtualized list to the selected item.
 const TIMEOUT = 50;
 
+/** A single option entry used by {@link SelectWithSearch}. */
 export type SelectOption = {
   value: string;
   label: string;
   data?: unknown;
 };
 
+/** Props for {@link SelectWithSearch}. */
 type SelectWithSearchProps = {
   options: SelectOption[];
   value?: string;
@@ -53,6 +56,45 @@ type SelectWithSearchProps = {
   size?: "default" | "sm" | "lg" | "icon";
 };
 
+/**
+ * A searchable single-select dropdown that virtualizes its option
+ * list for large datasets and supports server-side pagination.
+ *
+ * @remarks
+ * Composes `Popover`, `Command` (cmdk), `Label`, and `Button` from
+ * the design system with `react-virtuoso` for list virtualization.
+ *
+ * The option list is rendered inside a `Virtuoso` component whose
+ * height is calculated dynamically at 40 px per item, clamped
+ * between 50 px and 300 px.
+ *
+ * Filtering is intentionally disabled on the `Command` primitive
+ * (`shouldFilter={false}`) — fire-and-forget search is delegated to
+ * `onSearchChange` so the host can fetch filtered results from a
+ * server.
+ *
+ * When the dropdown opens the list automatically scrolls the
+ * currently selected item into the center of the viewport after a
+ * short `TIMEOUT` to allow the virtual list to fully render first.
+ *
+ * Pass `onEndReached` to load the next page when the user scrolls
+ * to the bottom; use `isFetchingNextPage` + `renderLoading` to show
+ * a footer spinner while the page loads.
+ *
+ * @example
+ * ```tsx
+ * <SelectWithSearch
+ *   label="Country"
+ *   options={countries}
+ *   value={country}
+ *   onValueChange={setCountry}
+ *   onSearchChange={setSearch}
+ *   onEndReached={fetchNextPage}
+ *   isFetchingNextPage={isFetching}
+ *   renderLoading={() => <Spinner />}
+ * />
+ * ```
+ */
 export function SelectWithSearch({
   options,
   value,
@@ -243,11 +285,10 @@ export function SelectWithSearch({
       return <CommandEmpty>{noResultsText}</CommandEmpty>;
     }
 
-    // Calculate dynamic height based on number of items
-    // Each item is roughly 40px in height, with a minimum of 50px and maximum of 300px
+    // Clamp list height: 40 px × item count, between 50 px and 300 px.
     const estimatedItemHeight = 40;
-    const minHeight = 50; // Minimum height for a single item with some padding
-    const maxHeight = 300; // Maximum height as before
+    const minHeight = 50;
+    const maxHeight = 300;
     const calculatedHeight = Math.min(
       maxHeight,
       Math.max(

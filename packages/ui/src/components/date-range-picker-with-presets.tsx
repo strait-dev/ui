@@ -56,6 +56,39 @@ type DateRangePickerWithPresetsProps = {
   className?: string;
 };
 
+/**
+ * A date-range picker with a preset sidebar and an explicit apply/reset flow.
+ *
+ * Extends {@link DateRangePicker} by embedding a {@link RangeCalendarWithPresets}
+ * panel (with preset buttons and an Apply / Reset footer) inside the popover.
+ * Selection changes are staged in local `tempDateRange` state and only
+ * committed to the caller when the user clicks Apply.
+ *
+ * @remarks
+ * - The trigger uses RAC's `DateInput` / `DateSegment` inline editors (pt-BR
+ *   locale) for direct text entry; the calendar icon button opens the preset
+ *   panel via `useOverlayTriggerState` / `useOverlayTrigger` rather than the
+ *   RAC built-in popover, so that the Apply button can control when the popover
+ *   closes.
+ * - Staged changes are discarded if the user closes the popover without
+ *   clicking Apply.
+ * - `handleReset` reverts to `defaultValue` (or an empty range), calls
+ *   `onChange`, and closes the popover immediately — no Apply step required.
+ * - Supports both controlled (`value`) and seeded-uncontrolled
+ *   (`defaultValue`) usage.
+ *
+ * @example
+ * ```tsx
+ * const [range, setRange] = React.useState<DateRange | undefined>();
+ *
+ * <DateRangePickerWithPresets
+ *   label="Period"
+ *   value={range}
+ *   onChange={setRange}
+ *   defaultValue={{ from: startOfMonth(new Date()), to: new Date() }}
+ * />
+ * ```
+ */
 export function DateRangePickerWithPresets({
   value,
   defaultValue,

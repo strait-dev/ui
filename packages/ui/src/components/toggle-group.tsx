@@ -7,6 +7,11 @@ import * as React from "react";
 import { cn } from "../utils/index";
 import { toggleVariants } from "./toggle";
 
+/**
+ * Internal context that distributes shared `variant`, `size`, `spacing`, and
+ * `orientation` values from {@link ToggleGroup} down to every
+ * {@link ToggleGroupItem} without requiring per-item prop drilling.
+ */
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants> & {
     spacing?: number;
@@ -19,6 +24,36 @@ const ToggleGroupContext = React.createContext<
   orientation: "horizontal",
 });
 
+/**
+ * A managed group of {@link ToggleGroupItem} controls, handling single or
+ * multiple selection and keyboard navigation.
+ *
+ * Built on Base UI's `ToggleGroup` primitive. Styling and layout props are
+ * passed once on the root and distributed to every item via
+ * {@link ToggleGroupContext}.
+ *
+ * @remarks
+ * - `variant` and `size` cascade to items; individual items can override
+ *   them only when the context values are absent.
+ * - `spacing` (a positive integer, default `0`) sets the gap between items
+ *   via a CSS custom property. When `0`, items are fused edge-to-edge with
+ *   shared borders collapsed, matching a {@link ButtonGroup} aesthetic.
+ * - `orientation` defaults to `"horizontal"`; set `"vertical"` to stack
+ *   items in a column. Note: `aria-orientation` is intentionally suppressed
+ *   because `role="group"` does not allow that attribute.
+ *
+ * @example
+ * ```tsx
+ * <ToggleGroup type="multiple" variant="outline" size="sm">
+ *   <ToggleGroupItem value="bold" aria-label="Bold">
+ *     <BoldIcon />
+ *   </ToggleGroupItem>
+ *   <ToggleGroupItem value="italic" aria-label="Italic">
+ *     <ItalicIcon />
+ *   </ToggleGroupItem>
+ * </ToggleGroup>
+ * ```
+ */
 function ToggleGroup({
   className,
   variant,
@@ -58,6 +93,14 @@ function ToggleGroup({
   );
 }
 
+/**
+ * Individual selectable item within a {@link ToggleGroup}.
+ *
+ * Inherits `variant`, `size`, and `spacing` from {@link ToggleGroupContext};
+ * per-item props serve as fallbacks when the context values are absent.
+ * Border-collapsing and corner-rounding are handled automatically based on
+ * the item's position and the group's spacing setting.
+ */
 function ToggleGroupItem({
   className,
   children,

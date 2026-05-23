@@ -22,10 +22,12 @@ type BaseCalendarProps = {
   className?: string;
 };
 
+// These types merge the full RAC prop surface with the local className override.
 type CalendarProps = ComponentProps<typeof CalendarRac> & BaseCalendarProps;
 type RangeCalendarProps = ComponentProps<typeof RangeCalendarRac> &
   BaseCalendarProps;
 
+/** Prev/next navigation header shared by {@link Calendar} and {@link RangeCalendar}. */
 function CalendarHeader() {
   return (
     <header className="flex w-full items-center gap-1 pb-1">
@@ -46,6 +48,13 @@ function CalendarHeader() {
   );
 }
 
+/**
+ * Renders the weekday header row and the day-cell grid.
+ *
+ * The `isRange` flag switches to range-selection styles: interior cells lose
+ * individual rounding, and start/end caps keep rounded corners. An `::after`
+ * dot marks today's date; its color inverts when today is selected.
+ */
 function CalendarGridComponent({ isRange = false }: { isRange?: boolean }) {
   const now = today(getLocalTimeZone());
 
@@ -85,6 +94,31 @@ function CalendarGridComponent({ isRange = false }: { isRange?: boolean }) {
   );
 }
 
+/**
+ * Single-date calendar built on React Aria Components.
+ *
+ * Wraps RAC's `Calendar` primitive with a shared {@link CalendarHeader} and
+ * {@link CalendarGridComponent}. All RAC `Calendar` props (value, onChange,
+ * minValue, maxValue, isDisabled, etc.) are forwarded.
+ *
+ * @remarks
+ * - Uses `@internationalized/date` value types (`CalendarDate`, `ZonedDateTime`,
+ *   etc.) rather than native `Date`. Pair with `parseDate` / `toCalendarDate`
+ *   to convert.
+ * - Keyboard navigation, ARIA roles, and focus management are handled
+ *   automatically by RAC.
+ * - For range selection use {@link RangeCalendar} instead.
+ *
+ * @example
+ * ```tsx
+ * import { parseDate } from "@internationalized/date";
+ *
+ * <Calendar
+ *   value={parseDate("2025-06-01")}
+ *   onChange={(d) => console.log(d.toString())}
+ * />
+ * ```
+ */
 function Calendar({ className, ...props }: CalendarProps) {
   return (
     <div data-slot="calendar">
@@ -99,6 +133,32 @@ function Calendar({ className, ...props }: CalendarProps) {
   );
 }
 
+/**
+ * Range-selection calendar built on React Aria Components.
+ *
+ * Wraps RAC's `RangeCalendar` with the shared {@link CalendarHeader} and
+ * enables range-specific cell styles in {@link CalendarGridComponent}
+ * (rounded caps on start/end dates, flat background for interior cells,
+ * destructive highlight when the selection is invalid).
+ *
+ * @remarks
+ * - Accepts RAC `RangeValue<DateValue>` for `value`/`defaultValue`; use
+ *   `parseDate` to create `CalendarDate` values from ISO strings.
+ * - Use {@link Calendar} for single-date selection.
+ *
+ * @example
+ * ```tsx
+ * import { parseDate } from "@internationalized/date";
+ *
+ * <RangeCalendar
+ *   value={{
+ *     start: parseDate("2025-06-01"),
+ *     end: parseDate("2025-06-15"),
+ *   }}
+ *   onChange={({ start, end }) => console.log(start, end)}
+ * />
+ * ```
+ */
 function RangeCalendar({ className, ...props }: RangeCalendarProps) {
   return (
     <div data-slot="range-calendar">

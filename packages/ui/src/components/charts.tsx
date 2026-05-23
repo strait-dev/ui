@@ -14,29 +14,66 @@ import {
 } from "recharts";
 import { cn } from "../utils/index";
 
+/** Corner radius applied to the top of every bar in {@link BarChart}. */
 const BAR_RADIUS = 4;
 
+/**
+ * Shared props inherited by all simplified chart components in this file.
+ *
+ * These charts are intentionally opinionated wrappers over Recharts —
+ * for full control use {@link ChartContainer} from `chart.tsx` instead.
+ */
 type BaseChartProps = {
+  /** Array of data row objects. */
   data: Record<string, unknown>[];
+  /** Key in each data row used as the X-axis (or Y-axis) category label. */
   index: string;
+  /** Ordered list of CSS color strings for series. Cycles if fewer than
+   *  the number of series. */
   colors?: string[];
+  /** Formats numeric tick/value labels for display. */
   valueFormatter?: (value: number) => string;
   className?: string;
 };
 
+/** Props for {@link LineChart}. */
 type LineChartProps = BaseChartProps & {
+  /** Data keys to render as separate `<Line>` series. */
   categories: string[];
 };
 
+/** Props for {@link BarChart}. */
 type BarChartProps = BaseChartProps & {
+  /** Data keys to render as separate `<Bar>` series. */
   categories: string[];
+  /** Axis orientation — `"horizontal"` (default) places categories on X. */
   layout?: "vertical" | "horizontal";
 };
 
+/** Props for {@link PieChart}. */
 type PieChartProps = BaseChartProps & {
+  /** Data key whose value determines each slice's arc length. */
   category: string;
 };
 
+/**
+ * Opinionated multi-series line chart with sensible defaults.
+ *
+ * Renders each string in `categories` as a smoothed `monotone` line.
+ * Grid lines are horizontal-only; axes have no visible border. For
+ * advanced configuration (tooltips, legends, custom colors) compose
+ * Recharts primitives directly inside a {@link ChartContainer}.
+ *
+ * @example
+ * ```tsx
+ * <LineChart
+ *   data={[{ month: "Jan", revenue: 400, cost: 200 }]}
+ *   index="month"
+ *   categories={["revenue", "cost"]}
+ *   valueFormatter={(v) => `$${v}`}
+ * />
+ * ```
+ */
 export const LineChart = ({
   data,
   categories,
@@ -76,6 +113,23 @@ export const LineChart = ({
   </div>
 );
 
+/**
+ * Opinionated multi-series bar chart with rounded bar tops.
+ *
+ * Supports `layout="horizontal"` (default, categories on X-axis) and
+ * `layout="vertical"` (categories on Y-axis). Axis roles swap automatically
+ * — `index` drives the category axis while numeric values go on the
+ * perpendicular axis.
+ *
+ * @example
+ * ```tsx
+ * <BarChart
+ *   data={[{ quarter: "Q1", sales: 3000 }]}
+ *   index="quarter"
+ *   categories={["sales"]}
+ * />
+ * ```
+ */
 export const BarChart = ({
   data,
   categories,
@@ -121,6 +175,23 @@ export const BarChart = ({
   </div>
 );
 
+/**
+ * Opinionated pie chart where each data row becomes one colored slice.
+ *
+ * Colors cycle through `colors` using the row's position in `data`. A
+ * thin `background`-colored stroke separates adjacent slices. Labels and
+ * label lines are hidden by default; add a Recharts `<Tooltip>` as needed.
+ *
+ * @example
+ * ```tsx
+ * <PieChart
+ *   data={[{ name: "Chrome", value: 60 }, { name: "Firefox", value: 40 }]}
+ *   index="name"
+ *   category="value"
+ *   colors={["hsl(var(--primary))", "hsl(var(--muted))"]}
+ * />
+ * ```
+ */
 export const PieChart = ({
   data,
   category,
@@ -154,6 +225,11 @@ export const PieChart = ({
   </div>
 );
 
+/**
+ * Placeholder component for a future map chart.
+ *
+ * @remarks Not yet implemented — renders a centered informational message.
+ */
 export const MapChart = () => {
   // TODO: Implement map chart
   return (

@@ -8,6 +8,48 @@ import type * as React from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
 
+/**
+ * Accessible navigation landmark for moving between pages of content.
+ *
+ * Compose with its sub-parts: a {@link PaginationContent} list holding
+ * {@link PaginationItem} wrappers that each contain a
+ * {@link PaginationLink}, {@link PaginationPrevious},
+ * {@link PaginationNext}, or {@link PaginationEllipsis}.
+ *
+ * @remarks
+ * The root renders a `<nav>` with `aria-label="pagination"` so screen
+ * readers announce the landmark. {@link PaginationLink} delegates to
+ * {@link Button} (via its `render` prop) so every page control inherits
+ * the full button styling system while keeping the correct `<a>` semantics
+ * for keyboard navigation.
+ * Pass `isActive` on {@link PaginationLink} to mark the current page
+ * (`aria-current="page"` is set automatically).
+ * The `text` label on {@link PaginationPrevious} and
+ * {@link PaginationNext} is hidden on small viewports (`sm:block`).
+ *
+ * @example
+ * ```tsx
+ * <Pagination>
+ *   <PaginationContent>
+ *     <PaginationItem>
+ *       <PaginationPrevious href="/page/1" />
+ *     </PaginationItem>
+ *     <PaginationItem>
+ *       <PaginationLink href="/page/1">1</PaginationLink>
+ *     </PaginationItem>
+ *     <PaginationItem>
+ *       <PaginationLink href="/page/2" isActive>2</PaginationLink>
+ *     </PaginationItem>
+ *     <PaginationItem>
+ *       <PaginationEllipsis />
+ *     </PaginationItem>
+ *     <PaginationItem>
+ *       <PaginationNext href="/page/3" />
+ *     </PaginationItem>
+ *   </PaginationContent>
+ * </Pagination>
+ * ```
+ */
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
@@ -19,6 +61,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   );
 }
 
+/** Flex list that holds {@link PaginationItem} controls. */
 function PaginationContent({
   className,
   ...props
@@ -32,6 +75,7 @@ function PaginationContent({
   );
 }
 
+/** List item wrapper for a single {@link PaginationLink} or control. */
 function PaginationItem({ ...props }: React.ComponentProps<"li">) {
   return <li data-slot="pagination-item" {...props} />;
 }
@@ -41,6 +85,13 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
   React.ComponentProps<"a">;
 
+/**
+ * Individual page link inside a {@link PaginationItem}.
+ *
+ * Renders as a {@link Button} whose underlying element is an `<a>` tag.
+ * When `isActive` is true the link receives `aria-current="page"` and
+ * switches to the `outline` variant for visual emphasis.
+ */
 function PaginationLink({
   className,
   isActive,
@@ -65,6 +116,12 @@ function PaginationLink({
   );
 }
 
+/**
+ * Convenience {@link PaginationLink} wired up for "go to previous page".
+ *
+ * The `text` prop (default `"Previous"`) is only visible on `sm` and wider
+ * viewports; on smaller screens only the arrow icon is shown.
+ */
 function PaginationPrevious({
   className,
   text = "Previous",
@@ -87,6 +144,12 @@ function PaginationPrevious({
   );
 }
 
+/**
+ * Convenience {@link PaginationLink} wired up for "go to next page".
+ *
+ * The `text` prop (default `"Next"`) is only visible on `sm` and wider
+ * viewports; on smaller screens only the arrow icon is shown.
+ */
 function PaginationNext({
   className,
   text = "Next",
@@ -109,6 +172,11 @@ function PaginationNext({
   );
 }
 
+/**
+ * Non-interactive placeholder indicating skipped page numbers in a
+ * {@link Pagination}. Includes an `sr-only` "More pages" label for
+ * screen readers.
+ */
 function PaginationEllipsis({
   className,
   ...props

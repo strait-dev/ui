@@ -14,6 +14,39 @@ import {
 } from "./dialog";
 import { InputGroup, InputGroupAddon } from "./input-group";
 
+/**
+ * A keyboard-navigable command palette built on the `cmdk` primitive.
+ *
+ * Compose it with {@link CommandInput}, {@link CommandList},
+ * {@link CommandGroup}, {@link CommandItem}, and {@link CommandEmpty} to
+ * build a filterable list of actions. For a floating modal variant, use
+ * {@link CommandDialog} instead of embedding `Command` inline.
+ *
+ * @remarks
+ * - Filtering and keyboard navigation (arrow keys, Enter, Escape) are
+ *   handled entirely by the `cmdk` library; no additional wiring is needed.
+ * - {@link CommandItem} automatically renders a tick icon when the item is
+ *   checked (`data-checked="true"`); the icon is hidden when a
+ *   {@link CommandShortcut} is present to avoid overlap.
+ * - All styling runs on Tailwind v4 utility classes; override individual
+ *   parts by passing `className` down the tree.
+ *
+ * @example
+ * ```tsx
+ * <Command>
+ *   <CommandInput placeholder="Type a command…" />
+ *   <CommandList>
+ *     <CommandEmpty>No results found.</CommandEmpty>
+ *     <CommandGroup heading="Actions">
+ *       <CommandItem onSelect={() => runAction()}>
+ *         New File
+ *         <CommandShortcut>⌘N</CommandShortcut>
+ *       </CommandItem>
+ *     </CommandGroup>
+ *   </CommandList>
+ * </Command>
+ * ```
+ */
 function Command({
   className,
   ...props
@@ -30,6 +63,17 @@ function Command({
   );
 }
 
+/**
+ * A modal {@link Dialog} pre-configured for the command palette pattern.
+ *
+ * The title and description are rendered `sr-only` for screen readers while
+ * remaining invisible to sighted users. Set `showCloseButton={true}` only
+ * when the Escape key alone is insufficient for your use case.
+ *
+ * @remarks
+ * The dialog is positioned at `top-1/3` (not centred) to keep it close to
+ * where the user's gaze lands when they first open it.
+ */
 function CommandDialog({
   title = "Command Palette",
   description = "Search for a command to run...",
@@ -63,6 +107,10 @@ function CommandDialog({
   );
 }
 
+/**
+ * The search input for a {@link Command} palette; renders inside an
+ * {@link InputGroup} with a trailing search icon.
+ */
 function CommandInput({
   className,
   ...props
@@ -90,6 +138,10 @@ function CommandInput({
   );
 }
 
+/**
+ * Scrollable container that holds all {@link CommandGroup}s and
+ * {@link CommandEmpty}; capped at `max-h-72` with hidden scrollbars.
+ */
 function CommandList({
   className,
   ...props
@@ -106,6 +158,10 @@ function CommandList({
   );
 }
 
+/**
+ * Shown by `cmdk` when no {@link CommandItem}s match the current query;
+ * renders centred placeholder text.
+ */
 function CommandEmpty({
   className,
   ...props
@@ -119,6 +175,10 @@ function CommandEmpty({
   );
 }
 
+/**
+ * A labelled section inside a {@link CommandList}; its heading text is
+ * styled via the `[cmdk-group-heading]` attribute selector.
+ */
 function CommandGroup({
   className,
   ...props
@@ -135,6 +195,7 @@ function CommandGroup({
   );
 }
 
+/** A horizontal rule separating {@link CommandGroup}s. */
 function CommandSeparator({
   className,
   ...props
@@ -148,6 +209,15 @@ function CommandSeparator({
   );
 }
 
+/**
+ * A single selectable row inside a {@link CommandGroup}.
+ *
+ * @remarks
+ * A tick icon is injected after `children` and is made visible when
+ * `data-checked="true"` is set by `cmdk` (e.g. for multi-select palettes).
+ * The tick is hidden via CSS when a {@link CommandShortcut} sibling is
+ * present to avoid layout conflicts.
+ */
 function CommandItem({
   className,
   children,
@@ -163,6 +233,7 @@ function CommandItem({
       {...props}
     >
       {children}
+      {/* Tick appears when item is checked; hidden when shortcut is present */}
       <HugeiconsIcon
         className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100"
         icon={Tick02Icon}
@@ -172,6 +243,10 @@ function CommandItem({
   );
 }
 
+/**
+ * Keyboard shortcut hint pushed to the trailing end of a
+ * {@link CommandItem}; inherits the selected item's foreground colour.
+ */
 function CommandShortcut({
   className,
   ...props

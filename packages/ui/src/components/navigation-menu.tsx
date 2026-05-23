@@ -4,6 +4,47 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { cva } from "class-variance-authority";
 import { cn } from "../utils/index";
 
+/**
+ * Horizontal navigation bar with flyout content panels.
+ *
+ * Built on Base UI's `NavigationMenu` primitive. Compose with
+ * {@link NavigationMenuList} > {@link NavigationMenuItem} and pair each
+ * item with a {@link NavigationMenuTrigger} + {@link NavigationMenuContent}
+ * for dropdown panels, or a standalone {@link NavigationMenuLink} for
+ * direct links. An {@link NavigationMenuIndicator} can be placed inside
+ * the list to render an animated arrow below the active trigger.
+ *
+ * @remarks
+ * - The `align` prop is forwarded to the internal
+ *   {@link NavigationMenuPositioner} (defaults to `"start"`), controlling
+ *   whether flyout panels align to the start or end of the trigger.
+ * - A {@link NavigationMenuPositioner} is automatically rendered as the
+ *   last child of the root, hosting the shared `Portal > Positioner >
+ *   Popup > Viewport` stack that all content panels animate into.
+ * - When Base UI's `viewport` feature is disabled (by passing
+ *   `viewport={false}` to the root), each {@link NavigationMenuContent}
+ *   panel renders as an independent popover and uses zoom/fade animations
+ *   instead of the shared viewport slide-across transition.
+ *
+ * @example
+ * ```tsx
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem>
+ *       <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <NavigationMenuLink href="/products/a">
+ *           Product A
+ *         </NavigationMenuLink>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem>
+ *       <NavigationMenuLink href="/about">About</NavigationMenuLink>
+ *     </NavigationMenuItem>
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ * ```
+ */
 function NavigationMenu({
   align = "start",
   className,
@@ -26,6 +67,10 @@ function NavigationMenu({
   );
 }
 
+/**
+ * Flex list that groups {@link NavigationMenuItem} elements inside a
+ * {@link NavigationMenu}.
+ */
 function NavigationMenuList({
   className,
   ...props
@@ -42,6 +87,11 @@ function NavigationMenuList({
   );
 }
 
+/**
+ * A single entry in a {@link NavigationMenuList}. Wrap a
+ * {@link NavigationMenuTrigger} + {@link NavigationMenuContent} pair, or
+ * a lone {@link NavigationMenuLink}, inside this element.
+ */
 function NavigationMenuItem({
   className,
   ...props
@@ -55,10 +105,25 @@ function NavigationMenuItem({
   );
 }
 
+/**
+ * Class-variance-authority recipe that produces the shared trigger button
+ * styles used by {@link NavigationMenuTrigger}.
+ *
+ * Exported so consumers can apply the same look to a custom element (e.g.
+ * a plain `<button>` or a framework `<Link>`) without duplicating the
+ * class list.
+ */
 const navigationMenuTriggerStyle = cva(
   "group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded-lg bg-background px-2.5 py-1.5 font-medium text-sm outline-none transition-all hover:bg-muted focus:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-open:bg-muted/50 data-popup-open:bg-muted/50 data-open:focus:bg-muted data-open:hover:bg-muted data-popup-open:hover:bg-muted"
 );
 
+/**
+ * Button that opens the associated {@link NavigationMenuContent} panel
+ * inside a {@link NavigationMenuItem}.
+ *
+ * Appends a chevron icon that rotates 180° when the panel is open
+ * (`data-open` / `data-popup-open`).
+ */
 function NavigationMenuTrigger({
   className,
   children,
@@ -81,6 +146,14 @@ function NavigationMenuTrigger({
   );
 }
 
+/**
+ * Flyout panel rendered inside the shared viewport when its parent
+ * {@link NavigationMenuTrigger} is open.
+ *
+ * Animates with directional slide transitions between items when the
+ * viewport is active; falls back to zoom/fade when used without the
+ * shared viewport (`viewport={false}` on the root).
+ */
 function NavigationMenuContent({
   className,
   ...props
@@ -97,6 +170,13 @@ function NavigationMenuContent({
   );
 }
 
+/**
+ * Internal Portal > Positioner > Popup > Viewport stack injected
+ * automatically by {@link NavigationMenu}.
+ *
+ * Exported so advanced consumers can position a custom viewport, but in
+ * normal use it does not need to be rendered manually.
+ */
 function NavigationMenuPositioner({
   className,
   side = "bottom",
@@ -126,6 +206,14 @@ function NavigationMenuPositioner({
   );
 }
 
+/**
+ * Navigable link inside a {@link NavigationMenuItem} or
+ * {@link NavigationMenuContent}.
+ *
+ * Adapts its padding and border-radius depending on whether it lives
+ * directly in the trigger bar or inside a content panel
+ * (`in-data-[slot=navigation-menu-content]`).
+ */
 function NavigationMenuLink({
   className,
   ...props
@@ -142,6 +230,11 @@ function NavigationMenuLink({
   );
 }
 
+/**
+ * Animated arrow indicator rendered below the active
+ * {@link NavigationMenuTrigger} inside a {@link NavigationMenuList}.
+ * Fades in/out via `data-[state=visible/hidden]` transitions.
+ */
 function NavigationMenuIndicator({
   className,
   ...props

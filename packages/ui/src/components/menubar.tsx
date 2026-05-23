@@ -22,6 +22,44 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 
+/**
+ * A horizontal bar of labeled menu triggers, each opening a dropdown panel.
+ *
+ * Built on Base UI's `Menubar` primitive for keyboard navigation between
+ * menus (arrow keys move focus from trigger to trigger). Each menu inside
+ * the bar is a {@link MenubarMenu} wrapping a {@link MenubarTrigger} and
+ * {@link MenubarContent}.
+ *
+ * @remarks
+ * - Most sub-parts delegate to their {@link DropdownMenu} counterparts so
+ *   the look and keyboard behaviour are consistent across the design system.
+ * - {@link MenubarCheckboxItem} and {@link MenubarRadioItem} are implemented
+ *   directly on Base UI's `Menu.CheckboxItem` / `Menu.RadioItem` primitives
+ *   because they require native checked-state rendering that the shared
+ *   dropdown layer does not expose.
+ * - The `inset` boolean on label, item, and trigger sub-components adds
+ *   `pl-7` to align text with items that have a leading icon or indicator.
+ *
+ * @example
+ * ```tsx
+ * <Menubar>
+ *   <MenubarMenu>
+ *     <MenubarTrigger>File</MenubarTrigger>
+ *     <MenubarContent>
+ *       <MenubarItem>New File</MenubarItem>
+ *       <MenubarSeparator />
+ *       <MenubarItem variant="destructive">Delete</MenubarItem>
+ *     </MenubarContent>
+ *   </MenubarMenu>
+ *   <MenubarMenu>
+ *     <MenubarTrigger>Edit</MenubarTrigger>
+ *     <MenubarContent>
+ *       <MenubarCheckboxItem checked>Word Wrap</MenubarCheckboxItem>
+ *     </MenubarContent>
+ *   </MenubarMenu>
+ * </Menubar>
+ * ```
+ */
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   return (
     <MenubarPrimitive
@@ -35,22 +73,26 @@ function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   );
 }
 
+/** One discrete menu within a {@link Menubar}; wraps {@link DropdownMenu}. */
 function MenubarMenu({ ...props }: React.ComponentProps<typeof DropdownMenu>) {
   return <DropdownMenu data-slot="menubar-menu" {...props} />;
 }
 
+/** Groups related {@link MenubarItem}s; delegates to {@link DropdownMenuGroup}. */
 function MenubarGroup({
   ...props
 }: React.ComponentProps<typeof DropdownMenuGroup>) {
   return <DropdownMenuGroup data-slot="menubar-group" {...props} />;
 }
 
+/** Portal wrapper for {@link MenubarContent}; delegates to {@link DropdownMenuPortal}. */
 function MenubarPortal({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPortal>) {
   return <DropdownMenuPortal data-slot="menubar-portal" {...props} />;
 }
 
+/** The visible label button in the {@link Menubar} that opens a menu on click. */
 function MenubarTrigger({
   className,
   ...props
@@ -67,6 +109,12 @@ function MenubarTrigger({
   );
 }
 
+/**
+ * The dropdown panel that opens below a {@link MenubarTrigger}.
+ *
+ * Defaults to `align="start"` with a small negative `alignOffset` so the
+ * panel left-aligns with the trigger label.
+ */
 function MenubarContent({
   className,
   align = "start",
@@ -89,6 +137,12 @@ function MenubarContent({
   );
 }
 
+/**
+ * A selectable row inside {@link MenubarContent}.
+ *
+ * Pass `variant="destructive"` for danger actions; `inset` adds left padding
+ * to align with icon-bearing siblings.
+ */
 function MenubarItem({
   className,
   inset,
@@ -109,6 +163,10 @@ function MenubarItem({
   );
 }
 
+/**
+ * A {@link MenubarItem} with a managed checked state; shows a tick indicator
+ * when `checked` is true.
+ */
 function MenubarCheckboxItem({
   className,
   children,
@@ -129,6 +187,7 @@ function MenubarCheckboxItem({
       data-slot="menubar-checkbox-item"
       {...props}
     >
+      {/* Absolute indicator slot; tick fades in via CheckboxItemIndicator */}
       <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.CheckboxItemIndicator>
           <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
@@ -139,12 +198,17 @@ function MenubarCheckboxItem({
   );
 }
 
+/** Groups {@link MenubarRadioItem}s for mutually exclusive selection. */
 function MenubarRadioGroup({
   ...props
 }: React.ComponentProps<typeof DropdownMenuRadioGroup>) {
   return <DropdownMenuRadioGroup data-slot="menubar-radio-group" {...props} />;
 }
 
+/**
+ * A radio-style {@link MenubarItem}; only one item in a
+ * {@link MenubarRadioGroup} can be selected at a time.
+ */
 function MenubarRadioItem({
   className,
   children,
@@ -163,6 +227,7 @@ function MenubarRadioItem({
       data-slot="menubar-radio-item"
       {...props}
     >
+      {/* Absolute indicator slot; tick fades in via RadioItemIndicator */}
       <span className="pointer-events-none absolute left-1.5 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.RadioItemIndicator>
           <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
@@ -173,6 +238,10 @@ function MenubarRadioItem({
   );
 }
 
+/**
+ * A non-interactive label row inside {@link MenubarContent} that names a
+ * section; `inset` aligns the text with adjacent icon items.
+ */
 function MenubarLabel({
   className,
   inset,
@@ -193,6 +262,7 @@ function MenubarLabel({
   );
 }
 
+/** A horizontal rule that divides sections inside {@link MenubarContent}. */
 function MenubarSeparator({
   className,
   ...props
@@ -206,6 +276,10 @@ function MenubarSeparator({
   );
 }
 
+/**
+ * Keyboard shortcut hint pushed to the trailing edge of a
+ * {@link MenubarItem}; inherits the item's focus color automatically.
+ */
 function MenubarShortcut({
   className,
   ...props
@@ -222,12 +296,20 @@ function MenubarShortcut({
   );
 }
 
+/**
+ * Container for a nested submenu inside {@link MenubarContent}; delegates
+ * to {@link DropdownMenuSub}.
+ */
 function MenubarSub({
   ...props
 }: React.ComponentProps<typeof DropdownMenuSub>) {
   return <DropdownMenuSub data-slot="menubar-sub" {...props} />;
 }
 
+/**
+ * The row that opens a nested {@link MenubarSubContent} on hover or arrow
+ * key; `inset` aligns the text with icon-bearing siblings.
+ */
 function MenubarSubTrigger({
   className,
   inset,
@@ -248,6 +330,7 @@ function MenubarSubTrigger({
   );
 }
 
+/** The dropdown panel that appears for a nested {@link MenubarSub} menu. */
 function MenubarSubContent({
   className,
   ...props

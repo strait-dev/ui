@@ -5,6 +5,32 @@ import type * as React from "react";
 
 import { cn } from "../utils/index";
 
+/**
+ * Rounded user-identity image with automatic fallback text.
+ *
+ * Built on Base UI's `Avatar` primitive. Compose it with {@link AvatarImage}
+ * for the photo and {@link AvatarFallback} for the initials or icon shown
+ * while the image loads (or when no `src` is provided). Attach an
+ * {@link AvatarBadge} to surface a status indicator.
+ *
+ * @remarks
+ * - The `size` prop (`"sm" | "default" | "lg"`) cascades to every sub-part
+ *   via `data-size` and group selectors — set it once on the root.
+ * - A subtle border overlay is rendered via an `::after` pseudo-element with
+ *   `mix-blend-darken` / `mix-blend-lighten` so the border adapts to both
+ *   light and dark themes without a hard colour token.
+ * - Wrap multiple `Avatar` elements in an {@link AvatarGroup} to get the
+ *   overlapping stack layout with ring separators.
+ *
+ * @example
+ * ```tsx
+ * <Avatar size="lg">
+ *   <AvatarImage src="/avatars/acme.png" alt="Acme Corp" />
+ *   <AvatarFallback>AC</AvatarFallback>
+ *   <AvatarBadge />
+ * </Avatar>
+ * ```
+ */
 function Avatar({
   className,
   size = "default",
@@ -25,6 +51,10 @@ function Avatar({
   );
 }
 
+/**
+ * Image layer inside an {@link Avatar}; Base UI hides it automatically
+ * while the `src` is loading and shows {@link AvatarFallback} instead.
+ */
 function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
   return (
     <AvatarPrimitive.Image
@@ -38,6 +68,10 @@ function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
   );
 }
 
+/**
+ * Fallback layer shown inside an {@link Avatar} when the image is absent or
+ * still loading; typically displays initials or a placeholder icon.
+ */
 function AvatarFallback({
   className,
   ...props
@@ -54,6 +88,13 @@ function AvatarFallback({
   );
 }
 
+/**
+ * Status dot anchored to the bottom-right corner of an {@link Avatar}.
+ *
+ * Size scales with the parent `Avatar` size via group selectors. An
+ * optional SVG icon (e.g. an online indicator) is hidden at the `"sm"`
+ * size where there is not enough space to render it legibly.
+ */
 function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -70,6 +111,12 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
   );
 }
 
+/**
+ * Overlapping stack of {@link Avatar} elements with ring separators.
+ *
+ * Children are shifted left via `negative-space-x-2` and gain a
+ * `ring-2 ring-background` outline to separate them visually.
+ */
 function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -83,6 +130,10 @@ function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Overflow count chip that matches {@link Avatar} sizing inside an
+ * {@link AvatarGroup}; typically shows "+N" when the group is truncated.
+ */
 function AvatarGroupCount({
   className,
   ...props

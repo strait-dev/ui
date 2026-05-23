@@ -4,6 +4,17 @@ import { cn } from "../utils/index";
 import { Button } from "./button";
 import { Input } from "./input";
 
+/**
+ * Props for {@link InputWithInlineButton}.
+ *
+ * @remarks
+ * Two rendering modes are available:
+ * - **Text button** (default): set `buttonText` and optionally
+ *   `onButtonClick`, `buttonType`, and `buttonAriaLabel`.
+ * - **Custom element**: pass any React node as `button` and the component
+ *   renders it inside a wrapper div instead of the built-in
+ *   {@link Button}.
+ */
 type InputWithInlineButtonProps = React.ComponentProps<"input"> & {
   button?: React.ReactNode;
   buttonText?: string;
@@ -14,6 +25,29 @@ type InputWithInlineButtonProps = React.ComponentProps<"input"> & {
   buttonType?: "button" | "submit" | "reset";
 };
 
+/**
+ * A text input with an attached button fused to its trailing edge, suitable
+ * for search bars, coupon fields, and newsletter sign-ups.
+ *
+ * @remarks
+ * Composes the `Input` primitive with either a custom `button` node or the
+ * built-in `Button` (outline variant, `buttonType` defaulting to
+ * `"submit"`). The input's right border radius is removed and the button's
+ * left radius is removed so they read as a single control.
+ *
+ * Focus rings appear on each element independently; `focus-visible:z-10` on
+ * the input ensures the ring renders above the button when the input is
+ * focused.
+ *
+ * @example
+ * ```tsx
+ * <InputWithInlineButton
+ *   placeholder="your@email.com"
+ *   buttonText="Subscribe"
+ *   buttonType="submit"
+ * />
+ * ```
+ */
 function InputWithInlineButton({
   button,
   buttonText,

@@ -6,16 +6,69 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
 import { cn } from "../utils/index";
 
+/**
+ * Right-click (or long-press) contextual menu anchored to an arbitrary
+ * region of the page.
+ *
+ * Unlike {@link DropdownMenu}, which opens from a button, `ContextMenu`
+ * opens at the pointer position in response to a secondary action (right-
+ * click, `contextmenu` event). The trigger region is defined by wrapping
+ * any element in `ContextMenuTrigger`.
+ *
+ * Compose the parts as:
+ * `ContextMenu` → `ContextMenuTrigger` → `ContextMenuContent`, with item
+ * parts inside: {@link ContextMenuItem}, {@link ContextMenuCheckboxItem},
+ * {@link ContextMenuRadioGroup} + {@link ContextMenuRadioItem},
+ * {@link ContextMenuSeparator}, {@link ContextMenuLabel}, and nested
+ * submenus via {@link ContextMenuSub} + {@link ContextMenuSubTrigger} +
+ * {@link ContextMenuSubContent}.
+ *
+ * @remarks
+ * - `ContextMenuTrigger` adds `select-none` so text inside the region
+ *   does not get selected on right-click.
+ * - `ContextMenuContent` defaults to `side="right"` and
+ *   `align="start"` since the menu opens to the right of the pointer.
+ * - Use `inset` on label and item components for `pl-7` indent when
+ *   mixing icon and text-only items.
+ * - Use `variant="destructive"` on {@link ContextMenuItem} for
+ *   irreversible actions.
+ * - Append a {@link ContextMenuShortcut} inside an item to display a
+ *   keyboard shortcut hint (visual only).
+ *
+ * @example
+ * ```tsx
+ * <ContextMenu>
+ *   <ContextMenuTrigger>
+ *     <div className="border p-4">Right-click here</div>
+ *   </ContextMenuTrigger>
+ *   <ContextMenuContent>
+ *     <ContextMenuItem>Open</ContextMenuItem>
+ *     <ContextMenuSeparator />
+ *     <ContextMenuItem variant="destructive">Delete</ContextMenuItem>
+ *   </ContextMenuContent>
+ * </ContextMenu>
+ * ```
+ */
 function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
 }
 
+/**
+ * Teleports {@link ContextMenuContent} outside the DOM tree into
+ * `document.body`, escaping overflow/stacking-context constraints.
+ */
 function ContextMenuPortal({ ...props }: ContextMenuPrimitive.Portal.Props) {
   return (
     <ContextMenuPrimitive.Portal data-slot="context-menu-portal" {...props} />
   );
 }
 
+/**
+ * The region that listens for the secondary action (right-click /
+ * `contextmenu` event) to open the {@link ContextMenu}.
+ *
+ * `select-none` prevents accidental text selection on right-click.
+ */
 function ContextMenuTrigger({
   className,
   ...props
@@ -29,6 +82,17 @@ function ContextMenuTrigger({
   );
 }
 
+/**
+ * Floating panel that holds all menu items for {@link ContextMenu}.
+ *
+ * Internally wraps Base UI's Portal, Positioner, and Popup. Positioning
+ * props (`side`, `sideOffset`, `align`, `alignOffset`) are forwarded to
+ * the Positioner; everything else goes to the Popup.
+ *
+ * @remarks
+ * `max-h-(--available-height)` and `overflow-y-auto` let the panel scroll
+ * when the viewport is too short to show all items.
+ */
 function ContextMenuContent({
   className,
   align = "start",
@@ -43,6 +107,7 @@ function ContextMenuContent({
   >) {
   return (
     <ContextMenuPrimitive.Portal>
+      {/* isolate prevents z-index bleed from ancestor stacking contexts */}
       <ContextMenuPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
@@ -63,12 +128,23 @@ function ContextMenuContent({
   );
 }
 
+/**
+ * Semantic grouping wrapper for related {@link ContextMenuItem}s.
+ * Pair with {@link ContextMenuLabel} to add a visible group heading.
+ */
 function ContextMenuGroup({ ...props }: ContextMenuPrimitive.Group.Props) {
   return (
     <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />
   );
 }
 
+/**
+ * Non-interactive heading above a group of items in
+ * {@link ContextMenuContent}.
+ *
+ * @remarks
+ * `inset` adds `pl-7` to align with icon-bearing items in the same group.
+ */
 function ContextMenuLabel({
   className,
   inset,
@@ -89,6 +165,16 @@ function ContextMenuLabel({
   );
 }
 
+/**
+ * A single selectable action row inside {@link ContextMenuContent}.
+ *
+ * @remarks
+ * - `inset` adds `pl-7` for text-only items sharing a group with icon
+ *   items.
+ * - `variant="destructive"` applies red text and a tinted focus
+ *   background for irreversible actions.
+ * - Optionally append a {@link ContextMenuShortcut} as the last child.
+ */
 function ContextMenuItem({
   className,
   inset,
@@ -112,12 +198,24 @@ function ContextMenuItem({
   );
 }
 
+/**
+ * Root container for a nested submenu inside {@link ContextMenu}.
+ * Pair with {@link ContextMenuSubTrigger} and
+ * {@link ContextMenuSubContent}.
+ */
 function ContextMenuSub({ ...props }: ContextMenuPrimitive.SubmenuRoot.Props) {
   return (
     <ContextMenuPrimitive.SubmenuRoot data-slot="context-menu-sub" {...props} />
   );
 }
 
+/**
+ * Item row that opens a nested {@link ContextMenuSubContent} on hover or
+ * focus. Renders a trailing right-arrow icon automatically.
+ *
+ * @remarks
+ * `inset` adds `pl-7` indent for alignment with icon items.
+ */
 function ContextMenuSubTrigger({
   className,
   inset,
@@ -146,6 +244,13 @@ function ContextMenuSubTrigger({
   );
 }
 
+/**
+ * Floating panel for a nested submenu, anchored to its
+ * {@link ContextMenuSubTrigger}.
+ *
+ * Delegates to {@link ContextMenuContent} with `side="right"` fixed and
+ * an elevated `shadow-lg`.
+ */
 function ContextMenuSubContent({
   ...props
 }: React.ComponentProps<typeof ContextMenuContent>) {
@@ -159,6 +264,16 @@ function ContextMenuSubContent({
   );
 }
 
+/**
+ * A checkable item inside {@link ContextMenuContent}.
+ *
+ * Renders a tick icon on the trailing edge when `checked` is `true`.
+ * Control state with the `checked` prop (controlled) or let the primitive
+ * manage it internally.
+ *
+ * @remarks
+ * `inset` adds `pl-7` indent to align with other items.
+ */
 function ContextMenuCheckboxItem({
   className,
   children,
@@ -179,6 +294,7 @@ function ContextMenuCheckboxItem({
       data-slot="context-menu-checkbox-item"
       {...props}
     >
+      {/* Tick indicator — absolutely positioned at the trailing edge */}
       <span className="pointer-events-none absolute right-2">
         <ContextMenuPrimitive.CheckboxItemIndicator>
           <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
@@ -189,6 +305,11 @@ function ContextMenuCheckboxItem({
   );
 }
 
+/**
+ * Groups {@link ContextMenuRadioItem}s so only one can be checked at a
+ * time. Manage selection with the primitive's `value` / `onValueChange`
+ * props.
+ */
 function ContextMenuRadioGroup({
   ...props
 }: ContextMenuPrimitive.RadioGroup.Props) {
@@ -200,6 +321,15 @@ function ContextMenuRadioGroup({
   );
 }
 
+/**
+ * A radio-style item inside {@link ContextMenuRadioGroup}.
+ *
+ * Renders a tick icon on the trailing edge when this item's value matches
+ * the group's selected value.
+ *
+ * @remarks
+ * `inset` adds `pl-7` indent to align with other items.
+ */
 function ContextMenuRadioItem({
   className,
   children,
@@ -218,6 +348,7 @@ function ContextMenuRadioItem({
       data-slot="context-menu-radio-item"
       {...props}
     >
+      {/* Tick indicator — absolutely positioned at the trailing edge */}
       <span className="pointer-events-none absolute right-2">
         <ContextMenuPrimitive.RadioItemIndicator>
           <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
@@ -228,6 +359,7 @@ function ContextMenuRadioItem({
   );
 }
 
+/** Horizontal divider between groups in {@link ContextMenuContent}. */
 function ContextMenuSeparator({
   className,
   ...props
@@ -241,6 +373,12 @@ function ContextMenuSeparator({
   );
 }
 
+/**
+ * Trailing keyboard shortcut hint inside a {@link ContextMenuItem}.
+ *
+ * Visual only — wire the actual keyboard handler separately. The hint
+ * text inherits the item's focus colour via the parent group selector.
+ */
 function ContextMenuShortcut({
   className,
   ...props

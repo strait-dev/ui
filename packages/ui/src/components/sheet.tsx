@@ -7,10 +7,61 @@ import type * as React from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
 
+/**
+ * Edge-anchored sliding panel built on Base UI's Dialog primitive.
+ *
+ * Unlike {@link Drawer} (which uses Vaul), `Sheet` is entirely driven by
+ * Base UI's Dialog and uses CSS transitions keyed off `data-[side=*]`
+ * attributes for directional enter/exit animations.
+ *
+ * Compose the parts as:
+ * `Sheet` → `SheetTrigger` → `SheetContent` (which internally mounts
+ * {@link SheetPortal} and {@link SheetOverlay}), then inside
+ * `SheetContent`: {@link SheetHeader} (holding {@link SheetTitle} and
+ * {@link SheetDescription}), body content, and {@link SheetFooter}.
+ *
+ * @remarks
+ * - The `side` prop on `SheetContent` (`"top" | "right" | "bottom" |
+ *   "left"`, default `"right"`) controls the panel origin. It is forwarded
+ *   as `data-side` and drives all anchoring, sizing, border placement, and
+ *   enter/exit translate animations.
+ * - `showCloseButton` (default `true`) renders a ghost icon button in the
+ *   top-right corner. Set to `false` when you manage dismissal via footer
+ *   actions.
+ * - `SheetTrigger` sets `nativeButton={false}` so Base UI does not assert
+ *   that the trigger is a `<button>` element — useful when the trigger is
+ *   styled as another element via `render`.
+ * - Always provide a {@link SheetTitle} for screen-reader accessibility.
+ *
+ * @example
+ * ```tsx
+ * <Sheet>
+ *   <SheetTrigger>Open settings</SheetTrigger>
+ *   <SheetContent side="right">
+ *     <SheetHeader>
+ *       <SheetTitle>Settings</SheetTitle>
+ *       <SheetDescription>
+ *         Manage your preferences.
+ *       </SheetDescription>
+ *     </SheetHeader>
+ *     <div className="px-4 flex-1">…</div>
+ *     <SheetFooter>
+ *       <SheetClose>Done</SheetClose>
+ *     </SheetFooter>
+ *   </SheetContent>
+ * </Sheet>
+ * ```
+ */
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
 
+/**
+ * Button or element that opens the {@link Sheet} when activated.
+ *
+ * `nativeButton={false}` relaxes the Base UI assertion that the trigger
+ * must be a native `<button>`, enabling use of custom trigger elements.
+ */
 function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
   return (
     <SheetPrimitive.Trigger
@@ -21,14 +72,24 @@ function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
   );
 }
 
+/** Programmatic close control for the {@link Sheet}. */
 function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
   return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
 }
 
+/**
+ * Teleports {@link SheetContent} outside the DOM tree into `document.body`,
+ * escaping overflow/stacking-context constraints.
+ */
 function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
 }
 
+/**
+ * Semi-transparent backdrop behind {@link SheetContent}; fades in/out via
+ * `data-starting-style` / `data-ending-style` and applies a backdrop blur
+ * when the browser supports it.
+ */
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   return (
     <SheetPrimitive.Backdrop
@@ -42,6 +103,20 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   );
 }
 
+/**
+ * The sliding panel itself.
+ *
+ * Mounts {@link SheetPortal} and {@link SheetOverlay} automatically.
+ * The `side` prop determines which edge the panel originates from; all
+ * anchoring, sizing, rounding, and enter/exit translations are driven by
+ * the resulting `data-side` attribute.
+ *
+ * @remarks
+ * - `side="left"` and `side="right"` panels are `w-3/4` up to `sm:max-w-sm`.
+ * - `side="top"` and `side="bottom"` panels span the full width (`inset-x-0`)
+ *   with auto height.
+ * - `showCloseButton` renders a ghost `×` icon in the top-right corner.
+ */
 function SheetContent({
   className,
   children,
@@ -85,6 +160,10 @@ function SheetContent({
   );
 }
 
+/**
+ * Top region of {@link SheetContent} for {@link SheetTitle} and
+ * {@link SheetDescription}.
+ */
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -95,6 +174,10 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Bottom action bar for {@link SheetContent}; pushes to the end of the
+ * flex column with `mt-auto`.
+ */
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -105,6 +188,10 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Accessible heading for the {@link Sheet}, announced by screen readers
+ * when the panel opens. Always provide this for a11y.
+ */
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
   return (
     <SheetPrimitive.Title
@@ -115,6 +202,7 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
   );
 }
 
+/** Muted supporting text beneath {@link SheetTitle}. */
 function SheetDescription({
   className,
   ...props

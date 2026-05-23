@@ -6,6 +6,24 @@ import { cn } from "../utils/index";
 import { Label } from "./label";
 import { Separator } from "./separator";
 
+/**
+ * Semantic wrapper that groups related form fields under a common heading.
+ *
+ * Renders a `<fieldset>` and adjusts its gap automatically when it contains
+ * a {@link CheckboxGroup} or a {@link RadioGroup} child.
+ *
+ * @remarks
+ * Place a {@link FieldLegend} as the first child to provide an accessible
+ * caption. Nest {@link Field} or {@link FieldGroup} elements inside.
+ *
+ * @example
+ * ```tsx
+ * <FieldSet>
+ *   <FieldLegend>Notifications</FieldLegend>
+ *   <Field><FieldLabel>Email</FieldLabel><Input /></Field>
+ * </FieldSet>
+ * ```
+ */
 function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   return (
     <fieldset
@@ -19,6 +37,13 @@ function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   );
 }
 
+/**
+ * Accessible caption for a {@link FieldSet}.
+ *
+ * The `variant` prop switches between `"legend"` (larger, section-heading
+ * weight) and `"label"` (matches {@link Label} size) to suit different
+ * visual contexts.
+ */
 function FieldLegend({
   className,
   variant = "legend",
@@ -37,6 +62,13 @@ function FieldLegend({
   );
 }
 
+/**
+ * Container that stacks multiple {@link Field} elements with consistent gaps.
+ *
+ * Uses a `@container` query (`@container/field-group`) so child
+ * {@link Field} items with `orientation="responsive"` can reflow from
+ * vertical to horizontal at the `@md` breakpoint.
+ */
 function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -50,6 +82,17 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Class-variance-authority recipe for the {@link Field} layout.
+ *
+ * Exposes one axis:
+ * - `orientation` — controls how the label and control are arranged:
+ *   - `"vertical"` (default) — label stacked above the control.
+ *   - `"horizontal"` — label and control side-by-side, aligning to the
+ *     top when a {@link FieldContent} description is present.
+ *   - `"responsive"` — vertical below the `@md` container breakpoint,
+ *     horizontal above it (requires a {@link FieldGroup} ancestor).
+ */
 const fieldVariants = cva(
   "group/field flex w-full gap-2 data-[invalid=true]:text-destructive",
   {
@@ -68,6 +111,28 @@ const fieldVariants = cva(
   }
 );
 
+/**
+ * Single form field: associates a label, control, description, and error.
+ *
+ * Compose it with {@link FieldLabel} (or {@link FieldTitle}),
+ * {@link FieldContent} (wrapping {@link FieldDescription}), and
+ * {@link FieldError}. Uses a `role="group"` on a `<div>` — see the inline
+ * note below for why `<fieldset>` is intentionally avoided here.
+ *
+ * @remarks
+ * - The `orientation` prop switches the label/control layout axis via
+ *   {@link fieldVariants}.
+ * - When `data-invalid="true"` is set on the root, all text inside turns
+ *   destructive (used by react-hook-form integrations).
+ *
+ * @example
+ * ```tsx
+ * <Field orientation="horizontal">
+ *   <FieldLabel htmlFor="email">Email</FieldLabel>
+ *   <Input id="email" type="email" />
+ * </Field>
+ * ```
+ */
 function Field({
   className,
   orientation = "vertical",
@@ -85,6 +150,13 @@ function Field({
   );
 }
 
+/**
+ * Wrapper that stacks a {@link FieldDescription} (and optionally a
+ * {@link FieldError}) beneath a control with consistent tight spacing.
+ *
+ * Use inside a {@link Field} when a description should sit directly below
+ * the control rather than below the label.
+ */
 function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -98,6 +170,13 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Label variant for a {@link Field} that also supports nesting a control
+ * (e.g. a {@link Checkbox}) inside the label itself for a "card-select" style.
+ *
+ * When a `data-slot="field"` child is detected, the label expands to full
+ * width and adds a bordered, tinted checked state.
+ */
 function FieldLabel({
   className,
   ...props
@@ -115,6 +194,11 @@ function FieldLabel({
   );
 }
 
+/**
+ * Non-interactive title text for a {@link Field} when a full {@link Label}
+ * `htmlFor` association is not needed (e.g. fields with an inline control
+ * that provides its own accessible name).
+ */
 function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -128,6 +212,13 @@ function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Muted helper text that describes a {@link Field}'s control.
+ *
+ * Adjusts top-margin automatically when it is the last or second-to-last
+ * sibling, and text-balances in horizontal {@link Field} layouts. Inline
+ * links are underlined and turn primary on hover.
+ */
 function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -143,6 +234,13 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
+/**
+ * Visual divider between two groups of fields inside a {@link FieldGroup}.
+ *
+ * Renders a full-width {@link Separator} line. Pass `children` for a
+ * centered label (e.g. `"or"`) that floats above the line on a background
+ * swatch; presence of children is tracked via `data-content` for CSS.
+ */
 function FieldSeparator({
   children,
   className,
@@ -156,6 +254,7 @@ function FieldSeparator({
         "relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2",
         className
       )}
+      // data-content drives CSS rules that show/hide the label swatch
       data-content={!!children}
       data-slot="field-separator"
       {...props}
@@ -173,6 +272,18 @@ function FieldSeparator({
   );
 }
 
+/**
+ * Validation error display for a {@link Field}.
+ *
+ * Accepts either explicit `children` or an `errors` array (e.g. from
+ * react-hook-form's `fieldState.errors`). When multiple distinct messages
+ * exist they are rendered as a bulleted list; duplicates are deduplicated
+ * by message text. Renders nothing when there is no content.
+ *
+ * @remarks
+ * The `errors` prop accepts `Array<{ message?: string } | undefined>` so
+ * it can receive react-hook-form error objects directly without mapping.
+ */
 function FieldError({
   className,
   children,
@@ -181,6 +292,7 @@ function FieldError({
 }: React.ComponentProps<"div"> & {
   errors?: Array<{ message?: string } | undefined>;
 }) {
+  // Derive display content: prefer explicit children, then deduplicate errors.
   const content = useMemo(() => {
     if (children) {
       return children;
@@ -190,6 +302,7 @@ function FieldError({
       return null;
     }
 
+    // Deduplicate by message text so repeated validations don't stack.
     const uniqueErrors = [
       ...new Map(errors.map((error) => [error?.message, error])).values(),
     ];

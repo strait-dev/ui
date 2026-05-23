@@ -2,6 +2,36 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "../utils/index";
 
+/**
+ * Centred placeholder surface shown when a list or view has no content.
+ *
+ * `Empty` is the root container. Compose it with {@link EmptyHeader}
+ * (holding {@link EmptyMedia}, {@link EmptyTitle}, and
+ * {@link EmptyDescription}) and an optional {@link EmptyContent} region for
+ * call-to-action controls.
+ *
+ * @remarks
+ * The root renders a dashed border by default, signalling the absence of
+ * real content. It stretches to fill available space via `flex-1`.
+ *
+ * @example
+ * ```tsx
+ * <Empty>
+ *   <EmptyHeader>
+ *     <EmptyMedia variant="icon">
+ *       <FolderIcon />
+ *     </EmptyMedia>
+ *     <EmptyTitle>No files yet</EmptyTitle>
+ *     <EmptyDescription>
+ *       Upload a file to get started.
+ *     </EmptyDescription>
+ *   </EmptyHeader>
+ *   <EmptyContent>
+ *     <Button>Upload</Button>
+ *   </EmptyContent>
+ * </Empty>
+ * ```
+ */
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -15,6 +45,8 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Centred column that stacks {@link EmptyMedia}, {@link EmptyTitle}, and
+ * {@link EmptyDescription} inside an {@link Empty}. */
 function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -25,6 +57,14 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Class-variance-authority recipe for {@link EmptyMedia}.
+ *
+ * Exposes one axis:
+ * - `variant` — `"default"` is transparent and suits illustrations or
+ *   custom imagery; `"icon"` wraps the child in a muted rounded square
+ *   sized for a 16 × 16 SVG icon.
+ */
 const emptyMediaVariants = cva(
   "mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
@@ -40,6 +80,10 @@ const emptyMediaVariants = cva(
   }
 );
 
+/**
+ * Visual focal point at the top of an {@link EmptyHeader} — an illustration,
+ * image, or icon container styled via {@link emptyMediaVariants}.
+ */
 function EmptyMedia({
   className,
   variant = "default",
@@ -55,6 +99,7 @@ function EmptyMedia({
   );
 }
 
+/** Primary heading inside an {@link EmptyHeader}. */
 function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -65,6 +110,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Muted supporting copy beneath an {@link EmptyTitle}. */
 function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <div
@@ -78,6 +124,10 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
+/**
+ * Centred region below {@link EmptyHeader} for action controls such as
+ * a call-to-action button.
+ */
 function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

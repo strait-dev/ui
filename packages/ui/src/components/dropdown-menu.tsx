@@ -6,18 +6,77 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
 import { cn } from "../utils/index";
 
+/**
+ * Floating list of actions that opens from a trigger button.
+ *
+ * `DropdownMenu` is the root state container. Compose the full tree as:
+ * `DropdownMenu` → `DropdownMenuTrigger` → `DropdownMenuContent`, with
+ * item parts inside the content: {@link DropdownMenuItem},
+ * {@link DropdownMenuCheckboxItem}, {@link DropdownMenuRadioGroup} +
+ * {@link DropdownMenuRadioItem}, {@link DropdownMenuSeparator},
+ * {@link DropdownMenuLabel}, and nested submenus via
+ * {@link DropdownMenuSub} + {@link DropdownMenuSubTrigger} +
+ * {@link DropdownMenuSubContent}.
+ *
+ * @remarks
+ * - `DropdownMenuContent` accepts `side`, `sideOffset`, `align`, and
+ *   `alignOffset` to control panel placement relative to the trigger.
+ * - The content panel matches the trigger width via `w-(--anchor-width)`,
+ *   with `min-w-32` as a floor.
+ * - Use `inset` on {@link DropdownMenuLabel} and {@link DropdownMenuItem}
+ *   to add `pl-7` left-indent when mixing icon items and text-only items
+ *   in the same group.
+ * - Use `variant="destructive"` on {@link DropdownMenuItem} for
+ *   irreversible actions; the item and its icons render in the destructive
+ *   colour.
+ * - Append a {@link DropdownMenuShortcut} inside an item to display a
+ *   keyboard shortcut hint (visual only — wire the actual shortcut
+ *   separately).
+ *
+ * @example
+ * ```tsx
+ * <DropdownMenu>
+ *   <DropdownMenuTrigger>Options</DropdownMenuTrigger>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuLabel>My Account</DropdownMenuLabel>
+ *     <DropdownMenuSeparator />
+ *     <DropdownMenuItem>
+ *       Profile
+ *       <DropdownMenuShortcut>P</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ * ```
+ */
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
 
+/**
+ * Teleports {@link DropdownMenuContent} outside the DOM tree into
+ * `document.body`, escaping overflow/stacking-context constraints.
+ */
 function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />;
 }
 
+/** Button or element that opens the {@link DropdownMenu} when activated. */
 function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
   return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
+/**
+ * Floating panel that holds all menu items for {@link DropdownMenu}.
+ *
+ * Internally wraps Base UI's Portal, Positioner, and Popup. The
+ * positioning props (`side`, `sideOffset`, `align`, `alignOffset`) are
+ * forwarded to the Positioner; everything else goes to the Popup.
+ *
+ * @remarks
+ * `max-h-(--available-height)` and `overflow-y-auto` let the panel scroll
+ * when the viewport is too short to show all items.
+ */
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,
@@ -32,6 +91,7 @@ function DropdownMenuContent({
   >) {
   return (
     <MenuPrimitive.Portal>
+      {/* isolate prevents z-index bleed from ancestor stacking contexts */}
       <MenuPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
@@ -52,10 +112,21 @@ function DropdownMenuContent({
   );
 }
 
+/**
+ * Semantic grouping wrapper for related {@link DropdownMenuItem}s.
+ * Pair with {@link DropdownMenuLabel} to add a visible group heading.
+ */
 function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />;
 }
 
+/**
+ * Non-interactive heading above a group of items in
+ * {@link DropdownMenuContent}.
+ *
+ * @remarks
+ * `inset` adds `pl-7` to align with icon-bearing items in the same group.
+ */
 function DropdownMenuLabel({
   className,
   inset,
@@ -76,6 +147,17 @@ function DropdownMenuLabel({
   );
 }
 
+/**
+ * A single selectable action row inside {@link DropdownMenuContent}.
+ *
+ * @remarks
+ * - `inset` adds `pl-7` for text-only items that share a group with
+ *   icon-bearing items.
+ * - `variant="destructive"` applies red text and a tinted focus background
+ *   to signal an irreversible action.
+ * - Optionally append a {@link DropdownMenuShortcut} as the last child to
+ *   display a keyboard hint.
+ */
 function DropdownMenuItem({
   className,
   inset,
@@ -99,10 +181,22 @@ function DropdownMenuItem({
   );
 }
 
+/**
+ * Root container for a nested submenu inside {@link DropdownMenu}.
+ * Pair with {@link DropdownMenuSubTrigger} and
+ * {@link DropdownMenuSubContent}.
+ */
 function DropdownMenuSub({ ...props }: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />;
 }
 
+/**
+ * Item row that opens a nested {@link DropdownMenuSubContent} on hover or
+ * focus. Renders a trailing right-arrow icon automatically.
+ *
+ * @remarks
+ * `inset` adds `pl-7` indent for alignment with icon items.
+ */
 function DropdownMenuSubTrigger({
   className,
   inset,
@@ -131,6 +225,13 @@ function DropdownMenuSubTrigger({
   );
 }
 
+/**
+ * Floating panel for a nested submenu, anchored to its
+ * {@link DropdownMenuSubTrigger}.
+ *
+ * Delegates to {@link DropdownMenuContent} with submenu-appropriate
+ * defaults (`side="right"`, `alignOffset=-3`) and a narrower min-width.
+ */
 function DropdownMenuSubContent({
   align = "start",
   alignOffset = -3,
@@ -155,6 +256,16 @@ function DropdownMenuSubContent({
   );
 }
 
+/**
+ * A checkable item inside {@link DropdownMenuContent}.
+ *
+ * Renders a tick icon on the trailing edge when `checked` is `true`.
+ * Control state with the `checked` prop (controlled) or let the primitive
+ * manage it internally.
+ *
+ * @remarks
+ * `inset` adds `pl-7` indent to align with other items.
+ */
 function DropdownMenuCheckboxItem({
   className,
   children,
@@ -175,6 +286,7 @@ function DropdownMenuCheckboxItem({
       data-slot="dropdown-menu-checkbox-item"
       {...props}
     >
+      {/* Tick indicator — absolutely positioned at the trailing edge */}
       <span
         className="pointer-events-none absolute right-2 flex items-center justify-center"
         data-slot="dropdown-menu-checkbox-item-indicator"
@@ -188,6 +300,11 @@ function DropdownMenuCheckboxItem({
   );
 }
 
+/**
+ * Groups {@link DropdownMenuRadioItem}s so only one can be checked at a
+ * time. Manage selection with the primitive's `value` / `onValueChange`
+ * props.
+ */
 function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
   return (
     <MenuPrimitive.RadioGroup
@@ -197,6 +314,15 @@ function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
   );
 }
 
+/**
+ * A radio-style item inside {@link DropdownMenuRadioGroup}.
+ *
+ * Renders a tick icon on the trailing edge when this item's value matches
+ * the group's selected value.
+ *
+ * @remarks
+ * `inset` adds `pl-7` indent to align with other items.
+ */
 function DropdownMenuRadioItem({
   className,
   children,
@@ -215,6 +341,7 @@ function DropdownMenuRadioItem({
       data-slot="dropdown-menu-radio-item"
       {...props}
     >
+      {/* Tick indicator — absolutely positioned at the trailing edge */}
       <span
         className="pointer-events-none absolute right-2 flex items-center justify-center"
         data-slot="dropdown-menu-radio-item-indicator"
@@ -228,6 +355,7 @@ function DropdownMenuRadioItem({
   );
 }
 
+/** Horizontal divider between groups in {@link DropdownMenuContent}. */
 function DropdownMenuSeparator({
   className,
   ...props
@@ -241,6 +369,12 @@ function DropdownMenuSeparator({
   );
 }
 
+/**
+ * Trailing keyboard shortcut hint inside a {@link DropdownMenuItem}.
+ *
+ * Visual only — wire the actual keyboard handler separately. The hint
+ * text inherits the item's focus colour via the parent group selector.
+ */
 function DropdownMenuShortcut({
   className,
   ...props

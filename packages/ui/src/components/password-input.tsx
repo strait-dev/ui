@@ -6,6 +6,13 @@ import { useState } from "react";
 import { Input } from "../components/input";
 import { cn } from "../utils/index";
 
+/**
+ * Props for {@link PasswordInput}.
+ *
+ * @remarks
+ * `type` is omitted because the component manages `"password"` / `"text"`
+ * internally via the show/hide toggle.
+ */
 export type PasswordInputProps = Omit<React.ComponentProps<"input">, "type"> & {
   label?: string;
   showPasswordLabel?: string;
@@ -13,6 +20,32 @@ export type PasswordInputProps = Omit<React.ComponentProps<"input">, "type"> & {
   containerClassName?: string;
 };
 
+/**
+ * A password field with an inline toggle button that reveals or masks the
+ * entered text.
+ *
+ * @remarks
+ * Composes the `Input` primitive with an absolutely-positioned `<button>` at
+ * the trailing end. The toggle button carries `aria-pressed` to reflect the
+ * current visibility state, and its `aria-label` switches between
+ * `showPasswordLabel` / `hidePasswordLabel` so screen readers announce the
+ * action correctly.
+ *
+ * - Renders an optional `<label>` element when the `label` prop is supplied;
+ *   the label is linked to the input via `htmlFor={props.id}`, so `id` must
+ *   be set when using `label`.
+ * - The `type` prop is intentionally omitted — the component manages
+ *   `"password"` vs `"text"` itself.
+ *
+ * @example
+ * ```tsx
+ * <PasswordInput
+ *   id="current-password"
+ *   label="Password"
+ *   placeholder="Enter your password"
+ * />
+ * ```
+ */
 function PasswordInput({
   className,
   label,

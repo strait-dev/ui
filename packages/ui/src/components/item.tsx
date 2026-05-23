@@ -5,6 +5,14 @@ import type * as React from "react";
 import { cn } from "../utils/index";
 import { Separator } from "./separator";
 
+/**
+ * Vertical list wrapper that spaces {@link Item} children and adapts gaps
+ * to the `size` of the items it contains.
+ *
+ * @remarks
+ * Uses `role="list"` on a `<div>` rather than a semantic `<ul>` because
+ * children may be links, divs, or other non-`<li>` elements.
+ */
 function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     // biome-ignore lint/a11y/useSemanticElements: items may be links/divs rather than <li>, so the group uses role="list" on a div instead of <ul>/<ol>.
@@ -20,6 +28,10 @@ function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Horizontal rule that visually divides sections inside an
+ * {@link ItemGroup}.
+ */
 function ItemSeparator({
   className,
   ...props
@@ -34,6 +46,15 @@ function ItemSeparator({
   );
 }
 
+/**
+ * Class-variance-authority recipe for {@link Item}.
+ *
+ * Exposes two axes:
+ * - `variant` — surface style. `"default"` has no border; `"outline"` shows
+ *   a visible border; `"muted"` uses a subtle muted background.
+ * - `size` — `"default"` and `"sm"` share the same padding while `"xs"`
+ *   is more compact and adjusts padding when nested inside a dropdown menu.
+ */
 const itemVariants = cva(
   "group/item flex w-full flex-wrap items-center rounded-lg border text-sm outline-none transition-colors duration-100 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted",
   {
@@ -56,6 +77,43 @@ const itemVariants = cva(
   }
 );
 
+/**
+ * Flexible row-level container for list entries, menu rows, or card-like
+ * tiles in an {@link ItemGroup}.
+ *
+ * Rendered as a `<div>` by default; swap the underlying element via the
+ * `render` prop (e.g. `render={<a href="…" />}` for a navigable row).
+ * Appearance is controlled by {@link itemVariants} through `variant` and
+ * `size`.
+ *
+ * @remarks
+ * - Compose with {@link ItemMedia}, {@link ItemContent} (containing
+ *   {@link ItemTitle} and {@link ItemDescription}), and {@link ItemActions}
+ *   to build rich list rows.
+ * - `size` and `variant` are forwarded through the `state` object so
+ *   descendant parts can respond via `group-data-[size=*]` selectors.
+ * - When `size="xs"` and the item lives inside a
+ *   `[data-slot=dropdown-menu-content]`, horizontal padding is removed to
+ *   align flush with the menu edge.
+ *
+ * @example
+ * ```tsx
+ * <ItemGroup>
+ *   <Item variant="outline" render={<a href="/users/1" />}>
+ *     <ItemMedia variant="image">
+ *       <img src="/avatars/1.png" alt="" />
+ *     </ItemMedia>
+ *     <ItemContent>
+ *       <ItemTitle>Jane Smith</ItemTitle>
+ *       <ItemDescription>Admin · Last seen 2h ago</ItemDescription>
+ *     </ItemContent>
+ *     <ItemActions>
+ *       <Button size="icon-sm" variant="ghost" aria-label="More" />
+ *     </ItemActions>
+ *   </Item>
+ * </ItemGroup>
+ * ```
+ */
 function Item({
   className,
   variant = "default",
@@ -80,6 +138,15 @@ function Item({
   });
 }
 
+/**
+ * Class-variance-authority recipe for {@link ItemMedia}.
+ *
+ * Exposes one axis:
+ * - `variant` — `"default"` is transparent (for custom content);
+ *   `"icon"` enforces a 16 × 16 SVG size; `"image"` creates a fixed square
+ *   container with `object-cover` clipping that scales with the parent
+ *   {@link Item} `size`.
+ */
 const itemMediaVariants = cva(
   "flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:translate-y-0.5 group-has-data-[slot=item-description]/item:self-start [&_svg]:pointer-events-none",
   {
@@ -97,6 +164,10 @@ const itemMediaVariants = cva(
   }
 );
 
+/**
+ * Leading visual slot inside an {@link Item} — accepts an icon, avatar, or
+ * thumbnail image; styled via {@link itemMediaVariants}.
+ */
 function ItemMedia({
   className,
   variant = "default",
@@ -112,6 +183,10 @@ function ItemMedia({
   );
 }
 
+/**
+ * Flex column that holds {@link ItemTitle} and {@link ItemDescription}
+ * inside an {@link Item}; grows to fill remaining row space.
+ */
 function ItemContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -125,6 +200,7 @@ function ItemContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Primary one-line label inside an {@link ItemContent}. */
 function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -138,6 +214,10 @@ function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Two-line clamped supporting copy beneath an {@link ItemTitle}; reduces
+ * to `text-xs` at the `"xs"` item size.
+ */
 function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -151,6 +231,10 @@ function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
+/**
+ * Trailing controls (buttons, badges, menus) pinned to the right of an
+ * {@link Item} row.
+ */
 function ItemActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -161,6 +245,10 @@ function ItemActions({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Full-width row at the top of an {@link Item} for a label and a trailing
+ * control on the same line; `basis-full` forces it to its own flex row.
+ */
 function ItemHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -174,6 +262,10 @@ function ItemHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Full-width row at the bottom of an {@link Item}; mirrors the layout of
+ * {@link ItemHeader} for a footer-level label and trailing control.
+ */
 function ItemFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

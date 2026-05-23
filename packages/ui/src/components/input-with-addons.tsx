@@ -1,11 +1,46 @@
 import { cn } from "../utils/index";
 
+/**
+ * Props for {@link InputWithAddons}.
+ *
+ * @remarks
+ * `leading` and `trailing` accept any React node — typically a short text
+ * label (e.g. `"https://"`, `".com"`) or an icon. Both are optional;
+ * omitting both renders a plain bordered input.
+ */
 export type InputWithAddonsProps = React.ComponentProps<"input"> & {
   leading?: React.ReactNode;
   trailing?: React.ReactNode;
   containerClassName?: string;
 };
 
+/**
+ * A text input flanked by optional muted addon panels for contextual prefix
+ * or suffix labels (e.g. protocol, domain extension, or unit).
+ *
+ * @remarks
+ * Renders a single bordered container (`group`) that holds up to three
+ * children in a horizontal row:
+ * - An optional `leading` addon — a muted panel separated from the input by
+ *   a right border.
+ * - The `<input>` element itself — transparent background, full remaining
+ *   width.
+ * - An optional `trailing` addon — a muted panel separated from the input
+ *   by a left border.
+ *
+ * Focus ring and border styling are applied to the outer wrapper via
+ * `focus-within`, so only a single ring appears regardless of which child
+ * has focus.
+ *
+ * @example
+ * ```tsx
+ * <InputWithAddons
+ *   leading="https://"
+ *   trailing=".com"
+ *   placeholder="yoursite"
+ * />
+ * ```
+ */
 function InputWithAddons({
   leading,
   trailing,

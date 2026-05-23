@@ -3,12 +3,43 @@
 import { Input } from "../components/input";
 import { cn } from "../utils/index";
 
+/**
+ * Props for {@link InputWithStartIcon}.
+ *
+ * @remarks
+ * `icon` accepts any React node; it is rendered in a non-interactive,
+ * pointer-events-disabled overlay at the leading edge.
+ */
 export type InputWithStartIconProps = React.ComponentProps<"input"> & {
   icon?: React.ReactNode;
   label?: string;
   containerClassName?: string;
 };
 
+/**
+ * A text input with a decorative, non-interactive icon pinned to the
+ * leading edge — the standard pattern for search bars and filtered inputs.
+ *
+ * @remarks
+ * Composes the `Input` primitive in a relative container with an absolutely-
+ * positioned icon overlay. The icon container is `pointer-events-none` so it
+ * never intercepts clicks or focus, and it fades via `peer-disabled:opacity-50`
+ * when the sibling input is disabled.
+ *
+ * An optional `label` prop renders a `<label>` linked via `htmlFor={id}`;
+ * when `label` is omitted, callers should provide an `aria-label` or
+ * associate a separate label element to maintain accessibility.
+ *
+ * @example
+ * ```tsx
+ * <InputWithStartIcon
+ *   id="search"
+ *   icon={<SearchIcon />}
+ *   label="Search"
+ *   placeholder="Search…"
+ * />
+ * ```
+ */
 function InputWithStartIcon({
   className,
   icon,

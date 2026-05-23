@@ -3,10 +3,41 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
 import { cn } from "../utils/index";
 
+/** Props for {@link NativeSelect}. Overrides `size` to use design tokens. */
 type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
   size?: "sm" | "default";
 };
 
+/**
+ * A styled wrapper around the native `<select>` element.
+ *
+ * Composed with {@link NativeSelectOption} and
+ * {@link NativeSelectOptGroup} to build the option list. Renders the
+ * browser's native dropdown — ideal when rich keyboard/accessibility
+ * support for the OS picker is required.
+ *
+ * @remarks
+ * - The chevron icon is purely decorative (`aria-hidden`) and is
+ *   absolutely-positioned over the right side of the wrapper `<div>`,
+ *   so `appearance-none` can be used to hide the OS-default arrow.
+ * - The `size` prop (`"default" | "sm"`) adjusts height and border
+ *   radius via `data-size` — it does NOT map to the HTML `size`
+ *   attribute.
+ * - Pair with a `<Label>` for accessible forms.
+ * - For a fully custom-styled JS dropdown, use {@link Select} instead.
+ *   For the alternative styled native wrapper, see {@link SelectNative}.
+ *
+ * @example
+ * ```tsx
+ * <NativeSelect defaultValue="">
+ *   <NativeSelectOption value="" disabled>
+ *     Pick a colour
+ *   </NativeSelectOption>
+ *   <NativeSelectOption value="red">Red</NativeSelectOption>
+ *   <NativeSelectOption value="blue">Blue</NativeSelectOption>
+ * </NativeSelect>
+ * ```
+ */
 function NativeSelect({
   className,
   size = "default",
@@ -38,10 +69,15 @@ function NativeSelect({
   );
 }
 
+/** A single `<option>` element used inside {@link NativeSelect}. */
 function NativeSelectOption({ ...props }: React.ComponentProps<"option">) {
   return <option data-slot="native-select-option" {...props} />;
 }
 
+/**
+ * An `<optgroup>` wrapper for labelling sections of
+ * {@link NativeSelectOption}s inside {@link NativeSelect}.
+ */
 function NativeSelectOptGroup({
   className,
   ...props

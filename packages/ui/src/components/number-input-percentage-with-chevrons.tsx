@@ -9,6 +9,13 @@ import { cn } from "../utils/index";
 const MINIMUM_VALUE = 0;
 const MAX_VALUE = 100;
 
+/**
+ * Props for {@link NumberInputPercentageWithChevrons}.
+ *
+ * `value` and `onChange` operate on the raw percentage integer
+ * (0–100). The component internally converts to the 0–1 fraction
+ * that React Aria's `NumberField` expects.
+ */
 export type NumberInputPercentageWithChevronsProps = Omit<
   React.ComponentProps<"input">,
   "value" | "onChange" | "defaultValue"
@@ -22,6 +29,31 @@ export type NumberInputPercentageWithChevronsProps = Omit<
   containerClassName?: string;
 };
 
+/**
+ * A percentage number input (0–100 %) with stacked up/down chevron
+ * buttons, formatted with React Aria's `NumberField`.
+ *
+ * @remarks
+ * Built on React Aria Components `NumberField` + `Group` + `Input`.
+ * The `value` and `onChange` contract uses the raw integer percentage
+ * (e.g. `42` for 42 %), while the underlying `NumberField` works with
+ * the 0–1 fraction required by the `"percent"` format style — the
+ * conversion is handled internally.
+ *
+ * Chevrons are wired to React Aria's `"increment"` / `"decrement"`
+ * slots and step by 0.01 (1 percentage point). Values are clamped
+ * between 0 and 100 by `minValue` / `maxValue`.
+ *
+ * @example
+ * ```tsx
+ * <NumberInputPercentageWithChevrons
+ *   name="discount"
+ *   label="Discount"
+ *   value={discount}
+ *   onChange={setDiscount}
+ * />
+ * ```
+ */
 function NumberInputPercentageWithChevrons({
   defaultValue = 0,
   name,
@@ -33,10 +65,12 @@ function NumberInputPercentageWithChevrons({
   containerClassName,
   ...props
 }: NumberInputPercentageWithChevronsProps) {
+  // Convert integer % (0–100) to the 0–1 fraction NumberField expects.
   const displayValue = value ? value / MAX_VALUE : 0;
 
   const handleChange = (newValue: number) => {
     if (onChange) {
+      // Convert fraction back to integer percentage for the caller.
       onChange(newValue * MAX_VALUE);
     }
   };

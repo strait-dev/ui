@@ -9,18 +9,30 @@ import * as React from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
 
+/** The Embla carousel API instance (imperative scroll controls). */
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
+/** Embla carousel initialization options forwarded to `useEmblaCarousel`. */
 type CarouselOptions = UseCarouselParameters[0];
+/** Embla plugin array forwarded to `useEmblaCarousel`. */
 type CarouselPlugin = UseCarouselParameters[1];
 
+/** Public props accepted by {@link Carousel}. */
 type CarouselProps = {
+  /** Embla options forwarded directly to `useEmblaCarousel`. */
   opts?: CarouselOptions;
+  /** Embla plugins (e.g. autoplay, wheel gestures). */
   plugins?: CarouselPlugin;
+  /** Scroll axis — `"horizontal"` (default) or `"vertical"`. */
   orientation?: "horizontal" | "vertical";
+  /**
+   * Callback that receives the Embla API instance once it is ready.
+   * Use this to call imperative methods (e.g. `api.scrollTo(index)`).
+   */
   setApi?: (api: CarouselApi) => void;
 };
 
+/** Internal context value shared between {@link Carousel} sub-components. */
 type CarouselContextProps = {
   carouselRef: ReturnType<typeof useEmblaCarousel>[0];
   api: ReturnType<typeof useEmblaCarousel>[1];
@@ -32,6 +44,12 @@ type CarouselContextProps = {
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null);
 
+/**
+ * Hook that reads the nearest {@link Carousel} context.
+ *
+ * Useful for building custom navigation controls outside the built-in
+ * {@link CarouselPrevious} / {@link CarouselNext} buttons.
+ */
 function useCarousel() {
   const context = React.useContext(CarouselContext);
 
@@ -42,6 +60,35 @@ function useCarousel() {
   return context;
 }
 
+/**
+ * Accessible, touch-friendly carousel built on Embla Carousel.
+ *
+ * Wrap slides in {@link CarouselContent} > {@link CarouselItem} and
+ * optionally add {@link CarouselPrevious} / {@link CarouselNext} buttons
+ * outside {@link CarouselContent}. The root element receives
+ * `role="region"` and `aria-roledescription="carousel"` following the
+ * WAI-ARIA APG carousel pattern; keyboard arrow navigation is wired
+ * automatically.
+ *
+ * @remarks
+ * - Pass `opts` for Embla configuration (loop, align, drag-free, etc.).
+ * - Pass `plugins` to add Embla plugins such as autoplay or wheel gestures.
+ * - Use `setApi` to obtain the Embla API instance for imperative scrolling.
+ * - The `orientation` prop maps to Embla's `axis` option (`"x"` / `"y"`).
+ *
+ * @example
+ * ```tsx
+ * <Carousel opts={{ loop: true }}>
+ *   <CarouselContent>
+ *     {slides.map((s) => (
+ *       <CarouselItem key={s.id}>{s.content}</CarouselItem>
+ *     ))}
+ *   </CarouselContent>
+ *   <CarouselPrevious />
+ *   <CarouselNext />
+ * </Carousel>
+ * ```
+ */
 function Carousel({
   orientation = "horizontal",
   opts,
@@ -51,6 +98,8 @@ function Carousel({
   children,
   ...props
 }: React.ComponentProps<"div"> & CarouselProps) {
+  // Translate the orientation prop to Embla's axis option, merging with
+  // any other opts the consumer may have provided.
   const [carouselRef, api] = useEmblaCarousel(
     {
       ...opts,
@@ -61,6 +110,7 @@ function Carousel({
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);
 
+  // Re-evaluate scroll-ability after every slide selection or reInit.
   const onSelect = React.useCallback((api: CarouselApi) => {
     if (!api) {
       return;
@@ -90,6 +140,7 @@ function Carousel({
     [scrollPrev, scrollNext]
   );
 
+  // Expose the Embla API to the consumer via setApi once it is ready.
   React.useEffect(() => {
     if (!(api && setApi)) {
       return;
@@ -97,6 +148,8 @@ function Carousel({
     setApi(api);
   }, [api, setApi]);
 
+  // Subscribe to Embla's "select" and "reInit" events to keep the
+  // canScrollPrev/Next flags in sync with the current scroll position.
   React.useEffect(() => {
     if (!api) {
       return;
@@ -139,6 +192,11 @@ function Carousel({
   );
 }
 
+/**
+ * Scrollable container for {@link CarouselItem} slides within a
+ * {@link Carousel}. Attaches the Embla viewport ref and flexes items in
+ * the correct axis direction.
+ */
 function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   const { carouselRef, orientation } = useCarousel();
 
@@ -160,6 +218,12 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * A single slide inside {@link CarouselContent}. Receives
+ * `role="group"` and `aria-roledescription="slide"` per the WAI-ARIA
+ * carousel pattern. Basis defaults to `100%`; override with Tailwind
+ * `basis-*` utilities for multi-slide views.
+ */
 function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
   const { orientation } = useCarousel();
 
@@ -179,6 +243,11 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Absolutely-positioned button that scrolls a {@link Carousel} to the
+ * previous slide. Disabled automatically when no previous slide exists.
+ * Positioned to the left (horizontal) or top (vertical) of the viewport.
+ */
 function CarouselPrevious({
   className,
   variant = "outline",
@@ -209,6 +278,11 @@ function CarouselPrevious({
   );
 }
 
+/**
+ * Absolutely-positioned button that scrolls a {@link Carousel} to the
+ * next slide. Disabled automatically when no next slide exists.
+ * Positioned to the right (horizontal) or bottom (vertical) of the viewport.
+ */
 function CarouselNext({
   className,
   variant = "outline",

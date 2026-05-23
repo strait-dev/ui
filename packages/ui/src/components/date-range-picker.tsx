@@ -65,6 +65,36 @@ type DateRangePickerProps = {
   disabled?: boolean;
 };
 
+/**
+ * An inline date-range picker composed from React Aria Components primitives.
+ *
+ * Renders a dual-segment text input (start / end) with a calendar icon button
+ * that opens a react-day-picker range calendar inside a RAC `Popover` /
+ * `Dialog`. Locale is fixed to `"pt-BR"` via RAC's `I18nProvider`.
+ *
+ * @remarks
+ * - The public API uses react-day-picker's `DateRange` (`{ from, to }`). The
+ *   conversion between `DateRange` and RAC's `RangeValue<CalendarDate>` is
+ *   handled internally via `@internationalized/date`'s `parseDate`.
+ * - The segment inputs provide full keyboard date editing (spin, arrow keys)
+ *   courtesy of RAC's `DateInput` / `DateSegment` primitives — no custom
+ *   spinners needed.
+ * - Unused props (`error`, `errorMessage`, `disabled`) are declared on the
+ *   type but not yet wired to the JSX; they are available for future use.
+ * - For a variant with quick-select presets use
+ *   {@link DateRangePickerWithPresets}.
+ *
+ * @example
+ * ```tsx
+ * const [range, setRange] = React.useState<DateRange | undefined>();
+ *
+ * <DateRangePicker
+ *   label="Period"
+ *   value={range}
+ *   onChange={setRange}
+ * />
+ * ```
+ */
 export function DateRangePicker({
   value,
   onChange,

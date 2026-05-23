@@ -25,8 +25,10 @@ import {
 import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
+/** A single entry in the country selector list. */
 type CountryEntry = { label: string; value: Country | undefined };
 
+/** Props injected into {@link CountrySelect} by `react-phone-number-input`. */
 type CountrySelectProps = {
   disabled?: boolean;
   value: Country;
@@ -34,6 +36,10 @@ type CountrySelectProps = {
   onChange: (country: Country) => void;
 };
 
+/**
+ * Popover-based country picker used as the `countrySelectComponent` inside
+ * {@link PhoneInput}; renders a flag button that opens a searchable list.
+ */
 const CountrySelect = ({
   disabled,
   value: selectedCountry,
@@ -48,6 +54,7 @@ const CountrySelect = ({
       modal
       onOpenChange={(open) => {
         setIsOpen(open);
+        // Clear stale search text so the full list appears on re-open.
         if (open) {
           setSearchValue("");
         }
@@ -124,6 +131,7 @@ const CountrySelect = ({
   );
 };
 
+/** Props for a single row inside the {@link CountrySelect} list. */
 type CountrySelectOptionProps = {
   country: Country;
   countryName: string;
@@ -132,6 +140,10 @@ type CountrySelectOptionProps = {
   onSelectComplete: () => void;
 };
 
+/**
+ * A single selectable country row inside {@link CountrySelect}; shows a
+ * flag, country name, calling code, and a check mark when selected.
+ */
 const CountrySelectOption = ({
   country,
   countryName,
@@ -160,11 +172,16 @@ const CountrySelectOption = ({
   );
 };
 
+/** Props for {@link FlagComponent}. */
 type FlagComponentProps = {
   country: Country | undefined;
   countryName: string;
 };
 
+/**
+ * Circular flag icon for a given country; renders a neutral placeholder
+ * when `country` is `undefined` (e.g. while the value is unset).
+ */
 const FlagComponent = ({ country, countryName }: FlagComponentProps) => {
   if (!country) {
     return (
@@ -183,6 +200,14 @@ const FlagComponent = ({ country, countryName }: FlagComponentProps) => {
   );
 };
 
+/**
+ * Props for {@link PhoneInput}.
+ *
+ * @remarks
+ * `onChange` is re-typed to always receive a `Value` string (never
+ * `undefined`) — an empty string is substituted when the library emits
+ * `undefined` for incomplete numbers.
+ */
 type PhoneInputProps = Omit<
   React.ComponentProps<"input">,
   "onChange" | "value" | "ref"
@@ -192,6 +217,34 @@ type PhoneInputProps = Omit<
     onCountryChange?: (country: Country) => void;
   };
 
+/**
+ * An international phone number field composed of a flag/country-code
+ * selector and a number text input that formats as the user types.
+ *
+ * @remarks
+ * Wraps `react-phone-number-input` (`RPNInput`) with custom sub-components:
+ * - {@link CountrySelect} — flag button that opens a searchable popover.
+ * - {@link FlagComponent} — circular flag badge.
+ * - {@link InputComponent} — styled `Input` primitive with left-side radius
+ *   removed to join flush with the country selector.
+ *
+ * The `onChange` callback always receives an E.164 `Value` string; when
+ * `RPNInput` emits `undefined` (partial or empty number) it is coerced to an
+ * empty string to keep controlled-input consumers stable.
+ *
+ * `smartCaret` is disabled to prevent caret-jump quirks on mobile browsers.
+ *
+ * @example
+ * ```tsx
+ * const [phone, setPhone] = useState<Value>("");
+ * <PhoneInput
+ *   defaultCountry="US"
+ *   placeholder="Enter phone number"
+ *   value={phone}
+ *   onChange={setPhone}
+ * />
+ * ```
+ */
 const PhoneInput = ({
   className,
   onChange,
@@ -233,6 +286,11 @@ const PhoneInput = ({
 
 PhoneInput.displayName = "PhoneInput";
 
+/**
+ * Thin `Input` wrapper passed as `inputComponent` to {@link PhoneInput};
+ * strips the start-side border radius so it joins flush with the country
+ * selector button.
+ */
 const InputComponent = ({
   className,
   ref,

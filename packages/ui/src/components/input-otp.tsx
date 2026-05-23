@@ -6,6 +6,42 @@ import { OTPInput, OTPInputContext } from "input-otp";
 import * as React from "react";
 import { cn } from "../utils/index";
 
+/**
+ * One-time-password input that renders a fixed-length sequence of digit
+ * slots driven by the `input-otp` library.
+ *
+ * @remarks
+ * Wraps the `OTPInput` primitive from `input-otp`. Compose it with
+ * {@link InputOTPGroup}, {@link InputOTPSlot}, and {@link InputOTPSeparator}
+ * to build the visible slot layout; the invisible `<OTPInput>` element
+ * still owns focus and keyboard input while each slot reads its character
+ * from `OTPInputContext`.
+ *
+ * - `maxLength` (required by the primitive) controls how many characters the
+ *   hidden input accepts; match it to the total number of
+ *   {@link InputOTPSlot}s rendered.
+ * - `spellCheck` is forced `false` to avoid browser autocorrect overlays on
+ *   numeric codes.
+ * - Slots reflect `aria-invalid` from an enclosing form library automatically
+ *   via the group's `has-aria-invalid` selector.
+ *
+ * @example
+ * ```tsx
+ * <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+ *   <InputOTPGroup>
+ *     <InputOTPSlot index={0} />
+ *     <InputOTPSlot index={1} />
+ *     <InputOTPSlot index={2} />
+ *   </InputOTPGroup>
+ *   <InputOTPSeparator />
+ *   <InputOTPGroup>
+ *     <InputOTPSlot index={3} />
+ *     <InputOTPSlot index={4} />
+ *     <InputOTPSlot index={5} />
+ *   </InputOTPGroup>
+ * </InputOTP>
+ * ```
+ */
 function InputOTP({
   className,
   containerClassName,
@@ -27,6 +63,10 @@ function InputOTP({
   );
 }
 
+/**
+ * Horizontal group of {@link InputOTPSlot}s with shared border-radius and
+ * validation ring; used as a direct child of {@link InputOTP}.
+ */
 function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -40,6 +80,14 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * A single character cell inside an {@link InputOTPGroup}.
+ *
+ * @remarks
+ * Reads its display character and active state from `OTPInputContext` using
+ * the `index` prop. When the slot is active but has no character yet, a
+ * blinking fake caret is rendered to match native `<input>` behaviour.
+ */
 function InputOTPSlot({
   index,
   className,
@@ -48,6 +96,7 @@ function InputOTPSlot({
   index: number;
 }) {
   const inputOTPContext = React.useContext(OTPInputContext);
+  // Each slot reads only the slice of context it owns.
   const { char, hasFakeCaret, isActive } = inputOTPContext?.slots[index] ?? {};
 
   return (
@@ -70,6 +119,10 @@ function InputOTPSlot({
   );
 }
 
+/**
+ * Decorative dash rendered between {@link InputOTPGroup}s inside an
+ * {@link InputOTP}; hidden from assistive technology via `aria-hidden`.
+ */
 function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
   return (
     // A purely visual divider between OTP digit groups; the icon conveys no

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import { cn } from "../utils/index";
 
-// Date validation constants
+// Bounds used by validateDate to reject out-of-range field values.
 const MIN_DAY = 1;
 const MAX_DAY = 31;
 const MIN_MONTH = 1;
@@ -11,21 +11,48 @@ const MIN_YEAR = 1000;
 const MAX_YEAR = 9999;
 const DESKTOP_BREAKPOINT = 1024;
 
-// Regex for numeric validation
+// Matches a single digit keystroke; used to allow/block key events.
 const NUMERIC_REGEX = /^[0-9]$/;
 
+/** Props for the {@link DateInput} component. */
 type DateInputProps = {
   value?: Date;
   onChange: (date: Date) => void;
   className?: string;
 };
 
+/** Internal representation of the three editable date segments. */
 type DateParts = {
   day: number;
   month: number;
   year: number;
 };
 
+/**
+ * A three-segment MM/DD/YYYY inline date editor with keyboard navigation.
+ *
+ * Renders three individual `<input type="text">` elements styled as a single
+ * field. Users can type digits, increment/decrement with arrow keys, and move
+ * between segments using the left/right arrow keys.
+ *
+ * @remarks
+ * - The component is fully controlled via `value`; internal state mirrors the
+ *   prop and is reset on blur when the entry would be invalid.
+ * - `onChange` is only called when all three parts form a valid calendar date
+ *   (e.g. Feb 30 is rejected by constructing a `Date` and comparing it back).
+ * - Arrow-up on the last day of a month rolls over to the 1st of the next
+ *   month; arrow-down on the 1st rolls back to the last day of the previous
+ *   month. The year advances/decrements accordingly.
+ * - On desktop (viewport width > 1024 px) focusing a segment selects all its
+ *   text so the user can immediately type a replacement value.
+ *
+ * @example
+ * ```tsx
+ * const [date, setDate] = React.useState(new Date());
+ *
+ * <DateInput value={date} onChange={setDate} />
+ * ```
+ */
 const DateInput: React.FC<DateInputProps> = ({
   value,
   onChange,

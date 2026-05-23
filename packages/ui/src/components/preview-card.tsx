@@ -5,14 +5,57 @@ import type React from "react";
 
 import { cn } from "../utils/index";
 
+// Open / close hover delay in milliseconds.
 const PREVIEW_CARD_DELAY = 300;
 
+/**
+ * A hover-activated floating card that previews rich content for a
+ * trigger element, built on Base UI's `PreviewCard` primitives.
+ *
+ * @remarks
+ * Compose the parts in this order:
+ * 1. `PreviewCard` — stateless root context provider.
+ * 2. `PreviewCardTrigger` — the element the user hovers; defaults to a
+ *    300 ms open and close delay.
+ * 3. `PreviewCardPortal` — renders the popup outside the DOM tree.
+ * 4. `PreviewCardPositioner` — positions the popup relative to the
+ *    trigger with an 8 px side offset.
+ * 5. `PreviewCardPopup` — the visible surface with scale+opacity
+ *    enter/exit transitions.
+ * 6. Optionally `PreviewCardArrow` — a filled SVG arrow pointing at
+ *    the trigger.
+ * 7. Optionally `PreviewCardBackdrop` — a full-screen overlay beneath
+ *    the popup (useful for blocking interaction on mobile).
+ *
+ * All parts forward their Base UI primitive props plus `className`.
+ *
+ * @example
+ * ```tsx
+ * <PreviewCard>
+ *   <PreviewCardTrigger>
+ *     <a href="/user/jane">@jane</a>
+ *   </PreviewCardTrigger>
+ *   <PreviewCardPortal>
+ *     <PreviewCardPositioner>
+ *       <PreviewCardPopup>
+ *         <PreviewCardArrow />
+ *         <UserProfile userId="jane" />
+ *       </PreviewCardPopup>
+ *     </PreviewCardPositioner>
+ *   </PreviewCardPortal>
+ * </PreviewCard>
+ * ```
+ */
 function PreviewCard({
   ...props
 }: React.ComponentProps<typeof PreviewCardPrimitive.Root>) {
   return <PreviewCardPrimitive.Root data-slot="preview-card" {...props} />;
 }
 
+/**
+ * The element that opens the {@link PreviewCard} on hover.
+ * Defaults to a 300 ms open and close delay.
+ */
 function PreviewCardTrigger({
   delay = PREVIEW_CARD_DELAY,
   closeDelay = PREVIEW_CARD_DELAY,
@@ -30,6 +73,10 @@ function PreviewCardTrigger({
   );
 }
 
+/**
+ * Teleports the {@link PreviewCard} popup outside the DOM hierarchy
+ * to avoid overflow / stacking-context clipping.
+ */
 function PreviewCardPortal({
   ...props
 }: React.ComponentProps<typeof PreviewCardPrimitive.Portal>) {
@@ -38,6 +85,10 @@ function PreviewCardPortal({
   );
 }
 
+/**
+ * Positions the {@link PreviewCardPopup} relative to the trigger
+ * with an 8 px side offset.
+ */
 function PreviewCardPositioner({
   className,
   sideOffset = 8,
@@ -53,6 +104,10 @@ function PreviewCardPositioner({
   );
 }
 
+/**
+ * The visible floating surface of a {@link PreviewCard}; animates
+ * in and out with a scale + opacity transition.
+ */
 function PreviewCardPopup({
   className,
   ...props
@@ -69,6 +124,10 @@ function PreviewCardPopup({
   );
 }
 
+/**
+ * An SVG arrow that points from the {@link PreviewCardPopup} toward
+ * its trigger; uses a drop-shadow to simulate a border.
+ */
 function PreviewCardArrow({
   className,
   ...props
@@ -85,6 +144,11 @@ function PreviewCardArrow({
   );
 }
 
+/**
+ * A fixed full-screen overlay rendered beneath the
+ * {@link PreviewCardPopup}, blocking pointer interaction with the
+ * page while the card is open.
+ */
 function PreviewCardBackdrop({
   className,
   ...props

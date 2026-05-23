@@ -8,11 +8,13 @@ import { cn } from "../utils/index";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
 
+// Named day-count constants to make preset offsets self-documenting.
 const ONE_DAY = 1;
 const SEVEN_DAYS = 7;
 const THIRTY_DAYS = 30;
 const NINETY_DAYS = 90;
 
+/** A single preset entry shown in the sidebar. */
 type CalendarPreset = {
   name: string;
   value: Date | DateRange;
@@ -55,6 +57,46 @@ type CalendarWithPresetsProps = {
   disableFutureDates?: boolean;
 };
 
+/**
+ * A day-picker calendar with a sidebar of quick-select presets.
+ *
+ * Combines the react-day-picker `Calendar` with a vertical list of preset
+ * buttons so users can jump to common relative dates (today, last 7 days,
+ * last month, etc.) in a single click.
+ *
+ * @remarks
+ * - `mode="single"` shows one calendar month and single-date presets
+ *   (today, yesterday, last week, last month, last year).
+ * - `mode="range"` shows two calendar months side-by-side and range presets
+ *   (last 7 / 30 / 90 days, last month, last year).
+ * - Supply `presets` to replace the built-in list entirely; both `Date` and
+ *   `DateRange` (react-day-picker) values are accepted.
+ * - `disableFutureDates` (default `true`) blocks dates after tomorrow via
+ *   react-day-picker's `disabled` prop.
+ * - `onSelect` is a union type; the caller is responsible for passing the
+ *   correct overload that matches the current `mode`.
+ * - Preset labels are in Brazilian Portuguese; replace `presets` to localise.
+ *
+ * @example
+ * ```tsx
+ * // Single-date picker with default presets
+ * <CalendarWithPresets
+ *   mode="single"
+ *   selected={date}
+ *   onSelect={(d) => setDate(d as Date)}
+ * />
+ *
+ * // Range picker with custom presets
+ * <CalendarWithPresets
+ *   mode="range"
+ *   selected={range}
+ *   onSelect={(r) => setRange(r as DateRange)}
+ *   presets={[
+ *     { name: "This week", value: { from: monday, to: today } },
+ *   ]}
+ * />
+ * ```
+ */
 export function CalendarWithPresets({
   mode = "single",
   selected,

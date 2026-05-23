@@ -5,6 +5,41 @@ import * as React from "react";
 
 import { cn } from "../utils/index";
 
+/**
+ * A range-input control for selecting a numeric value (or range of
+ * values) by dragging one or more thumbs along a track.
+ *
+ * Built on Base UI's `Slider` primitive. Supports both single-value
+ * and multi-thumb range modes depending on whether a scalar or array
+ * is passed to `value` / `defaultValue`.
+ *
+ * @remarks
+ * - Pass an array to `defaultValue` (e.g. `[20, 80]`) to enable a
+ *   two-thumb range slider; a single number produces one thumb.
+ * - The `min` / `max` props default to `0` / `100` and control the
+ *   allowed range. `step` (from Base UI) controls granularity.
+ * - Pass `aria-label` at the root to have the same accessible name
+ *   forwarded to every thumb. Omit it when wrapping the slider in a
+ *   `<Field>` with a `<FieldLabel>` — Base UI will wire the label
+ *   association automatically.
+ * - Supports `orientation="vertical"` via Base UI; the component
+ *   responds to `data-vertical` / `data-horizontal` on the root.
+ *
+ * @example
+ * ```tsx
+ * // Single thumb (uncontrolled)
+ * <Slider defaultValue={40} aria-label="Volume" />
+ *
+ * // Range slider (controlled)
+ * <Slider
+ *   value={[20, 80]}
+ *   onValueChange={([lo, hi]) => setRange([lo, hi])}
+ *   min={0}
+ *   max={100}
+ *   step={5}
+ * />
+ * ```
+ */
 function Slider({
   className,
   defaultValue,

@@ -6,7 +6,7 @@ import type * as React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
 import { cn } from "../utils/index";
 
-// Types
+/** Internal context shared between {@link Timeline} and its descendants. */
 type TimelineContextValue = {
   activeStep: number;
   setActiveStep: (step: number) => void;
@@ -17,6 +17,7 @@ const TimelineContext = createContext<TimelineContextValue | undefined>(
   undefined
 );
 
+/** Hook that reads the nearest {@link Timeline} context. */
 const useTimeline = () => {
   const context = useContext(TimelineContext);
   if (!context) {
@@ -26,13 +27,53 @@ const useTimeline = () => {
 };
 
 // Components
+/** Props for {@link Timeline}. */
 type TimelineProps = React.ComponentProps<"div"> & {
+  /** Initial active step index (uncontrolled). Defaults to `1`. */
   defaultValue?: number;
+  /** Active step index (controlled). */
   value?: number;
+  /** Called when the active step changes. */
   onValueChange?: (value: number) => void;
+  /** Direction of the step track. Defaults to `"vertical"`. */
   orientation?: "horizontal" | "vertical";
 };
 
+/**
+ * Stepped progress tracker that renders a sequence of labeled events.
+ *
+ * Compose with {@link TimelineItem} for each step, nesting
+ * {@link TimelineHeader} (containing {@link TimelineIndicator},
+ * {@link TimelineSeparator}, and {@link TimelineDate}) plus
+ * {@link TimelineTitle} and {@link TimelineContent}. The `orientation`
+ * prop switches between a vertical stack (default) and a horizontal row.
+ *
+ * @remarks
+ * - Supports both controlled (`value` + `onValueChange`) and uncontrolled
+ *   (`defaultValue`) usage — mirrors the same pattern as Radix primitives.
+ * - A step is considered completed when its `step` number is ≤ the active
+ *   step; this drives the `data-completed` attribute consumed by
+ *   {@link TimelineItem} and {@link TimelineIndicator} styling.
+ * - The separator line between steps is hidden on the last item via the
+ *   `group-last` selector, so no special handling is required by consumers.
+ *
+ * @example
+ * ```tsx
+ * <Timeline value={2}>
+ *   {steps.map((s, i) => (
+ *     <TimelineItem key={s.id} step={i + 1}>
+ *       <TimelineHeader>
+ *         <TimelineSeparator />
+ *         <TimelineIndicator />
+ *         <TimelineDate>{s.date}</TimelineDate>
+ *       </TimelineHeader>
+ *       <TimelineTitle>{s.title}</TimelineTitle>
+ *       <TimelineContent>{s.description}</TimelineContent>
+ *     </TimelineItem>
+ *   ))}
+ * </Timeline>
+ * ```
+ */
 function Timeline({
   defaultValue = 1,
   value,
@@ -45,6 +86,7 @@ function Timeline({
 
   const setActiveStep = useCallback(
     (step: number) => {
+      // In controlled mode the parent owns the state; skip internal update.
       if (value === undefined) {
         setInternalStep(step);
       }
@@ -53,6 +95,7 @@ function Timeline({
     [value, onValueChange]
   );
 
+  // Controlled value takes precedence over internal state.
   const currentStep = value ?? activeStep;
 
   return (
@@ -72,7 +115,7 @@ function Timeline({
   );
 }
 
-// TimelineContent
+/** Descriptive body text for a {@link TimelineItem}. */
 function TimelineContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -83,7 +126,10 @@ function TimelineContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-// TimelineDate
+/**
+ * Timestamp label rendered above a {@link TimelineItem}'s title. Uses Base
+ * UI's `useRender` so the element can be swapped via the `render` prop.
+ */
 type TimelineDateProps = useRender.ComponentProps<"time">;
 
 function TimelineDate({ render, className, ...props }: TimelineDateProps) {
@@ -105,14 +151,19 @@ function TimelineDate({ render, className, ...props }: TimelineDateProps) {
   });
 }
 
-// TimelineHeader
+/** Layout wrapper that positions the indicator and separator in a {@link TimelineItem}. */
 function TimelineHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn(className)} data-slot="timeline-header" {...props} />
   );
 }
 
-// TimelineIndicator
+/**
+ * Visual dot/badge placed at the step position inside a
+ * {@link TimelineItem}. Marked `aria-hidden`; any icon children are
+ * purely decorative. Filled border color switches when the parent item
+ * carries `data-completed`.
+ */
 type TimelineIndicatorProps = React.ComponentProps<"div">;
 
 function TimelineIndicator({
@@ -136,10 +187,21 @@ function TimelineIndicator({
 }
 
 // TimelineItem
+/** Props for {@link TimelineItem}. */
 type TimelineItemProps = React.ComponentProps<"div"> & {
+  /** 1-based index of this step; compared against the active step to
+   *  set `data-completed`. */
   step: number;
 };
 
+/**
+ * A single step inside a {@link Timeline}.
+ *
+ * Sets `data-completed` on itself when `step ≤ activeStep`, which the
+ * indicator and separator use for their filled styles. The adjacent
+ * sibling selector `has-[+[data-completed]]` on the separator turns the
+ * connector line primary-colored once the *next* step is reached.
+ */
 function TimelineItem({ step, className, ...props }: TimelineItemProps) {
   const { activeStep } = useTimeline();
 
@@ -156,7 +218,10 @@ function TimelineItem({ step, className, ...props }: TimelineItemProps) {
   );
 }
 
-// TimelineSeparator
+/**
+ * Connector line drawn between consecutive {@link TimelineItem} steps.
+ * Hidden on the last item via `group-last`. Marked `aria-hidden`.
+ */
 function TimelineSeparator({
   className,
   ...props
@@ -174,7 +239,7 @@ function TimelineSeparator({
   );
 }
 
-// TimelineTitle
+/** Primary heading for a {@link TimelineItem}, rendered as an `<h3>`. */
 function TimelineTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3

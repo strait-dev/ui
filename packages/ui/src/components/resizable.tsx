@@ -4,6 +4,30 @@ import * as ResizablePrimitive from "react-resizable-panels";
 
 import { cn } from "../utils/index";
 
+/**
+ * Root layout container for a set of drag-resizable panels.
+ *
+ * Wraps `react-resizable-panels`' `Group` primitive. Compose it with
+ * {@link ResizablePanel} for content areas and {@link ResizableHandle} for
+ * the drag handles between them. The group flex-direction is derived from
+ * `aria-orientation` on the underlying element: horizontal by default,
+ * vertical when `direction="vertical"` is set on the primitive.
+ *
+ * @remarks
+ * - Panels must be given unique `id` props (or auto-generated ones) so the
+ *   library can persist and restore sizes across renders.
+ * - Use `defaultSize` on each {@link ResizablePanel} to set initial sizes
+ *   as percentages (must sum to 100).
+ *
+ * @example
+ * ```tsx
+ * <ResizablePanelGroup direction="horizontal">
+ *   <ResizablePanel defaultSize={25}>Sidebar</ResizablePanel>
+ *   <ResizableHandle withHandle />
+ *   <ResizablePanel defaultSize={75}>Main</ResizablePanel>
+ * </ResizablePanelGroup>
+ * ```
+ */
 function ResizablePanelGroup({
   className,
   ...props
@@ -20,10 +44,25 @@ function ResizablePanelGroup({
   );
 }
 
+/**
+ * A single resizable content area inside a {@link ResizablePanelGroup}.
+ * Accepts all `react-resizable-panels` `Panel` props such as `defaultSize`,
+ * `minSize`, `maxSize`, and `collapsible`.
+ */
 function ResizablePanel({ ...props }: ResizablePrimitive.PanelProps) {
   return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />;
 }
 
+/**
+ * Drag handle separator between two {@link ResizablePanel} elements.
+ *
+ * @remarks
+ * - `withHandle` — when `true`, renders a small visual grip indicator
+ *   (a pill-shaped bar) centered on the drag line, making the resizable
+ *   boundary more discoverable.
+ * - The hit-target is widened via an `::after` pseudo-element so that
+ *   dragging is comfortable even on the 1 px visible line.
+ */
 function ResizableHandle({
   withHandle,
   className,

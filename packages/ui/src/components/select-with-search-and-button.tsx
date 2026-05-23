@@ -22,11 +22,15 @@ import {
 import { Label } from "./label";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
+/**
+ * A single option entry used by {@link SelectWithSearchAndButton}.
+ */
 export type SelectOptionWithSearchAndButton = {
   value: string;
   label: string;
 };
 
+/** Props for {@link SelectWithSearchAndButton}. */
 type SelectWithSearchAndButtonProps = {
   options: SelectOptionWithSearchAndButton[];
   value?: string;
@@ -45,6 +49,37 @@ type SelectWithSearchAndButtonProps = {
   buttonIcon?: React.ReactNode;
 };
 
+/**
+ * A searchable single-select dropdown with a persistent action
+ * button pinned below the option list, typically used for inline
+ * "Add new …" creation flows.
+ *
+ * @remarks
+ * Composes `Popover`, `Command` (cmdk), `Label`, and `Button` from
+ * the design system. Unlike {@link SelectWithSearch} the option list
+ * is not virtualized; filtering is handled client-side by the
+ * underlying `Command` primitive.
+ *
+ * Selecting an already-selected option toggles it back to empty
+ * (the value is cleared), giving users a way to deselect.
+ *
+ * When `onButtonClick` is provided, a `CommandSeparator` and a
+ * ghost `Button` are appended after the options. Clicking the
+ * button invokes `onButtonClick` and immediately closes the
+ * dropdown.
+ *
+ * @example
+ * ```tsx
+ * <SelectWithSearchAndButton
+ *   label="Team"
+ *   options={teams}
+ *   value={teamId}
+ *   onValueChange={setTeamId}
+ *   buttonText="Create team"
+ *   onButtonClick={openCreateTeamDialog}
+ * />
+ * ```
+ */
 export function SelectWithSearchAndButton({
   options,
   value,

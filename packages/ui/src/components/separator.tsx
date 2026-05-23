@@ -4,6 +4,26 @@ import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
 
 import { cn } from "../utils/index";
 
+/**
+ * A thin decorative or semantic dividing line between sections of content.
+ *
+ * Built on Base UI's `Separator` primitive, which renders the correct
+ * `role="separator"` or `role="presentation"` depending on its `decorative`
+ * prop. Orientation defaults to `"horizontal"` (full-width 1 px rule);
+ * set `orientation="vertical"` for a 1 px column divider that stretches
+ * to the cross-axis of its flex container.
+ *
+ * @remarks
+ * - Used internally by {@link ButtonGroupSeparator} with vertical orientation.
+ * - Pass `decorative={false}` when the separator conveys structural meaning
+ *   (e.g. separating nav sections) so assistive technology announces it.
+ *
+ * @example
+ * ```tsx
+ * <Separator />
+ * <Separator orientation="vertical" className="h-4" />
+ * ```
+ */
 function Separator({
   className,
   orientation = "horizontal",

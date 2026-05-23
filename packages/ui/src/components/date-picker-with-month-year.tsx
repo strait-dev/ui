@@ -19,14 +19,15 @@ import {
   SelectValue,
 } from "./select";
 
-// Set date-fns to preserve the date values without timezone conversion
+// Prevent date-fns from applying timezone offsets when formatting dates.
 setDefaultOptions({
-  // This ensures that date-fns doesn't apply timezone conversions
-  // when formatting or parsing dates
   weekStartsOn: 0,
 });
 
-// Capitalized month names for pt-BR
+/**
+ * Lookup table used to capitalise react-day-picker's lowercase pt-BR month
+ * names (e.g. "janeiro" → "Janeiro") inside the dropdown options.
+ */
 const capitalizedMonths = {
   janeiro: "Janeiro",
   fevereiro: "Fevereiro",
@@ -42,7 +43,10 @@ const capitalizedMonths = {
   dezembro: "Dezembro",
 };
 
-// Calendar dropdown navigation component
+/**
+ * Wrapper that places the month and year dropdowns side-by-side in the
+ * react-day-picker `captionLayout="dropdown"` caption slot.
+ */
 function DropdownNav(props: DropdownNavProps) {
   return (
     <div className="flex w-full items-center gap-2" data-slot="dropdown-nav">
@@ -51,7 +55,13 @@ function DropdownNav(props: DropdownNavProps) {
   );
 }
 
-// Calendar dropdown component
+/**
+ * Renders a single month or year dropdown as a design-system {@link Select}.
+ *
+ * Capitalises lowercase month labels from pt-BR before rendering them.
+ * Bridges react-day-picker's native `<select>` onChange into the
+ * {@link Select} `onValueChange` callback.
+ */
 function CalendarDropdown({
   props,
   handleCalendarChange,
@@ -111,7 +121,13 @@ function CalendarDropdown({
   );
 }
 
-// Dropdown wrapper component to avoid inline component definition
+/**
+ * Factory that closes over `handleCalendarChange` and returns a component
+ * compatible with react-day-picker's `components.Dropdown` slot.
+ *
+ * Defined as a factory (rather than an inline render prop) to prevent
+ * React from remounting the dropdown on each parent render.
+ */
 function DropdownWrapper({
   handleCalendarChange,
 }: {
@@ -151,6 +167,38 @@ type DatePickerWithMonthYearProps = {
   placeholder?: string;
 };
 
+/**
+ * A date picker with dropdown selectors for month and year navigation.
+ *
+ * Extends the basic popover-calendar pattern by replacing the prev/next
+ * navigation arrows with react-day-picker's `captionLayout="dropdown"` — two
+ * {@link Select} dropdowns that let users jump directly to any month or year
+ * within the `minValue`/`maxValue` bounds.
+ *
+ * @remarks
+ * - Supports both controlled (`value` + `onChange`) and uncontrolled
+ *   (`defaultValue`) usage. When `value` is `undefined` the component tracks
+ *   selection in internal state.
+ * - Dates are constructed with explicit year/month/day at midnight local time
+ *   to avoid UTC offset drift that can shift the displayed date by one day.
+ * - `placeholder` defaults to `"Selecione uma data"` (pt-BR); override it to
+ *   localise.
+ * - `minValue` and `maxValue` are forwarded as `startMonth`/`endMonth` to
+ *   react-day-picker, which hides out-of-range months from the dropdown.
+ *
+ * @example
+ * ```tsx
+ * const [date, setDate] = React.useState<Date | undefined>();
+ *
+ * <DatePickerWithMonthYear
+ *   value={date}
+ *   onChange={setDate}
+ *   minValue={new Date(2020, 0, 1)}
+ *   maxValue={new Date(2030, 11, 31)}
+ *   placeholder="Pick a date"
+ * />
+ * ```
+ */
 function DatePickerWithMonthYear({
   value,
   onChange,

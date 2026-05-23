@@ -3,6 +3,33 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type React from "react";
 import { cn } from "../utils/index";
 
+/**
+ * An alternative styled wrapper around the browser's native
+ * `<select>` element.
+ *
+ * Accepts raw `<option>` / `<optgroup>` children. Accepts all
+ * standard `<select>` attributes including `multiple`.
+ *
+ * @remarks
+ * - In single-select mode (`multiple` is falsy) a down-chevron icon
+ *   is absolutely-positioned to the right of the control; it hides
+ *   automatically when the select is disabled (`peer-disabled`).
+ * - In multi-select mode (`multiple={true}`) the chevron is omitted
+ *   and each `<option>` gets accent highlighting when selected.
+ * - For an accessible form, always pair with a `<Label>`.
+ * - For a fully custom JS-driven dropdown, use {@link Select} instead.
+ *   For the alternative native wrapper with a two-column icon style,
+ *   see {@link NativeSelect}.
+ *
+ * @example
+ * ```tsx
+ * <SelectNative defaultValue="">
+ *   <option value="" disabled>Choose…</option>
+ *   <option value="apple">Apple</option>
+ *   <option value="banana">Banana</option>
+ * </SelectNative>
+ * ```
+ */
 const SelectNative = ({
   className,
   children,
