@@ -1,6 +1,14 @@
 import { render } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
-import { BarChart, LineChart, MapChart, PieChart } from "./charts";
+import {
+  AreaChart,
+  BarChart,
+  ComboChart,
+  DonutChart,
+  LineChart,
+  MapChart,
+  PieChart,
+} from "./charts";
 
 beforeAll(() => {
   globalThis.ResizeObserver ||= class {
@@ -150,5 +158,159 @@ describe("MapChart", () => {
     expect(
       getByText("Map chart component not implemented yet")
     ).toBeInTheDocument();
+  });
+});
+
+describe("BarChart stacked", () => {
+  it("renders with data-slot='bar-chart' when stacked", () => {
+    render(
+      <BarChart
+        categories={["revenue", "expenses"]}
+        data={lineBarData}
+        index="month"
+        stacked
+      />
+    );
+    expect(
+      document.querySelector("[data-slot='bar-chart']")
+    ).toBeInTheDocument();
+  });
+
+  it("renders without throwing with stacked=false (default)", () => {
+    expect(() =>
+      render(
+        <BarChart
+          categories={["revenue"]}
+          data={lineBarData}
+          index="month"
+          stacked={false}
+        />
+      )
+    ).not.toThrow();
+  });
+});
+
+describe("AreaChart", () => {
+  it("renders with data-slot='area-chart'", () => {
+    render(
+      <AreaChart
+        categories={["revenue", "cost"]}
+        data={lineBarData}
+        index="month"
+      />
+    );
+    expect(
+      document.querySelector("[data-slot='area-chart']")
+    ).toBeInTheDocument();
+  });
+
+  it("renders without throwing with stacked=true", () => {
+    expect(() =>
+      render(
+        <AreaChart
+          categories={["revenue", "cost"]}
+          data={lineBarData}
+          index="month"
+          stacked
+        />
+      )
+    ).not.toThrow();
+  });
+
+  it("accepts fillOpacity without throwing", () => {
+    expect(() =>
+      render(
+        <AreaChart
+          categories={["revenue"]}
+          data={lineBarData}
+          fillOpacity={0.4}
+          index="month"
+        />
+      )
+    ).not.toThrow();
+  });
+});
+
+describe("DonutChart", () => {
+  it("renders with data-slot='donut-chart'", () => {
+    render(<DonutChart category="value" data={pieData} index="name" />);
+    expect(
+      document.querySelector("[data-slot='donut-chart']")
+    ).toBeInTheDocument();
+  });
+
+  it("renders without throwing", () => {
+    expect(() =>
+      render(<DonutChart category="value" data={pieData} index="name" />)
+    ).not.toThrow();
+  });
+
+  it("renders a center label when provided", () => {
+    const { getByText } = render(
+      <DonutChart
+        category="value"
+        centerLabel={<span>Total</span>}
+        data={pieData}
+        index="name"
+      />
+    );
+    expect(getByText("Total")).toBeInTheDocument();
+  });
+
+  it("accepts custom innerRadius and outerRadius without throwing", () => {
+    expect(() =>
+      render(
+        <DonutChart
+          category="value"
+          data={pieData}
+          index="name"
+          innerRadius={40}
+          outerRadius={70}
+        />
+      )
+    ).not.toThrow();
+  });
+});
+
+describe("ComboChart", () => {
+  it("renders with data-slot='combo-chart'", () => {
+    render(
+      <ComboChart
+        barCategories={["revenue"]}
+        data={lineBarData}
+        index="month"
+        lineCategories={["cost"]}
+      />
+    );
+    expect(
+      document.querySelector("[data-slot='combo-chart']")
+    ).toBeInTheDocument();
+  });
+
+  it("renders without throwing with rightAxis=false", () => {
+    expect(() =>
+      render(
+        <ComboChart
+          barCategories={["revenue"]}
+          data={lineBarData}
+          index="month"
+          lineCategories={["cost"]}
+          rightAxis={false}
+        />
+      )
+    ).not.toThrow();
+  });
+
+  it("renders without throwing with multiple bar and line categories", () => {
+    expect(() =>
+      render(
+        <ComboChart
+          barCategories={["revenue", "cost"]}
+          data={lineBarData}
+          index="month"
+          lineCategories={["revenue"]}
+        />
+      )
+    ).not.toThrow();
   });
 });
