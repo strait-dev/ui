@@ -1,0 +1,45 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Biome
+        run: bunx @biomejs/biome check .
+      - name: Typecheck
+        run: bun run --filter @strait/ui typecheck
+      - name: Build Storybook
+        run: bun run build-storybook
+
+  a11y:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bunx playwright install --with-deps chromium
+      - name: Build & serve Storybook, run a11y scan
+        run: |
+          bun run build-storybook
+          bunx http-server apps/storybook/storybook-static -p 6006 &
+          bunx wait-on http://localhost:6006/index.json
+          bun scripts/a11y-scan.mjs
+          bun scripts/a11y-scan.mjs --theme dark
+      - name: Fail on serious/critical findings
+        run: |
+          COUNT=$(bun -e "console.log(JSON.parse(require('fs').readFileSync('scripts/a11y-report.json')).filter(f=>f.impact==='serious'||f.impact==='critical').length)")
+          echo "serious/critical findings: $COUNT"
+          test "$COUNT" = "0"
