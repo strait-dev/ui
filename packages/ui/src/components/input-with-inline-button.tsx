@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "../utils/index";
 import { Button } from "./button";
 import { Input } from "./input";
