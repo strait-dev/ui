@@ -1,182 +1,326 @@
 "use client";
 
-import { format, formatDistanceToNow } from "date-fns";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "../utils/index";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
 
-/**
- * Props for {@link RelativeTimeCard}.
- */
-type RelativeTimeCardProps = {
-  /**
-   * The date to display. Accepts a `Date` object, an ISO string, or a numeric
-   * epoch timestamp — all are normalised via `new Date(date)`.
-   */
-  date: Date | string | number;
-  /**
-   * IANA time-zone identifiers to show as additional rows in the hover card,
-   * e.g. `["America/New_York", "Europe/London", "Asia/Tokyo"]`.
-   *
-   * Rows whose timezone identifier is invalid are silently skipped.
-   *
-   * @default []
-   */
-  timezones?: string[];
-  /**
-   * How often (in milliseconds) the relative-time string refreshes.
-   *
-   * @default 60000
-   */
-  updateInterval?: number;
-  /**
-   * Which side of the trigger the hover card opens on.
-   *
-   * @default "bottom"
-   */
-  side?: "top" | "right" | "bottom" | "left";
-  /**
-   * Alignment of the hover card relative to the trigger.
-   *
-   * @default "center"
-   */
-  align?: "start" | "center" | "end";
-  /** Extra classes merged onto the trigger `<span>`. */
-  className?: string;
-  /**
-   * When provided, replaces the live relative-time string as the trigger label.
-   * The hover card still shows the absolute time and timezone rows.
-   */
-  children?: React.ReactNode;
-};
-
-/**
- * Formats `target` in the given IANA `timezone` using `Intl.DateTimeFormat`.
- *
- * Returns `null` when the timezone identifier is invalid so callers can skip
- * the row instead of crashing.
- */
-function formatInTimezone(target: Date, timezone: string): string | null {
-  try {
-    return new Intl.DateTimeFormat(undefined, {
-      timeZone: timezone,
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(target);
-  } catch {
-    return null;
-  }
+/** Pluralise `word` against `n` ("1 minute" / "2 minutes"). */
+function pluralize(n: number, word: string): string {
+  return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
 
 /**
- * An inline trigger that displays a live relative timestamp ("3 minutes ago")
- * and, on hover, reveals a floating card with the full absolute time plus
- * optional per-timezone rows.
+ * Build a human relative-time string ("just now", "in 3 minutes",
+ * "2 hours ago") from `date` relative to now.
  *
- * The relative string auto-refreshes on a configurable interval (default every
- * 60 seconds) via an internal `setInterval` — no external timer management is
- * needed.
+ * Falls back to a locale date string once the distance exceeds a week so the
+ * label stays meaningful for old/far-future timestamps.
+ */
+function formatRelativeTime(date: Date): string {
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const isInFuture = diff < 0;
+  const absDiff = Math.abs(diff);
+
+  const seconds = Math.floor(absDiff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (seconds < 5) {
+    return "just now";
+  }
+
+  if (isInFuture) {
+    if (seconds < 60) {
+      return `in ${pluralize(seconds, "second")}`;
+    }
+    if (minutes < 60) {
+      return `in ${pluralize(minutes, "minute")}`;
+    }
+    if (hours < 24) {
+      return `in ${pluralize(hours, "hour")}`;
+    }
+    if (days < 7) {
+      return `in ${pluralize(days, "day")}`;
+    }
+    return date.toLocaleDateString();
+  }
+
+  if (seconds < 60) {
+    return `${pluralize(seconds, "second")} ago`;
+  }
+  if (minutes < 60) {
+    return `${pluralize(minutes, "minute")} ${pluralize(seconds % 60, "second")} ago`;
+  }
+  if (hours < 24) {
+    return `${pluralize(hours, "hour")} ago`;
+  }
+  if (days < 7) {
+    return `${pluralize(days, "day")} ago`;
+  }
+  return date.toLocaleDateString();
+}
+
+type TimezoneRowProps = React.ComponentProps<"li"> & {
+  date: Date;
+  /** IANA identifier. When omitted, the viewer's resolved timezone is used. */
+  timezone?: string;
+};
+
+/**
+ * A single timezone row inside the card: a name chip on the left and the
+ * formatted date + time on the right. With no `timezone`, it resolves the
+ * viewer's local short-offset name (e.g. "GMT-5").
+ */
+function TimezoneRow({
+  date,
+  timezone,
+  className,
+  ...props
+}: TimezoneRowProps) {
+  const locale = React.useMemo(
+    () => Intl.DateTimeFormat().resolvedOptions().locale,
+    []
+  );
+
+  const timezoneName = React.useMemo(
+    () =>
+      timezone ??
+      new Intl.DateTimeFormat(locale, { timeZoneName: "shortOffset" })
+        .formatToParts(date)
+        .find((part) => part.type === "timeZoneName")?.value,
+    [date, timezone, locale]
+  );
+
+  const { formattedDate, formattedTime } = React.useMemo(
+    () => ({
+      formattedDate: new Intl.DateTimeFormat(locale, {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: timezone,
+      }).format(date),
+      formattedTime: new Intl.DateTimeFormat(locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+        timeZone: timezone,
+      }).format(date),
+    }),
+    [date, timezone, locale]
+  );
+
+  return (
+    <li
+      aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
+      {...props}
+      className={cn(
+        "flex items-center justify-between gap-2 text-muted-foreground text-sm",
+        className
+      )}
+    >
+      <span className="w-fit rounded bg-accent px-1 font-medium text-xs">
+        {timezoneName}
+      </span>
+      <div className="flex items-center gap-2">
+        <time dateTime={date.toISOString()}>{formattedDate}</time>
+        <time className="tabular-nums" dateTime={date.toISOString()}>
+          {formattedTime}
+        </time>
+      </div>
+    </li>
+  );
+}
+
+const triggerVariants = cva(
+  "inline-flex w-fit cursor-default items-center justify-center text-foreground/70 text-sm transition-colors hover:text-foreground/90 focus-visible:rounded-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+  {
+    variants: {
+      variant: {
+        default: "",
+        muted: "text-foreground/50 hover:text-foreground/70",
+        ghost: "hover:underline",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+type RelativeTimeCardProps = Omit<React.ComponentProps<"button">, "children"> &
+  VariantProps<typeof triggerVariants> &
+  Pick<
+    React.ComponentProps<typeof HoverCard>,
+    "open" | "defaultOpen" | "onOpenChange"
+  > &
+  Pick<React.ComponentProps<typeof HoverCardTrigger>, "delay" | "closeDelay"> &
+  Pick<
+    React.ComponentProps<typeof HoverCardContent>,
+    "side" | "align" | "sideOffset" | "alignOffset"
+  > & {
+    /**
+     * The date to display. Accepts a `Date`, an ISO string, or a numeric epoch
+     * timestamp — all are normalised via `new Date(date)`.
+     */
+    date: Date | string | number;
+    /**
+     * IANA time-zone identifiers shown as rows in the card. The viewer's local
+     * timezone is always appended as a final row.
+     *
+     * @default ["UTC"]
+     */
+    timezones?: string[];
+    /**
+     * How often (ms) the relative-time string in the card refreshes.
+     *
+     * @default 1000
+     */
+    updateInterval?: number;
+    /**
+     * Custom trigger label. When omitted, the trigger shows the formatted
+     * absolute timestamp (e.g. "Jun 1, 2024, 12:00 PM").
+     */
+    children?: React.ReactNode;
+  };
+
+/**
+ * Shows a compact, formatted timestamp that — on hover — reveals a card with
+ * the live relative time and the same instant rendered across one or more
+ * timezones (plus the viewer's local zone).
+ *
+ * Built on {@link HoverCard}. The relative string in the card auto-refreshes on
+ * a configurable interval via an internal `setInterval`.
  *
  * @remarks
- * - The trigger is rendered as a `<span>` (not an `<a>`) so it can be embedded
- *   inline without introducing an unexpected anchor in the DOM.
- * - Supply `timezones` to add secondary time-zone rows to the card. Invalid
- *   IANA identifiers are silently skipped.
- * - Pass `children` to use custom text as the trigger label while keeping the
- *   card content intact (useful for semantic labels like "just now" or a user's
- *   local phrase).
- * - The component is pointer-driven (hover-card). Information shown exclusively
- *   inside the card is not keyboard-accessible; keep it supplemental.
+ * - The trigger renders as a `<button>` so it is focusable; the hover card is
+ *   still pointer-driven, so keep card-only information supplemental.
+ * - `variant` styles the trigger: `default`, `muted` (dimmer), or `ghost`
+ *   (underline on hover).
+ * - `timezones` defaults to `["UTC"]`; the viewer's local timezone is always
+ *   appended as the last row.
+ * - Positioning (`side`, `align`, `sideOffset`, `alignOffset`) and open-state
+ *   props (`open`, `defaultOpen`, `onOpenChange`, `delay`, `closeDelay`) are
+ *   forwarded to the underlying {@link HoverCard}.
  *
  * @example
  * ```tsx
- * // Basic — trigger shows live relative time
+ * // Default — trigger shows the absolute time, card adds relative + zones
  * <RelativeTimeCard date={new Date("2024-06-01T12:00:00Z")} />
  *
- * // With timezones
+ * // Multiple timezones + muted trigger
  * <RelativeTimeCard
- *   date={new Date()}
+ *   date={post.createdAt}
  *   timezones={["America/New_York", "Europe/Berlin", "Asia/Tokyo"]}
+ *   variant="muted"
  * />
  *
  * // Custom trigger label
- * <RelativeTimeCard date={event.createdAt}>
- *   Created recently
- * </RelativeTimeCard>
+ * <RelativeTimeCard date={event.startsAt}>Starts soon</RelativeTimeCard>
  * ```
  */
 function RelativeTimeCard({
-  date,
-  timezones = [],
-  updateInterval = 60_000,
-  side = "bottom",
-  align = "center",
+  date: dateProp,
+  variant,
+  timezones = ["UTC"],
+  updateInterval = 1000,
+  open,
+  defaultOpen,
+  onOpenChange,
+  delay = 500,
+  closeDelay = 300,
+  side,
+  align,
+  sideOffset,
+  alignOffset,
   className,
   children,
+  ...triggerProps
 }: RelativeTimeCardProps) {
-  const target = new Date(date);
+  const date = React.useMemo(
+    () => (dateProp instanceof Date ? dateProp : new Date(dateProp)),
+    [dateProp]
+  );
 
-  // Tick state — incrementing it forces a re-render so the relative string
-  // is recomputed even though date-fns itself is not reactive.
-  const [, setTick] = React.useState(0);
+  const locale = React.useMemo(
+    () => Intl.DateTimeFormat().resolvedOptions().locale,
+    []
+  );
+
+  const [relativeTime, setRelativeTime] = React.useState<string>(() =>
+    date.toLocaleDateString()
+  );
 
   React.useEffect(() => {
-    const id = setInterval(() => {
-      setTick((t) => t + 1);
+    setRelativeTime(formatRelativeTime(date));
+    const timer = setInterval(() => {
+      setRelativeTime(formatRelativeTime(date));
     }, updateInterval);
-    return () => {
-      clearInterval(id);
-    };
-  }, [updateInterval]);
 
-  // Recomputed on every render (including ticks).
-  const relative = formatDistanceToNow(target, { addSuffix: true });
+    return () => clearInterval(timer);
+  }, [date, updateInterval]);
 
-  // Full absolute local time, e.g. "Jun 1, 2024, 12:00:00 PM"
-  const absolute = format(target, "PPpp");
+  const absoluteLabel = React.useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(date),
+    [date, locale]
+  );
 
   return (
-    <HoverCard>
+    <HoverCard
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+      open={open}
+    >
       <HoverCardTrigger
+        closeDelay={closeDelay}
+        delay={delay}
         render={
-          <span
-            className={cn(
-              "cursor-default underline decoration-dotted underline-offset-2",
-              className
-            )}
+          <button
+            className={cn(triggerVariants({ variant }), className)}
             data-slot="relative-time-card-trigger"
+            type="button"
+            {...triggerProps}
           />
         }
       >
-        {children ?? relative}
+        {children ?? (
+          <time dateTime={date.toISOString()} suppressHydrationWarning>
+            {absoluteLabel}
+          </time>
+        )}
       </HoverCardTrigger>
 
       <HoverCardContent
         align={align}
+        alignOffset={alignOffset}
+        className="flex w-auto max-w-[420px] flex-col gap-2 p-3"
         data-slot="relative-time-card-content"
         side={side}
+        sideOffset={sideOffset}
       >
-        {/* Absolute local time heading */}
-        <p className="font-medium text-foreground text-sm">{absolute}</p>
-
-        {/* Per-timezone rows */}
-        {timezones.length > 0 && (
-          <div className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
-            {timezones.map((tz) => {
-              const formatted = formatInTimezone(target, tz);
-              if (formatted === null) {
-                return null;
-              }
-              return (
-                <React.Fragment key={tz}>
-                  <span className="text-muted-foreground">{tz}</span>
-                  <span className="text-foreground">{formatted}</span>
-                </React.Fragment>
-              );
-            })}
-          </div>
-        )}
+        <time
+          className="text-muted-foreground text-sm"
+          dateTime={date.toISOString()}
+        >
+          {relativeTime}
+        </time>
+        <ul className="flex list-none flex-col gap-1">
+          {timezones.map((timezone) => (
+            <TimezoneRow date={date} key={timezone} timezone={timezone} />
+          ))}
+          <TimezoneRow date={date} />
+        </ul>
       </HoverCardContent>
     </HoverCard>
   );

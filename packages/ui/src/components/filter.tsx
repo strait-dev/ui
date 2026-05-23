@@ -1,12 +1,20 @@
 "use client";
 
-import { FilterIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
+import {
+  AlertCircleIcon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  Cancel01Icon,
+  PlusSignIcon,
+  Tick02Icon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import { cva } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "../utils/index";
-import { Badge } from "./badge";
 import { Button } from "./button";
+import { ButtonGroup, ButtonGroupText } from "./button-group";
 import {
   Command,
   CommandEmpty,
@@ -15,598 +23,1363 @@ import {
   CommandItem,
   CommandList,
 } from "./command";
-import { Input } from "./input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+} from "./input-group";
+import { Kbd } from "./kbd";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
 
 // ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------
 
-/** Supported field value types for a {@link FilterFieldDef}. */
-export type FilterFieldType = "text" | "number" | "select" | "date";
+/** The kind of value a {@link FilterFieldConfig} edits. */
+export type FilterFieldType =
+  | "select"
+  | "multiselect"
+  | "text"
+  | "custom"
+  | "separator";
 
-/**
- * All operators that can be used in a {@link FilterRule}.
- *
- * Not every operator is valid for every field type — the default operator
- * sets are constrained by {@link DEFAULT_OPERATORS}.
- */
-export type FilterOperator =
-  | "is"
-  | "is_not"
-  | "contains"
-  | "does_not_contain"
-  | "starts_with"
-  | "ends_with"
-  | "gt"
-  | "lt"
-  | "gte"
-  | "lte"
-  | "before"
-  | "after"
-  | "on";
-
-/** A label/value pair for `select`-type fields. */
-export type FilterFieldOption = { label: string; value: string };
-
-/**
- * Definition of a filterable field.
- *
- * @remarks
- * `options` is required when `type` is `"select"`. `operators` overrides the
- * default operator list for the field type.
- */
-export type FilterFieldDef = {
-  /** Unique machine identifier for this field. */
-  id: string;
-  /** Human-readable label shown in the builder and chips. */
-  label: string;
-  /** Determines which operators and value editor are offered. */
-  type: FilterFieldType;
-  /** Required when `type` is `"select"`. */
-  options?: FilterFieldOption[];
-  /** Override the default operator list derived from `type`. */
-  operators?: FilterOperator[];
-  /** Optional icon shown next to the field name in the picker. */
-  icon?: IconSvgElement;
-};
-
-/**
- * A single active filter rule produced by {@link Filter}.
- *
- * @remarks
- * `value` is always stored as a string. For `date` fields it uses ISO
- * `yyyy-MM-dd` format.
- */
-export type FilterRule = {
-  /** Unique row id — generated via `crypto.randomUUID()`. */
-  id: string;
-  /** {@link FilterFieldDef.id} this rule targets. */
-  field: string;
-  operator: FilterOperator;
-  /** String-encoded value. */
-  value: string;
-};
-
-// ---------------------------------------------------------------------------
-// Operator helpers (exported for consumers)
-// ---------------------------------------------------------------------------
-
-/**
- * Default operator sets keyed by field type.
- *
- * Override per-field via {@link FilterFieldDef.operators}.
- */
-export const DEFAULT_OPERATORS: Record<FilterFieldType, FilterOperator[]> = {
-  text: [
-    "is",
-    "is_not",
-    "contains",
-    "does_not_contain",
-    "starts_with",
-    "ends_with",
-  ],
-  number: ["is", "is_not", "gt", "lt", "gte", "lte"],
-  select: ["is", "is_not"],
-  date: ["on", "before", "after"],
-};
-
-/**
- * Human-readable labels for every {@link FilterOperator}.
- *
- * Used both in the builder picker and in active-rule chips.
- */
-export const OPERATOR_LABELS: Record<FilterOperator, string> = {
-  is: "is",
-  is_not: "is not",
-  contains: "contains",
-  does_not_contain: "does not contain",
-  starts_with: "starts with",
-  ends_with: "ends with",
-  gt: "greater than",
-  lt: "less than",
-  gte: "greater than or equal",
-  lte: "less than or equal",
-  before: "before",
-  after: "after",
-  on: "on",
-};
-
-// ---------------------------------------------------------------------------
-// Internal helpers
-// ---------------------------------------------------------------------------
-
-/** Resolve the operator list for a given field definition. */
-function resolveOperators(field: FilterFieldDef): FilterOperator[] {
-  return field.operators ?? DEFAULT_OPERATORS[field.type];
-}
-
-/** Find a field by id; returns undefined when not found. */
-function findField(
-  fields: FilterFieldDef[],
-  id: string
-): FilterFieldDef | undefined {
-  return fields.find((f) => f.id === id);
-}
-
-/** Resolve the display label for a stored value in a select field. */
-function resolveSelectLabel(field: FilterFieldDef, value: string): string {
-  const opt = field.options?.find((o) => o.value === value);
-  return opt?.label ?? value;
-}
-
-/** Format an ISO date string (yyyy-MM-dd) as a locale date. */
-function formatDateValue(iso: string): string {
-  if (!iso) {
-    return iso;
-  }
-  const [year, month, day] = iso.split("-").map(Number);
-  const d = new Date(year, month - 1, day);
-  if (Number.isNaN(d.getTime())) {
-    return iso;
-  }
-  return d.toLocaleDateString();
-}
-
-/** Resolve the display string for a rule's value column. */
-function resolveValueLabel(field: FilterFieldDef, value: string): string {
-  switch (field.type) {
-    case "select":
-      return resolveSelectLabel(field, value);
-    case "date":
-      return formatDateValue(value);
-    default:
-      return value;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Builder step type
-// ---------------------------------------------------------------------------
-
-type BuilderStep = "field" | "operator" | "value";
-
-interface BuilderState {
-  fieldId: string | null;
-  operator: FilterOperator | null;
-  step: BuilderStep;
-}
-
-const BUILDER_INITIAL: BuilderState = {
-  step: "field",
-  fieldId: null,
-  operator: null,
-};
-
-// ---------------------------------------------------------------------------
-// Value editor
-// ---------------------------------------------------------------------------
-
-interface ValueEditorProps {
-  field: FilterFieldDef;
-  onCommit: (value: string) => void;
-}
-
-/**
- * Renders the appropriate value editor for the field's type.
- *
- * @remarks
- * - `text` / `number` → `Input` with confirm button (Enter or click).
- * - `select` → `Command` list of the field's `options`; selecting commits immediately.
- * - `date` → `<Input type="date">` with confirm button. ISO date committed as `yyyy-MM-dd`.
- */
-function ValueEditor({ field, onCommit }: ValueEditorProps) {
-  const [localValue, setLocalValue] = React.useState("");
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && localValue.trim()) {
-      onCommit(localValue.trim());
-    }
-  }
-
-  function handleConfirm() {
-    if (localValue.trim()) {
-      onCommit(localValue.trim());
-    }
-  }
-
-  switch (field.type) {
-    case "text":
-      return (
-        <div className="flex flex-col gap-2 p-2">
-          <Input
-            autoFocus
-            className="h-7 text-xs"
-            onChange={(e) => setLocalValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={`Enter ${field.label.toLowerCase()}…`}
-            size="sm"
-            value={localValue}
-          />
-          <Button
-            className="w-full"
-            disabled={!localValue.trim()}
-            onClick={handleConfirm}
-            size="sm"
-            variant="outline"
-          >
-            Apply
-          </Button>
-        </div>
-      );
-
-    case "number":
-      return (
-        <div className="flex flex-col gap-2 p-2">
-          <Input
-            autoFocus
-            className="h-7 text-xs"
-            onChange={(e) => setLocalValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter value…"
-            size="sm"
-            type="number"
-            value={localValue}
-          />
-          <Button
-            className="w-full"
-            disabled={!localValue.trim()}
-            onClick={handleConfirm}
-            size="sm"
-            variant="outline"
-          >
-            Apply
-          </Button>
-        </div>
-      );
-
-    case "select": {
-      const options = field.options ?? [];
-      return (
-        <Command>
-          <CommandInput placeholder="Search options…" />
-          <CommandList>
-            <CommandEmpty>No options found.</CommandEmpty>
-            <CommandGroup>
-              {options.map((opt) => (
-                <CommandItem
-                  key={opt.value}
-                  onSelect={() => onCommit(opt.value)}
-                  value={opt.value}
-                >
-                  {opt.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      );
-    }
-
-    case "date":
-      return (
-        <div className="flex flex-col gap-2 p-2">
-          <Input
-            autoFocus
-            className="h-7 text-xs"
-            onChange={(e) => setLocalValue(e.target.value)}
-            size="sm"
-            type="date"
-            value={localValue}
-          />
-          <Button
-            className="w-full"
-            disabled={!localValue}
-            onClick={() => {
-              if (localValue) {
-                onCommit(localValue);
-              }
-            }}
-            size="sm"
-            variant="outline"
-          >
-            Apply
-          </Button>
-        </div>
-      );
-
-    default:
-      return null;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Multi-step builder (inside Popover)
-// ---------------------------------------------------------------------------
-
-interface FilterBuilderProps {
-  fields: FilterFieldDef[];
-  onAdd: (rule: Omit<FilterRule, "id">) => void;
-  onClose: () => void;
-}
-
-function FilterBuilder({ fields, onAdd, onClose }: FilterBuilderProps) {
-  const [state, setState] = React.useState<BuilderState>(BUILDER_INITIAL);
-
-  const activeField = state.fieldId ? findField(fields, state.fieldId) : null;
-
-  function selectField(fieldId: string) {
-    setState({ step: "operator", fieldId, operator: null });
-  }
-
-  function selectOperator(op: FilterOperator) {
-    setState((prev) => ({ ...prev, step: "value", operator: op }));
-  }
-
-  function commitValue(value: string) {
-    if (!(state.fieldId && state.operator)) {
-      return;
-    }
-    onAdd({ field: state.fieldId, operator: state.operator, value });
-    onClose();
-  }
-
-  // Step: field picker
-  if (state.step === "field") {
-    return (
-      <Command>
-        <CommandInput placeholder="Search fields…" />
-        <CommandList>
-          <CommandEmpty>No fields found.</CommandEmpty>
-          <CommandGroup>
-            {fields.map((f) => (
-              <CommandItem
-                key={f.id}
-                onSelect={() => selectField(f.id)}
-                value={f.id}
-              >
-                {f.icon ? (
-                  <HugeiconsIcon className="size-3.5" icon={f.icon} />
-                ) : (
-                  <HugeiconsIcon className="size-3.5" icon={FilterIcon} />
-                )}
-                {f.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </Command>
-    );
-  }
-
-  // Step: operator picker
-  if (state.step === "operator" && activeField) {
-    const operators = resolveOperators(activeField);
-    return (
-      <div>
-        <div className="border-b px-2 py-1.5 text-muted-foreground text-xs">
-          {activeField.label}
-        </div>
-        <Command>
-          <CommandList>
-            <CommandGroup>
-              {operators.map((op) => (
-                <CommandItem
-                  key={op}
-                  onSelect={() => selectOperator(op)}
-                  value={op}
-                >
-                  {OPERATOR_LABELS[op]}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </div>
-    );
-  }
-
-  // Step: value editor
-  if (state.step === "value" && activeField && state.operator) {
-    return (
-      <div>
-        <div className="border-b px-2 py-1.5 text-muted-foreground text-xs">
-          {activeField.label}{" "}
-          <span className="font-medium text-foreground">
-            {OPERATOR_LABELS[state.operator]}
-          </span>
-        </div>
-        <ValueEditor field={activeField} onCommit={commitValue} />
-      </div>
-    );
-  }
-
-  return null;
-}
-
-// ---------------------------------------------------------------------------
-// Filter (public component)
-// ---------------------------------------------------------------------------
-
-/**
- * Props for {@link Filter}.
- *
- * @remarks
- * Supports both controlled (`value` + `onChange`) and uncontrolled
- * (`defaultValue`) usage. When `maxFilters` is set, the "Add filter" trigger
- * is disabled once the limit is reached.
- */
-export interface FilterProps {
+/** A single option for `select` / `multiselect` fields. */
+export interface FilterOption {
+  /** Extra classes for the option row. */
   className?: string;
-  /**
-   * Initial rules for uncontrolled mode.
-   * Ignored when `value` is provided.
-   */
-  defaultValue?: FilterRule[];
-  /** Field definitions that can be filtered on. */
-  fields: FilterFieldDef[];
-  /**
-   * Maximum number of simultaneous active rules.
-   * Hides the "Add filter" trigger when the limit is reached.
-   */
-  maxFilters?: number;
-  /** Called whenever the rule list changes. */
-  onChange?: (rules: FilterRule[]) => void;
-  /**
-   * Controlled rule list. Pair with {@link FilterProps.onChange}.
-   * When provided, the component renders in controlled mode.
-   */
-  value?: FilterRule[];
+  /** Optional leading icon. */
+  icon?: IconSvgElement;
+  /** Human-readable label shown in lists and the value trigger. */
+  label: string;
+  /** Stored value committed to the {@link Filter}. */
+  value: string;
+}
+
+/** An operator entry: a machine `value` paired with a display `label`. */
+export interface FilterOperator {
+  label: string;
+  value: string;
+}
+
+/** Arguments passed to a field's {@link FilterFieldConfig.customRenderer}. */
+export interface CustomRendererProps {
+  field: FilterFieldConfig;
+  onChange: (values: string[]) => void;
+  operator: string;
+  values: string[];
 }
 
 /**
- * Faceted filter builder (Linear / corr.sh style).
- *
- * Active filter rules render as removable {@link Badge} chips. An "Add filter"
- * {@link Popover} + {@link Command} flow builds new rules in three steps:
- * pick field → pick operator → enter value.
+ * Definition of one filterable field.
  *
  * @remarks
- * - Controlled (`value` + `onChange`) and uncontrolled (`defaultValue`)
- *   patterns are both supported.
- * - `maxFilters` disables the "Add filter" trigger once the limit is reached.
- * - Date values are stored and committed as ISO `yyyy-MM-dd` strings.
- * - For `select` fields the stored value is resolved back to its option label
- *   in the chip display.
- *
- * @example
- * ```tsx
- * // Uncontrolled
- * <Filter
- *   fields={[
- *     { id: "status", label: "Status", type: "select", options: [
- *       { label: "Active", value: "active" },
- *       { label: "Archived", value: "archived" },
- *     ]},
- *     { id: "name", label: "Name", type: "text" },
- *   ]}
- *   onChange={(rules) => console.log(rules)}
- * />
- *
- * // Controlled
- * const [rules, setRules] = React.useState<FilterRule[]>([]);
- * <Filter fields={fields} value={rules} onChange={setRules} />
- * ```
+ * `options` is required for `select` / `multiselect`. `operators` overrides
+ * the default operator list derived from `type`. A `separator` field renders
+ * nothing and is skipped in the picker — use it (inside a group) to space
+ * entries.
  */
-function Filter({
-  fields,
-  value,
-  defaultValue,
-  onChange,
-  maxFilters,
-  className,
-}: FilterProps) {
-  const isControlled = value !== undefined;
-  const [internal, setInternal] = React.useState<FilterRule[]>(
-    defaultValue ?? []
-  );
+export interface FilterFieldConfig {
+  /** Extra classes for the value-selector popover/input. */
+  className?: string;
+  /** Render a bespoke value editor inside the chip. */
+  customRenderer?: (props: CustomRendererProps) => React.ReactNode;
+  /** Operator applied when the filter is first added. */
+  defaultOperator?: string;
+  /** Child fields when this entry is a {@link FilterFieldGroup}. */
+  fields?: FilterFieldConfig[];
+  /** Group heading — used when this entry is a {@link FilterFieldGroup}. */
+  group?: string;
+  /** Optional leading icon. */
+  icon?: IconSvgElement;
+  /** Unique machine key. Required for a field to be selectable. */
+  key?: string;
+  /** Human-readable label shown in the picker and chip. */
+  label?: string;
+  /** Cap the number of selected values for `multiselect`. */
+  maxSelections?: number;
+  /** Override the default operator list for this field. */
+  operators?: FilterOperator[];
+  /** Options for `select` / `multiselect`. */
+  options?: FilterOption[];
+  /** RegExp source validated on blur for the `text` value editor. */
+  pattern?: string;
+  /** Placeholder for the `text` value editor. */
+  placeholder?: string;
+  /** Leading addon for the `text` value editor. */
+  prefix?: React.ReactNode;
+  /** Show the search box in option lists. @default true */
+  searchable?: boolean;
+  /** Trailing addon for the `text` value editor. */
+  suffix?: React.ReactNode;
+  /** Determines the operator set and value editor. @default "select" */
+  type?: FilterFieldType;
+  /** Custom validator for the `text` value editor. */
+  validation?: (
+    value: unknown
+  ) => boolean | { valid: boolean; message?: string };
+}
 
-  const rules = isControlled ? (value as FilterRule[]) : internal;
+/** A labelled group of fields rendered as a section in the picker. */
+export interface FilterFieldGroup {
+  fields: FilterFieldConfig[];
+  group?: string;
+}
 
-  const [popoverOpen, setPopoverOpen] = React.useState(false);
+/** Either a flat field list or a list of grouped fields. */
+export type FilterFieldsConfig = FilterFieldConfig[] | FilterFieldGroup[];
 
-  function commit(next: FilterRule[]) {
-    if (!isControlled) {
-      setInternal(next);
-    }
-    onChange?.(next);
+/** A single active filter produced by {@link Filters}. */
+export interface Filter {
+  /** {@link FilterFieldConfig.key} this filter targets. */
+  field: string;
+  /** Unique id — generate via {@link createFilter}. */
+  id: string;
+  /** Operator `value` currently applied. */
+  operator: string;
+  /** Selected values. Empty for `empty` / `not_empty` operators. */
+  values: string[];
+}
+
+/** A named bundle of filters + their fields (see {@link createFilterGroup}). */
+export interface FilterGroup {
+  fields: FilterFieldConfig[];
+  filters: Filter[];
+  id: string;
+  label?: string;
+}
+
+// ---------------------------------------------------------------------------
+// i18n
+// ---------------------------------------------------------------------------
+
+/** Operator label strings (override individual keys via `i18n.operators`). */
+export interface FilterI18nOperators {
+  contains: string;
+  empty: string;
+  endsWith: string;
+  excludesAll: string;
+  includesAll: string;
+  is: string;
+  isAnyOf: string;
+  isExactly: string;
+  isNot: string;
+  isNotAnyOf: string;
+  notContains: string;
+  notEmpty: string;
+  startsWith: string;
+}
+
+/** All translatable strings used by {@link Filters}. */
+export interface FilterI18nConfig {
+  addFilter: string;
+  back: string;
+  helpers: {
+    formatOperator: (operator: string) => string;
+  };
+  noFieldsFound: string;
+  noResultsFound: string;
+  operators: FilterI18nOperators;
+  placeholders: {
+    searchField: (fieldName: string) => string;
+    enterValue: string;
+  };
+  searchFields: string;
+  select: string;
+  selectedCount: string;
+  validation: {
+    invalid: string;
+  };
+}
+
+/** Default English strings — spread and override via the `i18n` prop. */
+export const DEFAULT_I18N: FilterI18nConfig = {
+  addFilter: "Filter",
+  searchFields: "Filter...",
+  noFieldsFound: "No filters found.",
+  noResultsFound: "No results found.",
+  select: "Select...",
+  selectedCount: "selected",
+  back: "Back",
+  operators: {
+    is: "is",
+    isNot: "is not",
+    isAnyOf: "is any of",
+    isNotAnyOf: "is not any of",
+    includesAll: "includes all",
+    excludesAll: "excludes all",
+    contains: "contains",
+    notContains: "does not contain",
+    startsWith: "starts with",
+    endsWith: "ends with",
+    isExactly: "is exactly",
+    empty: "is empty",
+    notEmpty: "is not empty",
+  },
+  placeholders: {
+    searchField: (fieldName: string) => `Search ${fieldName.toLowerCase()}...`,
+    enterValue: "Enter value...",
+  },
+  helpers: {
+    formatOperator: (operator: string) => operator.replace(/_/g, " "),
+  },
+  validation: {
+    invalid: "Invalid input format",
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Operators
+// ---------------------------------------------------------------------------
+
+function createOperatorsFromI18n(
+  i18n: FilterI18nConfig
+): Record<string, FilterOperator[]> {
+  return {
+    select: [
+      { value: "is", label: i18n.operators.is },
+      { value: "is_not", label: i18n.operators.isNot },
+      { value: "empty", label: i18n.operators.empty },
+      { value: "not_empty", label: i18n.operators.notEmpty },
+    ],
+    multiselect: [
+      { value: "is_any_of", label: i18n.operators.isAnyOf },
+      { value: "is_not_any_of", label: i18n.operators.isNotAnyOf },
+      { value: "includes_all", label: i18n.operators.includesAll },
+      { value: "excludes_all", label: i18n.operators.excludesAll },
+      { value: "empty", label: i18n.operators.empty },
+      { value: "not_empty", label: i18n.operators.notEmpty },
+    ],
+    text: [
+      { value: "contains", label: i18n.operators.contains },
+      { value: "not_contains", label: i18n.operators.notContains },
+      { value: "starts_with", label: i18n.operators.startsWith },
+      { value: "ends_with", label: i18n.operators.endsWith },
+      { value: "is", label: i18n.operators.isExactly },
+      { value: "empty", label: i18n.operators.empty },
+      { value: "not_empty", label: i18n.operators.notEmpty },
+    ],
+    custom: [
+      { value: "is", label: i18n.operators.is },
+      { value: "empty", label: i18n.operators.empty },
+      { value: "not_empty", label: i18n.operators.notEmpty },
+    ],
+  };
+}
+
+/** Default operator sets keyed by field type. */
+export const DEFAULT_OPERATORS: Record<string, FilterOperator[]> =
+  createOperatorsFromI18n(DEFAULT_I18N);
+
+function getOperatorsForField(
+  field: FilterFieldConfig,
+  values: string[],
+  i18n: FilterI18nConfig
+): FilterOperator[] {
+  if (field.operators) {
+    return field.operators;
   }
 
-  function addRule(partial: Omit<FilterRule, "id">) {
-    if (maxFilters !== undefined && rules.length >= maxFilters) {
+  const operators = createOperatorsFromI18n(i18n);
+  let fieldType = field.type ?? "select";
+  if (fieldType === "select" && values.length > 1) {
+    fieldType = "multiselect";
+  }
+  if (fieldType === "multiselect") {
+    return operators.multiselect;
+  }
+  return operators[fieldType] ?? operators.select;
+}
+
+// ---------------------------------------------------------------------------
+// Field-config helpers
+// ---------------------------------------------------------------------------
+
+function isFieldGroup(
+  item: FilterFieldConfig | FilterFieldGroup
+): item is FilterFieldGroup {
+  return "fields" in item && Array.isArray(item.fields);
+}
+
+/** Normalise either input shape into a list of render groups. */
+function normalizeGroups(fields: FilterFieldsConfig): FilterFieldGroup[] {
+  if (fields.length === 0) {
+    return [];
+  }
+  if (isFieldGroup(fields[0] as FilterFieldConfig | FilterFieldGroup)) {
+    return fields as FilterFieldGroup[];
+  }
+  return [{ fields: fields as FilterFieldConfig[] }];
+}
+
+function flattenFields(fields: FilterFieldsConfig): FilterFieldConfig[] {
+  return normalizeGroups(fields).flatMap((group) => group.fields);
+}
+
+function getFieldsMap(
+  fields: FilterFieldsConfig
+): Record<string, FilterFieldConfig> {
+  const map: Record<string, FilterFieldConfig> = {};
+  for (const field of flattenFields(fields)) {
+    if (field.key) {
+      map[field.key] = field;
+    }
+  }
+  return map;
+}
+
+function fieldHasOptions(field: FilterFieldConfig): boolean {
+  return (
+    (field.type === "select" || field.type === "multiselect") &&
+    Boolean(field.options?.length)
+  );
+}
+
+/** Apply a partial update to a filter, clearing values for empty operators. */
+function applyFilterUpdate(
+  filters: Filter[],
+  id: string,
+  updates: Partial<Filter>
+): Filter[] {
+  return filters.map((filter) => {
+    if (filter.id !== id) {
+      return filter;
+    }
+    const updated = { ...filter, ...updates };
+    if (updates.operator === "empty" || updates.operator === "not_empty") {
+      updated.values = [];
+    }
+    return updated;
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Context
+// ---------------------------------------------------------------------------
+
+type FilterSize = "sm" | "default" | "lg";
+
+interface FilterContextValue {
+  i18n: FilterI18nConfig;
+  radius: "default" | "full";
+  size: FilterSize;
+  variant: "solid" | "default";
+}
+
+const FilterContext = React.createContext<FilterContextValue>({
+  variant: "default",
+  size: "default",
+  radius: "default",
+  i18n: DEFAULT_I18N,
+});
+
+function useFilterContext() {
+  return React.useContext(FilterContext);
+}
+
+// ---------------------------------------------------------------------------
+// Style helpers
+// ---------------------------------------------------------------------------
+
+const filtersContainerVariants = cva("flex flex-wrap items-center", {
+  variants: {
+    variant: {
+      solid: "",
+      default: "",
+    },
+    size: {
+      sm: "gap-1.5",
+      default: "gap-2.5",
+      lg: "gap-3.5",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+  },
+});
+
+/** Forced segment height so every part of a chip's button group aligns. */
+const filterControlHeight: Record<FilterSize, string> = {
+  sm: "h-6!",
+  default: "h-7!",
+  lg: "h-8!",
+};
+
+/** Icon-button size matched to each segment height. */
+const filterIconSize = {
+  sm: "icon-xs",
+  default: "icon-sm",
+  lg: "icon",
+} as const;
+
+/** Pill rounding applied to a chip's button group when `radius="full"`. */
+const filterRadiusClass =
+  "rounded-full [&>[data-slot]:first-child]:rounded-l-full! [&>[data-slot]:last-child]:rounded-r-full!";
+
+// ---------------------------------------------------------------------------
+// Text value editor
+// ---------------------------------------------------------------------------
+
+function FilterInput({
+  field,
+  autoFocus,
+  className,
+  onBlur,
+  onKeyDown,
+  ...props
+}: Omit<React.ComponentProps<"input">, "size"> & {
+  field?: FilterFieldConfig;
+}) {
+  const { size, i18n } = useFilterContext();
+  const [isValid, setIsValid] = React.useState(true);
+  const [message, setMessage] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (!autoFocus) {
       return;
     }
-    const newRule: FilterRule = {
-      id: crypto.randomUUID(),
-      ...partial,
-    };
-    commit([...rules, newRule]);
+    // Defer focus until the chip's enter animation settles.
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 200);
+    return () => window.clearTimeout(timer);
+  }, [autoFocus]);
+
+  function validatePattern(value: string, pattern?: string): boolean {
+    if (!(pattern && value)) {
+      return true;
+    }
+    return new RegExp(pattern).test(value);
   }
 
-  function removeRule(id: string) {
-    commit(rules.filter((r) => r.id !== id));
+  function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
+    const value = event.target.value;
+    const pattern = field?.pattern ?? props.pattern;
+
+    if (value && (pattern || field?.validation)) {
+      let valid = true;
+      let customMessage = "";
+      if (field?.validation) {
+        const result = field.validation(value);
+        if (typeof result === "boolean") {
+          valid = result;
+        } else {
+          valid = result.valid;
+          customMessage = result.message ?? "";
+        }
+      } else if (pattern) {
+        valid = validatePattern(value, pattern);
+      }
+      setIsValid(valid);
+      setMessage(valid ? "" : customMessage || i18n.validation.invalid);
+    } else {
+      setIsValid(true);
+      setMessage("");
+    }
+
+    onBlur?.(event);
   }
 
-  const atMax = maxFilters !== undefined && rules.length >= maxFilters;
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (!isValid && event.key.length === 1) {
+      setIsValid(true);
+      setMessage("");
+    }
+    onKeyDown?.(event);
+  }
 
   return (
-    <div
-      className={cn("flex flex-wrap items-center gap-2", className)}
-      data-slot="filter"
+    <InputGroup
+      className={cn(
+        "w-36 has-[[data-slot=input-group-control]:focus-visible]:border-input has-[[data-slot=input-group-control]:focus-visible]:ring-0",
+        filterControlHeight[size],
+        className
+      )}
     >
-      {rules.map((rule) => {
-        const field = findField(fields, rule.field);
+      {field?.prefix ? (
+        <InputGroupAddon>
+          <InputGroupText>{field.prefix}</InputGroupText>
+        </InputGroupAddon>
+      ) : null}
+      <InputGroupInput
+        aria-invalid={!isValid}
+        className={cn(
+          "focus-visible:border-transparent focus-visible:ring-0",
+          size === "sm" && "text-xs"
+        )}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        ref={inputRef}
+        {...props}
+      />
+      {isValid || !message ? null : (
+        <InputGroupAddon align="inline-end">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <InputGroupButton size="icon-xs" type="button">
+                    <HugeiconsIcon
+                      className="text-destructive"
+                      icon={AlertCircleIcon}
+                    />
+                  </InputGroupButton>
+                }
+              />
+              <TooltipContent>{message}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </InputGroupAddon>
+      )}
+      {field?.suffix ? (
+        <InputGroupAddon align="inline-end">
+          <InputGroupText>{field.suffix}</InputGroupText>
+        </InputGroupAddon>
+      ) : null}
+    </InputGroup>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Remove button
+// ---------------------------------------------------------------------------
+
+function FilterRemoveButton({ onClick }: { onClick: () => void }) {
+  const { size } = useFilterContext();
+  return (
+    <Button
+      aria-label="Remove filter"
+      className={filterControlHeight[size]}
+      data-slot="filter-remove"
+      onClick={onClick}
+      size={filterIconSize[size]}
+      variant="outline"
+    >
+      <HugeiconsIcon icon={Cancel01Icon} />
+    </Button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Operator dropdown
+// ---------------------------------------------------------------------------
+
+function FilterOperatorDropdown({
+  field,
+  operator,
+  values,
+  onChange,
+}: {
+  field: FilterFieldConfig;
+  operator: string;
+  values: string[];
+  onChange: (operator: string) => void;
+}) {
+  const { size, i18n } = useFilterContext();
+  const operators = getOperatorsForField(field, values, i18n);
+  const operatorLabel =
+    operators.find((item) => item.value === operator)?.label ??
+    i18n.helpers.formatOperator(operator);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            className={cn(
+              "text-muted-foreground hover:text-foreground",
+              filterControlHeight[size]
+            )}
+            data-slot="filter-operator"
+            size={size}
+            variant="outline"
+          />
+        }
+      >
+        {operatorLabel}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-fit min-w-fit">
+        {operators.map((item) => (
+          <DropdownMenuItem
+            className="justify-between gap-4"
+            key={item.value}
+            onClick={() => onChange(item.value)}
+          >
+            <span>{item.label}</span>
+            <HugeiconsIcon
+              className={cn(
+                "size-4 text-primary",
+                item.value === operator ? "opacity-100" : "opacity-0"
+              )}
+              icon={Tick02Icon}
+            />
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Searchable option list (shared by value selector + add-filter submenu)
+// ---------------------------------------------------------------------------
+
+function OptionList({
+  field,
+  selectedValues,
+  onToggle,
+  emptyLabel,
+}: {
+  field: FilterFieldConfig;
+  selectedValues: string[];
+  onToggle: (value: string) => void;
+  emptyLabel: string;
+}) {
+  const { i18n } = useFilterContext();
+  const options = field.options ?? [];
+
+  return (
+    <Command className="bg-transparent">
+      {field.searchable === false ? null : (
+        <CommandInput
+          placeholder={i18n.placeholders.searchField(field.label ?? "")}
+        />
+      )}
+      <CommandList>
+        <CommandEmpty>{emptyLabel}</CommandEmpty>
+        <CommandGroup>
+          {options.map((option) => {
+            const isSelected = selectedValues.includes(option.value);
+            return (
+              <CommandItem
+                className={cn("gap-1.5", option.className)}
+                data-checked={isSelected ? "true" : undefined}
+                key={option.value}
+                onSelect={() => onToggle(option.value)}
+                value={option.label}
+              >
+                {option.icon ? <HugeiconsIcon icon={option.icon} /> : null}
+                <span className="truncate">{option.label}</span>
+              </CommandItem>
+            );
+          })}
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Select / multiselect value selector
+// ---------------------------------------------------------------------------
+
+function SelectOptionsPopover({
+  field,
+  values,
+  onChange,
+}: {
+  field: FilterFieldConfig;
+  values: string[];
+  onChange: (values: string[]) => void;
+}) {
+  const { size, i18n } = useFilterContext();
+  const [open, setOpen] = React.useState(false);
+  const isMultiSelect = field.type === "multiselect" || values.length > 1;
+  const options = field.options ?? [];
+  const selectedOptions = options.filter((option) =>
+    values.includes(option.value)
+  );
+
+  function handleToggle(value: string) {
+    const isSelected = values.includes(value);
+    let next: string[];
+    if (isSelected) {
+      next = values.filter((item) => item !== value);
+    } else if (isMultiSelect) {
+      next = [...values, value];
+    } else {
+      next = [value];
+    }
+    if (
+      !isSelected &&
+      isMultiSelect &&
+      field.maxSelections &&
+      next.length > field.maxSelections
+    ) {
+      return;
+    }
+    onChange(next);
+    if (!isMultiSelect) {
+      setOpen(false);
+    }
+  }
+
+  let triggerLabel: React.ReactNode = i18n.select;
+  if (selectedOptions.length === 1) {
+    triggerLabel = selectedOptions[0]?.label;
+  } else if (selectedOptions.length > 1) {
+    triggerLabel = `${selectedOptions.length} ${i18n.selectedCount}`;
+  }
+
+  return (
+    <Popover onOpenChange={setOpen} open={open}>
+      <PopoverTrigger
+        render={
+          <Button
+            className={filterControlHeight[size]}
+            data-slot="filter-value"
+            size={size}
+            variant="outline"
+          />
+        }
+      >
+        <span className="flex items-center gap-1.5">
+          {selectedOptions
+            .slice(0, 3)
+            .map((option) =>
+              option.icon ? (
+                <HugeiconsIcon icon={option.icon} key={option.value} />
+              ) : null
+            )}
+          {triggerLabel}
+        </span>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className={cn("w-[12rem] overflow-hidden p-0", field.className)}
+      >
+        <OptionList
+          emptyLabel={i18n.noResultsFound}
+          field={field}
+          onToggle={handleToggle}
+          selectedValues={values}
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Value selector (type switch)
+// ---------------------------------------------------------------------------
+
+function FilterValueSelector({
+  field,
+  values,
+  onChange,
+  operator,
+  autoFocus,
+}: {
+  field: FilterFieldConfig;
+  values: string[];
+  onChange: (values: string[]) => void;
+  operator: string;
+  autoFocus?: boolean;
+}) {
+  const { size, i18n } = useFilterContext();
+
+  if (operator === "empty" || operator === "not_empty") {
+    return null;
+  }
+
+  if (field.customRenderer) {
+    return (
+      <ButtonGroupText
+        className={cn(
+          "bg-background hover:bg-accent dark:bg-input/30",
+          filterControlHeight[size]
+        )}
+      >
+        {field.customRenderer({ field, values, onChange, operator })}
+      </ButtonGroupText>
+    );
+  }
+
+  if (field.type === "text") {
+    return (
+      <FilterInput
+        autoFocus={autoFocus}
+        className={field.className}
+        field={field}
+        onChange={(event) => onChange([event.target.value])}
+        placeholder={field.placeholder ?? i18n.placeholders.enterValue}
+        type="text"
+        value={values[0] ?? ""}
+      />
+    );
+  }
+
+  return (
+    <SelectOptionsPopover field={field} onChange={onChange} values={values} />
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Chip
+// ---------------------------------------------------------------------------
+
+function FilterChip({
+  field,
+  filter,
+  onUpdate,
+  onRemove,
+  autoFocus,
+}: {
+  field: FilterFieldConfig;
+  filter: Filter;
+  onUpdate: (updates: Partial<Filter>) => void;
+  onRemove: () => void;
+  autoFocus?: boolean;
+}) {
+  const { size, radius } = useFilterContext();
+  return (
+    <ButtonGroup
+      className={cn(radius === "full" && filterRadiusClass)}
+      data-slot="filter-chip"
+    >
+      <ButtonGroupText
+        className={cn(
+          "bg-background dark:bg-input/30",
+          filterControlHeight[size]
+        )}
+      >
+        {field.icon ? <HugeiconsIcon icon={field.icon} /> : null}
+        {field.label}
+      </ButtonGroupText>
+      <FilterOperatorDropdown
+        field={field}
+        onChange={(operator) => onUpdate({ operator })}
+        operator={filter.operator}
+        values={filter.values}
+      />
+      <FilterValueSelector
+        autoFocus={autoFocus}
+        field={field}
+        onChange={(values) => onUpdate({ values })}
+        operator={filter.operator}
+        values={filter.values}
+      />
+      <FilterRemoveButton onClick={onRemove} />
+    </ButtonGroup>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// FiltersContent — chips-only renderer (reads context for variant/size)
+// ---------------------------------------------------------------------------
+
+/** Props for {@link FiltersContent}. */
+export interface FiltersContentProps {
+  fields: FilterFieldsConfig;
+  filters: Filter[];
+  onChange: (filters: Filter[]) => void;
+}
+
+/**
+ * Renders just the active filter chips (no "Add filter" trigger).
+ *
+ * Use this when you want to place the add-filter control elsewhere, or when
+ * rendering a read-back row of filters. Reads `variant` / `size` / `radius`
+ * from the nearest {@link Filters} provider, falling back to defaults when
+ * used standalone.
+ */
+export function FiltersContent({
+  filters,
+  fields,
+  onChange,
+}: FiltersContentProps) {
+  const { variant, size } = useFilterContext();
+  const fieldsMap = React.useMemo(() => getFieldsMap(fields), [fields]);
+
+  return (
+    <div className={cn(filtersContainerVariants({ variant, size }))}>
+      {filters.map((filter) => {
+        const field = fieldsMap[filter.field];
         if (!field) {
           return null;
         }
-
-        const chipLabel = `${field.label} ${OPERATOR_LABELS[rule.operator]} ${resolveValueLabel(field, rule.value)}`;
-
         return (
-          <Badge
-            className="cursor-default"
-            data-slot="filter-chip"
-            dismissible
-            key={rule.id}
-            onDismiss={() => removeRule(rule.id)}
-            size="lg"
-            variant="secondary"
-          >
-            {field.icon ? (
-              <HugeiconsIcon className="size-3" icon={field.icon} />
-            ) : null}
-            {chipLabel}
-          </Badge>
+          <FilterChip
+            field={field}
+            filter={filter}
+            key={filter.id}
+            onRemove={() =>
+              onChange(filters.filter((item) => item.id !== filter.id))
+            }
+            onUpdate={(updates) =>
+              onChange(applyFilterUpdate(filters, filter.id, updates))
+            }
+          />
         );
       })}
-
-      {atMax ? null : (
-        <Popover
-          onOpenChange={(open) => {
-            setPopoverOpen(open);
-          }}
-          open={popoverOpen}
-        >
-          <PopoverTrigger render={<Button size="sm" variant="outline" />}>
-            <HugeiconsIcon className="size-3.5" icon={PlusSignIcon} />
-            Add filter
-          </PopoverTrigger>
-          <PopoverContent
-            align="start"
-            className="w-64 p-0"
-            side="bottom"
-            sideOffset={4}
-          >
-            <FilterBuilder
-              fields={fields}
-              onAdd={addRule}
-              onClose={() => setPopoverOpen(false)}
-            />
-          </PopoverContent>
-        </Popover>
-      )}
     </div>
   );
 }
 
-export { Filter };
+// ---------------------------------------------------------------------------
+// Add-filter menu (searchable field picker + per-field option submenu)
+// ---------------------------------------------------------------------------
+
+function AddFilterMenu({
+  fields,
+  filters,
+  onChange,
+  trigger,
+  allowMultiple,
+  enableShortcut,
+  shortcutKey,
+  shortcutLabel,
+  onAdded,
+}: {
+  fields: FilterFieldsConfig;
+  filters: Filter[];
+  onChange: (filters: Filter[]) => void;
+  trigger?: React.ReactElement;
+  allowMultiple: boolean;
+  enableShortcut: boolean;
+  shortcutKey: string;
+  shortcutLabel: string;
+  onAdded: (id: string) => void;
+}) {
+  const { size, i18n } = useFilterContext();
+  const [open, setOpen] = React.useState(false);
+  const [activeFieldKey, setActiveFieldKey] = React.useState<string | null>(
+    null
+  );
+  const [sessionFilterId, setSessionFilterId] = React.useState<string | null>(
+    null
+  );
+
+  const fieldsMap = React.useMemo(() => getFieldsMap(fields), [fields]);
+  const groups = React.useMemo(() => normalizeGroups(fields), [fields]);
+
+  const isFieldSelectable = React.useCallback(
+    (field: FilterFieldConfig) => {
+      if (!field.key || field.type === "separator") {
+        return false;
+      }
+      if (allowMultiple) {
+        return true;
+      }
+      return !filters.some((filter) => filter.field === field.key);
+    },
+    [allowMultiple, filters]
+  );
+
+  const selectableCount = React.useMemo(
+    () => flattenFields(fields).filter(isFieldSelectable).length,
+    [fields, isFieldSelectable]
+  );
+
+  React.useEffect(() => {
+    if (!enableShortcut) {
+      return;
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      const target = document.activeElement;
+      const typing =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement;
+      if (
+        !(open || typing) &&
+        event.key.toLowerCase() === shortcutKey.toLowerCase()
+      ) {
+        event.preventDefault();
+        setOpen(true);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [enableShortcut, open, shortcutKey]);
+
+  function handleOpenChange(next: boolean) {
+    setOpen(next);
+    if (!next) {
+      setActiveFieldKey(null);
+      setSessionFilterId(null);
+    }
+  }
+
+  function addSimpleFilter(field: FilterFieldConfig) {
+    if (!field.key) {
+      return;
+    }
+    const operator =
+      field.defaultOperator ??
+      (field.type === "multiselect" ? "is_any_of" : "is");
+    const values = field.type === "text" ? [""] : [];
+    const newFilter = createFilter(field.key, operator, values);
+    onChange([...filters, newFilter]);
+    onAdded(newFilter.id);
+    handleOpenChange(false);
+  }
+
+  function pickField(field: FilterFieldConfig) {
+    if (fieldHasOptions(field)) {
+      setActiveFieldKey(field.key ?? null);
+      setSessionFilterId(null);
+    } else {
+      addSimpleFilter(field);
+    }
+  }
+
+  const activeField = activeFieldKey ? fieldsMap[activeFieldKey] : undefined;
+  const sessionFilter = sessionFilterId
+    ? filters.find((filter) => filter.id === sessionFilterId)
+    : undefined;
+  const sessionValues = sessionFilter?.values ?? [];
+
+  function toggleOption(field: FilterFieldConfig, value: string) {
+    if (!field.key) {
+      return;
+    }
+    if (field.type !== "multiselect") {
+      const newFilter = createFilter(field.key, field.defaultOperator ?? "is", [
+        value,
+      ]);
+      onChange([...filters, newFilter]);
+      onAdded(newFilter.id);
+      handleOpenChange(false);
+      return;
+    }
+
+    const isSelected = sessionValues.includes(value);
+    const next = isSelected
+      ? sessionValues.filter((item) => item !== value)
+      : [...sessionValues, value];
+    if (
+      !isSelected &&
+      field.maxSelections &&
+      next.length > field.maxSelections
+    ) {
+      return;
+    }
+
+    if (sessionFilter) {
+      if (next.length === 0) {
+        onChange(filters.filter((filter) => filter.id !== sessionFilter.id));
+        setSessionFilterId(null);
+      } else {
+        onChange(
+          filters.map((filter) =>
+            filter.id === sessionFilter.id
+              ? { ...filter, values: next }
+              : filter
+          )
+        );
+      }
+      return;
+    }
+
+    const newFilter = createFilter(
+      field.key,
+      field.defaultOperator ?? "is_any_of",
+      next
+    );
+    onChange([...filters, newFilter]);
+    setSessionFilterId(newFilter.id);
+  }
+
+  if (selectableCount === 0) {
+    return null;
+  }
+
+  return (
+    <Popover onOpenChange={handleOpenChange} open={open}>
+      <PopoverTrigger
+        render={
+          trigger ?? (
+            <Button
+              className={filterControlHeight[size]}
+              data-slot="filter-add"
+              size={size}
+              variant="outline"
+            />
+          )
+        }
+      >
+        {trigger ? undefined : (
+          <>
+            <HugeiconsIcon icon={PlusSignIcon} />
+            {i18n.addFilter}
+            {enableShortcut && shortcutLabel ? (
+              <Kbd className="ml-1">{shortcutLabel}</Kbd>
+            ) : null}
+          </>
+        )}
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-[13rem] overflow-hidden p-0">
+        {activeField ? (
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1 border-b p-1">
+              <Button
+                aria-label={i18n.back}
+                onClick={() => {
+                  setActiveFieldKey(null);
+                  setSessionFilterId(null);
+                }}
+                size="icon-xs"
+                variant="ghost"
+              >
+                <HugeiconsIcon icon={ArrowLeft01Icon} />
+              </Button>
+              <span className="font-medium text-sm">{activeField.label}</span>
+            </div>
+            <OptionList
+              emptyLabel={i18n.noResultsFound}
+              field={activeField}
+              onToggle={(value) => toggleOption(activeField, value)}
+              selectedValues={sessionValues}
+            />
+          </div>
+        ) : (
+          <Command className="bg-transparent">
+            <CommandInput placeholder={i18n.searchFields} />
+            <CommandList>
+              <CommandEmpty>{i18n.noFieldsFound}</CommandEmpty>
+              {groups.map((group, index) => (
+                <CommandGroup
+                  heading={group.group}
+                  key={group.group ?? `group-${index}`}
+                >
+                  {group.fields.filter(isFieldSelectable).map((field) => (
+                    <CommandItem
+                      className="gap-1.5"
+                      key={field.key}
+                      onSelect={() => pickField(field)}
+                      value={field.label}
+                    >
+                      {field.icon ? <HugeiconsIcon icon={field.icon} /> : null}
+                      <span>{field.label}</span>
+                      {fieldHasOptions(field) ? (
+                        <HugeiconsIcon
+                          className="ml-auto text-muted-foreground"
+                          icon={ArrowRight01Icon}
+                        />
+                      ) : null}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              ))}
+            </CommandList>
+          </Command>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Filters (public component)
+// ---------------------------------------------------------------------------
+
+/** Props for {@link Filters}. */
+export interface FiltersProps {
+  /** Allow the same field to be filtered more than once. @default true */
+  allowMultiple?: boolean;
+  className?: string;
+  /** Bind a keyboard shortcut that opens the add-filter menu. @default false */
+  enableShortcut?: boolean;
+  /** Field definitions (flat list or grouped). */
+  fields: FilterFieldsConfig;
+  /** Controlled list of active filters. */
+  filters: Filter[];
+  /** Partial i18n overrides merged over {@link DEFAULT_I18N}. */
+  i18n?: Partial<
+    Omit<
+      FilterI18nConfig,
+      "operators" | "placeholders" | "helpers" | "validation"
+    >
+  > & {
+    operators?: Partial<FilterI18nOperators>;
+    placeholders?: Partial<FilterI18nConfig["placeholders"]>;
+    helpers?: Partial<FilterI18nConfig["helpers"]>;
+    validation?: Partial<FilterI18nConfig["validation"]>;
+  };
+  /** Called whenever the filter list changes. */
+  onChange: (filters: Filter[]) => void;
+  /** Chip corner style. @default "default" */
+  radius?: "default" | "full";
+  /** Key for the shortcut. @default "f" */
+  shortcutKey?: string;
+  /** Label shown in the trigger's `Kbd` hint. @default "F" */
+  shortcutLabel?: string;
+  /** Control density. @default "default" */
+  size?: FilterSize;
+  /** Replace the default "Add filter" trigger element. */
+  trigger?: React.ReactElement;
+  /** Reserved spacing style. @default "default" */
+  variant?: "solid" | "default";
+}
+
+/**
+ * A faceted filter builder modelled on corr.sh's Filters.
+ *
+ * Each active filter renders as a fused {@link ButtonGroup} chip with four
+ * segments — field label, an operator dropdown, a value selector, and a
+ * remove button. An "Add filter" trigger opens a searchable field picker;
+ * `select` / `multiselect` fields drill into a searchable option list so a
+ * value can be chosen as the filter is created.
+ *
+ * @remarks
+ * - **Controlled only** — drive it with `filters` + `onChange`. Generate ids
+ *   for new filters with {@link createFilter}.
+ * - Operators come from {@link DEFAULT_OPERATORS} per field `type`; override
+ *   per field via {@link FilterFieldConfig.operators} or globally through the
+ *   `i18n.operators` map. The `empty` / `not_empty` operators hide the value
+ *   selector and clear stored values.
+ * - `text` fields support `pattern` / `validation` with an inline error
+ *   tooltip; `select` / `multiselect` fields support searchable options and
+ *   `maxSelections`; `custom` fields render via
+ *   {@link FilterFieldConfig.customRenderer}.
+ * - Built on {@link Popover} + {@link Command} (searchable lists) and
+ *   {@link DropdownMenu} (operators) so keyboard navigation is native.
+ *
+ * @example
+ * ```tsx
+ * const [filters, setFilters] = React.useState<Filter[]>([]);
+ *
+ * <Filters
+ *   filters={filters}
+ *   onChange={setFilters}
+ *   fields={[
+ *     {
+ *       key: "status",
+ *       label: "Status",
+ *       type: "select",
+ *       options: [
+ *         { value: "active", label: "Active" },
+ *         { value: "archived", label: "Archived" },
+ *       ],
+ *     },
+ *     { key: "name", label: "Name", type: "text" },
+ *   ]}
+ * />
+ * ```
+ */
+export function Filters({
+  filters,
+  fields,
+  onChange,
+  className,
+  variant = "default",
+  size = "default",
+  radius = "default",
+  i18n,
+  trigger,
+  allowMultiple = true,
+  enableShortcut = false,
+  shortcutKey = "f",
+  shortcutLabel = "F",
+}: FiltersProps) {
+  const [lastAddedId, setLastAddedId] = React.useState<string | null>(null);
+
+  const mergedI18n = React.useMemo<FilterI18nConfig>(
+    () => ({
+      ...DEFAULT_I18N,
+      ...i18n,
+      operators: { ...DEFAULT_I18N.operators, ...i18n?.operators },
+      placeholders: { ...DEFAULT_I18N.placeholders, ...i18n?.placeholders },
+      helpers: { ...DEFAULT_I18N.helpers, ...i18n?.helpers },
+      validation: { ...DEFAULT_I18N.validation, ...i18n?.validation },
+    }),
+    [i18n]
+  );
+
+  const contextValue = React.useMemo<FilterContextValue>(
+    () => ({ variant, size, radius, i18n: mergedI18n }),
+    [variant, size, radius, mergedI18n]
+  );
+
+  const fieldsMap = React.useMemo(() => getFieldsMap(fields), [fields]);
+
+  React.useEffect(() => {
+    if (!lastAddedId) {
+      return;
+    }
+    const timer = window.setTimeout(() => setLastAddedId(null), 1000);
+    return () => window.clearTimeout(timer);
+  }, [lastAddedId]);
+
+  return (
+    <FilterContext.Provider value={contextValue}>
+      <div
+        className={cn(filtersContainerVariants({ variant, size }), className)}
+        data-slot="filter"
+      >
+        <AddFilterMenu
+          allowMultiple={allowMultiple}
+          enableShortcut={enableShortcut}
+          fields={fields}
+          filters={filters}
+          onAdded={setLastAddedId}
+          onChange={onChange}
+          shortcutKey={shortcutKey}
+          shortcutLabel={shortcutLabel}
+          trigger={trigger}
+        />
+        {filters.map((filter) => {
+          const field = fieldsMap[filter.field];
+          if (!field) {
+            return null;
+          }
+          return (
+            <FilterChip
+              autoFocus={filter.id === lastAddedId}
+              field={field}
+              filter={filter}
+              key={filter.id}
+              onRemove={() =>
+                onChange(filters.filter((item) => item.id !== filter.id))
+              }
+              onUpdate={(updates) =>
+                onChange(applyFilterUpdate(filters, filter.id, updates))
+              }
+            />
+          );
+        })}
+      </div>
+    </FilterContext.Provider>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Factories
+// ---------------------------------------------------------------------------
+
+/** Create a {@link Filter} with a generated id (defaults operator to `"is"`). */
+export function createFilter(
+  field: string,
+  operator?: string,
+  values: string[] = []
+): Filter {
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+    field,
+    operator: operator ?? "is",
+    values,
+  };
+}
+
+/** Bundle filters + their fields into a named {@link FilterGroup}. */
+export function createFilterGroup(
+  id: string,
+  label: string,
+  fields: FilterFieldConfig[],
+  initialFilters: Filter[] = []
+): FilterGroup {
+  return { id, label, filters: initialFilters, fields };
+}

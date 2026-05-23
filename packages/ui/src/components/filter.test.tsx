@@ -2,11 +2,14 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
+  createFilter,
+  createFilterGroup,
+  DEFAULT_I18N,
   DEFAULT_OPERATORS,
-  Filter,
-  type FilterFieldDef,
-  type FilterRule,
-  OPERATOR_LABELS,
+  type Filter,
+  type FilterFieldConfig,
+  Filters,
+  FiltersContent,
 } from "./filter";
 
 // ---------------------------------------------------------------------------
@@ -26,79 +29,118 @@ beforeAll(() => {
 // Test data
 // ---------------------------------------------------------------------------
 
-const textField: FilterFieldDef = {
-  id: "name",
+const textField: FilterFieldConfig = {
+  key: "name",
   label: "Name",
   type: "text",
 };
 
-const numberField: FilterFieldDef = {
-  id: "age",
-  label: "Age",
-  type: "number",
-};
-
-const selectField: FilterFieldDef = {
-  id: "status",
+const selectField: FilterFieldConfig = {
+  key: "status",
   label: "Status",
   type: "select",
   options: [
-    { label: "Active", value: "active" },
-    { label: "Archived", value: "archived" },
+    { value: "active", label: "Active" },
+    { value: "archived", label: "Archived" },
   ],
 };
 
-const dateField: FilterFieldDef = {
-  id: "created_at",
-  label: "Created at",
-  type: "date",
+const multiField: FilterFieldConfig = {
+  key: "labels",
+  label: "Labels",
+  type: "multiselect",
+  options: [
+    { value: "bug", label: "Bug" },
+    { value: "feature", label: "Feature" },
+  ],
 };
 
-const allFields = [textField, numberField, selectField, dateField];
+const allFields = [textField, selectField, multiField];
+
+function chip(container: HTMLElement, index = 0) {
+  return container.querySelectorAll("[data-slot='filter-chip']")[index] as
+    | HTMLElement
+    | undefined;
+}
 
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("Filter", () => {
+describe("Filters", () => {
   /* ---------------------------------------------------------------------- */
-  /* Renders chips for defaultValue rules                                     */
+  /* Container + chips                                                        */
   /* ---------------------------------------------------------------------- */
 
-  describe("defaultValue chips", () => {
-    it("renders a chip for each default rule with the correct label", () => {
-      const rules: FilterRule[] = [
-        { id: "r1", field: "name", operator: "contains", value: "Alice" },
-        { id: "r2", field: "status", operator: "is", value: "active" },
-      ];
-
+  describe("rendering", () => {
+    it("renders the container with data-slot='filter'", () => {
       const { container } = render(
-        <Filter defaultValue={rules} fields={allFields} />
+        <Filters fields={allFields} filters={[]} onChange={vi.fn()} />
       );
-
-      const chips = container.querySelectorAll("[data-slot='filter-chip']");
-      expect(chips).toHaveLength(2);
-
-      // chip 1: text field
-      expect(chips[0]?.textContent).toContain("Name");
-      expect(chips[0]?.textContent).toContain(OPERATOR_LABELS.contains);
-      expect(chips[0]?.textContent).toContain("Alice");
-
-      // chip 2: select field — value should be resolved to "Active" label
-      expect(chips[1]?.textContent).toContain("Status");
-      expect(chips[1]?.textContent).toContain(OPERATOR_LABELS.is);
-      expect(chips[1]?.textContent).toContain("Active");
-    });
-
-    it("renders the filter container with data-slot='filter'", () => {
-      const { container } = render(<Filter fields={allFields} />);
       expect(
         container.querySelector("[data-slot='filter']")
       ).toBeInTheDocument();
     });
 
-    it("renders no chips when no rules are provided", () => {
-      const { container } = render(<Filter fields={allFields} />);
+    it("renders no chips when there are no filters", () => {
+      const { container } = render(
+        <Filters fields={allFields} filters={[]} onChange={vi.fn()} />
+      );
+      expect(
+        container.querySelectorAll("[data-slot='filter-chip']")
+      ).toHaveLength(0);
+    });
+
+    it("renders one chip per filter", () => {
+      const filters: Filter[] = [
+        { id: "r1", field: "name", operator: "contains", values: ["Alice"] },
+        { id: "r2", field: "status", operator: "is", values: ["active"] },
+      ];
+      const { container } = render(
+        <Filters fields={allFields} filters={filters} onChange={vi.fn()} />
+      );
+      expect(
+        container.querySelectorAll("[data-slot='filter-chip']")
+      ).toHaveLength(2);
+    });
+
+    it("shows the field label, operator label, and value in a select chip", () => {
+      const filters: Filter[] = [
+        { id: "r1", field: "status", operator: "is", values: ["active"] },
+      ];
+      const { container } = render(
+        <Filters fields={allFields} filters={filters} onChange={vi.fn()} />
+      );
+      const first = chip(container);
+      expect(first?.textContent).toContain("Status");
+      expect(
+        first?.querySelector("[data-slot='filter-operator']")?.textContent
+      ).toBe("is");
+      // Select value resolves to its option label, not the raw value.
+      expect(
+        first?.querySelector("[data-slot='filter-value']")?.textContent
+      ).toContain("Active");
+    });
+
+    it("renders a text field's value inside an input", () => {
+      const filters: Filter[] = [
+        { id: "r1", field: "name", operator: "contains", values: ["Alice"] },
+      ];
+      const { container } = render(
+        <Filters fields={allFields} filters={filters} onChange={vi.fn()} />
+      );
+      const input = chip(container)?.querySelector("input");
+      expect(input).toBeInTheDocument();
+      expect((input as HTMLInputElement).value).toBe("Alice");
+    });
+
+    it("skips a filter whose field is unknown", () => {
+      const filters: Filter[] = [
+        { id: "r1", field: "ghost", operator: "is", values: ["x"] },
+      ];
+      const { container } = render(
+        <Filters fields={allFields} filters={filters} onChange={vi.fn()} />
+      );
       expect(
         container.querySelectorAll("[data-slot='filter-chip']")
       ).toHaveLength(0);
@@ -106,185 +148,222 @@ describe("Filter", () => {
   });
 
   /* ---------------------------------------------------------------------- */
+  /* Operator value clearing                                                  */
+  /* ---------------------------------------------------------------------- */
+
+  describe("empty / not_empty operators", () => {
+    it("hides the value selector for the empty operator", () => {
+      const filters: Filter[] = [
+        { id: "r1", field: "status", operator: "empty", values: [] },
+      ];
+      const { container } = render(
+        <Filters fields={allFields} filters={filters} onChange={vi.fn()} />
+      );
+      const first = chip(container);
+      expect(
+        first?.querySelector("[data-slot='filter-operator']")?.textContent
+      ).toBe("is empty");
+      expect(
+        first?.querySelector("[data-slot='filter-value']")
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  /* ---------------------------------------------------------------------- */
   /* Removing a chip                                                          */
   /* ---------------------------------------------------------------------- */
 
-  describe("removing chips", () => {
-    it("calls onChange without the removed rule when a chip is dismissed", () => {
+  describe("removing", () => {
+    it("calls onChange without the removed filter", () => {
       const onChange = vi.fn();
-      const rules: FilterRule[] = [
-        { id: "r1", field: "name", operator: "contains", value: "Alice" },
-        { id: "r2", field: "age", operator: "gt", value: "30" },
+      const filters: Filter[] = [
+        { id: "r1", field: "name", operator: "contains", values: ["Alice"] },
+        { id: "r2", field: "status", operator: "is", values: ["active"] },
       ];
-
       const { container } = render(
-        <Filter defaultValue={rules} fields={allFields} onChange={onChange} />
+        <Filters fields={allFields} filters={filters} onChange={onChange} />
       );
-
-      const chips = container.querySelectorAll("[data-slot='filter-chip']");
-      // Dismiss the first chip
-      const dismissBtn = chips[0]?.querySelector(
-        "[data-slot='badge-dismiss']"
+      const removeBtn = chip(container)?.querySelector(
+        "[data-slot='filter-remove']"
       ) as HTMLElement;
-      fireEvent.click(dismissBtn);
+      fireEvent.click(removeBtn);
 
       expect(onChange).toHaveBeenCalledOnce();
-      const [updatedRules] = onChange.mock.calls[0] as [FilterRule[]];
-      expect(updatedRules).toHaveLength(1);
-      expect(updatedRules[0]?.id).toBe("r2");
-    });
-
-    it("removes the chip from the UI when dismissed (uncontrolled)", () => {
-      const rules: FilterRule[] = [
-        { id: "r1", field: "name", operator: "is", value: "Bob" },
-      ];
-
-      const { container } = render(
-        <Filter defaultValue={rules} fields={allFields} />
-      );
-
-      let chips = container.querySelectorAll("[data-slot='filter-chip']");
-      expect(chips).toHaveLength(1);
-
-      const dismissBtn = chips[0]?.querySelector(
-        "[data-slot='badge-dismiss']"
-      ) as HTMLElement;
-      fireEvent.click(dismissBtn);
-
-      chips = container.querySelectorAll("[data-slot='filter-chip']");
-      expect(chips).toHaveLength(0);
+      const [next] = onChange.mock.calls[0] as [Filter[]];
+      expect(next).toHaveLength(1);
+      expect(next[0]?.id).toBe("r2");
     });
   });
 
   /* ---------------------------------------------------------------------- */
-  /* Controlled mode                                                          */
+  /* Add-filter trigger                                                       */
   /* ---------------------------------------------------------------------- */
 
-  describe("controlled mode", () => {
-    it("reflects externally provided value prop", () => {
-      const rules: FilterRule[] = [
-        { id: "r1", field: "status", operator: "is_not", value: "archived" },
-      ];
-
+  describe("add-filter trigger", () => {
+    it("renders the default trigger with data-slot='filter-add'", () => {
       const { container } = render(
-        <Filter fields={allFields} onChange={vi.fn()} value={rules} />
+        <Filters fields={allFields} filters={[]} onChange={vi.fn()} />
       );
-
-      const chips = container.querySelectorAll("[data-slot='filter-chip']");
-      expect(chips).toHaveLength(1);
-      expect(chips[0]?.textContent).toContain("Archived");
+      const trigger = container.querySelector("[data-slot='filter-add']");
+      expect(trigger).toBeInTheDocument();
+      expect(trigger?.textContent).toContain(DEFAULT_I18N.addFilter);
     });
 
-    it("does not update internal state in controlled mode", () => {
-      const onChange = vi.fn();
-      const rules: FilterRule[] = [
-        { id: "r1", field: "name", operator: "is", value: "Test" },
-      ];
-
-      const { container } = render(
-        <Filter fields={allFields} onChange={onChange} value={rules} />
-      );
-
-      const dismissBtn = container.querySelector(
-        "[data-slot='badge-dismiss']"
-      ) as HTMLElement;
-      fireEvent.click(dismissBtn);
-
-      // onChange is called, but value prop is still the same externally
-      expect(onChange).toHaveBeenCalledOnce();
-      // chip still there because value hasn't changed externally
-      expect(
-        container.querySelectorAll("[data-slot='filter-chip']")
-      ).toHaveLength(1);
-    });
-  });
-
-  /* ---------------------------------------------------------------------- */
-  /* maxFilters                                                               */
-  /* ---------------------------------------------------------------------- */
-
-  describe("maxFilters", () => {
-    it("hides the 'Add filter' trigger when maxFilters is reached", () => {
-      const rules: FilterRule[] = [
-        { id: "r1", field: "name", operator: "is", value: "Alice" },
-        { id: "r2", field: "age", operator: "gt", value: "18" },
-      ];
-
+    it("opens the field picker and lists selectable fields", () => {
       render(
-        <Filter
-          defaultValue={rules}
-          fields={allFields}
-          maxFilters={2}
+        <Filters
+          fields={[textField, selectField]}
+          filters={[]}
           onChange={vi.fn()}
         />
       );
-
-      // "Add filter" button should not be present
-      expect(screen.queryByText("Add filter")).toBeNull();
-    });
-
-    it("shows the 'Add filter' trigger when below maxFilters", () => {
-      const rules: FilterRule[] = [
-        { id: "r1", field: "name", operator: "is", value: "Alice" },
-      ];
-
-      render(
-        <Filter
-          defaultValue={rules}
-          fields={allFields}
-          maxFilters={3}
-          onChange={vi.fn()}
-        />
-      );
-
-      expect(screen.getByText("Add filter")).toBeInTheDocument();
-    });
-
-    it("shows the 'Add filter' trigger when maxFilters is not set", () => {
-      render(<Filter fields={allFields} />);
-      expect(screen.getByText("Add filter")).toBeInTheDocument();
-    });
-  });
-
-  /* ---------------------------------------------------------------------- */
-  /* Operator/label maps                                                      */
-  /* ---------------------------------------------------------------------- */
-
-  describe("exported maps", () => {
-    it("DEFAULT_OPERATORS covers all field types", () => {
-      expect(DEFAULT_OPERATORS.text).toContain("contains");
-      expect(DEFAULT_OPERATORS.number).toContain("gt");
-      expect(DEFAULT_OPERATORS.select).toEqual(["is", "is_not"]);
-      expect(DEFAULT_OPERATORS.date).toContain("before");
-    });
-
-    it("OPERATOR_LABELS has human-readable labels", () => {
-      expect(OPERATOR_LABELS.is_not).toBe("is not");
-      expect(OPERATOR_LABELS.does_not_contain).toBe("does not contain");
-      expect(OPERATOR_LABELS.gte).toBe("greater than or equal");
-    });
-  });
-
-  /* ---------------------------------------------------------------------- */
-  /* Opening popover shows field options                                      */
-  /* ---------------------------------------------------------------------- */
-
-  describe("add-filter popover", () => {
-    it("renders the 'Add filter' button", () => {
-      render(<Filter fields={allFields} />);
-      expect(screen.getByText("Add filter")).toBeInTheDocument();
-    });
-
-    it("opens the popover and shows field options when trigger is clicked", () => {
-      render(<Filter fields={[textField, selectField]} />);
-
-      const trigger = screen.getByText("Add filter");
-      fireEvent.click(trigger);
-
-      // Field options should appear in the command list
-      // (cmdk renders them in the DOM when open)
+      fireEvent.click(screen.getByText(DEFAULT_I18N.addFilter));
       expect(screen.getAllByText("Name").length).toBeGreaterThan(0);
       expect(screen.getAllByText("Status").length).toBeGreaterThan(0);
     });
+
+    it("hides the trigger when every field is used and allowMultiple is false", () => {
+      const filters: Filter[] = [
+        { id: "r1", field: "name", operator: "is", values: ["a"] },
+        { id: "r2", field: "status", operator: "is", values: ["active"] },
+      ];
+      const { container } = render(
+        <Filters
+          allowMultiple={false}
+          fields={[textField, selectField]}
+          filters={filters}
+          onChange={vi.fn()}
+        />
+      );
+      expect(
+        container.querySelector("[data-slot='filter-add']")
+      ).not.toBeInTheDocument();
+    });
+
+    it("uses the custom trigger element when provided", () => {
+      render(
+        <Filters
+          fields={allFields}
+          filters={[]}
+          onChange={vi.fn()}
+          trigger={<button type="button">Add a filter</button>}
+        />
+      );
+      expect(screen.getByText("Add a filter")).toBeInTheDocument();
+    });
+  });
+
+  /* ---------------------------------------------------------------------- */
+  /* i18n                                                                     */
+  /* ---------------------------------------------------------------------- */
+
+  describe("i18n", () => {
+    it("applies a partial i18n override to the trigger label", () => {
+      render(
+        <Filters
+          fields={allFields}
+          filters={[]}
+          i18n={{ addFilter: "Filtrar" }}
+          onChange={vi.fn()}
+        />
+      );
+      expect(screen.getByText("Filtrar")).toBeInTheDocument();
+    });
+
+    it("applies an operator label override to the chip", () => {
+      const filters: Filter[] = [
+        { id: "r1", field: "status", operator: "is", values: ["active"] },
+      ];
+      const { container } = render(
+        <Filters
+          fields={allFields}
+          filters={filters}
+          i18n={{ operators: { is: "equals" } }}
+          onChange={vi.fn()}
+        />
+      );
+      expect(
+        chip(container)?.querySelector("[data-slot='filter-operator']")
+          ?.textContent
+      ).toBe("equals");
+    });
+  });
+
+  /* ---------------------------------------------------------------------- */
+  /* FiltersContent                                                           */
+  /* ---------------------------------------------------------------------- */
+
+  describe("FiltersContent", () => {
+    it("renders chips without an add trigger", () => {
+      const filters: Filter[] = [
+        { id: "r1", field: "status", operator: "is", values: ["active"] },
+      ];
+      const { container } = render(
+        <FiltersContent
+          fields={allFields}
+          filters={filters}
+          onChange={vi.fn()}
+        />
+      );
+      expect(
+        container.querySelectorAll("[data-slot='filter-chip']")
+      ).toHaveLength(1);
+      expect(
+        container.querySelector("[data-slot='filter-add']")
+      ).not.toBeInTheDocument();
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Exports
+// ---------------------------------------------------------------------------
+
+describe("exports", () => {
+  it("DEFAULT_OPERATORS covers each field type", () => {
+    expect(DEFAULT_OPERATORS.select.map((o) => o.value)).toEqual([
+      "is",
+      "is_not",
+      "empty",
+      "not_empty",
+    ]);
+    expect(DEFAULT_OPERATORS.text.some((o) => o.value === "contains")).toBe(
+      true
+    );
+    expect(
+      DEFAULT_OPERATORS.multiselect.some((o) => o.value === "is_any_of")
+    ).toBe(true);
+  });
+
+  it("DEFAULT_I18N exposes operator labels", () => {
+    expect(DEFAULT_I18N.addFilter).toBe("Filter");
+    expect(DEFAULT_I18N.operators.is).toBe("is");
+    expect(DEFAULT_I18N.operators.isNot).toBe("is not");
+  });
+
+  it("createFilter generates an id and defaults the operator to 'is'", () => {
+    const f = createFilter("status");
+    expect(f.field).toBe("status");
+    expect(f.operator).toBe("is");
+    expect(f.values).toEqual([]);
+    expect(f.id).toBeTruthy();
+  });
+
+  it("createFilter honours an explicit operator and values", () => {
+    const f = createFilter("status", "is_not", ["active"]);
+    expect(f.operator).toBe("is_not");
+    expect(f.values).toEqual(["active"]);
+  });
+
+  it("createFilter produces unique ids", () => {
+    expect(createFilter("a").id).not.toBe(createFilter("a").id);
+  });
+
+  it("createFilterGroup bundles fields and filters", () => {
+    const group = createFilterGroup("g1", "Group", [selectField]);
+    expect(group.id).toBe("g1");
+    expect(group.label).toBe("Group");
+    expect(group.filters).toEqual([]);
+    expect(group.fields).toHaveLength(1);
   });
 });

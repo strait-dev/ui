@@ -11,15 +11,15 @@ const meta: Meta<typeof RelativeTimeCard> = {
     docs: {
       description: {
         component: [
-          "An inline trigger that shows a live relative timestamp ('3 minutes ago') and,",
-          "on hover, reveals a floating card with the full absolute time plus optional",
-          "per-timezone rows.",
+          "Shows a compact, formatted timestamp that — on hover — reveals a card with",
+          "the live relative time and the same instant across one or more timezones",
+          "(the viewer's local zone is always appended).",
           "",
-          "The relative string auto-refreshes on a configurable interval (default 60 s).",
-          "Supply `timezones` with IANA timezone identifiers to add secondary rows;",
-          "invalid identifiers are silently skipped.",
+          "The relative string in the card auto-refreshes on a configurable interval",
+          '(default every second). `timezones` defaults to `["UTC"]`.',
           "",
-          "Pass `children` to customise the trigger label while keeping the card content.",
+          "Use `variant` (`default` / `muted` / `ghost`) to style the trigger, and pass",
+          "`children` to override the trigger label.",
         ].join("\n"),
       },
     },
@@ -34,8 +34,8 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Interactive playground — a past date with the default 60-second refresh.
- * Hover over the underlined text to see the absolute time card.
+ * Default — the trigger shows the absolute timestamp. Hover to reveal the
+ * relative time and the UTC + local timezone rows.
  */
 export const Playground: Story = {
   args: {
@@ -44,7 +44,21 @@ export const Playground: Story = {
 };
 
 /**
- * Future date — the trigger shows an "in X minutes" prefix instead of "ago".
+ * Trigger variants — `default`, `muted` (dimmer), and `ghost` (underline on
+ * hover).
+ */
+export const Variants: Story = {
+  render: (args) => (
+    <div className="flex items-center gap-6">
+      <RelativeTimeCard {...args} variant="default" />
+      <RelativeTimeCard {...args} variant="muted" />
+      <RelativeTimeCard {...args} variant="ghost" />
+    </div>
+  ),
+};
+
+/**
+ * Future date — the card's relative string reads "in X minutes".
  */
 export const FutureDate: Story = {
   args: {
@@ -53,8 +67,8 @@ export const FutureDate: Story = {
 };
 
 /**
- * Multi-timezone — additional rows in the hover card show the time in several
- * IANA time zones. Hover to see them.
+ * Multiple timezones — extra rows render in the card, one per IANA zone, plus
+ * the viewer's local row.
  */
 export const MultiTimezone: Story = {
   args: {
@@ -70,18 +84,17 @@ export const MultiTimezone: Story = {
 };
 
 /**
- * Custom children — the trigger label is overridden; the hover card still shows
- * the absolute time.
+ * Custom label — the trigger text is overridden; the card content is unchanged.
  */
 export const CustomLabel: Story = {
   args: {
     date: new Date(Date.now() - 60_000),
-    children: "just now",
+    children: "Edited just now",
   },
 };
 
 /**
- * String date input — demonstrates that the component accepts ISO string dates.
+ * String date input — the component normalises ISO strings and epoch numbers.
  */
 export const StringDate: Story = {
   args: {

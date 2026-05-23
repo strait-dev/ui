@@ -1,6 +1,9 @@
-import { act, render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { RelativeTimeCard } from "./relative-time-card";
+
+// HoverCard (Base UI PreviewCard) is hover-driven; jsdom can't simulate that,
+// so card-content tests force the panel open with the `open` prop.
 
 describe("RelativeTimeCard", () => {
   afterEach(() => {
@@ -8,128 +11,127 @@ describe("RelativeTimeCard", () => {
   });
 
   /* ------------------------------------------------------------------ */
-  /* Trigger text — past / future                                        */
+  /* Trigger — formatted absolute timestamp                              */
   /* ------------------------------------------------------------------ */
 
-  it("trigger shows 'ago' for a past date", () => {
-    const past = new Date(Date.now() - 5 * 60_000); // 5 minutes ago
-    render(<RelativeTimeCard date={past} />);
+  it("trigger shows the formatted absolute timestamp by default", () => {
+    render(<RelativeTimeCard date={new Date("2024-06-01T12:00:00Z")} />);
     const trigger = document.querySelector(
       "[data-slot='relative-time-card-trigger']"
     );
     expect(trigger).toBeInTheDocument();
-    expect(trigger?.textContent).toMatch(/ago/i);
+    // Absolute label includes the year — the relative string lives in the card.
+    expect(trigger?.textContent).toMatch(/2024/);
+    expect(trigger?.textContent).not.toMatch(/ago/i);
   });
 
-  it("trigger shows 'in' prefix for a future date", () => {
-    const future = new Date(Date.now() + 10 * 60_000); // 10 minutes from now
-    render(<RelativeTimeCard date={future} />);
+  it("accepts a string ISO date", () => {
+    render(<RelativeTimeCard date={"2023-03-15T08:30:00Z"} />);
     const trigger = document.querySelector(
       "[data-slot='relative-time-card-trigger']"
     );
-    expect(trigger).toBeInTheDocument();
-    expect(trigger?.textContent).toMatch(/^in /i);
+    expect(trigger?.textContent).toMatch(/2023/);
   });
 
-  /* ------------------------------------------------------------------ */
-  /* Prop normalisation — string and number dates                        */
-  /* ------------------------------------------------------------------ */
-
-  it("accepts a string ISO date and renders a relative time", () => {
-    const iso = new Date(Date.now() - 2 * 60_000).toISOString();
-    render(<RelativeTimeCard date={iso} />);
-    const trigger = document.querySelector(
-      "[data-slot='relative-time-card-trigger']"
-    );
-    expect(trigger?.textContent).toMatch(/ago/i);
-  });
-
-  it("accepts a numeric epoch timestamp and renders a relative time", () => {
-    const epoch = Date.now() - 3 * 60_000;
+  it("accepts a numeric epoch timestamp", () => {
+    const epoch = new Date("2022-11-20T00:00:00Z").getTime();
     render(<RelativeTimeCard date={epoch} />);
     const trigger = document.querySelector(
       "[data-slot='relative-time-card-trigger']"
     );
-    expect(trigger?.textContent).toMatch(/ago/i);
+    expect(trigger?.textContent).toMatch(/2022/);
   });
 
-  /* ------------------------------------------------------------------ */
-  /* children override                                                   */
-  /* ------------------------------------------------------------------ */
-
-  it("children overrides the relative-time label on the trigger", () => {
-    const past = new Date(Date.now() - 60_000);
-    render(<RelativeTimeCard date={past}>Created recently</RelativeTimeCard>);
+  it("children overrides the trigger label", () => {
+    render(
+      <RelativeTimeCard date={new Date("2024-06-01T12:00:00Z")}>
+        Created recently
+      </RelativeTimeCard>
+    );
     const trigger = document.querySelector(
       "[data-slot='relative-time-card-trigger']"
     );
     expect(trigger?.textContent).toBe("Created recently");
-    // Should NOT contain "ago"
-    expect(trigger?.textContent).not.toMatch(/ago/i);
+    expect(trigger?.textContent).not.toMatch(/2024/);
   });
 
   /* ------------------------------------------------------------------ */
-  /* Auto-refresh via fake timers                                        */
+  /* Variants                                                            */
   /* ------------------------------------------------------------------ */
 
-  it("auto-refresh: setInterval is scheduled and clears on unmount", () => {
-    vi.useFakeTimers();
+  it("applies the muted variant classes to the trigger", () => {
+    render(<RelativeTimeCard date={new Date()} variant="muted" />);
+    const trigger = document.querySelector(
+      "[data-slot='relative-time-card-trigger']"
+    );
+    expect(trigger?.className).toContain("text-foreground/50");
+  });
 
+  it("applies the ghost variant classes to the trigger", () => {
+    render(<RelativeTimeCard date={new Date()} variant="ghost" />);
+    const trigger = document.querySelector(
+      "[data-slot='relative-time-card-trigger']"
+    );
+    expect(trigger?.className).toContain("hover:underline");
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Card content — relative string + timezone rows                      */
+  /* ------------------------------------------------------------------ */
+
+  it("renders the relative string and timezone rows when open", async () => {
+    const past = new Date(Date.now() - 5 * 60_000); // 5 minutes ago
+    render(<RelativeTimeCard date={past} open />);
+
+    // Relative string surfaces inside the card.
+    expect(await screen.findByText(/ago/i)).toBeInTheDocument();
+    // Default timezone ("UTC") chip is present.
+    expect(screen.getByText("UTC")).toBeInTheDocument();
+    // One row per configured timezone (UTC) plus the viewer's local row.
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+  });
+
+  it("renders one row per timezone plus a local row", async () => {
+    const date = new Date("2024-06-01T12:00:00Z");
+    render(
+      <RelativeTimeCard
+        date={date}
+        open
+        timezones={["UTC", "America/New_York", "Asia/Tokyo"]}
+      />
+    );
+    await screen.findByText("UTC");
+    // 3 configured + 1 local
+    expect(screen.getAllByRole("listitem")).toHaveLength(4);
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Auto-refresh                                                        */
+  /* ------------------------------------------------------------------ */
+
+  it("schedules setInterval with updateInterval and clears it on unmount", () => {
+    vi.useFakeTimers();
     const setIntervalSpy = vi.spyOn(globalThis, "setInterval");
     const clearIntervalSpy = vi.spyOn(globalThis, "clearInterval");
 
-    const past = new Date(Date.now() - 2 * 60_000);
     const { unmount } = render(
-      <RelativeTimeCard date={past} updateInterval={30_000} />
+      <RelativeTimeCard date={new Date()} updateInterval={30_000} />
     );
 
-    // setInterval should have been called once with our updateInterval
     expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 30_000);
 
     unmount();
-
-    // clearInterval should be called on cleanup
     expect(clearIntervalSpy).toHaveBeenCalled();
 
     setIntervalSpy.mockRestore();
     clearIntervalSpy.mockRestore();
   });
 
-  it("auto-refresh: trigger text updates after the interval elapses", () => {
-    vi.useFakeTimers();
-
-    // Pin "now" at a known point — must be set BEFORE the date is created
-    // and BEFORE render so date-fns computes from the same origin.
-    const fixedNow = new Date("2024-01-15T12:00:00Z").getTime();
-    vi.setSystemTime(fixedNow);
-
-    // Date is 20 seconds ago — date-fns renders this as "less than a minute ago".
-    const past = new Date(fixedNow - 20_000);
-    render(<RelativeTimeCard date={past} updateInterval={5000} />);
-
-    const trigger = document.querySelector(
-      "[data-slot='relative-time-card-trigger']"
-    );
-    const textBefore = trigger?.textContent ?? "";
-    expect(textBefore).toMatch(/less than a minute ago/i);
-
-    // Advance system time by 15 seconds so "now" is 35 s after `past`,
-    // then fire the interval inside act() so React flushes the state update.
-    act(() => {
-      vi.setSystemTime(fixedNow + 15_000);
-      vi.advanceTimersByTime(5000);
-    });
-
-    const textAfter = trigger?.textContent ?? "";
-    // Now past is 35 s ago → "1 minute ago" (threshold crossed at 30 s)
-    expect(textAfter).toMatch(/1 minute ago/i);
-  });
-
   /* ------------------------------------------------------------------ */
-  /* data-slot attributes                                                */
+  /* data-slot                                                           */
   /* ------------------------------------------------------------------ */
 
-  it("applies data-slot='relative-time-card-trigger' to the trigger element", () => {
+  it("applies data-slot='relative-time-card-trigger' to the trigger", () => {
     render(<RelativeTimeCard date={new Date()} />);
     expect(
       document.querySelector("[data-slot='relative-time-card-trigger']")
