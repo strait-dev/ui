@@ -1,11 +1,10 @@
 import { cn } from "../utils/index";
 
-export type InputWithAddonsProps =
-  React.InputHTMLAttributes<HTMLInputElement> & {
-    leading?: React.ReactNode;
-    trailing?: React.ReactNode;
-    containerClassName?: string;
-  };
+export type InputWithAddonsProps = React.ComponentProps<"input"> & {
+  leading?: React.ReactNode;
+  trailing?: React.ReactNode;
+  containerClassName?: string;
+};
 
 function InputWithAddons({
   leading,

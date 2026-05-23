@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from "./tooltip";
 
-export type NavigationRailProps = React.HTMLAttributes<HTMLDivElement> & {
+export type NavigationRailProps = React.ComponentProps<"div"> & {
   orientation?: "left" | "right";
 };
 

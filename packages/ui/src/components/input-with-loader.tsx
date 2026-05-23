@@ -5,14 +5,13 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "../utils/index";
 import { Input } from "./input";
 
-export type InputWithLoaderProps =
-  React.InputHTMLAttributes<HTMLInputElement> & {
-    isLoading?: boolean;
-    icon?: React.ReactNode;
-    endIcon?: React.ReactNode;
-    onEndIconClick?: () => void;
-    endIconAriaLabel?: string;
-  };
+export type InputWithLoaderProps = React.ComponentProps<"input"> & {
+  isLoading?: boolean;
+  icon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+  onEndIconClick?: () => void;
+  endIconAriaLabel?: string;
+};
 
 function InputWithLoader({
   className,

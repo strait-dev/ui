@@ -15,7 +15,7 @@ const shellVariants = cva("flex flex-col gap-4", {
   },
 });
 
-type ShellProps = React.HTMLAttributes<HTMLDivElement> &
+type ShellProps = React.ComponentProps<"div"> &
   VariantProps<typeof shellVariants> & {
     className?: string;
     variant?: "default" | "centered" | "fluid";

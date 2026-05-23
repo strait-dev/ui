@@ -49,7 +49,7 @@ const useStepItem = () => {
 };
 
 // Components
-type StepperProps = React.HTMLAttributes<HTMLDivElement> & {
+type StepperProps = React.ComponentProps<"div"> & {
   defaultValue?: number;
   value?: number;
   onValueChange?: (value: number) => void;
@@ -100,7 +100,7 @@ function Stepper({
 }
 
 // StepperItem
-type StepperItemProps = React.HTMLAttributes<HTMLDivElement> & {
+type StepperItemProps = React.ComponentProps<"div"> & {
   step: number;
   completed?: boolean;
   disabled?: boolean;
@@ -184,7 +184,7 @@ function StepperTrigger({
 }
 
 // StepperIndicator
-type StepperIndicatorProps = React.HTMLAttributes<HTMLSpanElement>;
+type StepperIndicatorProps = React.ComponentProps<"span">;
 
 function StepperIndicator({
   className,
@@ -229,10 +229,7 @@ function StepperIndicator({
 }
 
 // StepperTitle
-function StepperTitle({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
+function StepperTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
       className={cn("font-medium text-sm", className)}
@@ -246,7 +243,7 @@ function StepperTitle({
 function StepperDescription({
   className,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
+}: React.ComponentProps<"p">) {
   return (
     <p
       className={cn("text-muted-foreground text-sm", className)}
@@ -260,7 +257,7 @@ function StepperDescription({
 function StepperSeparator({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(

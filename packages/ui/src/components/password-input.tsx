@@ -6,10 +6,7 @@ import { useState } from "react";
 import { Input } from "../components/input";
 import { cn } from "../utils/index";
 
-export type PasswordInputProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "type"
-> & {
+export type PasswordInputProps = Omit<React.ComponentProps<"input">, "type"> & {
   label?: string;
   showPasswordLabel?: string;
   hidePasswordLabel?: string;

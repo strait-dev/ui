@@ -17,7 +17,7 @@ const MAX_STRENGTH = 4;
 const PERCENTAGE_TO_WIDTH = 100;
 
 export type InputPasswordWithStrengthIndicatorProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
+  React.ComponentProps<"input">,
   "type"
 > & {
   label?: string;

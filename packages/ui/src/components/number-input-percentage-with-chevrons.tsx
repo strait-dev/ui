@@ -10,7 +10,7 @@ const MINIMUM_VALUE = 0;
 const MAX_VALUE = 100;
 
 export type NumberInputPercentageWithChevronsProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
+  React.ComponentProps<"input">,
   "value" | "onChange" | "defaultValue"
 > & {
   defaultValue?: number;

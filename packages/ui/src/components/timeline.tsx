@@ -26,7 +26,7 @@ const useTimeline = () => {
 };
 
 // Components
-type TimelineProps = React.HTMLAttributes<HTMLDivElement> & {
+type TimelineProps = React.ComponentProps<"div"> & {
   defaultValue?: number;
   value?: number;
   onValueChange?: (value: number) => void;
@@ -73,10 +73,7 @@ function Timeline({
 }
 
 // TimelineContent
-function TimelineContent({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function TimelineContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn("text-muted-foreground text-sm", className)}
@@ -87,8 +84,7 @@ function TimelineContent({
 }
 
 // TimelineDate
-type TimelineDateProps = useRender.ComponentProps<"time"> &
-  React.HTMLAttributes<HTMLTimeElement>;
+type TimelineDateProps = useRender.ComponentProps<"time">;
 
 function TimelineDate({ render, className, ...props }: TimelineDateProps) {
   return useRender({
@@ -110,17 +106,14 @@ function TimelineDate({ render, className, ...props }: TimelineDateProps) {
 }
 
 // TimelineHeader
-function TimelineHeader({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function TimelineHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn(className)} data-slot="timeline-header" {...props} />
   );
 }
 
 // TimelineIndicator
-type TimelineIndicatorProps = React.HTMLAttributes<HTMLDivElement>;
+type TimelineIndicatorProps = React.ComponentProps<"div">;
 
 function TimelineIndicator({
   className,
@@ -143,7 +136,7 @@ function TimelineIndicator({
 }
 
 // TimelineItem
-type TimelineItemProps = React.HTMLAttributes<HTMLDivElement> & {
+type TimelineItemProps = React.ComponentProps<"div"> & {
   step: number;
 };
 
@@ -167,7 +160,7 @@ function TimelineItem({ step, className, ...props }: TimelineItemProps) {
 function TimelineSeparator({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.ComponentProps<"div">) {
   return (
     <div
       aria-hidden="true"
@@ -182,10 +175,7 @@ function TimelineSeparator({
 }
 
 // TimelineTitle
-function TimelineTitle({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
+function TimelineTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
       className={cn("font-medium text-sm", className)}

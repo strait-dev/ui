@@ -3,12 +3,11 @@
 import { Input } from "../components/input";
 import { cn } from "../utils/index";
 
-export type InputWithStartIconProps =
-  React.InputHTMLAttributes<HTMLInputElement> & {
-    icon?: React.ReactNode;
-    label?: string;
-    containerClassName?: string;
-  };
+export type InputWithStartIconProps = React.ComponentProps<"input"> & {
+  icon?: React.ReactNode;
+  label?: string;
+  containerClassName?: string;
+};
 
 function InputWithStartIcon({
   className,

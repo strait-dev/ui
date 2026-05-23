@@ -7,7 +7,7 @@ import { Button, Group, Input, NumberField } from "react-aria-components";
 import { cn } from "../utils/index";
 
 export type NumberInputWithButtonsProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
+  React.ComponentProps<"input">,
   "value" | "onChange" | "defaultValue"
 > & {
   defaultValue?: number;

@@ -29,7 +29,7 @@ const cardCheckboxVariants = cva(
   },
 );
 
-const CardCheckboxGroup: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+const CardCheckboxGroup: React.FC<React.ComponentProps<"div">> = ({
   className,
   ...props
 }) => (
