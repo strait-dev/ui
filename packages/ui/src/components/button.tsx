@@ -5,6 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "../utils/index";
 
+/**
+ * Class-variance-authority recipe for the {@link Button}.
+ *
+ * Exposes two axes:
+ * - `variant` — emphasis and intent. Each intent (brand, destructive, success,
+ *   warning, info) ships in three weights: `-solid` (filled), the bare name
+ *   (tinted), and `-outline` (bordered). Neutral tones (`default`, `secondary`,
+ *   `outline`) plus the low-emphasis `ghost` and `link` round out the set.
+ * - `size` — height/padding presets, including square `icon*` sizes for
+ *   icon-only buttons.
+ *
+ * Exported so consumers can compose the same look onto non-button elements
+ * (e.g. a link) without re-deriving the class list.
+ */
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-full border border-transparent bg-clip-padding font-normal text-sm outline-none transition-all focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
@@ -84,6 +98,31 @@ const buttonVariants = cva(
   }
 );
 
+/**
+ * The primary interactive control for actions and navigation.
+ *
+ * Built on Base UI's `Button` primitive, so it forwards every native button
+ * prop and ref. Styling is driven by {@link buttonVariants}; pass `variant`
+ * and `size` to pick an appearance.
+ *
+ * @remarks
+ * - Use the `render` prop to project the styling onto another element — e.g.
+ *   `render={<a href="…" />}` — when the button should be a link or a
+ *   framework `<Link>`. Doing so automatically relaxes the native-button
+ *   semantics (see `nativeButton` below).
+ * - Icon-only buttons should use an `icon*` size and always carry an
+ *   `aria-label`.
+ * - Wrap leading/trailing icons in an element with
+ *   `data-icon="inline-start"` / `data-icon="inline-end"` to get the tuned
+ *   asymmetric padding.
+ *
+ * @example
+ * ```tsx
+ * <Button variant="brand-solid" size="lg">Save</Button>
+ * <Button render={<a href="/docs" />}>Read the docs</Button>
+ * <Button size="icon" aria-label="Settings"><SettingsIcon /></Button>
+ * ```
+ */
 function Button({
   className,
   variant = "default",

@@ -2,6 +2,34 @@ import type * as React from "react";
 
 import { cn } from "../utils/index";
 
+/**
+ * A surface that groups related content and actions into a bordered container.
+ *
+ * `Card` is the root; compose it from the sub-parts in this file —
+ * {@link CardHeader} (holding {@link CardTitle}, {@link CardDescription}, and
+ * an optional {@link CardAction}), {@link CardContent}, and {@link CardFooter}.
+ * Each part tags itself with a `data-slot`, which the others use to adapt
+ * spacing (e.g. the footer reveals its top border, the header switches to a
+ * two-column grid when an action is present).
+ *
+ * @remarks
+ * The `size` prop (`"default" | "sm"`) cascades to every sub-part via a
+ * `data-size` attribute and group selectors, so set it once on the root. A
+ * full-bleed image as the first or last child is corner-rounded automatically.
+ *
+ * @example
+ * ```tsx
+ * <Card>
+ *   <CardHeader>
+ *     <CardTitle>Invoice</CardTitle>
+ *     <CardDescription>Due May 30</CardDescription>
+ *     <CardAction><Button size="icon-sm" aria-label="More" /></CardAction>
+ *   </CardHeader>
+ *   <CardContent>…</CardContent>
+ *   <CardFooter>…</CardFooter>
+ * </Card>
+ * ```
+ */
 function Card({
   className,
   size = "default",
@@ -20,6 +48,11 @@ function Card({
   );
 }
 
+/**
+ * Top region of a {@link Card}. Lays out {@link CardTitle},
+ * {@link CardDescription}, and an optional {@link CardAction} on a grid that
+ * reflows to make room for the action.
+ */
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -33,6 +66,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Accessible heading for a {@link Card}, rendered inside {@link CardHeader}. */
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -46,6 +80,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Muted supporting text beneath a {@link CardTitle}. */
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -56,6 +91,10 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Trailing control (button, menu, etc.) pinned to the top-right of a
+ * {@link CardHeader}; its presence switches the header to a two-column grid.
+ */
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -69,6 +108,7 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Primary body region of a {@link Card}. */
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -79,6 +119,10 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/**
+ * Bottom region of a {@link Card} for actions or summaries; renders a muted bar
+ * with a top divider.
+ */
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
