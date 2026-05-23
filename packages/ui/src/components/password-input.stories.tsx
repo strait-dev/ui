@@ -22,11 +22,26 @@ const meta: Meta<typeof PasswordInput> = {
     },
   },
   argTypes: {
-    label: { control: "text" },
-    placeholder: { control: "text" },
-    disabled: { control: "boolean" },
-    showPasswordLabel: { control: "text" },
-    hidePasswordLabel: { control: "text" },
+    label: {
+      control: "text",
+      description: "Text for the built-in label (omit for none).",
+    },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when the field is empty.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the field and toggle button.",
+    },
+    showPasswordLabel: {
+      control: "text",
+      description: "Accessible toggle label while the password is hidden.",
+    },
+    hidePasswordLabel: {
+      control: "text",
+      description: "Accessible toggle label while the password is shown.",
+    },
   },
   args: {
     label: "Password",

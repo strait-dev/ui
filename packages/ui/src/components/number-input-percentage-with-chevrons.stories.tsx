@@ -27,7 +27,10 @@ const meta: Meta<typeof NumberInputPercentageWithChevrons> = {
     },
   },
   argTypes: {
-    disabled: { control: "boolean" },
+    disabled: {
+      control: "boolean",
+      description: "Disable the input and chevrons.",
+    },
     defaultValue: {
       control: { type: "range", min: 0, max: 100, step: 1 },
       description: "Initial percentage value (0–100).",

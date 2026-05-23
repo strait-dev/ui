@@ -29,12 +29,24 @@ const meta: Meta<typeof InputWithInlineButton> = {
     },
   },
   argTypes: {
-    placeholder: { control: "text" },
-    buttonText: { control: "text" },
-    disabled: { control: "boolean" },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when the field is empty.",
+    },
+    buttonText: {
+      control: "text",
+      description:
+        "Label for the inline button (when no custom `button` is supplied).",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable both the input and the button.",
+    },
     buttonType: {
       control: "select",
       options: ["button", "submit", "reset"],
+      description:
+        "Native button `type` — `submit` inside a form, `button` otherwise.",
     },
   },
   args: {

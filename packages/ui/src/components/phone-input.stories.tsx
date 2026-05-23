@@ -29,10 +29,22 @@ const meta: Meta<typeof PhoneInput> = {
     },
   },
   argTypes: {
-    placeholder: { control: "text" },
-    disabled: { control: "boolean" },
-    value: { control: false },
-    onChange: { control: false },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when the field is empty.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the country selector and number field.",
+    },
+    value: {
+      control: false,
+      description: "Controlled E.164 phone value.",
+    },
+    onChange: {
+      control: false,
+      description: "Called with the next E.164 value (or empty string).",
+    },
   },
   args: {
     placeholder: "Phone number",

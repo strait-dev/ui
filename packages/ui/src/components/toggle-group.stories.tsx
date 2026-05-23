@@ -32,23 +32,29 @@ const meta = {
     variant: {
       control: "select",
       options: ["default", "outline"],
+      description: "Visual style — filled `default` or bordered `outline`.",
       table: { defaultValue: { summary: "default" } },
     },
     size: {
       control: "select",
       options: ["sm", "default", "lg"],
+      description: "Control height — `sm`, `default`, or `lg`.",
       table: { defaultValue: { summary: "default" } },
     },
     orientation: {
       control: "inline-radio",
       options: ["horizontal", "vertical"],
+      description: "Lay items out horizontally or vertically.",
       table: { defaultValue: { summary: "horizontal" } },
     },
     multiple: {
       control: "boolean",
       description: "Allow more than one item to be active.",
     },
-    disabled: { control: "boolean" },
+    disabled: {
+      control: "boolean",
+      description: "Disable every item in the group.",
+    },
   },
   args: {
     variant: "outline",

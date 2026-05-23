@@ -46,7 +46,10 @@ const meta: Meta<InputOTPStoryArgs> = {
       control: "number",
       description: "Total number of OTP characters.",
     },
-    disabled: { control: "boolean" },
+    disabled: {
+      control: "boolean",
+      description: "Disable all OTP slots.",
+    },
   },
   args: {
     maxLength: 6,

@@ -27,11 +27,26 @@ const meta: Meta<typeof InputWithLoader> = {
     },
   },
   argTypes: {
-    isLoading: { control: "boolean" },
-    placeholder: { control: "text" },
-    disabled: { control: "boolean" },
-    icon: { control: false },
-    endIcon: { control: false },
+    isLoading: {
+      control: "boolean",
+      description: "Replace the leading icon with a spinner.",
+    },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when the field is empty.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the field.",
+    },
+    icon: {
+      control: false,
+      description: "Element rendered in the leading slot.",
+    },
+    endIcon: {
+      control: false,
+      description: "Pressable element rendered in the trailing slot.",
+    },
   },
   args: {
     placeholder: "Search…",

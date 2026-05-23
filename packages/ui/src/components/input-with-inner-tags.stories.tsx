@@ -28,10 +28,22 @@ const meta: Meta<typeof InputWithInnerTags> = {
     },
   },
   argTypes: {
-    placeholder: { control: "text" },
-    disabled: { control: "boolean" },
-    tags: { control: false },
-    onTagsChange: { control: false },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when no tags are present.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable tag entry and removal.",
+    },
+    tags: {
+      control: false,
+      description: "Controlled array of current tags.",
+    },
+    onTagsChange: {
+      control: false,
+      description: "Called with the next tag array on add or remove.",
+    },
   },
   args: {
     placeholder: "Add a tag",

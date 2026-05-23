@@ -31,8 +31,14 @@ const meta: Meta<typeof InputWithAddons> = {
       control: false,
       description: "Content rendered in the trailing (right) addon.",
     },
-    placeholder: { control: "text" },
-    disabled: { control: "boolean" },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when the field is empty.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the field and dim the addons.",
+    },
   },
   args: {
     placeholder: "Type something…",

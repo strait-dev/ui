@@ -24,11 +24,26 @@ const meta: Meta<typeof NumberInputWithButtons> = {
     },
   },
   argTypes: {
-    min: { control: "number" },
-    max: { control: "number" },
-    step: { control: "number" },
-    disabled: { control: "boolean" },
-    defaultValue: { control: "number" },
+    min: {
+      control: "number",
+      description: "Smallest allowed value.",
+    },
+    max: {
+      control: "number",
+      description: "Largest allowed value.",
+    },
+    step: {
+      control: "number",
+      description: "Increment applied by the − / + buttons.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the input and both steppers.",
+    },
+    defaultValue: {
+      control: "number",
+      description: "Initial value for uncontrolled use.",
+    },
   },
   args: {
     name: "quantity",

@@ -24,10 +24,22 @@ const meta: Meta<typeof InputWithStartIcon> = {
     },
   },
   argTypes: {
-    placeholder: { control: "text" },
-    label: { control: "text" },
-    disabled: { control: "boolean" },
-    icon: { control: false },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when the field is empty.",
+    },
+    label: {
+      control: "text",
+      description: "Text for the built-in field label.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the field.",
+    },
+    icon: {
+      control: false,
+      description: "Element rendered in the leading icon slot.",
+    },
   },
   args: {
     placeholder: "Search…",

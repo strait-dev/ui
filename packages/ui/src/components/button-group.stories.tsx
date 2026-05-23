@@ -41,6 +41,7 @@ const meta = {
     orientation: {
       control: "inline-radio",
       options: ["horizontal", "vertical"],
+      description: "Lay the buttons out in a row or stacked vertically.",
       table: { defaultValue: { summary: "horizontal" } },
     },
   },

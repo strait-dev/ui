@@ -24,11 +24,26 @@ const meta: Meta<typeof InputPasswordWithStrengthIndicator> = {
     },
   },
   argTypes: {
-    label: { control: "text" },
-    placeholder: { control: "text" },
-    showStrengthIndicator: { control: "boolean" },
-    error: { control: "boolean" },
-    disabled: { control: "boolean" },
+    label: {
+      control: "text",
+      description: "Text for the built-in field label.",
+    },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when the field is empty.",
+    },
+    showStrengthIndicator: {
+      control: "boolean",
+      description: "Render the strength bar and requirement checklist.",
+    },
+    error: {
+      control: "boolean",
+      description: "Force the destructive (invalid) border styling.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the field and toggle button.",
+    },
   },
   args: {
     label: "Password",

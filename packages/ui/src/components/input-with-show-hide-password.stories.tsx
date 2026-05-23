@@ -23,8 +23,14 @@ const meta: Meta<typeof InputWithShowHidePassword> = {
     },
   },
   argTypes: {
-    placeholder: { control: "text" },
-    disabled: { control: "boolean" },
+    placeholder: {
+      control: "text",
+      description: "Placeholder shown when the field is empty.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the field and visibility toggle.",
+    },
   },
   args: {
     placeholder: "Enter password…",
