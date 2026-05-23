@@ -1,12 +1,13 @@
 "use client";
 
 import * as React from "react";
+import type { LegendPayload, TooltipPayloadEntry } from "recharts";
 import * as RechartsPrimitive from "recharts";
 
-type TooltipPayloadItem = Record<string, any>;
-type LegendPayloadItem = Record<string, any>;
-
 import { cn } from "../utils/index";
+
+type TooltipPayloadItem = TooltipPayloadEntry;
+type LegendPayloadItem = LegendPayload;
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
@@ -83,6 +84,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
 
   return (
     <style
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: static chart-theme CSS derived from build-time ChartConfig, no user input
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
           .map(
@@ -149,7 +151,7 @@ function ChartTooltipContent({
     if (labelFormatter) {
       return (
         <div className={cn("font-medium", labelClassName)}>
-          {labelFormatter(value, payload as any)}
+          {labelFormatter(value, payload as ReadonlyArray<TooltipPayloadItem>)}
         </div>
       );
     }
@@ -203,7 +205,7 @@ function ChartTooltipContent({
                   formatter(
                     item.value,
                     item.name,
-                    item as any,
+                    item as TooltipPayloadItem,
                     index,
                     item.payload,
                   )

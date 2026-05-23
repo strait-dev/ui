@@ -16,7 +16,7 @@ import {
 const BAR_RADIUS = 4;
 
 type BaseChartProps = {
-  data: any[];
+  data: Record<string, unknown>[];
   index: string;
   colors?: string[];
   valueFormatter?: (value: number) => string;

@@ -4,6 +4,7 @@ import { ArrowDown01Icon, Tick01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { VirtuosoHandle } from "react-virtuoso";
 import { Virtuoso } from "react-virtuoso";
 
 import { cn } from "../utils/index";
@@ -23,7 +24,7 @@ const TIMEOUT = 50;
 export type SelectOption = {
   value: string;
   label: string;
-  data?: any;
+  data?: unknown;
 };
 
 type SelectWithSearchProps = {
@@ -82,7 +83,7 @@ export function SelectWithSearch({
   const [searchInputValue, setSearchInputValue] = useState("");
 
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const virtuosoRef = useRef(null);
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
 
   useEffect(() => {
     if (value !== undefined) {
@@ -104,7 +105,7 @@ export function SelectWithSearch({
     if (selectedIndex !== -1 && virtuosoRef.current) {
       // Wait for the list to be fully rendered
       setTimeout(() => {
-        (virtuosoRef.current as any)?.scrollToIndex({
+        virtuosoRef.current?.scrollToIndex({
           index: selectedIndex,
           align: "center",
         });

@@ -887,8 +887,11 @@
   .animate-glow-pulse,
   .animate-marquee,
   .animate-flow-dash {
+    /* biome-ignore lint/complexity/noImportantStyles: prefers-reduced-motion overrides must beat inline styles set by JS animation libraries */
     opacity: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: prefers-reduced-motion overrides must beat inline styles set by JS animation libraries */
     transform: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: prefers-reduced-motion overrides must beat inline styles set by JS animation libraries */
     animation: none !important;
   }
 }

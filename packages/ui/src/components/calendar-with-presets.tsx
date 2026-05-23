@@ -155,7 +155,11 @@ export function CalendarWithPresets({
   const handlePresetClick = useCallback(
     (preset: CalendarPreset) => {
       if (onSelect) {
-        onSelect(preset.value as any);
+        // TypeScript cannot call a union of function types directly; cast to the
+        // common denominator (Date | DateRange | undefined) which both branches accept.
+        (onSelect as (value: Date | DateRange | undefined) => void)(
+          preset.value,
+        );
       }
     },
     [onSelect],
