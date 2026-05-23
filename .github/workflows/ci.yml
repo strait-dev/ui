@@ -23,8 +23,22 @@ jobs:
         run: bun run --filter @strait/ui build
       - name: Typecheck
         run: bun run --filter @strait/ui typecheck
+      - name: Unit tests
+        run: bun run --filter @strait/ui test
       - name: Build Storybook
         run: bun run build-storybook
+
+  interaction:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bunx playwright install --with-deps chromium
+      - name: Story interaction tests
+        run: bun run --filter @strait/storybook test-storybook
 
   a11y:
     runs-on: ubuntu-latest

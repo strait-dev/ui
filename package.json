@@ -18,7 +18,9 @@
     "check": "biome check --write .",
     "check:conventions": "bun scripts/check-conventions.mjs",
     "typecheck": "turbo run typecheck",
-    "verify": "biome check . && bun scripts/check-conventions.mjs && turbo run build && turbo run typecheck && turbo run build-storybook",
+    "test": "turbo run test",
+    "test:stories": "bun run --filter @strait/storybook test-storybook",
+    "verify": "biome check . && bun scripts/check-conventions.mjs && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
