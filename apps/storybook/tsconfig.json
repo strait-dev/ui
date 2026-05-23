@@ -1,0 +1,8 @@
+{
+  "extends": "../../packages/config/react-library.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": [".storybook", "vite.config.ts", "vite-env.d.ts"]
+}

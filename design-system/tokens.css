@@ -1,0 +1,24 @@
+:root {
+  --font-heading: General Sans Variable Variable Bold;
+  --font-body: General Sans Variable Variable Bold;
+  --space-1: 1px;
+  --space-2: 2px;
+  --space-3: 3px;
+  --space-4: 4px;
+  --space-5: 5px;
+  --space-6: 6px;
+  --space-7: 7px;
+  --space-8: 8px;
+  --space-9: 10px;
+  --space-10: 12px;
+  --space-11: 14px;
+  --space-12: 16px;
+  --space-13: 18px;
+  --space-14: 20px;
+  --space-15: 24px;
+  --space-16: 28px;
+  --space-17: 32px;
+  --space-18: 40px;
+  --space-19: 140px;
+  --space-20: 200px;
+}

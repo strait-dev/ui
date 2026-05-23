@@ -1,0 +1,31 @@
+{
+  "name": "@strait/storybook",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@strait/ui": "workspace:*",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@storybook/addon-docs": "^10.4.1",
+    "@storybook/addon-themes": "^10.4.1",
+    "@storybook/react-vite": "^10.4.1",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@typescript/native-preview": "^7.0.0-dev.20260423.1",
+    "@vitejs/plugin-react": "^6.0.2",
+    "storybook": "^10.4.1",
+    "vite": "^8.0.14"
+  }
+}
