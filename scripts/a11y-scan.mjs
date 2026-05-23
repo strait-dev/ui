@@ -6,8 +6,7 @@
 // Usage: node scripts/a11y-scan.mjs [--all] [--ids id1,id2]
 //   --all      scan every story (default: one per component title)
 //   --ids ...  scan only the given comma-separated story ids
-import { readFileSync } from "node:fs";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
@@ -21,7 +20,9 @@ const AXE_SRC = readFileSync(AXE_PATH, "utf8");
 const args = process.argv.slice(2);
 const scanAll = args.includes("--all");
 const idsArg = args.includes("--ids") ? args[args.indexOf("--ids") + 1] : null;
-const theme = args.includes("--theme") ? args[args.indexOf("--theme") + 1] : null;
+const theme = args.includes("--theme")
+  ? args[args.indexOf("--theme") + 1]
+  : null;
 const globalsParam = theme ? `&globals=theme:${theme}` : "";
 
 const idx = await (await fetch(`${BASE}/index.json`)).json();
@@ -44,7 +45,7 @@ if (idsArg) {
 }
 
 console.log(
-  `Scanning ${targets.length} stories against ${BASE}${theme ? ` (theme: ${theme})` : ""}`
+  `Scanning ${targets.length} stories against ${BASE}${theme ? ` (theme: ${theme})` : ""}`,
 );
 
 const browser = await chromium.launch();
@@ -66,11 +67,10 @@ for (const s of targets) {
           const root = document.querySelector("#storybook-root");
           const err = document.querySelector(".sb-errordisplay");
           return (
-            (root && root.children.length > 0 && root.textContent.trim()) ||
-            err
+            (root && root.children.length > 0 && root.textContent.trim()) || err
           );
         },
-        { timeout: 8000 }
+        { timeout: 8000 },
       )
       .catch(() => {});
     // When scanning a non-default theme, wait until Storybook has actually
@@ -80,7 +80,7 @@ for (const s of targets) {
       await page
         .waitForFunction(
           () => document.documentElement.classList.contains("dark"),
-          { timeout: 5000 }
+          { timeout: 5000 },
         )
         .catch(() => {});
     }
@@ -98,7 +98,7 @@ for (const s of targets) {
       // finishes so we don't collide with "Axe is already running".
       for (let i = 0; i < 15; i++) {
         try {
-          // @ts-ignore
+          // @ts-expect-error
           return await window.axe.run(document, opts);
         } catch (err) {
           if (String(err?.message ?? err).includes("already running")) {
@@ -159,8 +159,10 @@ if (rows.length === 0) {
 }
 for (const [rule, info] of rows) {
   console.log(
-    `${rule}: ${info.nodes} nodes across ${info.stories.size} components`
+    `${rule}: ${info.nodes} nodes across ${info.stories.size} components`,
   );
   for (const t of [...info.stories].slice(0, 12)) console.log(`    - ${t}`);
 }
-console.log(`\nFull report: scripts/a11y-report.json (${findings.length} findings)`);
+console.log(
+  `\nFull report: scripts/a11y-report.json (${findings.length} findings)`,
+);

@@ -23,11 +23,13 @@ try {
   if (!res.ok) fail(`GET ${BASE}/index.json -> ${res.status}`);
   index = await res.json();
 } catch (err) {
-  fail(`Could not reach Storybook at ${BASE}. Is the dev server running? (${err.message})`);
+  fail(
+    `Could not reach Storybook at ${BASE}. Is the dev server running? (${err.message})`,
+  );
 }
 
 const entries = Object.values(index.entries ?? {}).filter(
-  (e) => e.type === "story"
+  (e) => e.type === "story",
 );
 
 // Group by category (the part of the title before the first "/").
@@ -50,7 +52,7 @@ for (const category of categories) {
 console.log(
   `\n  Totals: ${categories.length} categories, ` +
     `${new Set(entries.map((e) => e.title)).size} components, ` +
-    `${entries.length} stories\n`
+    `${entries.length} stories\n`,
 );
 
 // Serve check: every story iframe returns 200.
@@ -68,7 +70,7 @@ await Promise.all(
       broken++;
       console.error(`  ✗ ${entry.id} -> ${err.message}`);
     }
-  })
+  }),
 );
 
 if (broken > 0) fail(`${broken} story iframe(s) failed to load`);

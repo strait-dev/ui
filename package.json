@@ -2,7 +2,10 @@
   "name": "strait",
   "version": "0.0.0",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "packageManager": "bun@1.3.14",
   "scripts": {
     "dev": "turbo run dev",
@@ -13,6 +16,7 @@
     "format": "biome format --write .",
     "check": "biome check --write .",
     "typecheck": "turbo run typecheck",
+    "verify": "biome check . && turbo run typecheck && turbo run build-storybook",
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
