@@ -1,15 +1,25 @@
 {
   "name": "@strait/ui",
   "version": "1.0.0",
-  "private": true,
-  "sideEffects": false,
+  "type": "module",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
+    "dist",
+    "src/globals.css",
     "tailwind.config.ts",
-    "postcss.config.js",
-    "globals.css"
+    "postcss.config.mjs"
   ],
   "scripts": {
-    "clean": "rm -rf .turbo node_modules",
+    "clean": "rm -rf .turbo node_modules dist",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 bunchee",
+    "dev": "bunchee --watch",
+    "prepublishOnly": "bun run build",
     "biome:lint": "biome lint ./src",
     "biome:format": "biome format --write .",
     "biome:write": "biome check --write ./src",
@@ -63,107 +73,484 @@
     "react-dom": "^19.0.0"
   },
   "exports": {
-    "./utils": "./src/utils/index.ts",
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js",
+      "default": "./dist/utils.js"
+    },
     "./tailwind.config": "./tailwind.config.ts",
     "./css": "./src/globals.css",
     "./globals.css": "./src/globals.css",
     "./postcss": "./postcss.config.mjs",
-    "./components/accordion": "./src/components/accordion.tsx",
-    "./components/alert": "./src/components/alert.tsx",
-    "./components/alert-dialog": "./src/components/alert-dialog.tsx",
-    "./components/aspect-ratio": "./src/components/aspect-ratio.tsx",
-    "./components/avatar": "./src/components/avatar.tsx",
-    "./components/badge": "./src/components/badge.tsx",
-    "./components/breadcrumb": "./src/components/breadcrumb.tsx",
-    "./components/button": "./src/components/button.tsx",
-    "./components/calendar": "./src/components/calendar.tsx",
-    "./components/calendar-rac": "./src/components/calendar-rac.tsx",
-    "./components/calendar-with-presets": "./src/components/calendar-with-presets.tsx",
-    "./components/card": "./src/components/card.tsx",
-    "./components/card-checkbox": "./src/components/card-checkbox.tsx",
-    "./components/carousel": "./src/components/carousel.tsx",
-    "./components/chart": "./src/components/chart.tsx",
-    "./components/checkbox": "./src/components/checkbox.tsx",
-    "./components/checkbox-tree": "./src/components/checkbox-tree.tsx",
-    "./components/collapsible": "./src/components/collapsible.tsx",
-    "./components/command": "./src/components/command.tsx",
-    "./components/context-menu": "./src/components/context-menu.tsx",
-    "./components/credenza": "./src/components/credenza.tsx",
-    "./components/date-input": "./src/components/date-input.tsx",
-    "./components/date-picker": "./src/components/date-picker.tsx",
-    "./components/date-picker-with-month-year": "./src/components/date-picker-with-month-year.tsx",
-    "./components/datefield-rac": "./src/components/datefield-rac.tsx",
-    "./components/date-range-picker": "./src/components/date-range-picker.tsx",
-    "./components/date-range-picker-with-presets": "./src/components/date-range-picker-with-presets.tsx",
-    "./components/dialog": "./src/components/dialog.tsx",
-    "./components/drawer": "./src/components/drawer.tsx",
-    "./components/dropdown-menu": "./src/components/dropdown-menu.tsx",
-    "./components/form": "./src/components/form.tsx",
-    "./components/hover-card": "./src/components/hover-card.tsx",
-    "./components/input": "./src/components/input.tsx",
-    "./components/input-group": "./src/components/input-group.tsx",
-    "./components/input-otp": "./src/components/input-otp.tsx",
-    "./components/input-password-with-strength-indicator": "./src/components/input-password-with-strength-indicator.tsx",
-    "./components/input-with-addons": "./src/components/input-with-addons.tsx",
-    "./components/input-with-inline-button": "./src/components/input-with-inline-button.tsx",
-    "./components/input-with-inner-tags": "./src/components/input-with-inner-tags.tsx",
-    "./components/input-with-loader": "./src/components/input-with-loader.tsx",
-    "./components/input-with-show-hide-password": "./src/components/input-with-show-hide-password.tsx",
-    "./components/input-with-start-icon": "./src/components/input-with-start-icon.tsx",
-    "./components/kbd": "./src/components/kbd.tsx",
-    "./components/label": "./src/components/label.tsx",
-    "./components/menubar": "./src/components/menubar.tsx",
-    "./components/multiselect": "./src/components/multiselect.tsx",
-    "./components/navigation-menu": "./src/components/navigation-menu.tsx",
-    "./components/number-input-percentage-with-chevrons": "./src/components/number-input-percentage-with-chevrons.tsx",
-    "./components/number-input-with-buttons": "./src/components/number-input-with-buttons.tsx",
-    "./components/number-input-with-chevrons": "./src/components/number-input-with-chevrons.tsx",
-    "./components/pagination": "./src/components/pagination.tsx",
-    "./components/password-input": "./src/components/password-input.tsx",
-    "./components/phone-input": "./src/components/phone-input.tsx",
-    "./components/popover": "./src/components/popover.tsx",
-    "./components/preview-card": "./src/components/preview-card.tsx",
-    "./components/progress": "./src/components/progress.tsx",
-    "./components/radio-group": "./src/components/radio-group.tsx",
-    "./components/range-calendar-with-presets": "./src/components/range-calendar-with-presets.tsx",
-    "./components/resizable": "./src/components/resizable.tsx",
-    "./components/scroll-area": "./src/components/scroll-area.tsx",
-    "./components/select": "./src/components/select.tsx",
-    "./components/select-native": "./src/components/select-native.tsx",
-    "./components/select-with-search": "./src/components/select-with-search.tsx",
-    "./components/select-with-search-and-button": "./src/components/select-with-search-and-button.tsx",
-    "./components/separator": "./src/components/separator.tsx",
-    "./components/sheet": "./src/components/sheet.tsx",
-    "./components/shell": "./src/components/shell.tsx",
-    "./components/sidebar": "./src/components/sidebar.tsx",
-    "./components/skeleton": "./src/components/skeleton.tsx",
-    "./components/slider": "./src/components/slider.tsx",
-    "./components/sonner": "./src/components/sonner.tsx",
-    "./toast": "./src/components/toast/index.ts",
-    "./components/switch": "./src/components/switch.tsx",
-    "./components/table": "./src/components/table.tsx",
-    "./components/tabs": "./src/components/tabs.tsx",
-    "./components/textarea": "./src/components/textarea.tsx",
-    "./components/toggle": "./src/components/toggle.tsx",
-    "./components/toggle-group": "./src/components/toggle-group.tsx",
-    "./components/tooltip": "./src/components/tooltip.tsx",
-    "./components/id-cell": "./src/components/id-cell.tsx",
-    "./components/field": "./src/components/field.tsx",
-    "./components/direction": "./src/components/direction.tsx",
-    "./components/empty": "./src/components/empty.tsx",
-    "./components/native-select": "./src/components/native-select.tsx",
-    "./components/spinner": "./src/components/spinner.tsx",
-    "./components/button-group": "./src/components/button-group.tsx",
-    "./components/item": "./src/components/item.tsx",
-    "./components/combobox": "./src/components/combobox.tsx",
-    "./components/stepper": "./src/components/stepper.tsx",
-    "./components/timeline": "./src/components/timeline.tsx",
-    "./components/data-table": "./src/components/data-table.tsx",
-    "./components/charts": "./src/components/charts.tsx",
-    "./components/navigation-rail": "./src/components/navigation-rail.tsx"
+    "./components/accordion": {
+      "types": "./dist/components/accordion.d.ts",
+      "import": "./dist/components/accordion.js",
+      "default": "./dist/components/accordion.js"
+    },
+    "./components/alert": {
+      "types": "./dist/components/alert.d.ts",
+      "import": "./dist/components/alert.js",
+      "default": "./dist/components/alert.js"
+    },
+    "./components/alert-dialog": {
+      "types": "./dist/components/alert-dialog.d.ts",
+      "import": "./dist/components/alert-dialog.js",
+      "default": "./dist/components/alert-dialog.js"
+    },
+    "./components/aspect-ratio": {
+      "types": "./dist/components/aspect-ratio.d.ts",
+      "import": "./dist/components/aspect-ratio.js",
+      "default": "./dist/components/aspect-ratio.js"
+    },
+    "./components/avatar": {
+      "types": "./dist/components/avatar.d.ts",
+      "import": "./dist/components/avatar.js",
+      "default": "./dist/components/avatar.js"
+    },
+    "./components/badge": {
+      "types": "./dist/components/badge.d.ts",
+      "import": "./dist/components/badge.js",
+      "default": "./dist/components/badge.js"
+    },
+    "./components/breadcrumb": {
+      "types": "./dist/components/breadcrumb.d.ts",
+      "import": "./dist/components/breadcrumb.js",
+      "default": "./dist/components/breadcrumb.js"
+    },
+    "./components/button": {
+      "types": "./dist/components/button.d.ts",
+      "import": "./dist/components/button.js",
+      "default": "./dist/components/button.js"
+    },
+    "./components/calendar": {
+      "types": "./dist/components/calendar.d.ts",
+      "import": "./dist/components/calendar.js",
+      "default": "./dist/components/calendar.js"
+    },
+    "./components/calendar-rac": {
+      "types": "./dist/components/calendar-rac.d.ts",
+      "import": "./dist/components/calendar-rac.js",
+      "default": "./dist/components/calendar-rac.js"
+    },
+    "./components/calendar-with-presets": {
+      "types": "./dist/components/calendar-with-presets.d.ts",
+      "import": "./dist/components/calendar-with-presets.js",
+      "default": "./dist/components/calendar-with-presets.js"
+    },
+    "./components/card": {
+      "types": "./dist/components/card.d.ts",
+      "import": "./dist/components/card.js",
+      "default": "./dist/components/card.js"
+    },
+    "./components/card-checkbox": {
+      "types": "./dist/components/card-checkbox.d.ts",
+      "import": "./dist/components/card-checkbox.js",
+      "default": "./dist/components/card-checkbox.js"
+    },
+    "./components/carousel": {
+      "types": "./dist/components/carousel.d.ts",
+      "import": "./dist/components/carousel.js",
+      "default": "./dist/components/carousel.js"
+    },
+    "./components/chart": {
+      "types": "./dist/components/chart.d.ts",
+      "import": "./dist/components/chart.js",
+      "default": "./dist/components/chart.js"
+    },
+    "./components/checkbox": {
+      "types": "./dist/components/checkbox.d.ts",
+      "import": "./dist/components/checkbox.js",
+      "default": "./dist/components/checkbox.js"
+    },
+    "./components/checkbox-tree": {
+      "types": "./dist/components/checkbox-tree.d.ts",
+      "import": "./dist/components/checkbox-tree.js",
+      "default": "./dist/components/checkbox-tree.js"
+    },
+    "./components/collapsible": {
+      "types": "./dist/components/collapsible.d.ts",
+      "import": "./dist/components/collapsible.js",
+      "default": "./dist/components/collapsible.js"
+    },
+    "./components/command": {
+      "types": "./dist/components/command.d.ts",
+      "import": "./dist/components/command.js",
+      "default": "./dist/components/command.js"
+    },
+    "./components/context-menu": {
+      "types": "./dist/components/context-menu.d.ts",
+      "import": "./dist/components/context-menu.js",
+      "default": "./dist/components/context-menu.js"
+    },
+    "./components/credenza": {
+      "types": "./dist/components/credenza.d.ts",
+      "import": "./dist/components/credenza.js",
+      "default": "./dist/components/credenza.js"
+    },
+    "./components/date-input": {
+      "types": "./dist/components/date-input.d.ts",
+      "import": "./dist/components/date-input.js",
+      "default": "./dist/components/date-input.js"
+    },
+    "./components/date-picker": {
+      "types": "./dist/components/date-picker.d.ts",
+      "import": "./dist/components/date-picker.js",
+      "default": "./dist/components/date-picker.js"
+    },
+    "./components/date-picker-with-month-year": {
+      "types": "./dist/components/date-picker-with-month-year.d.ts",
+      "import": "./dist/components/date-picker-with-month-year.js",
+      "default": "./dist/components/date-picker-with-month-year.js"
+    },
+    "./components/datefield-rac": {
+      "types": "./dist/components/datefield-rac.d.ts",
+      "import": "./dist/components/datefield-rac.js",
+      "default": "./dist/components/datefield-rac.js"
+    },
+    "./components/date-range-picker": {
+      "types": "./dist/components/date-range-picker.d.ts",
+      "import": "./dist/components/date-range-picker.js",
+      "default": "./dist/components/date-range-picker.js"
+    },
+    "./components/date-range-picker-with-presets": {
+      "types": "./dist/components/date-range-picker-with-presets.d.ts",
+      "import": "./dist/components/date-range-picker-with-presets.js",
+      "default": "./dist/components/date-range-picker-with-presets.js"
+    },
+    "./components/dialog": {
+      "types": "./dist/components/dialog.d.ts",
+      "import": "./dist/components/dialog.js",
+      "default": "./dist/components/dialog.js"
+    },
+    "./components/drawer": {
+      "types": "./dist/components/drawer.d.ts",
+      "import": "./dist/components/drawer.js",
+      "default": "./dist/components/drawer.js"
+    },
+    "./components/dropdown-menu": {
+      "types": "./dist/components/dropdown-menu.d.ts",
+      "import": "./dist/components/dropdown-menu.js",
+      "default": "./dist/components/dropdown-menu.js"
+    },
+    "./components/form": {
+      "types": "./dist/components/form.d.ts",
+      "import": "./dist/components/form.js",
+      "default": "./dist/components/form.js"
+    },
+    "./components/hover-card": {
+      "types": "./dist/components/hover-card.d.ts",
+      "import": "./dist/components/hover-card.js",
+      "default": "./dist/components/hover-card.js"
+    },
+    "./components/input": {
+      "types": "./dist/components/input.d.ts",
+      "import": "./dist/components/input.js",
+      "default": "./dist/components/input.js"
+    },
+    "./components/input-group": {
+      "types": "./dist/components/input-group.d.ts",
+      "import": "./dist/components/input-group.js",
+      "default": "./dist/components/input-group.js"
+    },
+    "./components/input-otp": {
+      "types": "./dist/components/input-otp.d.ts",
+      "import": "./dist/components/input-otp.js",
+      "default": "./dist/components/input-otp.js"
+    },
+    "./components/input-password-with-strength-indicator": {
+      "types": "./dist/components/input-password-with-strength-indicator.d.ts",
+      "import": "./dist/components/input-password-with-strength-indicator.js",
+      "default": "./dist/components/input-password-with-strength-indicator.js"
+    },
+    "./components/input-with-addons": {
+      "types": "./dist/components/input-with-addons.d.ts",
+      "import": "./dist/components/input-with-addons.js",
+      "default": "./dist/components/input-with-addons.js"
+    },
+    "./components/input-with-inline-button": {
+      "types": "./dist/components/input-with-inline-button.d.ts",
+      "import": "./dist/components/input-with-inline-button.js",
+      "default": "./dist/components/input-with-inline-button.js"
+    },
+    "./components/input-with-inner-tags": {
+      "types": "./dist/components/input-with-inner-tags.d.ts",
+      "import": "./dist/components/input-with-inner-tags.js",
+      "default": "./dist/components/input-with-inner-tags.js"
+    },
+    "./components/input-with-loader": {
+      "types": "./dist/components/input-with-loader.d.ts",
+      "import": "./dist/components/input-with-loader.js",
+      "default": "./dist/components/input-with-loader.js"
+    },
+    "./components/input-with-show-hide-password": {
+      "types": "./dist/components/input-with-show-hide-password.d.ts",
+      "import": "./dist/components/input-with-show-hide-password.js",
+      "default": "./dist/components/input-with-show-hide-password.js"
+    },
+    "./components/input-with-start-icon": {
+      "types": "./dist/components/input-with-start-icon.d.ts",
+      "import": "./dist/components/input-with-start-icon.js",
+      "default": "./dist/components/input-with-start-icon.js"
+    },
+    "./components/kbd": {
+      "types": "./dist/components/kbd.d.ts",
+      "import": "./dist/components/kbd.js",
+      "default": "./dist/components/kbd.js"
+    },
+    "./components/label": {
+      "types": "./dist/components/label.d.ts",
+      "import": "./dist/components/label.js",
+      "default": "./dist/components/label.js"
+    },
+    "./components/menubar": {
+      "types": "./dist/components/menubar.d.ts",
+      "import": "./dist/components/menubar.js",
+      "default": "./dist/components/menubar.js"
+    },
+    "./components/multiselect": {
+      "types": "./dist/components/multiselect.d.ts",
+      "import": "./dist/components/multiselect.js",
+      "default": "./dist/components/multiselect.js"
+    },
+    "./components/navigation-menu": {
+      "types": "./dist/components/navigation-menu.d.ts",
+      "import": "./dist/components/navigation-menu.js",
+      "default": "./dist/components/navigation-menu.js"
+    },
+    "./components/number-input-percentage-with-chevrons": {
+      "types": "./dist/components/number-input-percentage-with-chevrons.d.ts",
+      "import": "./dist/components/number-input-percentage-with-chevrons.js",
+      "default": "./dist/components/number-input-percentage-with-chevrons.js"
+    },
+    "./components/number-input-with-buttons": {
+      "types": "./dist/components/number-input-with-buttons.d.ts",
+      "import": "./dist/components/number-input-with-buttons.js",
+      "default": "./dist/components/number-input-with-buttons.js"
+    },
+    "./components/number-input-with-chevrons": {
+      "types": "./dist/components/number-input-with-chevrons.d.ts",
+      "import": "./dist/components/number-input-with-chevrons.js",
+      "default": "./dist/components/number-input-with-chevrons.js"
+    },
+    "./components/pagination": {
+      "types": "./dist/components/pagination.d.ts",
+      "import": "./dist/components/pagination.js",
+      "default": "./dist/components/pagination.js"
+    },
+    "./components/password-input": {
+      "types": "./dist/components/password-input.d.ts",
+      "import": "./dist/components/password-input.js",
+      "default": "./dist/components/password-input.js"
+    },
+    "./components/phone-input": {
+      "types": "./dist/components/phone-input.d.ts",
+      "import": "./dist/components/phone-input.js",
+      "default": "./dist/components/phone-input.js"
+    },
+    "./components/popover": {
+      "types": "./dist/components/popover.d.ts",
+      "import": "./dist/components/popover.js",
+      "default": "./dist/components/popover.js"
+    },
+    "./components/preview-card": {
+      "types": "./dist/components/preview-card.d.ts",
+      "import": "./dist/components/preview-card.js",
+      "default": "./dist/components/preview-card.js"
+    },
+    "./components/progress": {
+      "types": "./dist/components/progress.d.ts",
+      "import": "./dist/components/progress.js",
+      "default": "./dist/components/progress.js"
+    },
+    "./components/radio-group": {
+      "types": "./dist/components/radio-group.d.ts",
+      "import": "./dist/components/radio-group.js",
+      "default": "./dist/components/radio-group.js"
+    },
+    "./components/range-calendar-with-presets": {
+      "types": "./dist/components/range-calendar-with-presets.d.ts",
+      "import": "./dist/components/range-calendar-with-presets.js",
+      "default": "./dist/components/range-calendar-with-presets.js"
+    },
+    "./components/resizable": {
+      "types": "./dist/components/resizable.d.ts",
+      "import": "./dist/components/resizable.js",
+      "default": "./dist/components/resizable.js"
+    },
+    "./components/scroll-area": {
+      "types": "./dist/components/scroll-area.d.ts",
+      "import": "./dist/components/scroll-area.js",
+      "default": "./dist/components/scroll-area.js"
+    },
+    "./components/select": {
+      "types": "./dist/components/select.d.ts",
+      "import": "./dist/components/select.js",
+      "default": "./dist/components/select.js"
+    },
+    "./components/select-native": {
+      "types": "./dist/components/select-native.d.ts",
+      "import": "./dist/components/select-native.js",
+      "default": "./dist/components/select-native.js"
+    },
+    "./components/select-with-search": {
+      "types": "./dist/components/select-with-search.d.ts",
+      "import": "./dist/components/select-with-search.js",
+      "default": "./dist/components/select-with-search.js"
+    },
+    "./components/select-with-search-and-button": {
+      "types": "./dist/components/select-with-search-and-button.d.ts",
+      "import": "./dist/components/select-with-search-and-button.js",
+      "default": "./dist/components/select-with-search-and-button.js"
+    },
+    "./components/separator": {
+      "types": "./dist/components/separator.d.ts",
+      "import": "./dist/components/separator.js",
+      "default": "./dist/components/separator.js"
+    },
+    "./components/sheet": {
+      "types": "./dist/components/sheet.d.ts",
+      "import": "./dist/components/sheet.js",
+      "default": "./dist/components/sheet.js"
+    },
+    "./components/shell": {
+      "types": "./dist/components/shell.d.ts",
+      "import": "./dist/components/shell.js",
+      "default": "./dist/components/shell.js"
+    },
+    "./components/sidebar": {
+      "types": "./dist/components/sidebar.d.ts",
+      "import": "./dist/components/sidebar.js",
+      "default": "./dist/components/sidebar.js"
+    },
+    "./components/skeleton": {
+      "types": "./dist/components/skeleton.d.ts",
+      "import": "./dist/components/skeleton.js",
+      "default": "./dist/components/skeleton.js"
+    },
+    "./components/slider": {
+      "types": "./dist/components/slider.d.ts",
+      "import": "./dist/components/slider.js",
+      "default": "./dist/components/slider.js"
+    },
+    "./components/sonner": {
+      "types": "./dist/components/sonner.d.ts",
+      "import": "./dist/components/sonner.js",
+      "default": "./dist/components/sonner.js"
+    },
+    "./components/toast": {
+      "types": "./dist/components/toast.d.ts",
+      "import": "./dist/components/toast.js",
+      "default": "./dist/components/toast.js"
+    },
+    "./components/switch": {
+      "types": "./dist/components/switch.d.ts",
+      "import": "./dist/components/switch.js",
+      "default": "./dist/components/switch.js"
+    },
+    "./components/table": {
+      "types": "./dist/components/table.d.ts",
+      "import": "./dist/components/table.js",
+      "default": "./dist/components/table.js"
+    },
+    "./components/tabs": {
+      "types": "./dist/components/tabs.d.ts",
+      "import": "./dist/components/tabs.js",
+      "default": "./dist/components/tabs.js"
+    },
+    "./components/textarea": {
+      "types": "./dist/components/textarea.d.ts",
+      "import": "./dist/components/textarea.js",
+      "default": "./dist/components/textarea.js"
+    },
+    "./components/toggle": {
+      "types": "./dist/components/toggle.d.ts",
+      "import": "./dist/components/toggle.js",
+      "default": "./dist/components/toggle.js"
+    },
+    "./components/toggle-group": {
+      "types": "./dist/components/toggle-group.d.ts",
+      "import": "./dist/components/toggle-group.js",
+      "default": "./dist/components/toggle-group.js"
+    },
+    "./components/tooltip": {
+      "types": "./dist/components/tooltip.d.ts",
+      "import": "./dist/components/tooltip.js",
+      "default": "./dist/components/tooltip.js"
+    },
+    "./components/id-cell": {
+      "types": "./dist/components/id-cell.d.ts",
+      "import": "./dist/components/id-cell.js",
+      "default": "./dist/components/id-cell.js"
+    },
+    "./components/field": {
+      "types": "./dist/components/field.d.ts",
+      "import": "./dist/components/field.js",
+      "default": "./dist/components/field.js"
+    },
+    "./components/direction": {
+      "types": "./dist/components/direction.d.ts",
+      "import": "./dist/components/direction.js",
+      "default": "./dist/components/direction.js"
+    },
+    "./components/empty": {
+      "types": "./dist/components/empty.d.ts",
+      "import": "./dist/components/empty.js",
+      "default": "./dist/components/empty.js"
+    },
+    "./components/native-select": {
+      "types": "./dist/components/native-select.d.ts",
+      "import": "./dist/components/native-select.js",
+      "default": "./dist/components/native-select.js"
+    },
+    "./components/spinner": {
+      "types": "./dist/components/spinner.d.ts",
+      "import": "./dist/components/spinner.js",
+      "default": "./dist/components/spinner.js"
+    },
+    "./components/button-group": {
+      "types": "./dist/components/button-group.d.ts",
+      "import": "./dist/components/button-group.js",
+      "default": "./dist/components/button-group.js"
+    },
+    "./components/item": {
+      "types": "./dist/components/item.d.ts",
+      "import": "./dist/components/item.js",
+      "default": "./dist/components/item.js"
+    },
+    "./components/combobox": {
+      "types": "./dist/components/combobox.d.ts",
+      "import": "./dist/components/combobox.js",
+      "default": "./dist/components/combobox.js"
+    },
+    "./components/stepper": {
+      "types": "./dist/components/stepper.d.ts",
+      "import": "./dist/components/stepper.js",
+      "default": "./dist/components/stepper.js"
+    },
+    "./components/timeline": {
+      "types": "./dist/components/timeline.d.ts",
+      "import": "./dist/components/timeline.js",
+      "default": "./dist/components/timeline.js"
+    },
+    "./components/data-table": {
+      "types": "./dist/components/data-table.d.ts",
+      "import": "./dist/components/data-table.js",
+      "default": "./dist/components/data-table.js"
+    },
+    "./components/charts": {
+      "types": "./dist/components/charts.d.ts",
+      "import": "./dist/components/charts.js",
+      "default": "./dist/components/charts.js"
+    },
+    "./components/navigation-rail": {
+      "types": "./dist/components/navigation-rail.d.ts",
+      "import": "./dist/components/navigation-rail.js",
+      "default": "./dist/components/navigation-rail.js"
+    }
   },
   "devDependencies": {
     "@storybook/react-vite": "^10.4.1",
+    "bunchee": "^6.10.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "storybook": "^10.4.1"

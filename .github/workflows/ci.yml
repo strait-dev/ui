@@ -19,6 +19,8 @@ jobs:
         run: bunx @biomejs/biome check .
       - name: Component contract
         run: bun scripts/check-conventions.mjs
+      - name: Build package
+        run: bun run --filter @strait/ui build
       - name: Typecheck
         run: bun run --filter @strait/ui typecheck
       - name: Build Storybook
