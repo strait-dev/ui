@@ -9,7 +9,7 @@
     "build-storybook": "storybook build",
     "typecheck": "tsgo --noEmit",
     "test-storybook": "vitest run --project=storybook",
-    "chromatic": "chromatic --build-script-name build-storybook --exit-zero-on-changes"
+    "chromatic": "chromatic --storybook-build-dir=storybook-static --exit-zero-on-changes"
   },
   "dependencies": {
     "@strait/ui": "workspace:*",
