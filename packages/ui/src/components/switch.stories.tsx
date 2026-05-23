@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
+import { expect, userEvent, within } from "storybook/test";
 
 import { Label } from "./label";
 import { Switch } from "./switch";
@@ -59,6 +60,13 @@ export const Playground: Story = {
       <Label htmlFor="pg-switch">Airplane mode</Label>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const toggle = canvas.getByRole("switch", { name: "Airplane mode" });
+    await expect(toggle).toHaveAttribute("aria-checked", "false");
+    await userEvent.click(toggle);
+    await expect(toggle).toHaveAttribute("aria-checked", "true");
+  },
 };
 
 /* ------------------------------------------------------------------ */

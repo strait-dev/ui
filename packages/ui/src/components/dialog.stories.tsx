@@ -5,6 +5,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, screen, userEvent, within } from "storybook/test";
 
 import { Button } from "./button";
 import {
@@ -75,6 +76,13 @@ export const Playground: Story = {
       </DialogContent>
     </Dialog>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // The popup is portaled to the document body, so query it via `screen`.
+    await userEvent.click(canvas.getByRole("button", { name: "Open dialog" }));
+    await expect(await screen.findByText("Dialog title")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
+  },
 };
 
 /** A basic triggered dialog with a title and description. */

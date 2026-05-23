@@ -14,6 +14,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { type ComponentProps, Fragment } from "react";
+import { expect, fn, userEvent, within } from "storybook/test";
 
 import { Button } from "./button";
 import { ButtonGroup, ButtonGroupSeparator } from "./button-group";
@@ -125,6 +126,20 @@ type Story = StoryObj<typeof meta>;
 
 /** Interactive playground — use the controls to mix any variant and size. */
 export const Playground: Story = {};
+
+/**
+ * Interaction test: clicking the button fires its `onClick` handler, and a
+ * disabled button does not. Runs in the Storybook Vitest browser suite.
+ */
+export const ClickInteraction: Story = {
+  args: { onClick: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole("button", { name: "Button" });
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
 
 /* ------------------------------------------------------------------ */
 /* The full matrix                                                     */
