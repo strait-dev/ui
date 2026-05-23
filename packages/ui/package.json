@@ -184,6 +184,86 @@
       "import": "./dist/components/context-menu.js",
       "default": "./dist/components/context-menu.js"
     },
+    "./components/copy-button": {
+      "types": "./dist/components/copy-button.d.ts",
+      "import": "./dist/components/copy-button.js",
+      "default": "./dist/components/copy-button.js"
+    },
+    "./components/status-badge": {
+      "types": "./dist/components/status-badge.d.ts",
+      "import": "./dist/components/status-badge.js",
+      "default": "./dist/components/status-badge.js"
+    },
+    "./components/metric-card": {
+      "types": "./dist/components/metric-card.d.ts",
+      "import": "./dist/components/metric-card.js",
+      "default": "./dist/components/metric-card.js"
+    },
+    "./components/radial-gauge": {
+      "types": "./dist/components/radial-gauge.d.ts",
+      "import": "./dist/components/radial-gauge.js",
+      "default": "./dist/components/radial-gauge.js"
+    },
+    "./components/notice-banner": {
+      "types": "./dist/components/notice-banner.d.ts",
+      "import": "./dist/components/notice-banner.js",
+      "default": "./dist/components/notice-banner.js"
+    },
+    "./components/code-block": {
+      "types": "./dist/components/code-block.d.ts",
+      "import": "./dist/components/code-block.js",
+      "default": "./dist/components/code-block.js"
+    },
+    "./components/json-viewer": {
+      "types": "./dist/components/json-viewer.d.ts",
+      "import": "./dist/components/json-viewer.js",
+      "default": "./dist/components/json-viewer.js"
+    },
+    "./components/bulk-action-bar": {
+      "types": "./dist/components/bulk-action-bar.d.ts",
+      "import": "./dist/components/bulk-action-bar.js",
+      "default": "./dist/components/bulk-action-bar.js"
+    },
+    "./components/chart-empty-state": {
+      "types": "./dist/components/chart-empty-state.d.ts",
+      "import": "./dist/components/chart-empty-state.js",
+      "default": "./dist/components/chart-empty-state.js"
+    },
+    "./components/secret-input": {
+      "types": "./dist/components/secret-input.d.ts",
+      "import": "./dist/components/secret-input.js",
+      "default": "./dist/components/secret-input.js"
+    },
+    "./components/config-row": {
+      "types": "./dist/components/config-row.d.ts",
+      "import": "./dist/components/config-row.js",
+      "default": "./dist/components/config-row.js"
+    },
+    "./components/command-menu": {
+      "types": "./dist/components/command-menu.d.ts",
+      "import": "./dist/components/command-menu.js",
+      "default": "./dist/components/command-menu.js"
+    },
+    "./components/feature-lock": {
+      "types": "./dist/components/feature-lock.d.ts",
+      "import": "./dist/components/feature-lock.js",
+      "default": "./dist/components/feature-lock.js"
+    },
+    "./components/execution-trace-bar": {
+      "types": "./dist/components/execution-trace-bar.d.ts",
+      "import": "./dist/components/execution-trace-bar.js",
+      "default": "./dist/components/execution-trace-bar.js"
+    },
+    "./components/activity-feed": {
+      "types": "./dist/components/activity-feed.d.ts",
+      "import": "./dist/components/activity-feed.js",
+      "default": "./dist/components/activity-feed.js"
+    },
+    "./components/detail-sheet": {
+      "types": "./dist/components/detail-sheet.d.ts",
+      "import": "./dist/components/detail-sheet.js",
+      "default": "./dist/components/detail-sheet.js"
+    },
     "./components/credenza": {
       "types": "./dist/components/credenza.d.ts",
       "import": "./dist/components/credenza.js",
