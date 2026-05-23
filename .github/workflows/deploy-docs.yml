@@ -1,0 +1,37 @@
+name: Deploy docs
+on:
+  push:
+    branches: [main]
+# Allow one concurrent deployment; let an in-progress run finish so the live
+# site is never left half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Opt-in: set repository variable PAGES_ENABLED=true (and switch
+    # Settings → Pages → Source to "GitHub Actions") to publish the docs site.
+    if: ${{ vars.PAGES_ENABLED == 'true' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Build Storybook
+        run: bun run build-storybook
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/storybook/storybook-static
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

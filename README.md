@@ -2,6 +2,9 @@
 
 The Strait design system — a Bun + Turborepo monorepo.
 
+📖 **Live docs:** [strait-dev.github.io/ui](https://strait-dev.github.io/ui/) — the
+Storybook site, published from `main` (see [Documentation site](#documentation-site)).
+
 ## Packages
 
 | Path                | Name                | Description                                     |
@@ -56,3 +59,16 @@ Visual snapshots run on [Chromatic](https://www.chromatic.com). To enable them:
 
 Run it locally against your project with
 `CHROMATIC_PROJECT_TOKEN=<token> bun run chromatic`.
+
+## Documentation site
+
+Every push to `main` can publish the static Storybook to GitHub Pages via the
+`Deploy docs` workflow, serving the live docs at
+[strait-dev.github.io/ui](https://strait-dev.github.io/ui/). To turn it on:
+
+1. In **Settings → Pages**, set **Source** to **GitHub Actions**.
+2. Add a repository **variable** `PAGES_ENABLED` set to `true` to switch the
+   `Deploy docs` workflow on.
+
+The job builds Storybook and deploys it with the official Pages actions; the live
+URL appears on the workflow's `github-pages` environment after the first run.
