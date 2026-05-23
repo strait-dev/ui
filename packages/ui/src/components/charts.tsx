@@ -45,33 +45,35 @@ export const LineChart = ({
   valueFormatter = (value) => value.toString(),
   className,
 }: LineChartProps) => (
-  <ResponsiveContainer className={cn(className)} height={300} width="100%">
-    <RechartsLineChart data={data}>
-      <CartesianGrid vertical={false} />
-      <XAxis
-        axisLine={false}
-        dataKey={index}
-        tickLine={false}
-        tickMargin={10}
-      />
-      <YAxis
-        axisLine={false}
-        tickFormatter={valueFormatter}
-        tickLine={false}
-        tickMargin={10}
-      />
-      {categories.map((category, i) => (
-        <Line
-          dataKey={category}
-          dot={false}
-          key={category}
-          stroke={colors[i % colors.length]}
-          strokeWidth={2}
-          type="monotone"
+  <div data-slot="line-chart">
+    <ResponsiveContainer className={cn(className)} height={300} width="100%">
+      <RechartsLineChart data={data}>
+        <CartesianGrid vertical={false} />
+        <XAxis
+          axisLine={false}
+          dataKey={index}
+          tickLine={false}
+          tickMargin={10}
         />
-      ))}
-    </RechartsLineChart>
-  </ResponsiveContainer>
+        <YAxis
+          axisLine={false}
+          tickFormatter={valueFormatter}
+          tickLine={false}
+          tickMargin={10}
+        />
+        {categories.map((category, i) => (
+          <Line
+            dataKey={category}
+            dot={false}
+            key={category}
+            stroke={colors[i % colors.length]}
+            strokeWidth={2}
+            type="monotone"
+          />
+        ))}
+      </RechartsLineChart>
+    </ResponsiveContainer>
+  </div>
 );
 
 export const BarChart = ({
@@ -83,38 +85,40 @@ export const BarChart = ({
   layout = "horizontal",
   className,
 }: BarChartProps) => (
-  <ResponsiveContainer className={cn(className)} height={300} width="100%">
-    <RechartsBarChart
-      data={data}
-      layout={layout}
-      margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-    >
-      <CartesianGrid vertical={false} />
-      <XAxis
-        axisLine={false}
-        dataKey={layout === "horizontal" ? index : undefined}
-        tickLine={false}
-        tickMargin={10}
-        type={layout === "horizontal" ? "category" : "number"}
-      />
-      <YAxis
-        axisLine={false}
-        dataKey={layout === "vertical" ? index : undefined}
-        tickFormatter={valueFormatter}
-        tickLine={false}
-        tickMargin={10}
-        type={layout === "vertical" ? "category" : "number"}
-      />
-      {categories.map((category, i) => (
-        <Bar
-          dataKey={category}
-          fill={colors[i % colors.length]}
-          key={category}
-          radius={[BAR_RADIUS, BAR_RADIUS, 0, 0]}
+  <div data-slot="bar-chart">
+    <ResponsiveContainer className={cn(className)} height={300} width="100%">
+      <RechartsBarChart
+        data={data}
+        layout={layout}
+        margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+      >
+        <CartesianGrid vertical={false} />
+        <XAxis
+          axisLine={false}
+          dataKey={layout === "horizontal" ? index : undefined}
+          tickLine={false}
+          tickMargin={10}
+          type={layout === "horizontal" ? "category" : "number"}
         />
-      ))}
-    </RechartsBarChart>
-  </ResponsiveContainer>
+        <YAxis
+          axisLine={false}
+          dataKey={layout === "vertical" ? index : undefined}
+          tickFormatter={valueFormatter}
+          tickLine={false}
+          tickMargin={10}
+          type={layout === "vertical" ? "category" : "number"}
+        />
+        {categories.map((category, i) => (
+          <Bar
+            dataKey={category}
+            fill={colors[i % colors.length]}
+            key={category}
+            radius={[BAR_RADIUS, BAR_RADIUS, 0, 0]}
+          />
+        ))}
+      </RechartsBarChart>
+    </ResponsiveContainer>
+  </div>
 );
 
 export const PieChart = ({
@@ -124,7 +128,7 @@ export const PieChart = ({
   colors = ["hsl(var(--primary))"],
   className,
 }: PieChartProps) => (
-  <div className={cn("aspect-square w-full", className)}>
+  <div className={cn("aspect-square w-full", className)} data-slot="pie-chart">
     <ResponsiveContainer height="100%" width="100%">
       <RechartsPieChart>
         <Pie
@@ -153,7 +157,7 @@ export const PieChart = ({
 export const MapChart = () => {
   // TODO: Implement map chart
   return (
-    <div className="aspect-square w-full">
+    <div className="aspect-square w-full" data-slot="map-chart">
       <div className="flex h-full items-center justify-center text-muted-foreground">
         Map chart component not implemented yet
       </div>

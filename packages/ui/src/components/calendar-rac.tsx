@@ -87,25 +87,29 @@ function CalendarGridComponent({ isRange = false }: { isRange?: boolean }) {
 
 function Calendar({ className, ...props }: CalendarProps) {
   return (
-    <CalendarRac
-      {...props}
-      className={composeRenderProps(className, (clsss) => cn("w-fit", clsss))}
-    >
-      <CalendarHeader />
-      <CalendarGridComponent />
-    </CalendarRac>
+    <div data-slot="calendar">
+      <CalendarRac
+        {...props}
+        className={composeRenderProps(className, (clsss) => cn("w-fit", clsss))}
+      >
+        <CalendarHeader />
+        <CalendarGridComponent />
+      </CalendarRac>
+    </div>
   );
 }
 
 function RangeCalendar({ className, ...props }: RangeCalendarProps) {
   return (
-    <RangeCalendarRac
-      {...props}
-      className={composeRenderProps(className, (clsss) => cn("w-fit", clsss))}
-    >
-      <CalendarHeader />
-      <CalendarGridComponent isRange />
-    </RangeCalendarRac>
+    <div data-slot="range-calendar">
+      <RangeCalendarRac
+        {...props}
+        className={composeRenderProps(className, (clsss) => cn("w-fit", clsss))}
+      >
+        <CalendarHeader />
+        <CalendarGridComponent isRange />
+      </RangeCalendarRac>
+    </div>
   );
 }
 

@@ -32,7 +32,13 @@ const cardCheckboxVariants = cva(
 const CardCheckboxGroup: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   className,
   ...props
-}) => <div className={cn("grid gap-2", className)} {...props} />;
+}) => (
+  <div
+    className={cn("grid gap-2", className)}
+    data-slot="card-checkbox-group"
+    {...props}
+  />
+);
 CardCheckboxGroup.displayName = "CardCheckboxGroup";
 
 type CardCheckboxItemProps = React.ComponentPropsWithoutRef<typeof Checkbox> &
@@ -58,6 +64,7 @@ const CardCheckboxItem: React.FC<CardCheckboxItemProps> = ({
     className={cn(
       cardCheckboxVariants({ variant, layout, disabled, className }),
     )}
+    data-slot="card-checkbox-item"
   >
     <Checkbox
       aria-describedby={description ? `${id}-description` : undefined}

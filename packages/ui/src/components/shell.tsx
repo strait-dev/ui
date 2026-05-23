@@ -23,7 +23,11 @@ type ShellProps = React.HTMLAttributes<HTMLDivElement> &
 
 function Shell({ className, variant, ...props }: ShellProps) {
   return (
-    <div className={cn(shellVariants({ variant }), className)} {...props} />
+    <div
+      className={cn(shellVariants({ variant }), className)}
+      data-slot="shell"
+      {...props}
+    />
   );
 }
 

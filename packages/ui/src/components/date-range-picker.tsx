@@ -106,76 +106,80 @@ export function DateRangePicker({
   };
 
   return (
-    <I18nProvider locale="pt-BR">
-      <RACDateRangePicker
-        className={cn("flex flex-col gap-2", className)}
-        onChange={handleChange}
-        value={dateValue}
-      >
-        {label ? (
-          <Label className="font-medium text-foreground text-sm">{label}</Label>
-        ) : null}
-        <Group
-          className={cn(
-            "flex h-9 w-full items-center rounded-md border border-input bg-background text-sm ring-offset-background",
-            "focus-within:outline-hidden focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-          )}
+    <div data-slot="date-range-picker">
+      <I18nProvider locale="pt-BR">
+        <RACDateRangePicker
+          className={cn("flex flex-col gap-2", className)}
+          onChange={handleChange}
+          value={dateValue}
         >
-          <DateInput className="flex flex-1 px-2" slot="start">
-            {(segment) => (
-              <DateSegment
-                className={cn(
-                  "focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:outline-hidden",
-                  "placeholder:text-muted-foreground",
-                )}
-                segment={segment}
-              />
+          {label ? (
+            <Label className="font-medium text-foreground text-sm">
+              {label}
+            </Label>
+          ) : null}
+          <Group
+            className={cn(
+              "flex h-9 w-full items-center rounded-md border border-input bg-background text-sm ring-offset-background",
+              "focus-within:outline-hidden focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:ring-offset-2",
+              "disabled:cursor-not-allowed disabled:opacity-50",
             )}
-          </DateInput>
-          <span aria-hidden="true" className="px-2 text-muted-foreground">
-            to
-          </span>
-          <DateInput className="flex flex-1 px-2" slot="end">
-            {(segment) => (
-              <DateSegment
-                className={cn(
-                  "focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:outline-hidden",
-                  "placeholder:text-muted-foreground",
-                )}
-                segment={segment}
-              />
+          >
+            <DateInput className="flex flex-1 px-2" slot="start">
+              {(segment) => (
+                <DateSegment
+                  className={cn(
+                    "focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:outline-hidden",
+                    "placeholder:text-muted-foreground",
+                  )}
+                  segment={segment}
+                />
+              )}
+            </DateInput>
+            <span aria-hidden="true" className="px-2 text-muted-foreground">
+              to
+            </span>
+            <DateInput className="flex flex-1 px-2" slot="end">
+              {(segment) => (
+                <DateSegment
+                  className={cn(
+                    "focus:rounded-md focus:bg-accent focus:text-accent-foreground focus:outline-hidden",
+                    "placeholder:text-muted-foreground",
+                  )}
+                  segment={segment}
+                />
+              )}
+            </DateInput>
+            <Button className="mr-2 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-muted">
+              <HugeiconsIcon className="size-4" icon={Calendar03Icon} />
+            </Button>
+          </Group>
+          <Popover
+            className={cn(
+              "z-50 w-auto rounded-md border border-border bg-background p-2 shadow-md outline-hidden",
+              "data-entering:animate-in data-exiting:animate-out",
+              "data-entering:fade-in-0 data-exiting:fade-out-0",
+              "data-entering:zoom-in-95 data-exiting:zoom-out-95",
+              "data-[placement=bottom]:slide-in-from-top-2",
+              "data-[placement=left]:slide-in-from-right-2",
+              "data-[placement=right]:slide-in-from-left-2",
+              "data-[placement=top]:slide-in-from-bottom-2",
             )}
-          </DateInput>
-          <Button className="mr-2 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-muted">
-            <HugeiconsIcon className="size-4" icon={Calendar03Icon} />
-          </Button>
-        </Group>
-        <Popover
-          className={cn(
-            "z-50 w-auto rounded-md border border-border bg-background p-2 shadow-md outline-hidden",
-            "data-entering:animate-in data-exiting:animate-out",
-            "data-entering:fade-in-0 data-exiting:fade-out-0",
-            "data-entering:zoom-in-95 data-exiting:zoom-out-95",
-            "data-[placement=bottom]:slide-in-from-top-2",
-            "data-[placement=left]:slide-in-from-right-2",
-            "data-[placement=right]:slide-in-from-left-2",
-            "data-[placement=top]:slide-in-from-bottom-2",
-          )}
-          offset={4}
-        >
-          <Dialog className="p-0 outline-hidden">
-            <Calendar
-              className="border-0"
-              defaultMonth={value?.from}
-              mode="range"
-              numberOfMonths={2}
-              onSelect={onChange}
-              selected={value}
-            />
-          </Dialog>
-        </Popover>
-      </RACDateRangePicker>
-    </I18nProvider>
+            offset={4}
+          >
+            <Dialog className="p-0 outline-hidden">
+              <Calendar
+                className="border-0"
+                defaultMonth={value?.from}
+                mode="range"
+                numberOfMonths={2}
+                onSelect={onChange}
+                selected={value}
+              />
+            </Dialog>
+          </Popover>
+        </RACDateRangePicker>
+      </I18nProvider>
+    </div>
   );
 }

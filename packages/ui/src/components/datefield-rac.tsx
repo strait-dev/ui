@@ -21,12 +21,14 @@ function DateField<T extends DateValueRac>({
   ...props
 }: DateFieldProps<T>) {
   return (
-    <DateFieldRac
-      className={composeRenderProps(className, (clssname) => cn(clssname))}
-      {...props}
-    >
-      {children}
-    </DateFieldRac>
+    <div data-slot="date-field">
+      <DateFieldRac
+        className={composeRenderProps(className, (clssname) => cn(clssname))}
+        {...props}
+      >
+        {children}
+      </DateFieldRac>
+    </div>
   );
 }
 
@@ -36,12 +38,14 @@ function TimeField<T extends TimeValueRac>({
   ...props
 }: TimeFieldProps<T>) {
   return (
-    <TimeFieldRac
-      className={composeRenderProps(className, (clssname) => cn(clssname))}
-      {...props}
-    >
-      {children}
-    </TimeFieldRac>
+    <div data-slot="time-field">
+      <TimeFieldRac
+        className={composeRenderProps(className, (clssname) => cn(clssname))}
+        {...props}
+      >
+        {children}
+      </TimeFieldRac>
+    </div>
   );
 }
 
@@ -56,6 +60,7 @@ function DateSegment({ className, ...props }: DateSegmentProps) {
       )}
       {...props}
       data-invalid
+      data-slot="date-segment"
     />
   );
 }
@@ -74,14 +79,16 @@ function DateInput({
   ...props
 }: Omit<DateInputProps, "children">) {
   return (
-    <DateInputRac
-      className={composeRenderProps(className, (clssname) =>
-        cn(!unstyled && dateInputStyle, clssname),
-      )}
-      {...props}
-    >
-      {(segment) => <DateSegment segment={segment} />}
-    </DateInputRac>
+    <div data-slot="date-input">
+      <DateInputRac
+        className={composeRenderProps(className, (clssname) =>
+          cn(!unstyled && dateInputStyle, clssname),
+        )}
+        {...props}
+      >
+        {(segment) => <DateSegment segment={segment} />}
+      </DateInputRac>
+    </div>
   );
 }
 

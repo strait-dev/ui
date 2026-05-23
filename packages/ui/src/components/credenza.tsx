@@ -59,11 +59,13 @@ const Credenza = ({ children, ...props }: RootCredenzaProps) => {
   const Component = isDesktop ? Dialog : Drawer;
 
   return (
-    <CredenzaContext.Provider value={{ isDesktop }}>
-      <Component {...props} {...(!isDesktop && { autoFocus: true })}>
-        {children}
-      </Component>
-    </CredenzaContext.Provider>
+    <div data-slot="credenza">
+      <CredenzaContext.Provider value={{ isDesktop }}>
+        <Component {...props} {...(!isDesktop && { autoFocus: true })}>
+          {children}
+        </Component>
+      </CredenzaContext.Provider>
+    </div>
   );
 };
 
@@ -78,14 +80,24 @@ const CredenzaTrigger = ({
   // Dialog (Base UI) consumes `render`; Drawer (vaul) consumes `asChild`.
   if (isDesktop) {
     return (
-      <DialogTrigger className={className} render={render} {...props}>
+      <DialogTrigger
+        className={className}
+        data-slot="credenza-trigger"
+        render={render}
+        {...props}
+      >
         {children}
       </DialogTrigger>
     );
   }
 
   return (
-    <DrawerTrigger asChild className={className} {...props}>
+    <DrawerTrigger
+      asChild
+      className={className}
+      data-slot="credenza-trigger"
+      {...props}
+    >
       {render ?? children}
     </DrawerTrigger>
   );
@@ -102,14 +114,24 @@ const CredenzaClose = ({
   // Dialog (Base UI) consumes `render`; Drawer (vaul) consumes `asChild`.
   if (isDesktop) {
     return (
-      <DialogClose className={className} render={render} {...props}>
+      <DialogClose
+        className={className}
+        data-slot="credenza-close"
+        render={render}
+        {...props}
+      >
         {children}
       </DialogClose>
     );
   }
 
   return (
-    <DrawerClose asChild className={className} {...props}>
+    <DrawerClose
+      asChild
+      className={className}
+      data-slot="credenza-close"
+      {...props}
+    >
       {render ?? children}
     </DrawerClose>
   );
@@ -120,7 +142,7 @@ const CredenzaContent = ({ className, children, ...props }: CredenzaProps) => {
   const Component = isDesktop ? DialogContent : DrawerContent;
 
   return (
-    <Component className={className} {...props}>
+    <Component className={className} data-slot="credenza-content" {...props}>
       {children}
     </Component>
   );
@@ -135,7 +157,11 @@ const CredenzaDescription = ({
   const Component = isDesktop ? DialogDescription : DrawerDescription;
 
   return (
-    <Component className={className} {...props}>
+    <Component
+      className={className}
+      data-slot="credenza-description"
+      {...props}
+    >
       {children}
     </Component>
   );
@@ -146,7 +172,7 @@ const CredenzaHeader = ({ className, children, ...props }: CredenzaProps) => {
   const Component = isDesktop ? DialogHeader : DrawerHeader;
 
   return (
-    <Component className={className} {...props}>
+    <Component className={className} data-slot="credenza-header" {...props}>
       {children}
     </Component>
   );
@@ -157,14 +183,18 @@ const CredenzaTitle = ({ className, children, ...props }: CredenzaProps) => {
   const Component = isDesktop ? DialogTitle : DrawerTitle;
 
   return (
-    <Component className={className} {...props}>
+    <Component className={className} data-slot="credenza-title" {...props}>
       {children}
     </Component>
   );
 };
 
 const CredenzaBody = ({ className, children, ...props }: CredenzaProps) => (
-  <div className={cn("px-4 md:px-0", className)} {...props}>
+  <div
+    className={cn("px-4 md:px-0", className)}
+    data-slot="credenza-body"
+    {...props}
+  >
     {children}
   </div>
 );
@@ -174,7 +204,7 @@ const CredenzaFooter = ({ className, children, ...props }: CredenzaProps) => {
   const Component = isDesktop ? DialogFooter : DrawerFooter;
 
   return (
-    <Component className={className} {...props}>
+    <Component className={className} data-slot="credenza-footer" {...props}>
       {children}
     </Component>
   );

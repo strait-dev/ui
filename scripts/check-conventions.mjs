@@ -78,8 +78,9 @@ for (const file of files) {
   if (interactive && !hasDirective)
     add(file, "useClient", 'interactive but missing "use client"');
 
-  // Rule: root data-slot present
-  if (!EXEMPT.dataSlot.has(file) && !/data-slot=/.test(src))
+  // Rule: root data-slot present (JSX attr `data-slot=` or, for useRender/
+  // mergeProps components, the object-property form `"data-slot":`)
+  if (!EXEMPT.dataSlot.has(file) && !/data-slot["']?\s*[:=]/.test(src))
     add(file, "dataSlot", "no data-slot anywhere");
 
   // Rule: no React.HTMLAttributes / InputHTMLAttributes (prefer ComponentProps)

@@ -30,7 +30,10 @@ function DatePicker({
 }: DatePickerProps) {
   const datePickerId = useId();
   return (
-    <div className={cn("grid w-full items-center gap-1.5", className)}>
+    <div
+      className={cn("grid w-full items-center gap-1.5", className)}
+      data-slot="date-picker"
+    >
       {label ? (
         <label
           className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

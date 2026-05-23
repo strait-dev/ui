@@ -301,7 +301,10 @@ export function SelectWithSearch({
   );
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div
+      className={cn("flex flex-col gap-2", className)}
+      data-slot="select-with-search"
+    >
       {labelElement}
       <Popover onOpenChange={handleOpenChange} open={open}>
         <PopoverTrigger

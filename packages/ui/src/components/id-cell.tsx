@@ -31,7 +31,10 @@ export function IdCell({ id, className }: IdCellProps) {
   const Icon = isCopied ? Tick01Icon : Copy01Icon;
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div
+      className={cn("flex items-center gap-2", className)}
+      data-slot="id-cell"
+    >
       <Tooltip>
         <TooltipTrigger
           render={<span className="font-mono text-muted-foreground text-sm" />}

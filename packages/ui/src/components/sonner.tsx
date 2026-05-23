@@ -18,6 +18,7 @@ const Toaster = ({ className, ...props }: ToasterProps) => {
   return (
     <Sonner
       className={cn("toaster group", className)}
+      data-slot="toaster"
       icons={{
         success: (
           <HugeiconsIcon

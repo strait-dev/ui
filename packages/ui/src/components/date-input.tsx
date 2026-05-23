@@ -274,6 +274,7 @@ const DateInput: React.FC<DateInputProps> = ({
         "flex h-9 items-center rounded-md border border-input bg-input/20 px-2 text-sm dark:bg-input/30",
         className,
       )}
+      data-slot="date-input"
     >
       <input
         className="w-6 border-none p-0 text-center outline-hidden"

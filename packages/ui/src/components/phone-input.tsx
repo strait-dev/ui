@@ -203,29 +203,31 @@ const PhoneInput = ({
   ref?: React.Ref<React.ComponentRef<typeof RPNInput>>;
 }) => {
   return (
-    <RPNInput
-      className={cn("flex", className)}
-      countrySelectComponent={CountrySelect}
-      flagComponent={FlagComponent}
-      inputComponent={InputComponent}
-      onChange={(inputValue: Value | undefined) =>
-        onChange?.(inputValue || ("" as Value))
-      }
-      onCountryChange={onCountryChange}
-      ref={ref}
-      /**
-       * Handles the onChange event.
-       *
-       * react-phone-number-input might trigger the onChange event as undefined
-       * when a valid phone number is not entered. To prevent this,
-       * the value is coerced to an empty string.
-       *
-       * @param {E164Number | undefined} inputValue - The entered value
-       */
-      smartCaret={false}
-      value={value || undefined}
-      {...props}
-    />
+    <div data-slot="phone-input">
+      <RPNInput
+        className={cn("flex", className)}
+        countrySelectComponent={CountrySelect}
+        flagComponent={FlagComponent}
+        inputComponent={InputComponent}
+        onChange={(inputValue: Value | undefined) =>
+          onChange?.(inputValue || ("" as Value))
+        }
+        onCountryChange={onCountryChange}
+        ref={ref}
+        /**
+         * Handles the onChange event.
+         *
+         * react-phone-number-input might trigger the onChange event as undefined
+         * when a valid phone number is not entered. To prevent this,
+         * the value is coerced to an empty string.
+         *
+         * @param {E164Number | undefined} inputValue - The entered value
+         */
+        smartCaret={false}
+        value={value || undefined}
+        {...props}
+      />
+    </div>
   );
 };
 

@@ -190,7 +190,7 @@ export function CalendarWithPresets({
   );
 
   return (
-    <div className={cn(className)}>
+    <div className={cn(className)} data-slot="calendar-with-presets">
       <div className="rounded-md border border-border">
         <div className="flex max-sm:flex-col">
           <div className="relative border-border py-4 max-sm:order-1 max-sm:border-t sm:w-48">

@@ -219,6 +219,7 @@ export function RangeCalendarWithPresets({
         "flex flex-col gap-4 rounded-md border bg-popover p-4 text-popover-foreground shadow-md",
         className,
       )}
+      data-slot="range-calendar-with-presets"
     >
       <div className="grid grid-cols-4 gap-2">
         {currentPresets.map((preset) => (

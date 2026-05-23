@@ -88,7 +88,10 @@ export function SelectWithSearchAndButton({
   );
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div
+      className={cn("flex flex-col gap-2", className)}
+      data-slot="select-with-search-and-button"
+    >
       {label ? (
         <Label className={cn(error ? "text-destructive" : null)} htmlFor={name}>
           {label}

@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full", className)} data-slot="data-table">
       <div className="flex items-center py-4">
         {searchKey ? (
           <Input
@@ -229,28 +229,30 @@ export function DataTableRowActions<TData>({
   actions = [],
 }: DataTableRowActionsProps<TData>) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button className="h-8 w-8 p-0" variant="ghost" />}
-      >
-        <span className="sr-only">Open menu</span>
-        <HugeiconsIcon className="size-4" icon={MoreHorizontalIcon} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        </DropdownMenuGroup>
-        {actions.map((action) => (
-          <DropdownMenuItem
-            key={action.label}
-            onClick={() => action.onClick(row)}
-          >
-            {action.icon ? <span className="mr-2">{action.icon}</span> : null}
-            {action.label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div data-slot="data-table-row-actions">
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={<Button className="h-8 w-8 p-0" variant="ghost" />}
+        >
+          <span className="sr-only">Open menu</span>
+          <HugeiconsIcon className="size-4" icon={MoreHorizontalIcon} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          </DropdownMenuGroup>
+          {actions.map((action) => (
+            <DropdownMenuItem
+              key={action.label}
+              onClick={() => action.onClick(row)}
+            >
+              {action.icon ? <span className="mr-2">{action.icon}</span> : null}
+              {action.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
 

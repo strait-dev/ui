@@ -28,6 +28,7 @@ export const NavigationRail = ({
       orientation === "right" && "order-last border-r-0 border-l",
       className,
     )}
+    data-slot="navigation-rail"
     ref={ref}
     {...props}
   >
@@ -64,6 +65,7 @@ export const NavigationRailItem = ({
             isActive ? "bg-accent" : null,
             disabled ? "pointer-events-none opacity-50" : null,
           )}
+          data-slot="navigation-rail-item"
           disabled={disabled}
           onClick={onClick}
           ref={ref}
@@ -98,6 +100,7 @@ export const NavigationRailSection = ({
 }: NavigationRailSectionProps & { ref?: React.Ref<HTMLDivElement> }) => (
   <div
     className={cn("flex flex-col items-center gap-2 py-2", className)}
+    data-slot="navigation-rail-section"
     ref={ref}
     {...props}
   >
@@ -121,6 +124,7 @@ export const NavigationRailHeader = ({
       "flex h-20 items-center justify-center border-b px-2",
       className,
     )}
+    data-slot="navigation-rail-header"
     ref={ref}
     {...props}
   >
@@ -144,6 +148,7 @@ export const NavigationRailFooter = ({
       "mt-auto flex flex-col items-center gap-2 border-t py-2",
       className,
     )}
+    data-slot="navigation-rail-footer"
     ref={ref}
     {...props}
   >

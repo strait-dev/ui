@@ -92,7 +92,7 @@ export function InputWithInnerTags({
   );
 
   return (
-    <div className={containerClassName}>
+    <div className={containerClassName} data-slot="input-with-inner-tags">
       <div className="flex h-auto min-h-9 w-full min-w-0 flex-wrap items-center gap-2 rounded-md border border-input bg-input/20 px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:ring-destructive/40">
         {/* Render existing tags */}
         {tags.map((tag) => (
