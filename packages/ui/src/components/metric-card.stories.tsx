@@ -44,12 +44,20 @@ const meta: Meta<typeof MetricCard> = {
       table: { defaultValue: { summary: "var(--chart-1)" } },
     },
     description: { control: "text", description: "Muted description line." },
+    size: {
+      control: "select",
+      options: ["default", "sm"],
+      description:
+        "Card layout size. `sm` uses tighter padding and a smaller value text (`text-xl`).",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     title: "Total Revenue",
     value: "$48,295",
     delta: { value: 12, label: "vs last month" },
     color: "var(--chart-1)",
+    size: "default",
   },
   decorators: [
     (Story) => (
@@ -204,5 +212,93 @@ export const ManualComposition: Story = {
         data={[400, 350, 500, 450, 620, 580, 700]}
       />
     </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Size                                                                */
+/* ------------------------------------------------------------------ */
+
+/** Compact `sm` size — tighter padding and a smaller value text. */
+export const SmSize: Story = {
+  args: {
+    title: "Sessions",
+    value: "8,412",
+    delta: { value: 3.1, label: "vs last week" },
+    size: "sm",
+    color: "var(--chart-3)",
+  },
+};
+
+/** Side-by-side comparison of `default` and `sm` sizes. */
+export const Sizes: Story = {
+  decorators: [
+    (Story) => (
+      <div className="flex gap-4">
+        <Story />
+      </div>
+    ),
+  ],
+  render: () => (
+    <>
+      <MetricCard
+        color="var(--chart-1)"
+        delta={{ value: 5, label: "vs last month" }}
+        size="default"
+        title="Default"
+        value="$48,295"
+      />
+      <MetricCard
+        color="var(--chart-2)"
+        delta={{ value: 5, label: "vs last month" }}
+        size="sm"
+        title="Small"
+        value="$48,295"
+      />
+    </>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Neutral delta                                                       */
+/* ------------------------------------------------------------------ */
+
+/** `neutral` delta direction — muted grey treatment for unchanged metrics. */
+export const NeutralDelta: Story = {
+  args: {
+    title: "Response Time",
+    value: "142ms",
+    delta: { value: 0, direction: "neutral", label: "no change" },
+    color: "var(--chart-4)",
+  },
+};
+
+/** All three delta directions side by side. */
+export const DeltaDirections: Story = {
+  decorators: [
+    (Story) => (
+      <div className="grid grid-cols-3 gap-4">
+        <Story />
+      </div>
+    ),
+  ],
+  render: () => (
+    <>
+      <MetricCard
+        delta={{ value: 8, label: "vs last week", direction: "up" }}
+        title="Up"
+        value="1,024"
+      />
+      <MetricCard
+        delta={{ value: -4, label: "vs last week", direction: "down" }}
+        title="Down"
+        value="980"
+      />
+      <MetricCard
+        delta={{ value: 0, label: "no change", direction: "neutral" }}
+        title="Neutral"
+        value="1,002"
+      />
+    </>
   ),
 };

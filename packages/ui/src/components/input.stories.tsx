@@ -32,6 +32,12 @@ const meta = {
       description: "HTML input type.",
       table: { defaultValue: { summary: "text" } },
     },
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description: "Controls the height of the input field.",
+      table: { defaultValue: { summary: "default" } },
+    },
     placeholder: {
       control: "text",
       description: "Placeholder text shown when the field is empty.",
@@ -48,6 +54,7 @@ const meta = {
   args: {
     placeholder: "Type something…",
     type: "text",
+    size: "default",
   },
 } satisfies Meta<typeof Input>;
 
@@ -170,6 +177,29 @@ export const WithHelperAndError: Story = {
         />
         <p className="text-destructive text-sm">Please enter a valid email.</p>
       </div>
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/** Three height variants — sm (h-7), default (h-8), lg (h-9). */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex w-72 flex-col gap-4">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div className="flex flex-col gap-1.5" key={size}>
+          <Label htmlFor={`size-${size}`}>{size}</Label>
+          <Input
+            {...args}
+            id={`size-${size}`}
+            placeholder={`size="${size}"`}
+            size={size}
+          />
+        </div>
+      ))}
     </div>
   ),
 };

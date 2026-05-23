@@ -30,10 +30,17 @@ const meta = {
       control: "boolean",
       description: "Disables all items in the group.",
     },
+    size: {
+      control: "inline-radio",
+      options: ["sm", "default", "lg"],
+      description: "Scales the radio circle and inter-item spacing.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     defaultValue: "email",
     disabled: false,
+    size: "default",
   },
 } satisfies Meta<typeof RadioGroup>;
 
@@ -58,6 +65,35 @@ export const Playground: Story = {
         <Label htmlFor="pg-push">Push notification</Label>
       </div>
     </RadioGroup>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/** `sm`, `default`, and `lg` sizes. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div key={size}>
+          <p className="mb-2 font-medium text-muted-foreground text-xs capitalize">
+            {size}
+          </p>
+          <RadioGroup defaultValue="email" size={size}>
+            <div className="flex items-center gap-2">
+              <RadioGroupItem id={`sz-${size}-email`} value="email" />
+              <Label htmlFor={`sz-${size}-email`}>Email</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <RadioGroupItem id={`sz-${size}-sms`} value="sms" />
+              <Label htmlFor={`sz-${size}-sms`}>SMS</Label>
+            </div>
+          </RadioGroup>
+        </div>
+      ))}
+    </div>
   ),
 };
 

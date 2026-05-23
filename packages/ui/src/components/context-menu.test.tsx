@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -12,6 +12,15 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "./context-menu";
+
+beforeAll(() => {
+  globalThis.ResizeObserver ||= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+  Element.prototype.scrollIntoView ||= () => {};
+});
 
 describe("ContextMenu", () => {
   it("renders the trigger region with the correct data-slot", () => {
@@ -111,5 +120,88 @@ describe("ContextMenu", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("React")).toBeInTheDocument();
     expect(screen.getByText("Vue")).toBeInTheDocument();
+  });
+
+  // -------------------------------------------------------------------------
+  // Size axis
+  // -------------------------------------------------------------------------
+
+  it("content has data-size=default when no size is given", () => {
+    render(
+      <ContextMenu defaultOpen>
+        <ContextMenuTrigger>
+          <div>Right-click</div>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>Item</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+    const content = document.querySelector(
+      "[data-slot='context-menu-content']"
+    );
+    expect(content).toHaveAttribute("data-size", "default");
+  });
+
+  it("content has data-size=sm when size='sm' is given", () => {
+    render(
+      <ContextMenu defaultOpen>
+        <ContextMenuTrigger>
+          <div>Right-click</div>
+        </ContextMenuTrigger>
+        <ContextMenuContent size="sm">
+          <ContextMenuItem>Small Item</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+    const content = document.querySelector(
+      "[data-slot='context-menu-content']"
+    );
+    expect(content).toHaveAttribute("data-size", "sm");
+  });
+
+  it("content has data-size=lg when size='lg' is given", () => {
+    render(
+      <ContextMenu defaultOpen>
+        <ContextMenuTrigger>
+          <div>Right-click</div>
+        </ContextMenuTrigger>
+        <ContextMenuContent size="lg">
+          <ContextMenuItem>Large Item</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+    const content = document.querySelector(
+      "[data-slot='context-menu-content']"
+    );
+    expect(content).toHaveAttribute("data-size", "lg");
+  });
+
+  it("items are still present with sm size", () => {
+    render(
+      <ContextMenu defaultOpen>
+        <ContextMenuTrigger>
+          <div>Right-click</div>
+        </ContextMenuTrigger>
+        <ContextMenuContent size="sm">
+          <ContextMenuItem>Small Item</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+    expect(screen.getByText("Small Item")).toBeInTheDocument();
+  });
+
+  it("items are still present with lg size", () => {
+    render(
+      <ContextMenu defaultOpen>
+        <ContextMenuTrigger>
+          <div>Right-click</div>
+        </ContextMenuTrigger>
+        <ContextMenuContent size="lg">
+          <ContextMenuItem>Large Item</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+    expect(screen.getByText("Large Item")).toBeInTheDocument();
   });
 });

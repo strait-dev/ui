@@ -1,8 +1,86 @@
 "use client";
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "../utils/index";
+
+/**
+ * Class-variance-authority recipe for the {@link TooltipContent} popup.
+ *
+ * Exposes two axes:
+ * - `variant` — surface colour scheme. `default` uses an inverted (dark)
+ *   surface (`bg-foreground text-background`) for maximum contrast; `light`
+ *   uses the popover surface (`bg-popover text-popover-foreground border`)
+ *   for a softer, theme-aware appearance.
+ * - `size` — padding and text-size preset. `default` preserves the original
+ *   `px-3 py-1.5 text-xs` appearance; `sm` tightens it to `px-2 py-1
+ *   text-[0.7rem]`.
+ *
+ * All animation, positioning, and `data-[slot=kbd]` adjustment classes are
+ * part of the base string and are never affected by variant switching.
+ *
+ * Exported so consumers can derive the same visual style independently.
+ */
+const tooltipContentVariants = cva(
+  [
+    // Animation & state classes — preserved across all variants
+    "data-[side=bottom]:slide-in-from-top-2",
+    "data-[side=inline-end]:slide-in-from-left-2",
+    "data-[side=inline-start]:slide-in-from-right-2",
+    "data-[side=left]:slide-in-from-right-2",
+    "data-[side=right]:slide-in-from-left-2",
+    "data-[side=top]:slide-in-from-bottom-2",
+    "data-[state=delayed-open]:fade-in-0",
+    "data-[state=delayed-open]:zoom-in-95",
+    "data-open:fade-in-0",
+    "data-open:zoom-in-95",
+    "data-closed:fade-out-0",
+    "data-closed:zoom-out-95",
+    // Layout & shape — preserved across all variants
+    "z-50 inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md",
+    // Kbd child styling — preserved across all variants
+    "has-data-[slot=kbd]:pr-1.5",
+    "data-[state=delayed-open]:animate-in",
+    "data-closed:animate-out",
+    "data-open:animate-in",
+    "**:data-[slot=kbd]:relative",
+    "**:data-[slot=kbd]:isolate",
+    "**:data-[slot=kbd]:z-50",
+    "**:data-[slot=kbd]:rounded-sm",
+  ].join(" "),
+  {
+    variants: {
+      /**
+       * Surface colour scheme.
+       *
+       * - `default` — inverted surface (`bg-foreground / text-background`):
+       *   high-contrast dark pill, identical to the original design.
+       * - `light` — popover surface (`bg-popover / text-popover-foreground`
+       *   with a `border`): softer, theme-aware tooltip for contexts where
+       *   the dark pill would feel too heavy.
+       */
+      variant: {
+        default: "bg-foreground text-background",
+        light: "border bg-popover text-popover-foreground shadow-sm",
+      },
+      /**
+       * Padding + text-size preset.
+       *
+       * - `default` — `px-3 py-1.5 text-xs` (original).
+       * - `sm` — `px-2 py-1 text-[0.7rem]` (compact).
+       */
+      size: {
+        sm: "px-2 py-1 text-[0.7rem]",
+        default: "px-3 py-1.5 text-xs",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
 
 /**
  * Shared configuration provider for one or more {@link Tooltip} instances.
@@ -47,7 +125,7 @@ function TooltipProvider({
  *   `alignOffset` to control placement.
  * - An arrow pointing to the trigger is rendered automatically inside the
  *   content panel.
- * - The content panel supports a `data-[slot=kbd]` child to show a
+ * - The content panel supports a `data-slot="kbd"` child to show a
  *   keyboard shortcut badge; padding is tuned automatically when one is
  *   present.
  * - Always ensure the trigger element has an accessible label — do not
@@ -57,10 +135,8 @@ function TooltipProvider({
  * ```tsx
  * <TooltipProvider>
  *   <Tooltip>
- *     <TooltipTrigger asChild>
- *       <Button size="icon" aria-label="Settings">
- *         <SettingsIcon />
- *       </Button>
+ *     <TooltipTrigger render={<Button size="icon" aria-label="Settings" />}>
+ *       <SettingsIcon />
  *     </TooltipTrigger>
  *     <TooltipContent>Settings</TooltipContent>
  *   </Tooltip>
@@ -77,20 +153,40 @@ function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
 }
 
 /**
+ * Props for {@link TooltipContent}.
+ *
+ * Merges Base UI Popup props, Base UI Positioner placement props, and the
+ * variant axes from {@link tooltipContentVariants}.
+ */
+interface TooltipContentProps
+  extends TooltipPrimitive.Popup.Props,
+    Pick<
+      TooltipPrimitive.Positioner.Props,
+      "align" | "alignOffset" | "side" | "sideOffset"
+    >,
+    VariantProps<typeof tooltipContentVariants> {}
+
+/**
  * Floating label panel for {@link Tooltip}.
  *
  * Internally wraps Base UI's Portal, Positioner, Popup, and Arrow. The
  * positioning props (`side`, `sideOffset`, `align`, `alignOffset`) are
- * forwarded to the Positioner; everything else goes to the Popup.
+ * forwarded to the Positioner; `variant` and `size` drive styling via
+ * {@link tooltipContentVariants}; everything else goes to the Popup.
  *
  * @remarks
- * - The arrow is absolutely positioned and rotated 45 ° to form a diamond
- *   tip; its translate/position values handle all four sides.
- * - `data-[state=delayed-open]` animation classes are included alongside
- *   the standard `data-open` ones to handle the open-delay state from
- *   {@link TooltipProvider}.
+ * - The arrow inherits the popup background automatically by sharing the
+ *   same `bg-*` class. For the `light` variant the arrow also gets a border
+ *   treatment via a thin shadow outline.
+ * - `data-[state=delayed-open]` animation classes handle the open-delay
+ *   state from {@link TooltipProvider}.
  * - Include a child with `data-slot="kbd"` to display a keyboard shortcut
  *   inside the tooltip.
+ *
+ * @example
+ * ```tsx
+ * <TooltipContent variant="light" size="sm">Compact light tooltip</TooltipContent>
+ * ```
  */
 function TooltipContent({
   className,
@@ -98,13 +194,18 @@ function TooltipContent({
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
+  variant,
+  size,
   children,
   ...props
-}: TooltipPrimitive.Popup.Props &
-  Pick<
-    TooltipPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset"
-  >) {
+}: TooltipContentProps) {
+  // Compute the arrow background class to stay in sync with the popup surface.
+  // For 'light' we use bg-popover; for 'default' we use bg-foreground.
+  const arrowBg =
+    variant === "light"
+      ? "bg-popover fill-popover"
+      : "bg-foreground fill-foreground";
+
   return (
     <TooltipPrimitive.Portal>
       {/* isolate prevents z-index bleed from ancestor stacking contexts */}
@@ -116,20 +217,35 @@ function TooltipContent({
         sideOffset={sideOffset}
       >
         <TooltipPrimitive.Popup
-          className={cn(
-            "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-background text-xs has-data-[slot=kbd]:pr-1.5 data-[state=delayed-open]:animate-in data-closed:animate-out data-open:animate-in **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm",
-            className
-          )}
+          className={cn(tooltipContentVariants({ variant, size }), className)}
           data-slot="tooltip-content"
           {...props}
         >
           {children}
           {/* Arrow rotated 45° to form a diamond tip pointing at the trigger */}
-          <TooltipPrimitive.Arrow className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=bottom]:top-1 data-[side=inline-end]:top-1/2! data-[side=inline-start]:top-1/2! data-[side=left]:top-1/2! data-[side=right]:top-1/2! data-[side=inline-start]:-right-1 data-[side=left]:-right-1 data-[side=top]:-bottom-2.5 data-[side=inline-end]:-left-1 data-[side=right]:-left-1 data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:-translate-y-1/2 data-[side=left]:-translate-y-1/2 data-[side=right]:-translate-y-1/2" />
+          <TooltipPrimitive.Arrow
+            className={cn(
+              "z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px]",
+              "data-[side=bottom]:top-1",
+              "data-[side=inline-end]:top-1/2! data-[side=inline-start]:top-1/2! data-[side=left]:top-1/2! data-[side=right]:top-1/2!",
+              "data-[side=inline-start]:-right-1 data-[side=left]:-right-1",
+              "data-[side=top]:-bottom-2.5",
+              "data-[side=inline-end]:-left-1 data-[side=right]:-left-1",
+              "data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:-translate-y-1/2 data-[side=left]:-translate-y-1/2 data-[side=right]:-translate-y-1/2",
+              arrowBg
+            )}
+          />
         </TooltipPrimitive.Popup>
       </TooltipPrimitive.Positioner>
     </TooltipPrimitive.Portal>
   );
 }
 
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger };
+export {
+  Tooltip,
+  TooltipContent,
+  type TooltipContentProps,
+  TooltipProvider,
+  TooltipTrigger,
+  tooltipContentVariants,
+};

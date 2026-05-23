@@ -1,9 +1,48 @@
 "use client";
 
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
+import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
+
+/**
+ * Class-variance-authority recipe for {@link AlertDialogContent} sizing.
+ *
+ * Controls the `max-width` axis of the alert-dialog panel (and `max-height`
+ * for the `full` variant). The `default` variant reproduces the original
+ * `sm:max-w-sm` cap so upgrading is non-breaking.
+ *
+ * Exported so consumers can derive the same sizing on custom alert-dialog-like
+ * surfaces without re-implementing the class list.
+ *
+ * @remarks
+ * Only the max-width (and for `full`, max-height) axis is managed here.
+ * All positioning, animation, background, and ring classes remain on the
+ * base string inside {@link AlertDialogContent}.
+ *
+ * @example
+ * ```ts
+ * // Derive a class list for a non-AlertDialog panel that should match `lg` size.
+ * const cls = alertDialogContentVariants({ size: "lg" });
+ * ```
+ *
+ * {@link AlertDialogContent}
+ */
+const alertDialogContentVariants = cva("", {
+  variants: {
+    size: {
+      sm: "max-w-xs",
+      default: "max-w-xs sm:max-w-sm",
+      lg: "sm:max-w-2xl",
+      xl: "sm:max-w-4xl",
+      full: "max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-4rem)]",
+    },
+  },
+  defaultVariants: {
+    size: "default",
+  },
+});
 
 /**
  * Blocking confirmation dialog that requires the user to make a choice
@@ -23,7 +62,9 @@ import { Button } from "./button";
  * {@link AlertDialogCancel}).
  *
  * @remarks
- * - `AlertDialogContent` accepts a `size` prop (`"default" | "sm"`).
+ * - `AlertDialogContent` accepts a `size` prop
+ *   (`"sm" | "default" | "lg" | "xl" | "full"`). See
+ *   {@link alertDialogContentVariants} for the max-width each size applies.
  *   `"default"` centres content on mobile and left-aligns on `sm+`; `"sm"`
  *   stays centred and uses a two-column footer grid.
  * - `AlertDialogMedia` renders a square icon container; when present on
@@ -101,23 +142,39 @@ function AlertDialogOverlay({
  * automatically, then centres itself in the viewport.
  *
  * @remarks
- * The `size` prop (`"default" | "sm"`) is forwarded as `data-size` and
- * consumed by child layout selectors — set it once here and all parts
- * adapt automatically.
+ * - The `size` prop (`"sm" | "default" | "lg" | "xl" | "full"`) controls the
+ *   maximum width of the panel via {@link alertDialogContentVariants}. The
+ *   value is also forwarded as `data-size` so child layout selectors (e.g.
+ *   `group-data-[size=default]/alert-dialog-content`) continue to work.
+ * - `"default"` matches the original `sm:max-w-sm` cap — non-breaking.
+ * - `"sm"` keeps the centred layout and renders a two-column footer grid.
+ * - `"full"` also applies a complementary `max-h` to stay inside the viewport.
+ *
+ * @example
+ * ```tsx
+ * // Large alert dialog for a multi-step confirmation
+ * <AlertDialogContent size="lg">
+ *   <AlertDialogHeader>
+ *     <AlertDialogTitle>Confirm migration</AlertDialogTitle>
+ *   </AlertDialogHeader>
+ * </AlertDialogContent>
+ * ```
+ *
+ * {@link alertDialogContentVariants}
  */
 function AlertDialogContent({
   className,
   size = "default",
   ...props
-}: AlertDialogPrimitive.Popup.Props & {
-  size?: "default" | "sm";
-}) {
+}: AlertDialogPrimitive.Popup.Props &
+  VariantProps<typeof alertDialogContentVariants>) {
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Popup
         className={cn(
-          "group/alert-dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg bg-background p-4 outline-none ring-1 ring-foreground/10 duration-100 data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-closed:animate-out data-open:animate-in data-[size=default]:sm:max-w-sm",
+          "group/alert-dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg bg-background p-4 outline-none ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in",
+          alertDialogContentVariants({ size }),
           className
         )}
         data-size={size}
@@ -136,15 +193,44 @@ function AlertDialogContent({
  * On mobile the content is centred; on `sm+` with `size="default"` it
  * left-aligns. When {@link AlertDialogMedia} is present the grid grows an
  * extra row so the icon spans both the title and description.
+ *
+ * @remarks
+ * Pass `accent="destructive"` to tint the title text with the destructive
+ * semantic token (`text-destructive`). This is useful for deletion or
+ * irreversible-action dialogs where the header itself should signal danger.
+ * The prop is optional and undefined by default, keeping all existing alert
+ * dialogs visually unchanged.
+ *
+ * @example
+ * ```tsx
+ * // Destructive-tinted header for a delete confirmation
+ * <AlertDialogHeader accent="destructive">
+ *   <AlertDialogTitle>Delete account</AlertDialogTitle>
+ *   <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+ * </AlertDialogHeader>
+ * ```
+ *
+ * {@link AlertDialogContent}
  */
 function AlertDialogHeader({
   className,
+  accent,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<"div"> & {
+  /**
+   * Optional colour accent applied to the header.
+   * `"destructive"` tints the title text with `text-destructive` via a CSS
+   * child selector so you don't need to style {@link AlertDialogTitle}
+   * individually.
+   */
+  accent?: "destructive";
+}) {
   return (
     <div
       className={cn(
         "grid grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-4 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]",
+        accent === "destructive" &&
+          "*:data-[slot=alert-dialog-title]:text-destructive",
         className
       )}
       data-slot="alert-dialog-header"
@@ -288,4 +374,5 @@ export {
   AlertDialogPortal,
   AlertDialogTitle,
   AlertDialogTrigger,
+  alertDialogContentVariants,
 };

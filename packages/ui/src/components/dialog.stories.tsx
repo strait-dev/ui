@@ -35,6 +35,11 @@ const meta = {
           "Compose it with `DialogTrigger`, `DialogContent`, `DialogHeader`,",
           "`DialogTitle`, `DialogDescription`, and `DialogFooter`. The close button",
           "is rendered automatically; pass `showCloseButton={false}` to suppress it.",
+          "",
+          "Use the `size` prop on `DialogContent` to control the panel width:",
+          "`sm` (compact), `default` (standard), `lg` (wide), `xl` (extra-wide),",
+          'or `full` (near-viewport). Use `accent="destructive"` on `DialogHeader`',
+          "to tint the title for danger/deletion flows.",
         ].join("\n"),
       },
     },
@@ -277,6 +282,81 @@ export const ProfilePreview: Story = {
         </DialogHeader>
         <DialogFooter showCloseButton>
           <Button variant="outline">Send message</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+};
+
+/**
+ * Each available `size` value rendered side-by-side as separate trigger
+ * buttons so you can compare the panel widths at a glance.
+ *
+ * `sm` → `sm:max-w-sm` · `default` → `sm:max-w-sm` · `lg` → `sm:max-w-2xl`
+ * · `xl` → `sm:max-w-4xl` · `full` → near-viewport
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-3">
+      {(
+        [
+          { size: "sm", label: "Small (sm)" },
+          { size: "default", label: "Default" },
+          { size: "lg", label: "Large (lg)" },
+          { size: "xl", label: "Extra-large (xl)" },
+          { size: "full", label: "Full" },
+        ] as const
+      ).map(({ size, label }) => (
+        <Dialog key={size}>
+          <DialogTrigger render={<Button variant="outline">{label}</Button>} />
+          <DialogContent size={size}>
+            <DialogHeader>
+              <DialogTitle>Size: {size}</DialogTitle>
+              <DialogDescription>
+                This dialog uses <code>size="{size}"</code>. The panel max-width
+                for this variant is{" "}
+                {size === "sm" || size === "default"
+                  ? "sm:max-w-sm"
+                  : size === "lg"
+                    ? "sm:max-w-2xl"
+                    : size === "xl"
+                      ? "sm:max-w-4xl"
+                      : "max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-4rem)]"}
+                .
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter showCloseButton />
+          </DialogContent>
+        </Dialog>
+      ))}
+    </div>
+  ),
+};
+
+/**
+ * A delete-confirmation dialog that uses `accent="destructive"` on
+ * `DialogHeader` to tint the title text with the `text-destructive` semantic
+ * token, signalling danger without any extra class on `DialogTitle`.
+ */
+export const Destructive: Story = {
+  render: () => (
+    <Dialog>
+      <DialogTrigger
+        render={<Button variant="outline">Delete account</Button>}
+      />
+      <DialogContent>
+        <DialogHeader accent="destructive">
+          <DialogTitle>Delete account</DialogTitle>
+          <DialogDescription>
+            This will permanently delete your account and remove all your data
+            from our servers. This action cannot be undone.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline" />}>
+            Cancel
+          </DialogClose>
+          <Button variant="destructive-solid">Delete account</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

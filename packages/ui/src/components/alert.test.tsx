@@ -29,13 +29,22 @@ describe("Alert", () => {
   it("applies destructive variant classes", () => {
     render(<Alert variant="destructive">Danger</Alert>);
     const alert = screen.getByRole("alert");
-    expect(alert).toHaveClass("text-destructive");
+    expect(alert).toHaveClass("text-destructive-accent");
   });
 
   it("applies default variant classes", () => {
     render(<Alert variant="default">Info</Alert>);
     const alert = screen.getByRole("alert");
     expect(alert).toHaveClass("bg-card");
+  });
+
+  it.each([
+    ["info", "text-info-accent"],
+    ["success", "text-success-accent"],
+    ["warning", "text-warning-accent"],
+  ] as const)("applies %s intent variant classes", (variant, expected) => {
+    render(<Alert variant={variant}>Intent</Alert>);
+    expect(screen.getByRole("alert")).toHaveClass(expected);
   });
 
   it("renders AlertAction with data-slot", () => {

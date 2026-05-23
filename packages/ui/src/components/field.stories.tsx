@@ -53,9 +53,17 @@ const meta = {
       description: "Direction of the label–control layout.",
       table: { defaultValue: { summary: "vertical" } },
     },
+    size: {
+      control: "inline-radio",
+      options: ["sm", "default", "lg"],
+      description:
+        "Spacing size that cascades to label, description, and control via data-size.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     orientation: "vertical",
+    size: "default",
   },
 } satisfies Meta<typeof Field>;
 
@@ -71,6 +79,32 @@ export const Playground: Story = {
         <FieldLabel htmlFor="pg-name">Full name</FieldLabel>
         <Input id="pg-name" placeholder="Jane Doe" />
       </Field>
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/** `sm`, `default`, and `lg` spacing sizes — cascades to label and description. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex w-full max-w-xl flex-col gap-6">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div key={size}>
+          <p className="mb-2 font-medium text-muted-foreground text-xs capitalize">
+            {size}
+          </p>
+          <Field size={size}>
+            <FieldLabel htmlFor={`sz-${size}-name`}>Full name</FieldLabel>
+            <Input id={`sz-${size}-name`} placeholder="Jane Doe" />
+            <FieldDescription>
+              Enter your legal first and last name.
+            </FieldDescription>
+          </Field>
+        </div>
+      ))}
     </div>
   ),
 };

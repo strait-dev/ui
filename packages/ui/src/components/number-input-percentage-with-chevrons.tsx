@@ -2,12 +2,32 @@
 
 import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cva, type VariantProps } from "class-variance-authority";
 import type React from "react";
 import { Button, Group, Input, NumberField } from "react-aria-components";
 import { cn } from "../utils/index";
 
 const MINIMUM_VALUE = 0;
 const MAX_VALUE = 100;
+
+/**
+ * CVA recipe for the `Group` container height in
+ * {@link NumberInputPercentageWithChevrons}. Mirrors the `inputVariants`
+ * height tokens so this component stays visually in rhythm with `Input` and
+ * similar fields.
+ */
+const numberInputGroupVariants = cva("", {
+  variants: {
+    size: {
+      sm: "h-7",
+      default: "h-8",
+      lg: "h-9",
+    },
+  },
+  defaultVariants: {
+    size: "default",
+  },
+});
 
 /**
  * Props for {@link NumberInputPercentageWithChevrons}.
@@ -18,7 +38,7 @@ const MAX_VALUE = 100;
  */
 export type NumberInputPercentageWithChevronsProps = Omit<
   React.ComponentProps<"input">,
-  "value" | "onChange" | "defaultValue"
+  "value" | "onChange" | "defaultValue" | "size"
 > & {
   defaultValue?: number;
   name: string;
@@ -27,6 +47,8 @@ export type NumberInputPercentageWithChevronsProps = Omit<
   disabled?: boolean;
   label?: string;
   containerClassName?: string;
+  /** Controls the height of the input group. Defaults to `"default"` (h-8). */
+  size?: VariantProps<typeof numberInputGroupVariants>["size"];
 };
 
 /**
@@ -43,6 +65,9 @@ export type NumberInputPercentageWithChevronsProps = Omit<
  * Chevrons are wired to React Aria's `"increment"` / `"decrement"`
  * slots and step by 0.01 (1 percentage point). Values are clamped
  * between 0 and 100 by `minValue` / `maxValue`.
+ *
+ * Use `size` (`"sm"` | `"default"` | `"lg"`) to control height. The default
+ * matches the previous `h-8` appearance so existing usage is unaffected.
  *
  * @example
  * ```tsx
@@ -63,6 +88,7 @@ function NumberInputPercentageWithChevrons({
   label,
   className,
   containerClassName,
+  size = "default",
   ...props
 }: NumberInputPercentageWithChevronsProps) {
   // Convert integer % (0–100) to the 0–1 fraction NumberField expects.
@@ -94,7 +120,8 @@ function NumberInputPercentageWithChevrons({
     >
       <Group
         className={cn(
-          "relative inline-flex h-8 w-full items-center overflow-hidden whitespace-nowrap rounded-lg border border-input bg-input/20 text-sm shadow-black/5 shadow-xs ring-offset-background transition-shadow data-focus-within:border-ring data-disabled:opacity-50 data-focus-within:outline-hidden data-focus-within:ring-[3px] data-focus-within:ring-ring/50 data-focus-within:ring-offset-2 dark:bg-input/30",
+          "relative inline-flex w-full items-center overflow-hidden whitespace-nowrap rounded-lg border border-input bg-input/20 text-sm shadow-black/5 shadow-xs ring-offset-background transition-shadow data-focus-within:border-ring data-disabled:opacity-50 data-focus-within:outline-hidden data-focus-within:ring-[3px] data-focus-within:ring-ring/50 data-focus-within:ring-offset-2 dark:bg-input/30",
+          numberInputGroupVariants({ size }),
           containerClassName
         )}
         data-slot="input-group"

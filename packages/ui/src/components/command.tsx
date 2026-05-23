@@ -15,6 +15,19 @@ import {
 import { InputGroup, InputGroupAddon } from "./input-group";
 
 /**
+ * Size tokens for the {@link CommandList} size axis.
+ *
+ * - `sm`      — compact: `py-1` item padding, `text-xs` labels.
+ * - `default` — standard: `py-1.5` item padding, `text-sm` labels (unchanged).
+ * - `lg`      — spacious: `py-2` item padding, `text-base` labels.
+ *
+ * The value is propagated downward via a `data-size` attribute so that
+ * {@link CommandItem} (and any custom sub-parts) can react with
+ * `group-data-[size=sm]:…` / `group-data-[size=lg]:…` selectors.
+ */
+type CommandListSize = "sm" | "default" | "lg";
+
+/**
  * A keyboard-navigable command palette built on the `cmdk` primitive.
  *
  * Compose it with {@link CommandInput}, {@link CommandList},
@@ -141,17 +154,29 @@ function CommandInput({
 /**
  * Scrollable container that holds all {@link CommandGroup}s and
  * {@link CommandEmpty}; capped at `max-h-72` with hidden scrollbars.
+ *
+ * @param size - Controls item density across the entire list.
+ *   - `"sm"`      — `py-1` padding on items, `text-xs` item text.
+ *   - `"default"` — `py-1.5` padding on items, `text-sm` item text (unchanged default).
+ *   - `"lg"`      — `py-2` padding on items, `text-base` item text.
+ *
+ *   The value is forwarded as `data-size` so child items can respond via
+ *   `group-data-[size=sm]:…` / `group-data-[size=lg]:…` Tailwind selectors.
  */
 function CommandList({
   className,
+  size = "default",
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.List>) {
+}: React.ComponentProps<typeof CommandPrimitive.List> & {
+  size?: CommandListSize;
+}) {
   return (
     <CommandPrimitive.List
       className={cn(
         "no-scrollbar max-h-72 scroll-py-1 overflow-y-auto overflow-x-hidden outline-none",
         className
       )}
+      data-size={size}
       data-slot="command-list"
       {...props}
     />
@@ -217,6 +242,10 @@ function CommandSeparator({
  * `data-checked="true"` is set by `cmdk` (e.g. for multi-select palettes).
  * The tick is hidden via CSS when a {@link CommandShortcut} sibling is
  * present to avoid layout conflicts.
+ *
+ * Size density is inherited from the nearest `[data-size]` ancestor
+ * (i.e. {@link CommandList}) via `group-data-[size=sm]:…` /
+ * `group-data-[size=lg]:…` selectors — no additional prop is needed here.
  */
 function CommandItem({
   className,
@@ -226,7 +255,12 @@ function CommandItem({
   return (
     <CommandPrimitive.Item
       className={cn(
-        "group/command-item relative flex cursor-default select-none items-center gap-2 in-data-[slot=dialog-content]:rounded-lg! rounded-sm px-2 py-1.5 text-sm outline-hidden data-[disabled=true]:pointer-events-none data-selected:bg-muted data-selected:text-foreground data-[disabled=true]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-selected:*:[svg]:text-foreground",
+        // Base layout — unchanged default appearance.
+        "group/command-item relative flex cursor-default select-none items-center gap-2 in-data-[slot=dialog-content]:rounded-lg! rounded-sm px-2 outline-hidden data-[disabled=true]:pointer-events-none data-selected:bg-muted data-selected:text-foreground data-[disabled=true]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-selected:*:[svg]:text-foreground",
+        // Vertical padding / text-size respond to the CommandList `data-size` attribute.
+        "py-1.5 text-sm",
+        "in-data-[size=sm]:py-1 in-data-[size=sm]:text-xs",
+        "in-data-[size=lg]:py-2 in-data-[size=lg]:text-base",
         className
       )}
       data-slot="command-item"
@@ -263,6 +297,7 @@ function CommandShortcut({
   );
 }
 
+export type { CommandListSize };
 export {
   Command,
   CommandDialog,

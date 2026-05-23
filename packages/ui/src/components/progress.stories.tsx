@@ -13,6 +13,9 @@ const meta = {
         component: [
           "A horizontal progress bar built on the Base UI `Progress` primitive.",
           "Pass a numeric `value` between `0` and `100` (or `null` for indeterminate).",
+          "Use `size` to control the track height (`xs | sm | default | lg`).",
+          "Use `intent` to tint the indicator with a semantic color",
+          "(`default | success | warning | info | destructive`).",
           "Compose with `ProgressLabel` and `ProgressValue` for labelled bars.",
         ].join("\n"),
       },
@@ -24,9 +27,23 @@ const meta = {
       description: "Current progress value (0–100). `null` = indeterminate.",
       table: { defaultValue: { summary: "0" } },
     },
+    size: {
+      control: { type: "select" },
+      options: ["xs", "sm", "default", "lg"],
+      description: "Height of the track rail.",
+      table: { defaultValue: { summary: "default" } },
+    },
+    intent: {
+      control: { type: "select" },
+      options: ["default", "success", "warning", "info", "destructive"],
+      description: "Semantic color of the filled indicator bar.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     value: 40,
+    size: "default",
+    intent: "default",
   },
 } satisfies Meta<typeof Progress>;
 
@@ -86,6 +103,46 @@ export const Indeterminate: Story = {
       <Progress {...args} value={null}>
         <ProgressLabel>Loading…</ProgressLabel>
       </Progress>
+    </div>
+  ),
+};
+
+/** All four track heights stacked for visual comparison. */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex w-full max-w-sm flex-col gap-6">
+      {(["xs", "sm", "default", "lg"] as const).map((s) => (
+        <div className="flex flex-col gap-1.5" key={s}>
+          <span className="text-muted-foreground text-xs">size="{s}"</span>
+          <Progress
+            aria-label={`Size ${s} progress`}
+            {...args}
+            size={s}
+            value={60}
+          />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/** All five intent colors stacked for visual comparison. */
+export const Intents: Story = {
+  render: (args) => (
+    <div className="flex w-full max-w-sm flex-col gap-6">
+      {(["default", "success", "warning", "info", "destructive"] as const).map(
+        (i) => (
+          <div className="flex flex-col gap-1.5" key={i}>
+            <span className="text-muted-foreground text-xs">intent="{i}"</span>
+            <Progress
+              aria-label={`Intent ${i} progress`}
+              {...args}
+              intent={i}
+              value={60}
+            />
+          </div>
+        )
+      )}
     </div>
   ),
 };

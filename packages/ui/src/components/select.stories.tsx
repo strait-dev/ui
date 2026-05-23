@@ -26,7 +26,7 @@ const meta = {
           "",
           "Compose it as:",
           "```",
-          "<Select>",
+          '<Select size="lg">',
           "  <SelectTrigger><SelectValue placeholder='Pick…' /></SelectTrigger>",
           "  <SelectContent>",
           "    <SelectItem value='a'>Option A</SelectItem>",
@@ -34,7 +34,17 @@ const meta = {
           "</Select>",
           "```",
           "",
-          "`SelectTrigger` accepts a `size` prop (`default` | `sm`).",
+          "### Size axis (`sm | default | lg`)",
+          "Set `size` once on the `<Select>` root — it cascades to the trigger,",
+          "content popup, and every item via context + `data-size` + `group-data-[size=…]`.",
+          'You can also override per-trigger with `<SelectTrigger size="…" />`.',
+          "",
+          "| Value | Trigger height | Item padding/text |",
+          "|-------|---------------|-------------------|",
+          "| `sm` | `h-7` | `py-0.5 text-xs` |",
+          "| `default` | `h-8` | `py-1 text-sm` |",
+          "| `lg` | `h-10` | `py-1.5 text-base` |",
+          "",
           "Items are grouped with `SelectGroup` + `SelectLabel`.",
           "Separate groups visually with `SelectSeparator`.",
         ].join("\n"),
@@ -46,9 +56,15 @@ const meta = {
       control: "boolean",
       description: "Disables the entire select.",
     },
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description: "Size scale cascaded to trigger, content, and items.",
+    },
   },
   args: {
     disabled: false,
+    size: "default",
   },
 } satisfies Meta<typeof Select>;
 
@@ -80,14 +96,19 @@ export const Playground: Story = {
 /* Sizes                                                               */
 /* ------------------------------------------------------------------ */
 
-/** `default` and `sm` trigger sizes. */
+/**
+ * All three `size` values shown side-by-side.
+ *
+ * The `size` prop is set on the `<Select>` root and cascades
+ * automatically to the trigger, popup, and items.
+ */
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <Label>Default size</Label>
-        <Select>
-          <SelectTrigger className="w-48" size="default">
+        <Label>Small (sm) — h-7, text-xs items</Label>
+        <Select size="sm">
+          <SelectTrigger className="w-48">
             <SelectValue placeholder="Select…" />
           </SelectTrigger>
           <SelectContent>
@@ -98,9 +119,22 @@ export const Sizes: Story = {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label>Small size</Label>
-        <Select>
-          <SelectTrigger className="w-48" size="sm">
+        <Label>Default — h-8, text-sm items</Label>
+        <Select size="default">
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Select…" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="a">Option A</SelectItem>
+            <SelectItem value="b">Option B</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label>Large (lg) — h-10, text-base items</Label>
+        <Select size="lg">
+          <SelectTrigger className="w-48">
             <SelectValue placeholder="Select…" />
           </SelectTrigger>
           <SelectContent>

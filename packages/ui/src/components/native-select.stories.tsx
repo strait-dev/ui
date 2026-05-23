@@ -21,7 +21,7 @@ const meta = {
           "Uses the OS-native dropdown, making it ideal for mobile-first flows.",
           "The chevron icon is injected via absolute positioning.",
           "",
-          "Accepts `size` (`default` | `sm`), all native `<select>` attributes,",
+          "Accepts `size` (`sm` | `default` | `lg`), all native `<select>` attributes,",
           "`NativeSelectOption` for `<option>` children, and `NativeSelectOptGroup`",
           "for grouped options.",
         ].join("\n"),
@@ -31,8 +31,8 @@ const meta = {
   argTypes: {
     size: {
       control: "inline-radio",
-      options: ["sm", "default"],
-      description: "Height preset.",
+      options: ["sm", "default", "lg"],
+      description: "Height preset. Does NOT map to the HTML size attribute.",
       table: { defaultValue: { summary: "default" } },
     },
     disabled: {
@@ -70,10 +70,17 @@ export const Playground: Story = {
 /* Sizes                                                               */
 /* ------------------------------------------------------------------ */
 
-/** `default` and `sm` sizes. */
+/** `sm`, `default`, and `lg` sizes. */
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <Label>Small</Label>
+        <NativeSelect size="sm">
+          <NativeSelectOption value="a">Option A</NativeSelectOption>
+          <NativeSelectOption value="b">Option B</NativeSelectOption>
+        </NativeSelect>
+      </div>
       <div className="flex flex-col gap-1.5">
         <Label>Default</Label>
         <NativeSelect size="default">
@@ -82,8 +89,8 @@ export const Sizes: Story = {
         </NativeSelect>
       </div>
       <div className="flex flex-col gap-1.5">
-        <Label>Small</Label>
-        <NativeSelect size="sm">
+        <Label>Large</Label>
+        <NativeSelect size="lg">
           <NativeSelectOption value="a">Option A</NativeSelectOption>
           <NativeSelectOption value="b">Option B</NativeSelectOption>
         </NativeSelect>

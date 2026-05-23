@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
-import { Toaster } from "./sonner";
+import { Toaster } from "./toaster";
 
 beforeAll(() => {
   window.matchMedia ||= (q: string) => ({

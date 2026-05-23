@@ -78,4 +78,10 @@ describe("PhoneInput", () => {
       screen.getByRole("button", { name: "Select country" })
     ).toBeDisabled();
   });
+
+  it("size='sm' reaches the underlying input field", () => {
+    render(<PhoneInput defaultCountry="US" placeholder="Phone" size="sm" />);
+    const input = document.querySelector("[data-slot='input']");
+    expect(input).toHaveClass("h-7");
+  });
 });

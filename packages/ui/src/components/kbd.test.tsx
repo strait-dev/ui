@@ -46,4 +46,26 @@ describe("Kbd", () => {
       "Command key"
     );
   });
+
+  // --- size axis ---
+
+  it("default size applies h-5 and text-xs classes", () => {
+    const { container } = render(<Kbd>K</Kbd>);
+    const kbd = container.querySelector("kbd");
+    expect(kbd).toHaveClass("h-5");
+    expect(kbd).toHaveClass("text-xs");
+  });
+
+  it("size='sm' applies h-4 class", () => {
+    const { container } = render(<Kbd size="sm">K</Kbd>);
+    const kbd = container.querySelector("kbd");
+    expect(kbd).toHaveClass("h-4");
+  });
+
+  it("size='lg' applies h-6 and text-sm classes", () => {
+    const { container } = render(<Kbd size="lg">Cmd</Kbd>);
+    const kbd = container.querySelector("kbd");
+    expect(kbd).toHaveClass("h-6");
+    expect(kbd).toHaveClass("text-sm");
+  });
 });

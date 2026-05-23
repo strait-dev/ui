@@ -11,6 +11,21 @@ describe("Input", () => {
     expect(input).toHaveAttribute("data-slot", "input");
   });
 
+  it("default size applies h-8", () => {
+    render(<Input placeholder="Email" />);
+    expect(screen.getByPlaceholderText("Email")).toHaveClass("h-8");
+  });
+
+  it("size='sm' applies h-7", () => {
+    render(<Input placeholder="Email" size="sm" />);
+    expect(screen.getByPlaceholderText("Email")).toHaveClass("h-7");
+  });
+
+  it("size='lg' applies h-9", () => {
+    render(<Input placeholder="Email" size="lg" />);
+    expect(screen.getByPlaceholderText("Email")).toHaveClass("h-9");
+  });
+
   it("forwards the type attribute", () => {
     render(<Input placeholder="Password" type="password" />);
     expect(screen.getByPlaceholderText("Password")).toHaveAttribute(

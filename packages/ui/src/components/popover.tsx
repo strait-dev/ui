@@ -5,6 +5,25 @@ import type * as React from "react";
 
 import { cn } from "../utils/index";
 
+// ---------------------------------------------------------------------------
+// Size axis
+// ---------------------------------------------------------------------------
+
+/**
+ * The three size steps available on {@link PopoverContent}.
+ *
+ * | Value     | Padding     | Text size |
+ * |-----------|-------------|-----------|
+ * | `sm`      | `p-2`       | `text-xs` |
+ * | `default` | `p-2.5`     | `text-sm` |
+ * | `lg`      | `p-4`       | `text-sm` |
+ */
+type PopoverSize = "sm" | "default" | "lg";
+
+// ---------------------------------------------------------------------------
+// Popover (root)
+// ---------------------------------------------------------------------------
+
 /**
  * Floating panel anchored to a trigger element for rich non-modal content.
  *
@@ -46,10 +65,18 @@ function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
 
+// ---------------------------------------------------------------------------
+// PopoverTrigger
+// ---------------------------------------------------------------------------
+
 /** Button or element that opens the {@link Popover} when activated. */
 function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
+
+// ---------------------------------------------------------------------------
+// PopoverContent
+// ---------------------------------------------------------------------------
 
 /**
  * Floating panel for {@link Popover} content.
@@ -61,6 +88,14 @@ function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
  * @remarks
  * `origin-(--transform-origin)` keeps the scale animation anchored to the
  * side the panel opens from, matching the slide direction.
+ *
+ * **Size axis** — controls the panel's padding and (for `sm`) text size:
+ *
+ * | `size`    | Padding | Text   |
+ * |-----------|---------|--------|
+ * | `sm`      | `p-2`   | `text-xs` |
+ * | `default` | `p-2.5` | `text-sm` (unchanged) |
+ * | `lg`      | `p-4`   | `text-sm` (unchanged) |
  */
 function PopoverContent({
   className,
@@ -68,12 +103,19 @@ function PopoverContent({
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  size = "default",
   ...props
 }: PopoverPrimitive.Popup.Props &
   Pick<
     PopoverPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
-  >) {
+  > & {
+    /**
+     * Controls padding (and text size for `sm`) of the popover panel.
+     * Defaults to `"default"` to preserve the existing look.
+     */
+    size?: PopoverSize;
+  }) {
   return (
     <PopoverPrimitive.Portal>
       {/* isolate prevents z-index bleed from ancestor stacking contexts */}
@@ -86,9 +128,17 @@ function PopoverContent({
       >
         <PopoverPrimitive.Popup
           className={cn(
-            "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-lg bg-popover p-2.5 text-popover-foreground text-sm shadow-md outline-hidden ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in",
+            // Positioning / animation (keep verbatim)
+            "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:animate-out data-open:animate-in",
+            // Shape / colour / layout (keep verbatim)
+            "z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-lg bg-popover text-popover-foreground shadow-md outline-hidden ring-1 ring-foreground/10 duration-100",
+            // Size variants — padding + text
+            size === "sm" && "p-2 text-xs",
+            size === "default" && "p-2.5 text-sm",
+            size === "lg" && "p-4 text-sm",
             className
           )}
+          data-size={size}
           data-slot="popover-content"
           {...props}
         />
@@ -96,6 +146,10 @@ function PopoverContent({
     </PopoverPrimitive.Portal>
   );
 }
+
+// ---------------------------------------------------------------------------
+// PopoverHeader
+// ---------------------------------------------------------------------------
 
 /**
  * Optional title/description container at the top of
@@ -111,6 +165,10 @@ function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// PopoverTitle
+// ---------------------------------------------------------------------------
+
 /** Accessible heading for the {@link Popover} panel. */
 function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
   return (
@@ -121,6 +179,10 @@ function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
     />
   );
 }
+
+// ---------------------------------------------------------------------------
+// PopoverDescription
+// ---------------------------------------------------------------------------
 
 /** Muted supporting text beneath {@link PopoverTitle}. */
 function PopoverDescription({

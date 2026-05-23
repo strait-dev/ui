@@ -37,8 +37,13 @@ const meta = {
           "`AlertDialogTitle`, `AlertDialogDescription`, `AlertDialogFooter`,",
           "`AlertDialogAction` (the primary CTA), and `AlertDialogCancel`.",
           "",
-          "The `size` prop on `AlertDialogContent` switches between `default` (wider,",
-          "left-aligned on sm+) and `sm` (narrow, always centered with a 2-column footer).",
+          "The `size` prop on `AlertDialogContent` accepts `sm | default | lg | xl | full`",
+          "and controls the max-width of the panel via `alertDialogContentVariants`.",
+          "`default` matches the original `sm:max-w-sm` cap — non-breaking.",
+          "`sm` stays centred and uses a two-column footer grid.",
+          "",
+          'Pass `accent="destructive"` on `AlertDialogHeader` to tint the title with',
+          "`text-destructive` — useful for irreversible deletion flows.",
         ].join("\n"),
       },
     },
@@ -198,6 +203,71 @@ export const NonDestructive: Story = {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction variant="default">
             Reset settings
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  ),
+};
+
+/**
+ * All five `size` values on `AlertDialogContent` side by side for visual
+ * comparison. Each dialog opens via its own trigger.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-3">
+      {(["sm", "default", "lg", "xl", "full"] as const).map((size) => (
+        <AlertDialog key={size}>
+          <AlertDialogTrigger
+            render={<Button variant="outline">size="{size}"</Button>}
+          />
+          <AlertDialogContent size={size}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>size="{size}" dialog</AlertDialogTitle>
+              <AlertDialogDescription>
+                This alert dialog uses the <strong>{size}</strong> size variant.
+                Resize the viewport to see max-width behaviour.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Confirm</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      ))}
+    </div>
+  ),
+};
+
+/**
+ * Destructive confirmation with `accent="destructive"` on the header — the
+ * title is tinted with `text-destructive` automatically via a child selector.
+ */
+export const DestructiveConfirmation: Story = {
+  render: () => (
+    <AlertDialog>
+      <AlertDialogTrigger
+        render={
+          <Button variant="destructive">
+            <HugeiconsIcon data-icon="inline-start" icon={Delete02Icon} />
+            Delete account
+          </Button>
+        }
+      />
+      <AlertDialogContent>
+        <AlertDialogHeader accent="destructive">
+          <AlertDialogTitle>Permanently delete account?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This is irreversible. All your data, projects, and billing history
+            will be erased immediately.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Keep account</AlertDialogCancel>
+          <AlertDialogAction variant="destructive-solid">
+            Yes, delete account
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

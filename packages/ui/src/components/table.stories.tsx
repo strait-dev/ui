@@ -26,10 +26,33 @@ const meta: Meta<typeof Table> = {
           "",
           "The outer `Table` wraps itself in a horizontally-scrollable `<div>`",
           "so wide tables stay accessible on small viewports.",
+          "",
+          "**Size** (`sm | default | lg`) — cascades from the `Table` root via",
+          "`data-size` + `group-data-[size=…]/table` selectors to header and data",
+          "cells, controlling height and horizontal padding.",
+          "",
+          "**Variant** (`default | striped | bordered`) — `striped` zebra-stripes",
+          "even body rows; `bordered` adds cell and row borders; `default` keeps",
+          "the existing style.",
         ].join("\n"),
       },
     },
   },
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description: "Cell height and padding preset.",
+      table: { defaultValue: { summary: "default" } },
+    },
+    variant: {
+      control: "select",
+      options: ["default", "striped", "bordered"],
+      description: "Row/cell decoration style.",
+      table: { defaultValue: { summary: "default" } },
+    },
+  },
+  args: { size: "default", variant: "default" },
 };
 
 export default meta;
@@ -61,8 +84,8 @@ const statusVariantMap = {
 
 /** Default table with header, body, footer, and a caption. */
 export const Playground: Story = {
-  render: () => (
-    <Table>
+  render: (args) => (
+    <Table {...args}>
       <TableCaption>A list of recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
@@ -95,6 +118,84 @@ export const Playground: Story = {
         </TableRow>
       </TableFooter>
     </Table>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/** `sm`, `default`, and `lg` — note the progressive cell height and padding. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div key={size}>
+          <p className="mb-2 font-medium text-sm">size="{size}"</p>
+          <Table size={size}>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Invoice</TableHead>
+                <TableHead>Method</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoices.slice(0, 3).map((inv) => (
+                <TableRow key={inv.id}>
+                  <TableCell className="font-medium">{inv.id}</TableCell>
+                  <TableCell>{inv.method}</TableCell>
+                  <TableCell className="text-right">
+                    ${inv.amount.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Variants                                                            */
+/* ------------------------------------------------------------------ */
+
+/** `default`, `striped`, and `bordered` side by side. */
+export const Variants: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      {(["default", "striped", "bordered"] as const).map((variant) => (
+        <div key={variant}>
+          <p className="mb-2 font-medium text-sm">variant="{variant}"</p>
+          <Table variant={variant}>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Invoice</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoices.map((inv) => (
+                <TableRow key={inv.id}>
+                  <TableCell className="font-medium">{inv.id}</TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariantMap[inv.status]}>
+                      {inv.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    ${inv.amount.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ))}
+    </div>
   ),
 };
 

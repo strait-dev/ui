@@ -4,9 +4,36 @@ import {
   MoreHorizontalCircle01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
+
+// ---------------------------------------------------------------------------
+// Size axis
+// ---------------------------------------------------------------------------
+
+/**
+ * The three size steps available on the `Pagination` root.
+ *
+ * - `sm`  — maps icon buttons to `icon-sm` (28 px square).
+ * - `default` — the original look; icon buttons use `icon` (32 px square).
+ * - `lg`  — maps icon buttons to `icon-lg` (36 px square).
+ *
+ * `PaginationPrevious` and `PaginationNext` follow the same steps but use
+ * the non-icon sizes `sm`, `default`, and `lg` respectively so they keep
+ * their text labels.
+ */
+type PaginationSize = "sm" | "default" | "lg";
+
+// ---------------------------------------------------------------------------
+// Context — propagates size from root to every link/control
+// ---------------------------------------------------------------------------
+
+const PaginationSizeContext = React.createContext<PaginationSize>("default");
+
+// ---------------------------------------------------------------------------
+// Pagination (root)
+// ---------------------------------------------------------------------------
 
 /**
  * Accessible navigation landmark for moving between pages of content.
@@ -27,9 +54,13 @@ import { Button } from "./button";
  * The `text` label on {@link PaginationPrevious} and
  * {@link PaginationNext} is hidden on small viewports (`sm:block`).
  *
+ * **Size axis** — pass `size` (`sm | default | lg`) to scale page buttons
+ * uniformly. The value propagates via React context so every descendant
+ * link/control automatically uses the matching button size.
+ *
  * @example
  * ```tsx
- * <Pagination>
+ * <Pagination size="sm">
  *   <PaginationContent>
  *     <PaginationItem>
  *       <PaginationPrevious href="/page/1" />
@@ -50,16 +81,30 @@ import { Button } from "./button";
  * </Pagination>
  * ```
  */
-function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
+function Pagination({
+  className,
+  size = "default",
+  ...props
+}: React.ComponentProps<"nav"> & {
+  /** Scales all page-button controls uniformly. */
+  size?: PaginationSize;
+}) {
   return (
-    <nav
-      aria-label="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
-      data-slot="pagination"
-      {...props}
-    />
+    <PaginationSizeContext.Provider value={size}>
+      <nav
+        aria-label="pagination"
+        className={cn("mx-auto flex w-full justify-center", className)}
+        data-size={size}
+        data-slot="pagination"
+        {...props}
+      />
+    </PaginationSizeContext.Provider>
   );
 }
+
+// ---------------------------------------------------------------------------
+// PaginationContent
+// ---------------------------------------------------------------------------
 
 /** Flex list that holds {@link PaginationItem} controls. */
 function PaginationContent({
@@ -75,10 +120,18 @@ function PaginationContent({
   );
 }
 
+// ---------------------------------------------------------------------------
+// PaginationItem
+// ---------------------------------------------------------------------------
+
 /** List item wrapper for a single {@link PaginationLink} or control. */
 function PaginationItem({ ...props }: React.ComponentProps<"li">) {
   return <li data-slot="pagination-item" {...props} />;
 }
+
+// ---------------------------------------------------------------------------
+// PaginationLink
+// ---------------------------------------------------------------------------
 
 type PaginationLinkProps = {
   isActive?: boolean;
@@ -91,13 +144,39 @@ type PaginationLinkProps = {
  * Renders as a {@link Button} whose underlying element is an `<a>` tag.
  * When `isActive` is true the link receives `aria-current="page"` and
  * switches to the `outline` variant for visual emphasis.
+ *
+ * @remarks
+ * When an explicit `size` prop is omitted the component reads the nearest
+ * {@link Pagination} root's size via context and maps it to the appropriate
+ * `icon-*` button size:
+ *
+ * | Pagination size | Button icon size |
+ * |-----------------|-----------------|
+ * | `sm`            | `icon-sm`        |
+ * | `default`       | `icon`           |
+ * | `lg`            | `icon-lg`        |
  */
 function PaginationLink({
   className,
   isActive,
-  size = "icon",
+  size,
   ...props
 }: PaginationLinkProps) {
+  const ctxSize = React.useContext(PaginationSizeContext);
+
+  /** Map the pagination size to a matching icon button size. */
+  function iconSizeFromCtx(): React.ComponentProps<typeof Button>["size"] {
+    if (ctxSize === "sm") {
+      return "icon-sm";
+    }
+    if (ctxSize === "lg") {
+      return "icon-lg";
+    }
+    return "icon";
+  }
+  const resolvedSize: React.ComponentProps<typeof Button>["size"] =
+    size ?? iconSizeFromCtx();
+
   return (
     <Button
       className={cn(className)}
@@ -110,28 +189,53 @@ function PaginationLink({
           {...props}
         />
       }
-      size={size}
+      size={resolvedSize}
       variant={isActive ? "outline" : "ghost"}
     />
   );
 }
+
+// ---------------------------------------------------------------------------
+// PaginationPrevious
+// ---------------------------------------------------------------------------
 
 /**
  * Convenience {@link PaginationLink} wired up for "go to previous page".
  *
  * The `text` prop (default `"Previous"`) is only visible on `sm` and wider
  * viewports; on smaller screens only the arrow icon is shown.
+ *
+ * @remarks
+ * The button size follows the parent {@link Pagination} size context using
+ * the non-icon size steps (`sm`, `default`, `lg`) so the text label can
+ * sit beside the arrow.
  */
 function PaginationPrevious({
   className,
   text = "Previous",
+  size,
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+  const ctxSize = React.useContext(PaginationSizeContext);
+
+  /** Map pagination size to the matching non-icon button size. */
+  function textSizeFromCtx(): React.ComponentProps<typeof Button>["size"] {
+    if (ctxSize === "sm") {
+      return "sm";
+    }
+    if (ctxSize === "lg") {
+      return "lg";
+    }
+    return "default";
+  }
+  const resolvedSize: React.ComponentProps<typeof Button>["size"] =
+    size ?? textSizeFromCtx();
+
   return (
     <PaginationLink
       aria-label="Go to previous page"
       className={cn("pl-1.5!", className)}
-      size="default"
+      size={resolvedSize}
       {...props}
     >
       <HugeiconsIcon
@@ -144,22 +248,47 @@ function PaginationPrevious({
   );
 }
 
+// ---------------------------------------------------------------------------
+// PaginationNext
+// ---------------------------------------------------------------------------
+
 /**
  * Convenience {@link PaginationLink} wired up for "go to next page".
  *
  * The `text` prop (default `"Next"`) is only visible on `sm` and wider
  * viewports; on smaller screens only the arrow icon is shown.
+ *
+ * @remarks
+ * The button size follows the parent {@link Pagination} size context using
+ * the non-icon size steps (`sm`, `default`, `lg`) so the text label can
+ * sit beside the arrow.
  */
 function PaginationNext({
   className,
   text = "Next",
+  size,
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+  const ctxSize = React.useContext(PaginationSizeContext);
+
+  /** Map pagination size to the matching non-icon button size. */
+  function textSizeFromCtx(): React.ComponentProps<typeof Button>["size"] {
+    if (ctxSize === "sm") {
+      return "sm";
+    }
+    if (ctxSize === "lg") {
+      return "lg";
+    }
+    return "default";
+  }
+  const resolvedSize: React.ComponentProps<typeof Button>["size"] =
+    size ?? textSizeFromCtx();
+
   return (
     <PaginationLink
       aria-label="Go to next page"
       className={cn("pr-1.5!", className)}
-      size="default"
+      size={resolvedSize}
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
@@ -171,6 +300,10 @@ function PaginationNext({
     </PaginationLink>
   );
 }
+
+// ---------------------------------------------------------------------------
+// PaginationEllipsis
+// ---------------------------------------------------------------------------
 
 /**
  * Non-interactive placeholder indicating skipped page numbers in a
@@ -186,6 +319,8 @@ function PaginationEllipsis({
       aria-hidden
       className={cn(
         "flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
+        "in-data-[size=sm]:size-7",
+        "in-data-[size=lg]:size-9",
         className
       )}
       data-slot="pagination-ellipsis"

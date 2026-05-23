@@ -60,4 +60,59 @@ describe("Toggle", () => {
     expect(toggleVariants({ size: "lg" })).toContain("h-9");
     expect(toggleVariants({ variant: "outline" })).toContain("border-input");
   });
+
+  /* ------------------------------------------------------------------ */
+  /* Size variant — xs and xl                                            */
+  /* ------------------------------------------------------------------ */
+
+  it("applies xs size class when size=xs", () => {
+    render(
+      <Toggle aria-label="Extra small" size="xs">
+        X
+      </Toggle>
+    );
+    expect(screen.getByRole("button", { name: "Extra small" })).toHaveClass(
+      "h-6"
+    );
+  });
+
+  it("applies xl size class when size=xl", () => {
+    render(
+      <Toggle aria-label="Extra large" size="xl">
+        XL
+      </Toggle>
+    );
+    expect(screen.getByRole("button", { name: "Extra large" })).toHaveClass(
+      "h-10"
+    );
+  });
+
+  it("toggleVariants emits xs and xl size classes", () => {
+    expect(toggleVariants({ size: "xs" })).toContain("h-6");
+    expect(toggleVariants({ size: "xl" })).toContain("h-10");
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Intent variant                                                      */
+  /* ------------------------------------------------------------------ */
+
+  it("includes destructive pressed class when intent=destructive", () => {
+    const classes = toggleVariants({ intent: "destructive" });
+    expect(classes).toContain("aria-pressed:bg-destructive");
+  });
+
+  it("includes success pressed class when intent=success", () => {
+    const classes = toggleVariants({ intent: "success" });
+    expect(classes).toContain("aria-pressed:bg-success");
+  });
+
+  it("includes warning pressed class when intent=warning", () => {
+    const classes = toggleVariants({ intent: "warning" });
+    expect(classes).toContain("aria-pressed:bg-warning");
+  });
+
+  it("includes info pressed class when intent=info", () => {
+    const classes = toggleVariants({ intent: "info" });
+    expect(classes).toContain("aria-pressed:bg-info");
+  });
 });

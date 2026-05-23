@@ -19,6 +19,12 @@ const meta = {
           "`disabled` dims and blocks interaction; `aria-invalid` switches to",
           "destructive styling.",
           "",
+          "**Size** — `size` scales both the outer box and the inner check icon:",
+          "`sm` (14 px), `default` (16 px), `lg` (20 px).",
+          "",
+          "**Intent** — `intent` tints the border and checked background.",
+          "`default` uses primary; `destructive` uses the destructive semantic token.",
+          "",
           "Use `defaultChecked` for uncontrolled usage, or `checked` +",
           "`onCheckedChange` for controlled usage.",
         ].join("\n"),
@@ -34,9 +40,23 @@ const meta = {
       control: "boolean",
       description: "Initial checked state (uncontrolled).",
     },
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description: "Scales the box and check icon.",
+      table: { defaultValue: { summary: "default" } },
+    },
+    intent: {
+      control: "select",
+      options: ["default", "destructive"],
+      description: "Tints the border and checked background.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     disabled: false,
+    size: "default",
+    intent: "default",
   },
 } satisfies Meta<typeof Checkbox>;
 
@@ -86,6 +106,60 @@ export const States: Story = {
         <Checkbox aria-invalid defaultChecked id="invalid-checked" />
         <Label htmlFor="invalid-checked">Invalid checked</Label>
       </div>
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/** Three sizes — `sm`, `default`, `lg` — showing unchecked and checked. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div className="flex items-center gap-4" key={size}>
+          <div className="flex items-center gap-2">
+            <Checkbox id={`size-${size}-unchecked`} size={size} />
+            <Label htmlFor={`size-${size}-unchecked`}>{size} unchecked</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox defaultChecked id={`size-${size}-checked`} size={size} />
+            <Label htmlFor={`size-${size}-checked`}>{size} checked</Label>
+          </div>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Intents                                                             */
+/* ------------------------------------------------------------------ */
+
+/** Default vs destructive intent — unchecked and checked. */
+export const Intents: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      {(["default", "destructive"] as const).map((intent) => (
+        <div className="flex items-center gap-4" key={intent}>
+          <div className="flex items-center gap-2">
+            <Checkbox id={`intent-${intent}-unchecked`} intent={intent} />
+            <Label htmlFor={`intent-${intent}-unchecked`}>
+              {intent} unchecked
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              defaultChecked
+              id={`intent-${intent}-checked`}
+              intent={intent}
+            />
+            <Label htmlFor={`intent-${intent}-checked`}>{intent} checked</Label>
+          </div>
+        </div>
+      ))}
     </div>
   ),
 };

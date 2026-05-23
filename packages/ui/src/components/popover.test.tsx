@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   Popover,
   PopoverContent,
@@ -9,6 +9,15 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "./popover";
+
+beforeAll(() => {
+  globalThis.ResizeObserver ||= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+  Element.prototype.scrollIntoView ||= () => {};
+});
 
 function Fixture() {
   return (
@@ -69,5 +78,51 @@ describe("Popover", () => {
     expect(
       await screen.findByText("Controlled popover content.")
     ).toBeInTheDocument();
+  });
+
+  // -------------------------------------------------------------------------
+  // Size axis
+  // -------------------------------------------------------------------------
+
+  it("sets data-size=default on the content when no size prop is given", async () => {
+    render(
+      <Popover open>
+        <PopoverTrigger>Open</PopoverTrigger>
+        <PopoverContent>
+          <p>Content</p>
+        </PopoverContent>
+      </Popover>
+    );
+    await screen.findByText("Content");
+    const content = document.querySelector("[data-slot=popover-content]");
+    expect(content).toHaveAttribute("data-size", "default");
+  });
+
+  it("sets data-size=sm on the content when size='sm' is given", async () => {
+    render(
+      <Popover open>
+        <PopoverTrigger>Open</PopoverTrigger>
+        <PopoverContent size="sm">
+          <p>Small popover</p>
+        </PopoverContent>
+      </Popover>
+    );
+    await screen.findByText("Small popover");
+    const content = document.querySelector("[data-slot=popover-content]");
+    expect(content).toHaveAttribute("data-size", "sm");
+  });
+
+  it("sets data-size=lg on the content when size='lg' is given", async () => {
+    render(
+      <Popover open>
+        <PopoverTrigger>Open</PopoverTrigger>
+        <PopoverContent size="lg">
+          <p>Large popover</p>
+        </PopoverContent>
+      </Popover>
+    );
+    await screen.findByText("Large popover");
+    const content = document.querySelector("[data-slot=popover-content]");
+    expect(content).toHaveAttribute("data-size", "lg");
   });
 });

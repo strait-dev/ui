@@ -216,3 +216,56 @@ describe("MetricCardSparkline", () => {
     expect(() => render(<MetricCardSparkline data={[]} />)).not.toThrow();
   });
 });
+
+describe("MetricCard size='sm'", () => {
+  it("adds data-size='sm' on the root card element", () => {
+    render(<MetricCard size="sm" title="Compact" value="42" />);
+    const card = document.querySelector("[data-slot='metric-card']");
+    expect(card).toHaveAttribute("data-size", "sm");
+  });
+
+  it("value uses text-xl class when size is sm", () => {
+    render(<MetricCard size="sm" title="Compact" value="42" />);
+    const val = document.querySelector("[data-slot='metric-card-value']");
+    expect(val).toHaveClass("text-xl");
+  });
+
+  it("default size keeps text-2xl class", () => {
+    render(<MetricCard title="Normal" value="42" />);
+    const val = document.querySelector("[data-slot='metric-card-value']");
+    expect(val).toHaveClass("text-2xl");
+  });
+});
+
+describe("MetricCard neutral delta", () => {
+  it("neutral direction applies text-muted-foreground", () => {
+    render(
+      <MetricCard
+        delta={{ value: 0, direction: "neutral" }}
+        title="Flat"
+        value="100"
+      />
+    );
+    const delta = document.querySelector("[data-slot='metric-card-delta']");
+    expect(delta).toHaveClass("text-muted-foreground");
+  });
+
+  it("neutral direction does not apply success or destructive accent class", () => {
+    render(
+      <MetricCard
+        delta={{ value: 0, direction: "neutral" }}
+        title="Flat"
+        value="100"
+      />
+    );
+    const delta = document.querySelector("[data-slot='metric-card-delta']");
+    expect(delta).not.toHaveClass("text-success-accent");
+    expect(delta).not.toHaveClass("text-destructive-accent");
+  });
+
+  it("MetricCardDelta with direction='neutral' applies text-muted-foreground", () => {
+    render(<MetricCardDelta direction="neutral" value={0} />);
+    const delta = document.querySelector("[data-slot='metric-card-delta']");
+    expect(delta).toHaveClass("text-muted-foreground");
+  });
+});

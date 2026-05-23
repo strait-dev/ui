@@ -85,13 +85,17 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
 /**
  * Class-variance-authority recipe for the {@link Field} layout.
  *
- * Exposes one axis:
+ * Exposes two axes:
  * - `orientation` — controls how the label and control are arranged:
  *   - `"vertical"` (default) — label stacked above the control.
  *   - `"horizontal"` — label and control side-by-side, aligning to the
  *     top when a {@link FieldContent} description is present.
  *   - `"responsive"` — vertical below the `@md` container breakpoint,
  *     horizontal above it (requires a {@link FieldGroup} ancestor).
+ * - `size` — controls the internal spacing of the field and cascades to
+ *   sub-parts via `data-size` + `group-data-[size=…]/field` selectors.
+ *   Only `orientation` lives here; `size` is handled directly on the root
+ *   element so it can be forwarded as a `data-size` attribute.
  */
 const fieldVariants = cva(
   "group/field flex w-full gap-2 data-[invalid=true]:text-destructive",
@@ -122,12 +126,18 @@ const fieldVariants = cva(
  * @remarks
  * - The `orientation` prop switches the label/control layout axis via
  *   {@link fieldVariants}.
+ * - `size` (`"sm"` | `"default"` | `"lg"`) cascades spacing to every
+ *   sub-part via `data-size` + `group-data-[size=…]/field` selectors,
+ *   matching the pattern used by `card.tsx`. Set it once on the root:
+ *   - `sm`      — `gap-1` between label/control, tighter description margin.
+ *   - `default` — `gap-2` (unchanged from before).
+ *   - `lg`      — `gap-3` between label/control, looser description margin.
  * - When `data-invalid="true"` is set on the root, all text inside turns
- *   destructive (used by react-hook-form integrations).
+ *   destructive (used by form integrations).
  *
  * @example
  * ```tsx
- * <Field orientation="horizontal">
+ * <Field orientation="horizontal" size="lg">
  *   <FieldLabel htmlFor="email">Email</FieldLabel>
  *   <Input id="email" type="email" />
  * </Field>
@@ -136,13 +146,30 @@ const fieldVariants = cva(
 function Field({
   className,
   orientation = "vertical",
+  size = "default",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof fieldVariants>) {
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof fieldVariants> & {
+    /**
+     * Spacing size that cascades to sub-parts via
+     * `group-data-[size=…]/field` selectors.
+     * @defaultValue "default"
+     */
+    size?: "sm" | "default" | "lg";
+  }) {
   return (
     // biome-ignore lint/a11y/useSemanticElements: a field groups a label/control/description; role="group" on a div is the intended pattern (<fieldset> would impose unwanted layout/legend semantics).
     <div
-      className={cn(fieldVariants({ orientation }), className)}
+      className={cn(
+        fieldVariants({ orientation }),
+        // Size axis: gap between label and control
+        "data-[size=sm]:gap-1",
+        "data-[size=default]:gap-2",
+        "data-[size=lg]:gap-3",
+        className
+      )}
       data-orientation={orientation}
+      data-size={size}
       data-slot="field"
       role="group"
       {...props}
@@ -176,6 +203,13 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
  *
  * When a `data-slot="field"` child is detected, the label expands to full
  * width and adds a bordered, tinted checked state.
+ *
+ * @remarks
+ * The text size responds to the parent {@link Field}'s `size` via
+ * `group-data-[size=…]/field` selectors:
+ * - `sm`      — `text-xs`
+ * - `default` — `text-sm` (unchanged)
+ * - `lg`      — `text-base`
  */
 function FieldLabel({
   className,
@@ -186,6 +220,10 @@ function FieldLabel({
       className={cn(
         "group/field-label peer/field-label flex w-fit gap-2 leading-snug has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border has-data-checked:border-primary/30 has-data-checked:bg-primary/5 *:data-[slot=field]:p-2.5 group-data-[disabled=true]/field:opacity-50 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10",
         "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col",
+        // Text size cascades from the parent Field's data-size
+        "group-data-[size=sm]/field:text-xs",
+        "group-data-[size=default]/field:text-sm",
+        "group-data-[size=lg]/field:text-base",
         className
       )}
       data-slot="field-label"
@@ -218,6 +256,13 @@ function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
  * Adjusts top-margin automatically when it is the last or second-to-last
  * sibling, and text-balances in horizontal {@link Field} layouts. Inline
  * links are underlined and turn primary on hover.
+ *
+ * @remarks
+ * The text size responds to the parent {@link Field}'s `size` via
+ * `group-data-[size=…]/field` selectors:
+ * - `sm`      — `text-xs`
+ * - `default` — `text-sm` (unchanged)
+ * - `lg`      — `text-sm` (description stays readable; only label grows)
  */
 function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
@@ -226,6 +271,8 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
         "text-left font-normal text-muted-foreground text-sm leading-normal group-has-data-horizontal/field:text-balance [[data-variant=legend]+&]:-mt-1.5",
         "nth-last-2:-mt-1 last:mt-0",
         "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
+        // Text size responds to parent Field size
+        "group-data-[size=sm]/field:text-xs",
         className
       )}
       data-slot="field-description"
@@ -275,14 +322,14 @@ function FieldSeparator({
 /**
  * Validation error display for a {@link Field}.
  *
- * Accepts either explicit `children` or an `errors` array (e.g. from
- * react-hook-form's `fieldState.errors`). When multiple distinct messages
- * exist they are rendered as a bulleted list; duplicates are deduplicated
- * by message text. Renders nothing when there is no content.
+ * Accepts either explicit `children` or an `errors` array (e.g. from a
+ * field's validation state). When multiple distinct messages exist they are
+ * rendered as a bulleted list; duplicates are deduplicated by message text.
+ * Renders nothing when there is no content.
  *
  * @remarks
- * The `errors` prop accepts `Array<{ message?: string } | undefined>` so
- * it can receive react-hook-form error objects directly without mapping.
+ * The `errors` prop accepts `Array<{ message?: string } | undefined>` so it
+ * can receive standard-schema error objects directly without mapping.
  */
 function FieldError({
   className,

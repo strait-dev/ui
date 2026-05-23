@@ -34,6 +34,10 @@ const meta = {
           "",
           "Unlike `Dialog`, the popover closes when you click outside or press Escape.",
           "Use it for supplementary information, quick-edit forms, or filter panels.",
+          "",
+          "**Size axis** — pass `size` (`sm | default | lg`) on `PopoverContent` to",
+          "control panel padding. `sm` also reduces text to `text-xs` for compact",
+          "use-cases such as tooltip-like annotations.",
         ].join("\n"),
       },
     },
@@ -263,5 +267,38 @@ export const InvitePopover: Story = {
         </div>
       </PopoverContent>
     </Popover>
+  ),
+};
+
+/**
+ * All three content sizes side by side. The `size` prop on `PopoverContent`
+ * controls padding and (for `sm`) text size.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex items-start gap-4">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <Popover defaultOpen key={size}>
+          <PopoverTrigger
+            render={
+              <Button size="sm" variant="outline">
+                {size}
+              </Button>
+            }
+          />
+          <PopoverContent size={size}>
+            <PopoverHeader>
+              <PopoverTitle>Size: {size}</PopoverTitle>
+              <PopoverDescription>
+                Padding and text scale to this size.
+              </PopoverDescription>
+            </PopoverHeader>
+            <p className="text-muted-foreground">
+              Body content for the {size} variant.
+            </p>
+          </PopoverContent>
+        </Popover>
+      ))}
+    </div>
   ),
 };

@@ -2,9 +2,33 @@
 
 import { MinusSignIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { OTPInput, OTPInputContext } from "input-otp";
 import * as React from "react";
 import { cn } from "../utils/index";
+
+/**
+ * CVA recipe that drives the height (and matching width) of each
+ * {@link InputOTPSlot}. Mirrors the height values from `inputVariants` in
+ * `input.tsx` so OTP slots stay in rhythm with other form fields.
+ *
+ * @example
+ * ```ts
+ * otpSlotVariants({ size: "lg" }) // → "size-9"
+ * ```
+ */
+const otpSlotVariants = cva("", {
+  variants: {
+    size: {
+      sm: "size-7",
+      default: "size-8",
+      lg: "size-9",
+    },
+  },
+  defaultVariants: {
+    size: "default",
+  },
+});
 
 /**
  * One-time-password input that renders a fixed-length sequence of digit
@@ -87,14 +111,20 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
  * Reads its display character and active state from `OTPInputContext` using
  * the `index` prop. When the slot is active but has no character yet, a
  * blinking fake caret is rendered to match native `<input>` behaviour.
+ *
+ * Use the `size` prop (`"sm"` | `"default"` | `"lg"`) to match the height
+ * of other form fields in the layout. The default (`"default"`) is identical
+ * to the previous `size-8` appearance.
  */
 function InputOTPSlot({
   index,
   className,
+  size,
   ...props
-}: React.ComponentProps<"div"> & {
-  index: number;
-}) {
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof otpSlotVariants> & {
+    index: number;
+  }) {
   const inputOTPContext = React.useContext(OTPInputContext);
   // Each slot reads only the slice of context it owns.
   const { char, hasFakeCaret, isActive } = inputOTPContext?.slots[index] ?? {};
@@ -102,7 +132,8 @@ function InputOTPSlot({
   return (
     <div
       className={cn(
-        "relative flex size-8 items-center justify-center border-input border-y border-r text-sm outline-none transition-all first:rounded-l-lg first:border-l last:rounded-r-lg aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-3 data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-destructive/20 dark:bg-input/30 dark:data-[active=true]:aria-invalid:ring-destructive/40",
+        "relative flex items-center justify-center border-input border-y border-r text-sm outline-none transition-all first:rounded-l-lg first:border-l last:rounded-r-lg aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-3 data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-destructive/20 dark:bg-input/30 dark:data-[active=true]:aria-invalid:ring-destructive/40",
+        otpSlotVariants({ size }),
         className
       )}
       data-active={isActive}

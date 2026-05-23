@@ -121,4 +121,10 @@ describe("PasswordInput", () => {
     render(<PasswordInput disabled placeholder="Password" />);
     expect(screen.getByPlaceholderText("Password")).toBeDisabled();
   });
+
+  it("size='sm' reaches the underlying input field", () => {
+    render(<PasswordInput placeholder="Password" size="sm" />);
+    const input = document.querySelector("[data-slot='input']");
+    expect(input).toHaveClass("h-7");
+  });
 });

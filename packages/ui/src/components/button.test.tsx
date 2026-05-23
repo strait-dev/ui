@@ -65,3 +65,46 @@ describe("Button", () => {
     expect(buttonVariants({ size: "icon" })).toContain("size-8");
   });
 });
+
+// ---------------------------------------------------------------------------
+// New variant assertions
+// ---------------------------------------------------------------------------
+
+describe("Button secondary-outline variant", () => {
+  it("renders with the secondary border class", () => {
+    render(<Button variant="secondary-outline">Secondary Outline</Button>);
+    const button = screen.getByRole("button", { name: "Secondary Outline" });
+    expect(button).toHaveClass("border-secondary");
+  });
+
+  it("renders with secondary foreground text class", () => {
+    render(<Button variant="secondary-outline">Secondary Outline</Button>);
+    const button = screen.getByRole("button", { name: "Secondary Outline" });
+    expect(button).toHaveClass("text-secondary-foreground");
+  });
+
+  it("buttonVariants helper returns expected classes for secondary-outline", () => {
+    const classes = buttonVariants({ variant: "secondary-outline" });
+    expect(classes).toContain("border-secondary");
+    expect(classes).toContain("text-secondary-foreground");
+  });
+});
+
+describe("Button invert variants", () => {
+  it("invert-solid has bg-invert and text-invert-foreground", () => {
+    render(<Button variant="invert-solid">Invert</Button>);
+    const button = screen.getByRole("button", { name: "Invert" });
+    expect(button).toHaveClass("bg-invert");
+    expect(button).toHaveClass("text-invert-foreground");
+  });
+
+  it("invert (soft) has bg-invert/10", () => {
+    const classes = buttonVariants({ variant: "invert" });
+    expect(classes).toContain("bg-invert/10");
+  });
+
+  it("invert-outline has border-invert/30", () => {
+    const classes = buttonVariants({ variant: "invert-outline" });
+    expect(classes).toContain("border-invert/30");
+  });
+});

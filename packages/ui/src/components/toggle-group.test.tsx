@@ -95,4 +95,66 @@ describe("ToggleGroup", () => {
     const group = screen.getByRole("group", { name: "Actions" });
     expect(group).toHaveAttribute("data-spacing", "4");
   });
+
+  /* ------------------------------------------------------------------ */
+  /* xs / xl size forwarding                                             */
+  /* ------------------------------------------------------------------ */
+
+  it("reflects size=xs on the group data-size attribute", () => {
+    render(
+      <ToggleGroup aria-label="Tiny" size="xs">
+        <ToggleGroupItem aria-label="A" value="a">
+          A
+        </ToggleGroupItem>
+      </ToggleGroup>
+    );
+    expect(screen.getByRole("group", { name: "Tiny" })).toHaveAttribute(
+      "data-size",
+      "xs"
+    );
+  });
+
+  it("reflects size=xl on the group data-size attribute", () => {
+    render(
+      <ToggleGroup aria-label="Huge" size="xl">
+        <ToggleGroupItem aria-label="A" value="a">
+          A
+        </ToggleGroupItem>
+      </ToggleGroup>
+    );
+    expect(screen.getByRole("group", { name: "Huge" })).toHaveAttribute(
+      "data-size",
+      "xl"
+    );
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Intent forwarding                                                   */
+  /* ------------------------------------------------------------------ */
+
+  it("reflects intent on the group data-intent attribute", () => {
+    render(
+      <ToggleGroup aria-label="Danger" intent="destructive">
+        <ToggleGroupItem aria-label="Delete" value="delete">
+          D
+        </ToggleGroupItem>
+      </ToggleGroup>
+    );
+    expect(screen.getByRole("group", { name: "Danger" })).toHaveAttribute(
+      "data-intent",
+      "destructive"
+    );
+  });
+
+  it("cascades intent to ToggleGroupItem via data-intent", () => {
+    render(
+      <ToggleGroup aria-label="Status" intent="success">
+        <ToggleGroupItem aria-label="Approve" value="approve">
+          OK
+        </ToggleGroupItem>
+      </ToggleGroup>
+    );
+    const item = screen.getByRole("button", { name: "Approve" });
+    expect(item).toHaveAttribute("data-intent", "success");
+  });
 });

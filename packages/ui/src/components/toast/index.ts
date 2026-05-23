@@ -6,5 +6,4 @@ export type {
   PromiseToastOptions,
   Toast,
   ToastAction,
-  ToastContentProps,
 } from "./types";

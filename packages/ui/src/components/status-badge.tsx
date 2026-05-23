@@ -45,12 +45,19 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
     dotClassName: "bg-muted-foreground",
   },
   idle: { variant: "secondary-light", dotClassName: "bg-muted-foreground" },
+  // Extended neutral / lifecycle states
+  draft: { variant: "secondary-light", dotClassName: "bg-muted-foreground" },
+  archived: { variant: "secondary-light", dotClassName: "bg-muted-foreground" },
+  disabled: { variant: "secondary-light", dotClassName: "bg-muted-foreground" },
+  unknown: { variant: "secondary-light", dotClassName: "bg-muted-foreground" },
   // Live / in-flight
   running: { variant: "info-light", dotClassName: "bg-info animate-pulse" },
   executing: { variant: "info-light", dotClassName: "bg-info animate-pulse" },
   active: { variant: "info-light", dotClassName: "bg-info animate-pulse" },
   in_progress: { variant: "info-light", dotClassName: "bg-info animate-pulse" },
   processing: { variant: "info-light", dotClassName: "bg-info animate-pulse" },
+  // Scheduled / queued-with-time
+  scheduled: { variant: "info-light", dotClassName: "bg-info" },
   // Success
   completed: { variant: "success-light", dotClassName: "bg-success" },
   succeeded: { variant: "success-light", dotClassName: "bg-success" },
@@ -70,11 +77,18 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
     dotClassName: "bg-destructive",
   },
   error: { variant: "destructive-light", dotClassName: "bg-destructive" },
+  blocked: { variant: "destructive-light", dotClassName: "bg-destructive" },
   // Warning / waiting
   delayed: { variant: "warning-light", dotClassName: "bg-warning" },
   waiting: { variant: "warning-light", dotClassName: "bg-warning" },
   paused: { variant: "warning-light", dotClassName: "bg-warning" },
   degraded: { variant: "warning-light", dotClassName: "bg-warning" },
+  retrying: {
+    variant: "warning-light",
+    dotClassName: "bg-warning animate-pulse",
+  },
+  partial: { variant: "warning-light", dotClassName: "bg-warning" },
+  partial_success: { variant: "warning-light", dotClassName: "bg-warning" },
 };
 
 /**
@@ -94,6 +108,20 @@ function formatStatusLabel(status: string): string {
 }
 
 /**
+ * Maps a badge `size` value to a Tailwind dot size class.
+ *
+ * Nullable-key coalescing (`size ?? "default"`) is used at the index site to
+ * satisfy TypeScript's strict index-access rules on `VariantProps` values.
+ */
+const DOT_SIZE_MAP: Record<NonNullable<BadgeProps["size"]>, string> = {
+  xs: "size-1",
+  sm: "size-1.5",
+  default: "size-1.5",
+  lg: "size-2",
+  xl: "size-2.5",
+};
+
+/**
  * Props for {@link StatusBadge}.
  *
  * Extends {@link Badge} (so `size`, `render`, etc. pass through) but derives
@@ -106,6 +134,23 @@ type StatusBadgeProps = Omit<BadgeProps, "children"> & {
   showDot?: boolean;
   /** Override the rendered text; defaults to a humanised `status`. */
   label?: React.ReactNode;
+  /**
+   * When `true`, renders an `animate-ping` ring behind the dot to signal a
+   * "live" or real-time state.
+   *
+   * @remarks
+   * The ping is positioned absolutely behind the solid dot; both sit inside a
+   * relative wrapper. The existing per-status `animate-pulse` on the dot is
+   * preserved alongside this affordance.
+   */
+  pulse?: boolean;
+  /**
+   * When `true`, renders only the dot with no visible text label.
+   *
+   * An `aria-label` is automatically set to the humanised status string so
+   * screen readers still announce the meaning.
+   */
+  dotOnly?: boolean;
 };
 
 /**
@@ -122,12 +167,18 @@ type StatusBadgeProps = Omit<BadgeProps, "children"> & {
  * - Live states (`running`, `executing`, …) animate the dot with a subtle
  *   pulse so in-flight work reads as "active" at a glance.
  * - Unknown statuses degrade to a neutral grey pill rather than throwing.
+ * - Use `pulse` for a `animate-ping` ring behind the dot — a "live" affordance.
+ * - Use `dotOnly` for icon-only representations (e.g. dense table cells); an
+ *   `aria-label` is automatically applied for accessibility.
+ * - The dot size scales with the badge `size` prop automatically.
  *
  * @example
  * ```tsx
  * <StatusBadge status="running" />
  * <StatusBadge status="timed_out" />            // → "Timed out", red
  * <StatusBadge status="completed" showDot={false} label="Done" />
+ * <StatusBadge status="running" pulse />        // animated ping ring
+ * <StatusBadge status="failed" dotOnly />       // dot only, aria-label="Failed"
  * ```
  */
 function StatusBadge({
@@ -136,26 +187,66 @@ function StatusBadge({
   label,
   variant,
   className,
+  size,
+  pulse,
+  dotOnly,
+  "aria-label": ariaLabel,
   ...props
 }: StatusBadgeProps) {
   const config = getStatusConfig(status);
+  const dotSizeClass = DOT_SIZE_MAP[size ?? "default"];
+  const humanLabel = label ?? formatStatusLabel(status);
+
+  const pulseDot = (
+    <span className="relative inline-flex shrink-0 items-center justify-center">
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute inline-flex rounded-full opacity-75",
+          dotSizeClass,
+          config.dotClassName.replace(/animate-pulse/g, ""),
+          "animate-ping"
+        )}
+      />
+      <span
+        aria-hidden="true"
+        className={cn(
+          "relative inline-flex shrink-0 rounded-full",
+          dotSizeClass,
+          config.dotClassName
+        )}
+        data-slot="status-badge-dot"
+      />
+    </span>
+  );
+
+  const plainDot = (
+    <span
+      aria-hidden="true"
+      className={cn("shrink-0 rounded-full", dotSizeClass, config.dotClassName)}
+      data-slot="status-badge-dot"
+    />
+  );
+
+  let dotNode: React.ReactNode = null;
+  if (showDot) {
+    dotNode = pulse ? pulseDot : plainDot;
+  }
 
   return (
     <Badge
+      aria-label={
+        dotOnly ? (ariaLabel ?? formatStatusLabel(status)) : ariaLabel
+      }
       className={cn(className)}
       data-slot="status-badge"
       data-status={status.trim().toLowerCase()}
+      size={size}
       variant={variant ?? config.variant}
       {...props}
     >
-      {showDot ? (
-        <span
-          aria-hidden="true"
-          className={cn("size-1.5 shrink-0 rounded-full", config.dotClassName)}
-          data-slot="status-badge-dot"
-        />
-      ) : null}
-      {label ?? formatStatusLabel(status)}
+      {dotNode}
+      {dotOnly ? null : humanLabel}
     </Badge>
   );
 }

@@ -22,7 +22,7 @@ import {
   CommandItem,
   CommandList,
 } from "./command";
-import { Input } from "./input";
+import { Input, type InputProps } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 /** A single entry in the country selector list. */
@@ -206,13 +206,15 @@ const FlagComponent = ({ country, countryName }: FlagComponentProps) => {
  * @remarks
  * `onChange` is re-typed to always receive a `Value` string (never
  * `undefined`) — an empty string is substituted when the library emits
- * `undefined` for incomplete numbers.
+ * `undefined` for incomplete numbers. `size` controls the height of the
+ * underlying text input — `"sm"` | `"default"` | `"lg"`.
  */
 type PhoneInputProps = Omit<
   React.ComponentProps<"input">,
-  "onChange" | "value" | "ref"
+  "onChange" | "value" | "ref" | "size"
 > &
-  Omit<React.ComponentProps<typeof RPNInput>, "onChange"> & {
+  Omit<React.ComponentProps<typeof RPNInput>, "onChange" | "size"> &
+  Pick<InputProps, "size"> & {
     onChange?: (value: Value) => void;
     onCountryChange?: (country: Country) => void;
   };
@@ -251,6 +253,7 @@ const PhoneInput = ({
   onCountryChange,
   value,
   ref,
+  size = "default",
   ...props
 }: PhoneInputProps & {
   ref?: React.Ref<React.ComponentRef<typeof RPNInput>>;
@@ -279,6 +282,9 @@ const PhoneInput = ({
         smartCaret={false}
         value={value || undefined}
         {...props}
+        // RPNInput spreads unrecognised props onto the inputComponent via
+        // FeatureProps<InputComponentProps>; `size` reaches InputComponent here.
+        size={size}
       />
     </div>
   );
@@ -289,17 +295,21 @@ PhoneInput.displayName = "PhoneInput";
 /**
  * Thin `Input` wrapper passed as `inputComponent` to {@link PhoneInput};
  * strips the start-side border radius so it joins flush with the country
- * selector button.
+ * selector button. Accepts `size` from `InputProps` so the height can be
+ * controlled from the parent `PhoneInput`.
  */
 const InputComponent = ({
   className,
   ref,
+  size,
   ...props
-}: React.ComponentProps<"input"> & {
-  ref?: React.RefObject<HTMLInputElement | null>;
-}) => (
+}: Omit<React.ComponentProps<"input">, "size"> &
+  Pick<InputProps, "size"> & {
+    ref?: React.RefObject<HTMLInputElement | null>;
+  }) => (
   <Input
     className={cn("rounded-s-none rounded-e-md", className)}
+    size={size}
     {...props}
     ref={ref}
   />

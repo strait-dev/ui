@@ -25,7 +25,8 @@ const meta: Meta<typeof Stepper> = {
           "",
           "Built with Base UI's `useRender` for the trigger. Key composition:",
           "- `Stepper` — root; props: `defaultValue`, `value`, `onValueChange`,",
-          "  `orientation` (`horizontal` | `vertical`).",
+          "  `orientation` (`horizontal` | `vertical`),",
+          "  `size` (`default` | `sm`), `compact` (boolean).",
           "- `StepperItem` — wraps one step; props: `step` (number), `completed`,",
           "  `disabled`, `loading`.",
           "- `StepperTrigger` — clickable button to jump to a step.",
@@ -33,6 +34,12 @@ const meta: Meta<typeof Stepper> = {
           "  or spinner. Derives its state from `StepItemContext`.",
           "- `StepperTitle` / `StepperDescription` — text content next to the indicator.",
           "- `StepperSeparator` — the line between steps.",
+          "",
+          "**Size** (`default | sm`) — scales step indicators (`size-8` → `size-6`)",
+          "and label text (`text-sm` → `text-xs`) via `data-size` cascade.",
+          "",
+          "**Compact** — tightens gap between items and shortens vertical connectors",
+          "(`h-12` → `h-8`) for space-constrained layouts.",
         ].join("\n"),
       },
     },
@@ -44,10 +51,23 @@ const meta: Meta<typeof Stepper> = {
       description: "Layout direction.",
       table: { defaultValue: { summary: "horizontal" } },
     },
+    size: {
+      control: "radio",
+      options: ["default", "sm"],
+      description: "Indicator and label size preset.",
+      table: { defaultValue: { summary: "default" } },
+    },
+    compact: {
+      control: "boolean",
+      description: "Tighter spacing and shorter connectors.",
+      table: { defaultValue: { summary: "false" } },
+    },
   },
   args: {
     defaultValue: 1,
     orientation: "horizontal",
+    size: "default",
+    compact: false,
   },
 };
 
@@ -81,6 +101,77 @@ export const Playground: Story = {
     </Stepper>
   ),
 };
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/** `default` vs `sm` — indicator diameter and label font scale down. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      {(["default", "sm"] as const).map((size) => (
+        <div key={size}>
+          <p className="mb-3 font-medium text-sm">size="{size}"</p>
+          <Stepper className="w-full max-w-2xl" defaultValue={2} size={size}>
+            {steps.map(({ step, title, description }, idx) => (
+              <StepperItem className="flex-1" key={step} step={step}>
+                <StepperTrigger>
+                  <StepperIndicator />
+                  <div>
+                    <StepperTitle>{title}</StepperTitle>
+                    <StepperDescription>{description}</StepperDescription>
+                  </div>
+                </StepperTrigger>
+                {idx < steps.length - 1 && <StepperSeparator />}
+              </StepperItem>
+            ))}
+          </Stepper>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Compact                                                             */
+/* ------------------------------------------------------------------ */
+
+/** `compact=false` vs `compact=true` — tighter spacing and shorter connectors. */
+export const Compact: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      {([false, true] as const).map((compact) => (
+        <div key={String(compact)}>
+          <p className="mb-3 font-medium text-sm">compact={String(compact)}</p>
+          <Stepper
+            className="max-w-xs"
+            compact={compact}
+            defaultValue={2}
+            orientation="vertical"
+          >
+            {steps.map(({ step, title, description }, idx) => (
+              <StepperItem key={step} step={step}>
+                <StepperTrigger className="gap-3">
+                  <StepperIndicator />
+                  <div>
+                    <StepperTitle>{title}</StepperTitle>
+                    <StepperDescription>{description}</StepperDescription>
+                  </div>
+                </StepperTrigger>
+                {idx < steps.length - 1 && <StepperSeparator />}
+              </StepperItem>
+            ))}
+          </Stepper>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Controlled                                                          */
+/* ------------------------------------------------------------------ */
 
 /** Controlled stepper with Next / Back buttons. */
 export const Controlled: Story = {
@@ -128,6 +219,10 @@ export const Controlled: Story = {
   },
 };
 
+/* ------------------------------------------------------------------ */
+/* Vertical                                                            */
+/* ------------------------------------------------------------------ */
+
 /** Vertical orientation — steps stack top-to-bottom. */
 export const Vertical: Story = {
   render: (args) => (
@@ -153,6 +248,10 @@ export const Vertical: Story = {
   ),
 };
 
+/* ------------------------------------------------------------------ */
+/* AllCompleted                                                        */
+/* ------------------------------------------------------------------ */
+
 /** All steps completed — every indicator shows the checkmark. */
 export const AllCompleted: Story = {
   render: (args) => (
@@ -169,6 +268,10 @@ export const AllCompleted: Story = {
     </Stepper>
   ),
 };
+
+/* ------------------------------------------------------------------ */
+/* LoadingStep                                                         */
+/* ------------------------------------------------------------------ */
 
 /** Loading state on the active step — the indicator spins. */
 export const LoadingStep: Story = {
@@ -191,6 +294,10 @@ export const LoadingStep: Story = {
     </Stepper>
   ),
 };
+
+/* ------------------------------------------------------------------ */
+/* WithDisabled                                                        */
+/* ------------------------------------------------------------------ */
 
 /** Disabled steps are non-interactive and shown at reduced opacity. */
 export const WithDisabled: Story = {
@@ -215,6 +322,10 @@ export const WithDisabled: Story = {
     </Stepper>
   ),
 };
+
+/* ------------------------------------------------------------------ */
+/* IndicatorsOnly                                                      */
+/* ------------------------------------------------------------------ */
 
 /** Minimal stepper — indicators only, no text labels. */
 export const IndicatorsOnly: Story = {

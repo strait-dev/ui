@@ -1,6 +1,6 @@
+import { useForm } from "@tanstack/react-form";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { useForm } from "react-hook-form";
 import { describe, expect, it, vi } from "vitest";
 import {
   Form,
@@ -21,18 +21,34 @@ function TestForm({
   onSubmit?: (data: TestFields) => void;
   defaultValues?: TestFields;
 }) {
-  const form = useForm<TestFields>({ defaultValues });
+  const form = useForm({
+    defaultValues,
+    onSubmit: ({ value }) => onSubmit(value),
+  });
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+    <Form form={form}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+      >
         <FormField
-          control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
-              <FormControl render={<input type="email" {...field} />} />
+              <FormControl
+                render={
+                  <input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    type="email"
+                    value={field.state.value}
+                  />
+                }
+              />
               <FormDescription>We will never share your email.</FormDescription>
               <FormMessage />
             </FormItem>
@@ -76,24 +92,43 @@ describe("Form", () => {
 
   it("renders FormMessage with form-message data-slot on validation error", async () => {
     function ErrorForm() {
-      const form = useForm<TestFields>({
+      const form = useForm({
         defaultValues: { email: "" },
+        onSubmit: () => {
+          // no-op
+        },
       });
 
       return (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(() => {})}>
+        <Form form={form}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+          >
             <FormField
-              control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
-                  <FormControl render={<input type="email" {...field} />} />
+                  <FormControl
+                    render={
+                      <input
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        type="email"
+                        value={field.state.value}
+                      />
+                    }
+                  />
                   <FormMessage />
                 </FormItem>
               )}
-              rules={{ required: "Email is required" }}
+              validators={{
+                onSubmit: ({ value }) =>
+                  value ? undefined : "Email is required",
+              }}
             />
             <button type="submit">Submit</button>
           </form>

@@ -21,6 +21,12 @@ const meta = {
           "",
           "Supports horizontal (default) and vertical orientation via the Base UI",
           "prop. The track fills from `min` to the thumb position.",
+          "",
+          "**Size** — `size` controls track thickness and thumb diameter:",
+          "`sm` (thin/small), `default`, `lg` (thick/large).",
+          "",
+          "**Intent** — `intent` colors both the filled range and the thumb border/ring:",
+          "`default` (primary), `success`, `warning`, `info`, `destructive`.",
         ].join("\n"),
       },
     },
@@ -45,12 +51,26 @@ const meta = {
       control: "boolean",
       description: "Disables the slider.",
     },
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description: "Controls track thickness and thumb size.",
+      table: { defaultValue: { summary: "default" } },
+    },
+    intent: {
+      control: "select",
+      options: ["default", "success", "warning", "info", "destructive"],
+      description: "Colors the filled range and thumb.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     min: 0,
     max: 100,
     step: 1,
     defaultValue: [40],
+    size: "default",
+    intent: "default",
   },
 } satisfies Meta<typeof Slider>;
 
@@ -118,6 +138,49 @@ function RangeSlider() {
 /** Two-thumb range slider — pass a two-element `defaultValue`. */
 export const Range: Story = {
   render: () => <RangeSlider />,
+};
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/** Three track and thumb sizes. */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex w-72 flex-col gap-6">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div className="flex flex-col gap-2" key={size}>
+          <Label>{size}</Label>
+          <Slider {...args} aria-label={`Volume ${size}`} size={size} />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Intents                                                             */
+/* ------------------------------------------------------------------ */
+
+/** Five intent colours — filled range and thumb ring. */
+export const Intents: Story = {
+  render: (args) => (
+    <div className="flex w-72 flex-col gap-6">
+      {(["default", "success", "warning", "info", "destructive"] as const).map(
+        (intent) => (
+          <div className="flex flex-col gap-2" key={intent}>
+            <Label>{intent}</Label>
+            <Slider
+              {...args}
+              aria-label={`Volume ${intent}`}
+              defaultValue={[60]}
+              intent={intent}
+            />
+          </div>
+        )
+      )}
+    </div>
+  ),
 };
 
 /* ------------------------------------------------------------------ */

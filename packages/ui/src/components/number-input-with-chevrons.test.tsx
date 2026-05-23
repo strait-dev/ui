@@ -128,4 +128,13 @@ describe("NumberInputWithChevrons", () => {
       expect(onChange).toHaveBeenCalledWith(5);
     }
   });
+
+  it("size='lg' applies h-9 to the input group", () => {
+    const { container } = render(
+      <NumberInputWithChevrons label="Price" name="price" size="lg" />
+    );
+    expect(container.querySelector("[data-slot='input-group']")).toHaveClass(
+      "h-9"
+    );
+  });
 });

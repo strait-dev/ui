@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import {
   Select,
   SelectContent,
@@ -12,15 +12,23 @@ import {
   SelectValue,
 } from "./select";
 
+// Base UI Select uses scrollIntoView internally when aligning the selected
+// item with the trigger. jsdom does not provide this, so polyfill it.
+beforeAll(() => {
+  Element.prototype.scrollIntoView ||= () => {};
+});
+
 // Reusable inline fixture — inlined per test to avoid cross-test state.
 function makeFixture(
   props: {
     onValueChange?: (value: string | null) => void;
     defaultValue?: string;
+    size?: "sm" | "default" | "lg";
   } = {}
 ) {
+  const { size, ...rootProps } = props;
   return (
-    <Select {...props}>
+    <Select {...rootProps} size={size}>
       <SelectTrigger aria-label="Framework">
         <SelectValue placeholder="Pick a framework" />
       </SelectTrigger>
@@ -79,5 +87,66 @@ describe("Select", () => {
     expect(
       screen.getByRole("combobox", { name: "Framework" })
     ).toHaveTextContent(/svelte/i);
+  });
+
+  // ------------------------------------------------------------------
+  // size axis — trigger data-size attribute
+  // ------------------------------------------------------------------
+
+  it("trigger has data-size=default when no size is specified", () => {
+    render(makeFixture());
+    const trigger = screen.getByRole("combobox", { name: "Framework" });
+    expect(trigger).toHaveAttribute("data-size", "default");
+  });
+
+  it("trigger has data-size=sm when size=sm is set on root", () => {
+    render(makeFixture({ size: "sm" }));
+    const trigger = screen.getByRole("combobox", { name: "Framework" });
+    expect(trigger).toHaveAttribute("data-size", "sm");
+  });
+
+  it("trigger has data-size=lg when size=lg is set on root", () => {
+    render(makeFixture({ size: "lg" }));
+    const trigger = screen.getByRole("combobox", { name: "Framework" });
+    expect(trigger).toHaveAttribute("data-size", "lg");
+  });
+
+  it("trigger size prop overrides the root context value", () => {
+    render(
+      <Select size="lg">
+        <SelectTrigger aria-label="Framework" size="sm">
+          <SelectValue placeholder="Pick" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="x">X</SelectItem>
+        </SelectContent>
+      </Select>
+    );
+    const trigger = screen.getByRole("combobox", { name: "Framework" });
+    // Explicit trigger prop wins over context
+    expect(trigger).toHaveAttribute("data-size", "sm");
+  });
+
+  // ------------------------------------------------------------------
+  // size=sm typechecks (JSX compile-time guard)
+  // ------------------------------------------------------------------
+
+  it('accepts size="sm" without TypeScript error (type-safety smoke test)', () => {
+    // This test exercises the type at the JSX level; if it renders, the
+    // type accepted the string union correctly.
+    render(
+      <Select>
+        <SelectTrigger aria-label="FW" size="sm">
+          <SelectValue placeholder="Pick" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="a">A</SelectItem>
+        </SelectContent>
+      </Select>
+    );
+    expect(screen.getByRole("combobox", { name: "FW" })).toHaveAttribute(
+      "data-size",
+      "sm"
+    );
   });
 });

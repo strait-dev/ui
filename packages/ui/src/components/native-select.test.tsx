@@ -83,4 +83,19 @@ describe("NativeSelect", () => {
       container.querySelector("[data-slot='native-select-optgroup']")
     ).toBeInTheDocument();
   });
+
+  it("accepts size=lg and forwards data-size=lg to wrapper and select", () => {
+    const { container } = render(
+      <NativeSelect aria-label="Colour" size="lg">
+        <NativeSelectOption value="red">Red</NativeSelectOption>
+      </NativeSelect>
+    );
+    expect(
+      container.querySelector("[data-slot='native-select-wrapper']")
+    ).toHaveAttribute("data-size", "lg");
+    expect(screen.getByRole("combobox", { name: "Colour" })).toHaveAttribute(
+      "data-size",
+      "lg"
+    );
+  });
 });

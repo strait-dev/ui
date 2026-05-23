@@ -1,6 +1,36 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
-
 import { cn } from "../utils/index";
+
+// ---------------------------------------------------------------------------
+// cardVariants — drives the `variant` axis on the Card root element.
+// ---------------------------------------------------------------------------
+
+/**
+ * CVA variants for the {@link Card} component.
+ *
+ * - `default` — subtle ring border on a card background (existing style).
+ * - `outline` — visible `border` instead of ring; keeps `bg-card`.
+ * - `ghost`   — transparent background, no ring or border.
+ */
+export const cardVariants = cva(
+  // Base classes shared across all variants
+  "group/card flex flex-col overflow-hidden rounded-xl text-card-foreground text-sm",
+  {
+    variants: {
+      variant: {
+        default: "bg-card ring-1 ring-foreground/10",
+        outline: "border bg-card",
+        ghost: "bg-transparent",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+type CardVariantProps = VariantProps<typeof cardVariants>;
 
 /**
  * A surface that groups related content and actions into a bordered container.
@@ -13,13 +43,25 @@ import { cn } from "../utils/index";
  * two-column grid when an action is present).
  *
  * @remarks
- * The `size` prop (`"default" | "sm"`) cascades to every sub-part via a
- * `data-size` attribute and group selectors, so set it once on the root. A
- * full-bleed image as the first or last child is corner-rounded automatically.
+ * **Size** (`"default" | "sm" | "lg"`) cascades to every sub-part via a
+ * `data-size` attribute and `group-data-[size=…]/card:` selectors, so set it
+ * once on the root:
+ * - `sm`  — gap-3 / py-3; header/content `px-3`; footer `px-3 py-2`.
+ * - `default` — gap-4 / py-4; header/content `px-4`; footer `px-4 py-2.5`.
+ * - `lg`  — gap-6 / py-6; header/content `px-6`; footer `px-6 py-3.5`.
+ *
+ * **Variant** (`"default" | "outline" | "ghost"`) controls the card's surface
+ * decoration:
+ * - `default` — `bg-card` with a 1 px ring (`ring-foreground/10`).
+ * - `outline` — visible `border` + `bg-card`; ring is removed.
+ * - `ghost`   — `bg-transparent`; no ring or border (useful inside already-
+ *   surfaced containers).
+ *
+ * A full-bleed image as the first or last child is corner-rounded automatically.
  *
  * @example
  * ```tsx
- * <Card>
+ * <Card size="lg" variant="outline">
  *   <CardHeader>
  *     <CardTitle>Invoice</CardTitle>
  *     <CardDescription>Due May 30</CardDescription>
@@ -33,12 +75,20 @@ import { cn } from "../utils/index";
 function Card({
   className,
   size = "default",
+  variant = "default",
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> &
+  CardVariantProps & { size?: "default" | "sm" | "lg" }) {
   return (
     <div
       className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-card-foreground text-sm ring-1 ring-foreground/10 has-[>img:first-child]:pt-0 has-data-[slot=card-footer]:pb-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        cardVariants({ variant }),
+        // gap / py: default → sm → lg
+        "gap-4 py-4",
+        "data-[size=sm]:gap-3 data-[size=sm]:py-3",
+        "data-[size=lg]:gap-6 data-[size=lg]:py-6",
+        // image helpers
+        "has-[>img:first-child]:pt-0 has-data-[slot=card-footer]:pb-0 data-[size=lg]:has-data-[slot=card-footer]:pb-0 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className
       )}
       data-size={size}
@@ -57,7 +107,10 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] group-data-[size=sm]/card:px-3 [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
+        "group-data-[size=sm]/card:px-3",
+        "group-data-[size=lg]/card:px-6",
+        "[.border-b]:pb-4 group-data-[size=lg]/card:[.border-b]:pb-6 group-data-[size=sm]/card:[.border-b]:pb-3",
         className
       )}
       data-slot="card-header"
@@ -71,7 +124,8 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "font-medium text-base leading-snug group-data-[size=sm]/card:text-sm",
+        "font-medium text-base leading-snug",
+        "group-data-[size=sm]/card:text-sm",
         className
       )}
       data-slot="card-title"
@@ -112,7 +166,12 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("px-4 group-data-[size=sm]/card:px-3", className)}
+      className={cn(
+        "px-4",
+        "group-data-[size=sm]/card:px-3",
+        "group-data-[size=lg]/card:px-6",
+        className
+      )}
       data-slot="card-content"
       {...props}
     />
@@ -127,7 +186,9 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "mt-2 flex items-center rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/card:p-3",
+        "flex items-center rounded-b-xl border-t bg-muted/50 px-4 py-2.5",
+        "group-data-[size=sm]/card:px-3 group-data-[size=sm]/card:py-2",
+        "group-data-[size=lg]/card:px-6 group-data-[size=lg]/card:py-3.5",
         className
       )}
       data-slot="card-footer"

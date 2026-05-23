@@ -1,168 +1,97 @@
-import { toast as sonnerToast } from "sonner";
-import { ToastConfirm } from "./toast-confirm";
-import { ToastError } from "./toast-error";
-import { ToastInfo } from "./toast-info";
-import { ToastLoading } from "./toast-loading";
-import { ToastSuccess } from "./toast-success";
-import { ToastWarning } from "./toast-warning";
-import type { PromiseToastOptions, Toast } from "./types";
+import { type ExternalToast, toast as sonnerToast } from "sonner";
+import type {
+  BaseToastOptions,
+  ConfirmToastOptions,
+  PromiseToastOptions,
+  Toast,
+} from "./types";
 
-const DEFAULT_SUCCESS_DURATION = 4000;
-const DEFAULT_ERROR_DURATION = 5000;
-const DEFAULT_WARNING_DURATION = 5000;
-const DEFAULT_INFO_DURATION = 4000;
+const DEFAULT_CONFIRM_LABEL = "Confirm";
+const DEFAULT_CANCEL_LABEL = "Cancel";
 
+/** Map the design-system options onto Sonner's native `ExternalToast` shape. */
+function toExternal(options?: BaseToastOptions): ExternalToast | undefined {
+  if (!options) {
+    return;
+  }
+  const { action, ...rest } = options;
+  return action ? { ...rest, action } : rest;
+}
+
+/** Run a confirm handler, routing both sync and async failures to `onError`. */
+function runConfirm(options: ConfirmToastOptions): void {
+  try {
+    const result = options.onConfirm();
+    if (result instanceof Promise) {
+      result.catch((error: unknown) => options.onError?.(error));
+    }
+  } catch (error) {
+    options.onError?.(error);
+  }
+}
+
+/**
+ * Thin, strongly-typed wrapper around Sonner's imperative `toast` API.
+ *
+ * Each method renders Sonner's built-in styled toast (themed by
+ * {@link Toaster}); there is no custom renderer. `confirm` is the only
+ * composite — it builds a prompt from Sonner's native `action`/`cancel`
+ * buttons.
+ *
+ * @remarks
+ * - `success/error/warning/info` accept an optional `action`
+ *   (`{ label, onClick }`) that renders an inline button.
+ * - `loading` stays visible until dismissed or replaced (e.g. by `promise`).
+ * - `promise` delegates to Sonner's native promise toast and resolves to the
+ *   original promise's value so you can keep awaiting it.
+ * - `dismiss()` closes a specific toast by id, or all toasts when called with
+ *   no argument.
+ *
+ * @example
+ * ```ts
+ * import { toast } from "@strait/ui/toast";
+ *
+ * toast.success("File saved");
+ * toast.error("Upload failed", { description: "Check your network." });
+ * toast.confirm("Delete this item?", { onConfirm: () => remove() });
+ * ```
+ */
 export const toast: Toast = {
-  success: (title, options) =>
-    sonnerToast.custom(
-      (id) => (
-        <ToastSuccess
-          action={options?.action}
-          description={options?.description}
-          dismissible={options?.dismissible}
-          onDismiss={() => sonnerToast.dismiss(id)}
-          title={title}
-        />
-      ),
-      { duration: options?.duration ?? DEFAULT_SUCCESS_DURATION }
-    ),
+  success: (title, options) => sonnerToast.success(title, toExternal(options)),
 
-  error: (title, options) =>
-    sonnerToast.custom(
-      (id) => (
-        <ToastError
-          action={options?.action}
-          description={options?.description}
-          dismissible={options?.dismissible}
-          onDismiss={() => sonnerToast.dismiss(id)}
-          title={title}
-        />
-      ),
-      { duration: options?.duration ?? DEFAULT_ERROR_DURATION }
-    ),
+  error: (title, options) => sonnerToast.error(title, toExternal(options)),
 
-  warning: (title, options) =>
-    sonnerToast.custom(
-      (id) => (
-        <ToastWarning
-          action={options?.action}
-          description={options?.description}
-          dismissible={options?.dismissible}
-          onDismiss={() => sonnerToast.dismiss(id)}
-          title={title}
-        />
-      ),
-      { duration: options?.duration ?? DEFAULT_WARNING_DURATION }
-    ),
+  warning: (title, options) => sonnerToast.warning(title, toExternal(options)),
 
-  info: (title, options) =>
-    sonnerToast.custom(
-      (id) => (
-        <ToastInfo
-          action={options?.action}
-          description={options?.description}
-          dismissible={options?.dismissible}
-          onDismiss={() => sonnerToast.dismiss(id)}
-          title={title}
-        />
-      ),
-      { duration: options?.duration ?? DEFAULT_INFO_DURATION }
-    ),
+  info: (title, options) => sonnerToast.info(title, toExternal(options)),
 
-  loading: (title, options) =>
-    sonnerToast.custom(
-      (id) => (
-        <ToastLoading
-          description={options?.description}
-          onDismiss={() => sonnerToast.dismiss(id)}
-          title={title}
-        />
-      ),
-      { duration: Number.POSITIVE_INFINITY }
-    ),
+  loading: (title, options) => sonnerToast.loading(title, toExternal(options)),
 
-  promise: async <T,>(
+  promise: <T,>(
     promise: Promise<T>,
     options: PromiseToastOptions<T>
   ): Promise<T> => {
-    const id = sonnerToast.custom(
-      (toastId) => (
-        <ToastLoading
-          description={options.description?.loading}
-          onDismiss={() => sonnerToast.dismiss(toastId)}
-          title={options.loading}
-        />
-      ),
-      { duration: Number.POSITIVE_INFINITY }
-    );
-
-    try {
-      const result = await promise;
-
-      const successTitle =
-        typeof options.success === "function"
-          ? options.success(result)
-          : options.success;
-
-      const successDescription =
-        typeof options.description?.success === "function"
-          ? options.description.success(result)
-          : options.description?.success;
-
-      sonnerToast.custom(
-        (toastId) => (
-          <ToastSuccess
-            description={successDescription}
-            onDismiss={() => sonnerToast.dismiss(toastId)}
-            title={successTitle}
-          />
-        ),
-        { id, duration: DEFAULT_SUCCESS_DURATION }
-      );
-
-      return result;
-    } catch (error) {
-      const errorTitle =
-        typeof options.error === "function"
-          ? options.error(error)
-          : options.error;
-
-      const errorDescription =
-        typeof options.description?.error === "function"
-          ? options.description.error(error)
-          : options.description?.error;
-
-      sonnerToast.custom(
-        (toastId) => (
-          <ToastError
-            description={errorDescription}
-            onDismiss={() => sonnerToast.dismiss(toastId)}
-            title={errorTitle}
-          />
-        ),
-        { id, duration: DEFAULT_ERROR_DURATION }
-      );
-
-      throw error;
-    }
+    sonnerToast.promise(promise, {
+      loading: options.loading,
+      success: options.success,
+      error: options.error,
+    });
+    return promise;
   },
 
   confirm: (title, options) =>
-    sonnerToast.custom(
-      (id) => (
-        <ToastConfirm
-          cancelLabel={options.cancelLabel}
-          confirmLabel={options.confirmLabel}
-          description={options.description}
-          onCancel={options.onCancel}
-          onConfirm={options.onConfirm}
-          onDismiss={() => sonnerToast.dismiss(id)}
-          title={title}
-          variant={options.variant}
-        />
-      ),
-      { duration: options.duration ?? Number.POSITIVE_INFINITY }
-    ),
+    sonnerToast(title, {
+      description: options.description,
+      duration: options.duration ?? Number.POSITIVE_INFINITY,
+      action: {
+        label: options.confirmLabel ?? DEFAULT_CONFIRM_LABEL,
+        onClick: () => runConfirm(options),
+      },
+      cancel: {
+        label: options.cancelLabel ?? DEFAULT_CANCEL_LABEL,
+        onClick: () => options.onCancel?.(),
+      },
+    }),
 
   dismiss: sonnerToast.dismiss,
 };

@@ -126,4 +126,17 @@ describe("NumberInputPercentageWithChevrons", () => {
     );
     expect(container.querySelector("[data-slot='input']")).toBeInTheDocument();
   });
+
+  it("size='sm' applies h-7 to the input group", () => {
+    const { container } = render(
+      <NumberInputPercentageWithChevrons
+        label="Discount"
+        name="discount"
+        size="sm"
+      />
+    );
+    expect(container.querySelector("[data-slot='input-group']")).toHaveClass(
+      "h-7"
+    );
+  });
 });

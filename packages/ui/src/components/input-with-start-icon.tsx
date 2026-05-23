@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "../components/input";
+import { Input, type InputProps } from "../components/input";
 import { cn } from "../utils/index";
 
 /**
@@ -10,7 +10,7 @@ import { cn } from "../utils/index";
  * `icon` accepts any React node; it is rendered in a non-interactive,
  * pointer-events-disabled overlay at the leading edge.
  */
-export type InputWithStartIconProps = React.ComponentProps<"input"> & {
+export type InputWithStartIconProps = InputProps & {
   icon?: React.ReactNode;
   label?: string;
   containerClassName?: string;

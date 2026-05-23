@@ -1,3 +1,4 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../utils/index";
 import {
   Tooltip,
@@ -18,6 +19,32 @@ type TraceSegment = {
    */
   color?: string;
 };
+
+/**
+ * Class-variance-authority recipe for the bar track height in
+ * {@link ExecutionTraceBar}.
+ *
+ * Controls the rendered height of the stacked bar itself. Legend text is
+ * not affected.
+ */
+const executionTraceBarVariants = cva(
+  "flex w-full overflow-hidden rounded-md",
+  {
+    variants: {
+      size: {
+        /** Slim bar for dense UIs (e.g. table rows or sidebar panels). */
+        sm: "h-3",
+        /** Original bar height — unchanged default. */
+        default: "h-6",
+        /** Thicker bar for hero or drill-down views. */
+        lg: "h-9",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+    },
+  }
+);
 
 /**
  * Props for {@link ExecutionTraceBar}.
@@ -45,6 +72,14 @@ type ExecutionTraceBarProps = {
    * @example `(n) => \`${n}ms\``
    */
   formatValue?: (n: number) => string;
+  /**
+   * Controls the height of the stacked bar track.
+   *
+   * - `"sm"` — slim bar (`h-3`) for table rows or sidebar panels.
+   * - `"default"` — standard bar (`h-6`) — unchanged from before.
+   * - `"lg"` — thick bar (`h-9`) for hero or drill-down views.
+   */
+  size?: VariantProps<typeof executionTraceBarVariants>["size"];
   className?: string;
 };
 
@@ -98,6 +133,7 @@ function ExecutionTraceBar({
   total: totalProp,
   showLegend = true,
   formatValue = (n) => String(n),
+  size = "default",
   className,
 }: ExecutionTraceBarProps) {
   const sum = segments.reduce((acc, seg) => acc + seg.value, 0);
@@ -107,7 +143,8 @@ function ExecutionTraceBar({
     <div className={cn("flex flex-col gap-2", className)}>
       <TooltipProvider>
         <div
-          className="flex h-6 w-full overflow-hidden rounded-md"
+          className={cn(executionTraceBarVariants({ size }))}
+          data-size={size}
           data-slot="execution-trace-bar"
         >
           {segments.map((segment, index) => {

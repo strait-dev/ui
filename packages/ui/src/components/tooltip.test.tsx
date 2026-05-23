@@ -1,12 +1,23 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "./tooltip";
+
+// Base UI uses ResizeObserver internally for positioning — polyfill in jsdom.
+beforeAll(() => {
+  if (typeof window !== "undefined" && !window.ResizeObserver) {
+    window.ResizeObserver = class ResizeObserver {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    };
+  }
+});
 
 function Fixture() {
   return (
@@ -55,5 +66,95 @@ describe("Tooltip", () => {
       </TooltipProvider>
     );
     expect(await screen.findByText("Tooltip label")).toBeInTheDocument();
+  });
+
+  // ── variant axis ──────────────────────────────────────────────────────────
+
+  it("default variant applies bg-foreground class to the popup", async () => {
+    render(
+      <TooltipProvider>
+        <Tooltip open>
+          <TooltipTrigger>Trigger</TooltipTrigger>
+          <TooltipContent variant="default">Default tooltip</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+    const popup = (await screen.findByText("Default tooltip")).closest(
+      "[data-slot='tooltip-content']"
+    );
+    expect(popup).toHaveClass("bg-foreground");
+    expect(popup).toHaveClass("text-background");
+  });
+
+  it("light variant applies bg-popover class to the popup", async () => {
+    render(
+      <TooltipProvider>
+        <Tooltip open>
+          <TooltipTrigger>Trigger</TooltipTrigger>
+          <TooltipContent variant="light">Light tooltip</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+    const popup = (await screen.findByText("Light tooltip")).closest(
+      "[data-slot='tooltip-content']"
+    );
+    expect(popup).toHaveClass("bg-popover");
+    expect(popup).toHaveClass("text-popover-foreground");
+    expect(popup).toHaveClass("border");
+  });
+
+  // ── size axis ─────────────────────────────────────────────────────────────
+
+  it("default size applies px-3 py-1.5 text-xs to the popup", async () => {
+    render(
+      <TooltipProvider>
+        <Tooltip open>
+          <TooltipTrigger>Trigger</TooltipTrigger>
+          <TooltipContent size="default">Default size</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+    const popup = (await screen.findByText("Default size")).closest(
+      "[data-slot='tooltip-content']"
+    );
+    expect(popup).toHaveClass("px-3");
+    expect(popup).toHaveClass("py-1.5");
+    expect(popup).toHaveClass("text-xs");
+  });
+
+  it("sm size applies px-2 py-1 to the popup", async () => {
+    render(
+      <TooltipProvider>
+        <Tooltip open>
+          <TooltipTrigger>Trigger</TooltipTrigger>
+          <TooltipContent size="sm">Small tooltip</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+    const popup = (await screen.findByText("Small tooltip")).closest(
+      "[data-slot='tooltip-content']"
+    );
+    expect(popup).toHaveClass("px-2");
+    expect(popup).toHaveClass("py-1");
+  });
+
+  it("light + sm combination applies both class sets", async () => {
+    render(
+      <TooltipProvider>
+        <Tooltip open>
+          <TooltipTrigger>Trigger</TooltipTrigger>
+          <TooltipContent size="sm" variant="light">
+            Combined
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+    const popup = (await screen.findByText("Combined")).closest(
+      "[data-slot='tooltip-content']"
+    );
+    expect(popup).toHaveClass("bg-popover");
+    expect(popup).toHaveClass("px-2");
+    expect(popup).toHaveClass("py-1");
+    expect(popup).toHaveClass("border");
   });
 });

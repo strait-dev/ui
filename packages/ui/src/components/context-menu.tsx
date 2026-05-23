@@ -6,6 +6,25 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
 import { cn } from "../utils/index";
 
+// ---------------------------------------------------------------------------
+// Size axis
+// ---------------------------------------------------------------------------
+
+/**
+ * The three size steps available on {@link ContextMenuContent}.
+ *
+ * The size cascades from the content popup to every item via
+ * `data-size` on the popup element and `group-data-[size=…]` selectors on
+ * each item — identical to the {@link DropdownMenuContent} cascade.
+ *
+ * | Value     | Item padding  | Item text |
+ * |-----------|---------------|-----------|
+ * | `sm`      | `px-1 py-0.5` | `text-xs` |
+ * | `default` | `px-1.5 py-1` | `text-sm` |
+ * | `lg`      | `px-2 py-1.5` | `text-sm` |
+ */
+type ContextMenuSize = "sm" | "default" | "lg";
+
 /**
  * Right-click (or long-press) contextual menu anchored to an arbitrary
  * region of the page.
@@ -92,6 +111,11 @@ function ContextMenuTrigger({
  * @remarks
  * `max-h-(--available-height)` and `overflow-y-auto` let the panel scroll
  * when the viewport is too short to show all items.
+ *
+ * **Size axis** — `size` is stamped onto the popup as `data-size`. Item
+ * components (`ContextMenuItem`, etc.) read it via `group-data-[size=…]`
+ * selectors (using the `/context-menu-content` group name) to scale their
+ * padding and text size.
  */
 function ContextMenuContent({
   className,
@@ -99,12 +123,19 @@ function ContextMenuContent({
   alignOffset = 4,
   side = "right",
   sideOffset = 0,
+  size = "default",
   ...props
 }: ContextMenuPrimitive.Popup.Props &
   Pick<
     ContextMenuPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
-  >) {
+  > & {
+    /**
+     * Controls item padding and text size for all items inside this menu.
+     * Cascades via `data-size` on the popup + `group-data-[size=…]` on items.
+     */
+    size?: ContextMenuSize;
+  }) {
   return (
     <ContextMenuPrimitive.Portal>
       {/* isolate prevents z-index bleed from ancestor stacking contexts */}
@@ -117,9 +148,12 @@ function ContextMenuContent({
       >
         <ContextMenuPrimitive.Popup
           className={cn(
+            // Named group so items can read data-size via group-data-[size=…]/context-menu-content
+            "group/context-menu-content",
             "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 max-h-(--available-height) min-w-36 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md outline-none ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in",
             className
           )}
+          data-size={size}
           data-slot="context-menu-content"
           {...props}
         />
@@ -144,6 +178,7 @@ function ContextMenuGroup({ ...props }: ContextMenuPrimitive.Group.Props) {
  *
  * @remarks
  * `inset` adds `pl-7` to align with icon-bearing items in the same group.
+ * Text size and padding cascade from the nearest `data-size` ancestor.
  */
 function ContextMenuLabel({
   className,
@@ -155,7 +190,12 @@ function ContextMenuLabel({
   return (
     <ContextMenuPrimitive.GroupLabel
       className={cn(
+        // default
         "px-1.5 py-1 font-medium text-muted-foreground text-xs data-inset:pl-7",
+        // sm — tighter
+        "group-data-[size=sm]/context-menu-content:px-1 group-data-[size=sm]/context-menu-content:py-0.5",
+        // lg — looser
+        "group-data-[size=lg]/context-menu-content:px-2 group-data-[size=lg]/context-menu-content:py-1.5",
         className
       )}
       data-inset={inset}
@@ -174,6 +214,8 @@ function ContextMenuLabel({
  * - `variant="destructive"` applies red text and a tinted focus
  *   background for irreversible actions.
  * - Optionally append a {@link ContextMenuShortcut} as the last child.
+ * - Padding and text size cascade from the nearest `data-size` popup
+ *   element via `group-data-[size=…]` selectors.
  */
 function ContextMenuItem({
   className,
@@ -187,7 +229,12 @@ function ContextMenuItem({
   return (
     <ContextMenuPrimitive.Item
       className={cn(
+        // Base (default size)
         "group/context-menu-item relative flex cursor-default select-none items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-[variant=destructive]:text-destructive data-disabled:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus:*:[svg]:text-accent-foreground data-[variant=destructive]:*:[svg]:text-destructive",
+        // sm override — tighter padding + smaller text
+        "group-data-[size=sm]/context-menu-content:px-1 group-data-[size=sm]/context-menu-content:py-0.5 group-data-[size=sm]/context-menu-content:text-xs",
+        // lg override — looser padding
+        "group-data-[size=lg]/context-menu-content:px-2 group-data-[size=lg]/context-menu-content:py-1.5",
         className
       )}
       data-inset={inset}
@@ -215,6 +262,7 @@ function ContextMenuSub({ ...props }: ContextMenuPrimitive.SubmenuRoot.Props) {
  *
  * @remarks
  * `inset` adds `pl-7` indent for alignment with icon items.
+ * Padding and text size cascade from the nearest `data-size` popup element.
  */
 function ContextMenuSubTrigger({
   className,
@@ -227,7 +275,12 @@ function ContextMenuSubTrigger({
   return (
     <ContextMenuPrimitive.SubmenuTrigger
       className={cn(
+        // Base (default size)
         "flex cursor-default select-none items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-open:bg-accent data-inset:pl-7 data-open:text-accent-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // sm override
+        "group-data-[size=sm]/context-menu-content:px-1 group-data-[size=sm]/context-menu-content:py-0.5 group-data-[size=sm]/context-menu-content:text-xs",
+        // lg override
+        "group-data-[size=lg]/context-menu-content:px-2 group-data-[size=lg]/context-menu-content:py-1.5",
         className
       )}
       data-inset={inset}
@@ -273,6 +326,7 @@ function ContextMenuSubContent({
  *
  * @remarks
  * `inset` adds `pl-7` indent to align with other items.
+ * Padding and text size cascade from the nearest `data-size` popup element.
  */
 function ContextMenuCheckboxItem({
   className,
@@ -287,7 +341,12 @@ function ContextMenuCheckboxItem({
     <ContextMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
+        // Base (default size)
         "relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // sm override
+        "group-data-[size=sm]/context-menu-content:py-0.5 group-data-[size=sm]/context-menu-content:pl-1 group-data-[size=sm]/context-menu-content:text-xs",
+        // lg override
+        "group-data-[size=lg]/context-menu-content:py-1.5 group-data-[size=lg]/context-menu-content:pl-2",
         className
       )}
       data-inset={inset}
@@ -329,6 +388,7 @@ function ContextMenuRadioGroup({
  *
  * @remarks
  * `inset` adds `pl-7` indent to align with other items.
+ * Padding and text size cascade from the nearest `data-size` popup element.
  */
 function ContextMenuRadioItem({
   className,
@@ -341,7 +401,12 @@ function ContextMenuRadioItem({
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
+        // Base (default size)
         "relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // sm override
+        "group-data-[size=sm]/context-menu-content:py-0.5 group-data-[size=sm]/context-menu-content:pl-1 group-data-[size=sm]/context-menu-content:text-xs",
+        // lg override
+        "group-data-[size=lg]/context-menu-content:py-1.5 group-data-[size=lg]/context-menu-content:pl-2",
         className
       )}
       data-inset={inset}

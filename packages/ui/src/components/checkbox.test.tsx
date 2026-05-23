@@ -68,4 +68,47 @@ describe("Checkbox", () => {
       screen.getByRole("checkbox", { name: "Accept terms" })
     ).toHaveAttribute("aria-invalid", "true");
   });
+
+  /* ------------------------------------------------------------------ */
+  /* Size variant                                                        */
+  /* ------------------------------------------------------------------ */
+
+  it("applies size=sm class to the checkbox element", () => {
+    const { container } = render(<Checkbox aria-label="Small" size="sm" />);
+    const checkbox = container.querySelector("[data-slot='checkbox']");
+    expect(checkbox).toHaveClass("size-3.5");
+  });
+
+  it("applies size=lg class to the checkbox element", () => {
+    const { container } = render(<Checkbox aria-label="Large" size="lg" />);
+    const checkbox = container.querySelector("[data-slot='checkbox']");
+    expect(checkbox).toHaveClass("size-5");
+  });
+
+  it("defaults to size=default (size-4) when no size prop is given", () => {
+    const { container } = render(<Checkbox aria-label="Default size" />);
+    const checkbox = container.querySelector("[data-slot='checkbox']");
+    expect(checkbox).toHaveClass("size-4");
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Intent variant                                                      */
+  /* ------------------------------------------------------------------ */
+
+  it("applies destructive border class when intent=destructive", () => {
+    const { container } = render(
+      <Checkbox aria-label="Delete" intent="destructive" />
+    );
+    const checkbox = container.querySelector("[data-slot='checkbox']");
+    expect(checkbox).toHaveClass("border-destructive");
+  });
+
+  it("renders with size=sm and intent=destructive together", () => {
+    const { container } = render(
+      <Checkbox aria-label="Small destructive" intent="destructive" size="sm" />
+    );
+    const checkbox = container.querySelector("[data-slot='checkbox']");
+    expect(checkbox).toHaveClass("size-3.5");
+    expect(checkbox).toHaveClass("border-destructive");
+  });
 });

@@ -39,6 +39,11 @@ const meta: Meta<typeof CodeBlock> = {
           "Renders **plain text** — no syntax-highlighting library is used.",
           "Use `showLineNumbers` for numbered gutter rendering and `maxHeight`",
           "to constrain long snippets with internal scrolling.",
+          "",
+          "The `variant` prop controls the surface treatment:",
+          "- `default` — muted background with border (original).",
+          "- `dark` — forced dark surface (`bg-neutral-950`) for terminal-style snippets.",
+          "- `transparent` — no background or border; blends into any container.",
         ].join("\n"),
       },
     },
@@ -51,6 +56,12 @@ const meta: Meta<typeof CodeBlock> = {
     language: {
       control: "text",
       description: "Language label shown in the top bar.",
+    },
+    variant: {
+      control: { type: "select" },
+      options: ["default", "dark", "transparent"],
+      description: "Surface colour treatment for the root container.",
+      table: { defaultValue: { summary: "default" } },
     },
     showLineNumbers: {
       control: "boolean",
@@ -76,6 +87,7 @@ const meta: Meta<typeof CodeBlock> = {
     code: TSX_SAMPLE,
     language: "tsx",
     copyable: true,
+    variant: "default",
   },
 };
 
@@ -104,6 +116,100 @@ export const Bash: Story = {
     code: BASH_SAMPLE,
     language: "bash",
   },
+};
+
+/* ------------------------------------------------------------------ */
+/* Variants                                                             */
+/* ------------------------------------------------------------------ */
+
+/**
+ * All three surface variants stacked with labels so they can be compared
+ * side by side.
+ *
+ * - `default` — the original muted surface with a border.
+ * - `dark` — forced dark background; great for terminal-style output.
+ * - `transparent` — no background or border; blends into any container.
+ */
+export const Variants: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Stacks all three `variant` options — `default`, `dark`, and `transparent` — with labels so you can compare the surface treatments at a glance. The `transparent` entry is wrapped in a card surface to make the blend-in effect apparent.",
+      },
+    },
+  },
+  render: () => (
+    <div className="flex flex-col gap-6">
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">
+          variant="default"
+        </p>
+        <CodeBlock code={BASH_SAMPLE} language="bash" variant="default" />
+      </div>
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">
+          variant="dark"
+        </p>
+        <CodeBlock code={BASH_SAMPLE} language="bash" variant="dark" />
+      </div>
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">
+          variant="transparent"
+        </p>
+        <div className="rounded-lg bg-card p-4 ring-1 ring-foreground/10">
+          <CodeBlock code={BASH_SAMPLE} language="bash" variant="transparent" />
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+/**
+ * Dark surface — forced dark background regardless of colour scheme.
+ * Ideal for terminal-style install commands and shell snippets.
+ */
+export const Dark: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Forces a dark surface (`bg-neutral-950 text-neutral-50`) regardless of the active colour scheme. Perfect for terminal-style install commands or shell snippets where a dark canvas is always expected.",
+      },
+    },
+  },
+  args: {
+    code: "npm install @strait/ui",
+    language: "bash",
+    variant: "dark",
+  },
+};
+
+/**
+ * Transparent surface — no background or border; use inside a card or panel
+ * that provides its own surface.
+ */
+export const Transparent: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Removes the background and border entirely so the code area blends into any container. Rendered here inside a decorative card wrapper (`bg-card` + `ring-1 ring-foreground/10`) to make the blend-in effect visible.",
+      },
+    },
+  },
+  render: () => (
+    <div className="rounded-lg bg-card p-4 ring-1 ring-foreground/10">
+      <p className="mb-2 text-muted-foreground text-sm">
+        Custom container provides the surface:
+      </p>
+      <CodeBlock
+        code={`const greeting = "Hello, world!";\nconsole.log(greeting);`}
+        language="js"
+        variant="transparent"
+      />
+    </div>
+  ),
 };
 
 /* ------------------------------------------------------------------ */

@@ -43,6 +43,10 @@ const meta = {
           "",
           "Supports items, separators, labels, checkboxes, radio groups, and",
           "nested sub-menus — the same API as `DropdownMenu`.",
+          "",
+          "**Size axis** — pass `size` (`sm | default | lg`) on `ContextMenuContent` to",
+          "cascade padding and text size to all items in that panel via `data-size` on",
+          "the popup and `group-data-[size=…]/context-menu-content` selectors on items.",
         ].join("\n"),
       },
     },
@@ -268,4 +272,43 @@ export const WithRadioGroup: Story = {
       </ContextMenu>
     );
   },
+};
+
+/**
+ * All three content sizes side by side. Item padding and text cascade from the
+ * `size` prop on `ContextMenuContent` to every item via
+ * `group-data-[size=…]/context-menu-content` selectors — no per-item changes
+ * needed.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex items-start gap-6">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <ContextMenu defaultOpen key={size}>
+          <ContextMenuTrigger>
+            <div className="flex h-16 w-24 cursor-context-menu items-center justify-center rounded border border-dashed text-muted-foreground text-xs">
+              {size}
+            </div>
+          </ContextMenuTrigger>
+          <ContextMenuContent size={size}>
+            <ContextMenuLabel>Size: {size}</ContextMenuLabel>
+            <ContextMenuSeparator />
+            <ContextMenuItem>
+              <HugeiconsIcon icon={Edit02Icon} />
+              Edit
+            </ContextMenuItem>
+            <ContextMenuItem>
+              <HugeiconsIcon icon={Copy01Icon} />
+              Duplicate
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem variant="destructive">
+              <HugeiconsIcon icon={Delete02Icon} />
+              Delete
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+      ))}
+    </div>
+  ),
 };

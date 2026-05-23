@@ -15,17 +15,30 @@ interface IdCellProps {
   className?: string;
   /** Full identifier string to display and copy. */
   id: string;
+  /**
+   * Number of characters to show before the trailing ellipsis.
+   *
+   * Defaults to `6` to preserve the original behaviour. Useful when the
+   * column is wider (increase) or extremely narrow (decrease).
+   *
+   * @example
+   * ```tsx
+   * // Show first 8 chars instead of 6
+   * <IdCell id={row.original.id} length={8} />
+   * ```
+   */
+  length?: number;
 }
 
 /**
  * Table cell that displays a truncated identifier with a copy-to-clipboard
  * button, intended for use inside a data table column definition.
  *
- * The `id` is shortened to its first 6 characters (followed by `…`); a
- * tooltip on the truncated text reveals the full value on hover. A ghost
- * icon button copies the full `id` to the system clipboard and shows a
- * success toast, with an animated icon swap (copy → checkmark) that resets
- * after 2 seconds.
+ * The `id` is shortened to its first {@link IdCellProps.length} characters
+ * (followed by `…`); defaults to `6` for backwards compatibility. A tooltip
+ * on the truncated text reveals the full value on hover. A ghost icon button
+ * copies the full `id` to the system clipboard and shows a success toast,
+ * with an animated icon swap (copy → checkmark) that resets after 2 seconds.
  *
  * @remarks
  * - The copy button carries `aria-label="Copy ID"` for screen-reader
@@ -42,10 +55,10 @@ interface IdCellProps {
  * }
  * ```
  */
-export function IdCell({ id, className }: IdCellProps) {
+export function IdCell({ id, className, length = 6 }: IdCellProps) {
   const [isCopied, setIsCopied] = useState(false);
-  // Show only the first 6 chars to keep the column narrow.
-  const truncatedId = id.slice(0, 6);
+  // Show only the first `length` chars to keep the column narrow.
+  const truncatedId = id.slice(0, length);
 
   const handleCopy = () => {
     copy(id);

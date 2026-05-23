@@ -76,4 +76,45 @@ describe("CodeBlock", () => {
       "my-custom"
     );
   });
+
+  // ── variant axis ──────────────────────────────────────────────────────────
+
+  it("default variant applies bg-muted and border to root", () => {
+    render(<CodeBlock code={SAMPLE_CODE} variant="default" />);
+    const root = document.querySelector("[data-slot='code-block']");
+    expect(root).toHaveClass("bg-muted");
+    expect(root).toHaveClass("border");
+  });
+
+  it("no variant prop (default) applies bg-muted and border", () => {
+    render(<CodeBlock code={SAMPLE_CODE} />);
+    const root = document.querySelector("[data-slot='code-block']");
+    expect(root).toHaveClass("bg-muted");
+    expect(root).toHaveClass("border");
+  });
+
+  it("dark variant applies bg-neutral-950 to root", () => {
+    render(<CodeBlock code={SAMPLE_CODE} variant="dark" />);
+    const root = document.querySelector("[data-slot='code-block']");
+    expect(root).toHaveClass("bg-neutral-950");
+    expect(root).toHaveClass("text-neutral-50");
+    expect(root).not.toHaveClass("bg-muted");
+  });
+
+  it("transparent variant applies bg-transparent to root and removes border", () => {
+    render(<CodeBlock code={SAMPLE_CODE} variant="transparent" />);
+    const root = document.querySelector("[data-slot='code-block']");
+    expect(root).toHaveClass("bg-transparent");
+    expect(root).not.toHaveClass("bg-muted");
+    expect(root).not.toHaveClass("border");
+  });
+
+  it("variant and className are both applied", () => {
+    render(
+      <CodeBlock className="my-custom" code={SAMPLE_CODE} variant="dark" />
+    );
+    const root = document.querySelector("[data-slot='code-block']");
+    expect(root).toHaveClass("bg-neutral-950");
+    expect(root).toHaveClass("my-custom");
+  });
 });

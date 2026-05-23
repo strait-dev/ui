@@ -2,7 +2,7 @@
 
 import { cn } from "../utils/index";
 import { Button } from "./button";
-import { Input } from "./input";
+import { Input, type InputProps } from "./input";
 
 /**
  * Props for {@link InputWithInlineButton}.
@@ -15,7 +15,7 @@ import { Input } from "./input";
  *   renders it inside a wrapper div instead of the built-in
  *   {@link Button}.
  */
-type InputWithInlineButtonProps = React.ComponentProps<"input"> & {
+type InputWithInlineButtonProps = InputProps & {
   button?: React.ReactNode;
   buttonText?: string;
   onButtonClick?: () => void;

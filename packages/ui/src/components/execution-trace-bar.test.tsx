@@ -129,4 +129,30 @@ describe("ExecutionTraceBar", () => {
       "rgb(0, 0, 255)"
     );
   });
+
+  // --- size axis ---
+
+  it("default size applies h-6 class to the bar track", () => {
+    render(<ExecutionTraceBar segments={twoEqualSegments} />);
+    const bar = document.querySelector('[data-slot="execution-trace-bar"]');
+    expect(bar).toHaveClass("h-6");
+  });
+
+  it("size='sm' applies h-3 class to the bar track", () => {
+    render(<ExecutionTraceBar segments={twoEqualSegments} size="sm" />);
+    const bar = document.querySelector('[data-slot="execution-trace-bar"]');
+    expect(bar).toHaveClass("h-3");
+  });
+
+  it("size='lg' applies h-9 class to the bar track", () => {
+    render(<ExecutionTraceBar segments={twoEqualSegments} size="lg" />);
+    const bar = document.querySelector('[data-slot="execution-trace-bar"]');
+    expect(bar).toHaveClass("h-9");
+  });
+
+  it("size prop is forwarded as data-size attribute on the bar track", () => {
+    render(<ExecutionTraceBar segments={twoEqualSegments} size="lg" />);
+    const bar = document.querySelector('[data-slot="execution-trace-bar"]');
+    expect(bar).toHaveAttribute("data-size", "lg");
+  });
 });

@@ -32,3 +32,37 @@ describe("IdCell", () => {
     expect(toast.success).toHaveBeenCalledWith("ID copied to clipboard");
   });
 });
+
+// ---------------------------------------------------------------------------
+// length prop
+// ---------------------------------------------------------------------------
+
+describe("IdCell length prop", () => {
+  it("defaults to 6 characters when length is not supplied", () => {
+    render(<IdCell id={ID} />);
+    // Default: first 6 chars + "..."
+    expect(screen.getByText("abcdef...")).toBeInTheDocument();
+  });
+
+  it("shows the first `length` characters when length=4", () => {
+    render(<IdCell id={ID} length={4} />);
+    expect(screen.getByText("abcd...")).toBeInTheDocument();
+  });
+
+  it("shows the first `length` characters when length=10", () => {
+    render(<IdCell id={ID} length={10} />);
+    expect(screen.getByText("abcdef0123...")).toBeInTheDocument();
+  });
+
+  it("does not break when length equals the full id length", () => {
+    render(<IdCell id="abc" length={3} />);
+    // Slice(0, 3) of "abc" = "abc"; still appends "..."
+    expect(screen.getByText("abc...")).toBeInTheDocument();
+  });
+
+  it("still copies the full id regardless of the displayed length", async () => {
+    render(<IdCell id={ID} length={4} />);
+    await userEvent.click(screen.getByRole("button", { name: "Copy ID" }));
+    expect(copy).toHaveBeenCalledWith(ID);
+  });
+});

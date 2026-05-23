@@ -130,4 +130,24 @@ describe("Field", () => {
       container.querySelector("[data-slot='field-content']")
     ).toBeInTheDocument();
   });
+
+  it("forwards size to data-size attribute on the field root", () => {
+    render(
+      <Field size="lg">
+        <FieldLabel htmlFor="sz-input">Label</FieldLabel>
+        <input id="sz-input" />
+      </Field>
+    );
+    expect(screen.getByRole("group")).toHaveAttribute("data-size", "lg");
+  });
+
+  it("defaults data-size to default when size is omitted", () => {
+    render(
+      <Field>
+        <FieldLabel htmlFor="def-input">Label</FieldLabel>
+        <input id="def-input" />
+      </Field>
+    );
+    expect(screen.getByRole("group")).toHaveAttribute("data-size", "default");
+  });
 });

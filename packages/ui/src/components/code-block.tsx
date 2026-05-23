@@ -1,10 +1,45 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../utils/index";
 import { CopyButton } from "./copy-button";
 
 /**
+ * Class-variance-authority recipe for the {@link CodeBlock} root element.
+ *
+ * Exposes one axis:
+ * - `variant` — surface treatment.
+ *   - `default` — the original muted surface (`bg-muted` with a `border`).
+ *   - `dark` — forces a dark surface (`bg-neutral-950 text-neutral-50`)
+ *     regardless of the active colour scheme, useful for terminal-style
+ *     snippets or when the surrounding UI is already light.
+ *   - `transparent` — removes the background and border entirely, letting
+ *     the code area blend into any container.
+ *
+ * Exported so consumers can apply the same surface to a custom wrapper.
+ */
+const codeBlockVariants = cva("overflow-hidden rounded-lg", {
+  variants: {
+    /**
+     * Surface colour treatment for the root container.
+     *
+     * - `default` — muted background with border (original appearance).
+     * - `dark` — forced dark surface; always dark regardless of theme.
+     * - `transparent` — no background, no border; blends into the page.
+     */
+    variant: {
+      default: "border bg-muted",
+      dark: "bg-neutral-950 text-neutral-50",
+      transparent: "bg-transparent",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+/**
  * Props for {@link CodeBlock}.
  */
-interface CodeBlockProps {
+interface CodeBlockProps extends VariantProps<typeof codeBlockVariants> {
   /** Additional class names applied to the root element. */
   className?: string;
   /** The source code string to display. */
@@ -37,6 +72,11 @@ interface CodeBlockProps {
  * Renders plain text — no syntax-highlighting dependency is used. Wrap it in
  * a `<figure>` with a `<figcaption>` when a visible caption is needed.
  *
+ * The surface appearance is controlled by the `variant` prop:
+ * - `default` — muted surface with border (original).
+ * - `dark` — forced dark surface for terminal-style snippets.
+ * - `transparent` — no background or border; blends into any container.
+ *
  * @remarks
  * - The top bar is only rendered when `language` is provided or `copyable` is
  *   not `false`; if neither applies, the `<pre>` fills the full container.
@@ -53,6 +93,12 @@ interface CodeBlockProps {
  *   showLineNumbers
  *   code={`function greet(name: string) {\n  return \`Hello, \${name}!\`;\n}`}
  * />
+ *
+ * // Dark surface — great for terminal-style output
+ * <CodeBlock variant="dark" language="bash" code="npm install @strait/ui" />
+ *
+ * // Transparent — blends into a custom card surface
+ * <CodeBlock variant="transparent" code={snippet} />
  * ```
  */
 function CodeBlock({
@@ -62,6 +108,7 @@ function CodeBlock({
   copyable = true,
   maxHeight,
   wrap = false,
+  variant,
   className,
 }: CodeBlockProps) {
   const showTopBar = Boolean(language) || copyable;
@@ -75,7 +122,7 @@ function CodeBlock({
 
   return (
     <div
-      className={cn("overflow-hidden rounded-lg border bg-muted", className)}
+      className={cn(codeBlockVariants({ variant }), className)}
       data-slot="code-block"
     >
       {showTopBar && (
@@ -133,4 +180,4 @@ function CodeBlock({
   );
 }
 
-export { CodeBlock, type CodeBlockProps };
+export { CodeBlock, type CodeBlockProps, codeBlockVariants };

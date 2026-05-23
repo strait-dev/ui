@@ -34,6 +34,7 @@ const variantOptions: ButtonVariant[] = [
   "default",
   "secondary",
   "outline",
+  "secondary-outline",
   "ghost",
   "link",
   "brand-solid",
@@ -51,6 +52,9 @@ const variantOptions: ButtonVariant[] = [
   "info-solid",
   "info",
   "info-outline",
+  "invert-solid",
+  "invert",
+  "invert-outline",
 ];
 
 const sizeOptions: ButtonSize[] = [
@@ -177,9 +181,15 @@ const matrixRows: {
     outline: "warning-outline",
   },
   { name: "Info", solid: "info-solid", soft: "info", outline: "info-outline" },
+  {
+    name: "Invert",
+    solid: "invert-solid",
+    soft: "invert",
+    outline: "invert-outline",
+  },
 ];
 
-const specialVariants: ButtonVariant[] = ["ghost", "link"];
+const specialVariants: ButtonVariant[] = ["ghost", "link", "secondary-outline"];
 
 /**
  * Every variant in one place: each intent across solid / soft / outline

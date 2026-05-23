@@ -116,8 +116,41 @@
 }
 
 @theme inline {
+  /* Override hook: set --font-heading on :root to ship a distinct heading face;
+     by default headings share the sans family. */
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
+
+  /* Typography scale — size bundles its own line-height / tracking / weight
+     (Tailwind v4 modifier syntax), so `text-h1` etc. set all four at once.
+     Semantic classes (.display / .heading-1..4 / .body / .body-sm / .caption)
+     wrap these — see the @layer components block below. */
+  --text-display: 3rem;
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 700;
+  --text-h1: 2.25rem;
+  --text-h1--line-height: 1.15;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h1--font-weight: 600;
+  --text-h2: 1.875rem;
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h2--font-weight: 600;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h3--font-weight: 600;
+  --text-h4: 1.25rem;
+  --text-h4--line-height: 1.3;
+  --text-h4--letter-spacing: -0.01em;
+  --text-h4--font-weight: 600;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.55;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.5;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -183,6 +216,47 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ============================================
+   Typography scale — semantic classes
+   Drop these on any element so headings/body
+   copy flow through the design system. Tailwind
+   `text-*`/`font-*` utilities still override them.
+   ============================================ */
+
+@layer components {
+  .display {
+    font-family: var(--font-heading);
+    @apply text-display text-balance;
+  }
+  .heading-1 {
+    font-family: var(--font-heading);
+    @apply text-h1 text-balance;
+  }
+  .heading-2 {
+    font-family: var(--font-heading);
+    @apply text-h2 text-balance;
+  }
+  .heading-3 {
+    font-family: var(--font-heading);
+    @apply text-h3;
+  }
+  .heading-4 {
+    font-family: var(--font-heading);
+    @apply text-h4;
+  }
+  .body {
+    font-family: var(--font-sans);
+    @apply text-body;
+  }
+  .body-sm {
+    font-family: var(--font-sans);
+    @apply text-body-sm;
+  }
+  .caption {
+    @apply text-caption;
   }
 }
 
@@ -440,10 +514,13 @@
    ============================================ */
 
 .kicker {
+  font-family: var(--font-heading);
   font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1.4;
   color: var(--muted-foreground);
   text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .icon-chip {

@@ -1,10 +1,18 @@
 import type { ExternalToast } from "sonner";
 
+/** Inline action button rendered alongside a toast. */
 export interface ToastAction {
   label: string;
   onClick: () => void;
 }
 
+/**
+ * Options shared by `toast.success/error/warning/info/loading`.
+ *
+ * Extends Sonner's {@link ExternalToast} (so `duration`, `id`, `position`, …
+ * pass straight through) and narrows `action`/`description` to the
+ * design-system shape.
+ */
 export interface BaseToastOptions extends Omit<ExternalToast, "action"> {
   action?: ToastAction;
   description?: string;
@@ -12,17 +20,20 @@ export interface BaseToastOptions extends Omit<ExternalToast, "action"> {
   duration?: number;
 }
 
+/**
+ * Options for `toast.promise` — maps directly onto Sonner's native promise
+ * toast (loading → success | error).
+ */
 export interface PromiseToastOptions<T> {
-  description?: {
-    loading?: string;
-    success?: string | ((data: T) => string);
-    error?: string | ((error: unknown) => string);
-  };
   error: string | ((error: unknown) => string);
   loading: string;
   success: string | ((data: T) => string);
 }
 
+/**
+ * Options for `toast.confirm` — a minimal confirmation prompt built from
+ * Sonner's native `action` (confirm) and `cancel` buttons.
+ */
 export interface ConfirmToastOptions {
   cancelLabel?: string;
   confirmLabel?: string;
@@ -31,19 +42,9 @@ export interface ConfirmToastOptions {
   onCancel?: () => void;
   onConfirm: () => void | Promise<void>;
   onError?: (error: unknown) => void;
-  variant?: "destructive" | "default";
 }
 
-export interface ToastContentProps {
-  action?: ToastAction;
-  className?: string;
-  copyable?: boolean;
-  description?: string;
-  dismissible?: boolean;
-  onDismiss?: () => void;
-  title: string;
-}
-
+/** The imperative toast API. */
 export interface Toast {
   confirm: (title: string, options: ConfirmToastOptions) => string | number;
   dismiss: (id?: string | number) => void;

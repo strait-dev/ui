@@ -78,4 +78,81 @@ describe("Avatar", () => {
     const count = screen.getByText("+3");
     expect(count).toHaveAttribute("data-slot", "avatar-group-count");
   });
+
+  it("size xs applies size-5 via data-size attribute", () => {
+    render(
+      <Avatar size="xs">
+        <AvatarFallback>XS</AvatarFallback>
+      </Avatar>
+    );
+    const root = screen.getByText("XS").closest("[data-slot=avatar]");
+    expect(root).toHaveAttribute("data-size", "xs");
+    expect(root?.className).toContain("data-[size=xs]:size-5");
+  });
+
+  it("size xl applies size-12 via data-size attribute", () => {
+    render(
+      <Avatar size="xl">
+        <AvatarFallback>XL</AvatarFallback>
+      </Avatar>
+    );
+    const root = screen.getByText("XL").closest("[data-slot=avatar]");
+    expect(root).toHaveAttribute("data-size", "xl");
+    expect(root?.className).toContain("data-[size=xl]:size-12");
+  });
+
+  it("AvatarBadge intent online applies bg-success", () => {
+    render(
+      <Avatar>
+        <AvatarFallback>ON</AvatarFallback>
+        <AvatarBadge intent="online" />
+      </Avatar>
+    );
+    const badge = document.querySelector("[data-slot=avatar-badge]");
+    expect(badge?.className).toContain("bg-success");
+  });
+
+  it("AvatarBadge intent busy applies bg-destructive", () => {
+    render(
+      <Avatar>
+        <AvatarFallback>BS</AvatarFallback>
+        <AvatarBadge intent="busy" />
+      </Avatar>
+    );
+    const badge = document.querySelector("[data-slot=avatar-badge]");
+    expect(badge?.className).toContain("bg-destructive");
+  });
+
+  it("AvatarBadge intent away applies bg-warning", () => {
+    render(
+      <Avatar>
+        <AvatarFallback>AW</AvatarFallback>
+        <AvatarBadge intent="away" />
+      </Avatar>
+    );
+    const badge = document.querySelector("[data-slot=avatar-badge]");
+    expect(badge?.className).toContain("bg-warning");
+  });
+
+  it("AvatarBadge intent offline applies bg-muted-foreground", () => {
+    render(
+      <Avatar>
+        <AvatarFallback>OF</AvatarFallback>
+        <AvatarBadge intent="offline" />
+      </Avatar>
+    );
+    const badge = document.querySelector("[data-slot=avatar-badge]");
+    expect(badge?.className).toContain("bg-muted-foreground");
+  });
+
+  it("AvatarBadge without intent keeps bg-primary (backwards compat)", () => {
+    render(
+      <Avatar>
+        <AvatarFallback>NO</AvatarFallback>
+        <AvatarBadge />
+      </Avatar>
+    );
+    const badge = document.querySelector("[data-slot=avatar-badge]");
+    expect(badge?.className).toContain("bg-primary");
+  });
 });

@@ -11,9 +11,17 @@ import { Toggle } from "./toggle";
 
 type ToggleVariant = NonNullable<ComponentProps<typeof Toggle>["variant"]>;
 type ToggleSize = NonNullable<ComponentProps<typeof Toggle>["size"]>;
+type ToggleIntent = NonNullable<ComponentProps<typeof Toggle>["intent"]>;
 
 const variantOptions: ToggleVariant[] = ["default", "outline"];
-const sizeOptions: ToggleSize[] = ["sm", "default", "lg"];
+const sizeOptions: ToggleSize[] = ["xs", "sm", "default", "lg", "xl"];
+const intentOptions: ToggleIntent[] = [
+  "default",
+  "destructive",
+  "success",
+  "info",
+  "warning",
+];
 
 const meta = {
   title: "Actions/Toggle",
@@ -28,6 +36,12 @@ const meta = {
           "controls like bold/italic. Use `pressed` (controlled) or",
           "`defaultPressed` (uncontrolled); the on state is exposed as",
           "`data-[state=on]`. Always give icon-only toggles an `aria-label`.",
+          "",
+          "**Size** — five presets: `xs` (24 px), `sm` (28 px), `default` (32 px),",
+          "`lg` (36 px), `xl` (40 px).",
+          "",
+          "**Intent** — five colour treatments for the pressed/active state:",
+          "`default` (muted), `destructive`, `success`, `info`, `warning`.",
         ].join("\n"),
       },
     },
@@ -45,6 +59,12 @@ const meta = {
       description: "Height/padding preset.",
       table: { defaultValue: { summary: "default" } },
     },
+    intent: {
+      control: "select",
+      options: intentOptions,
+      description: "Tints the pressed/active state.",
+      table: { defaultValue: { summary: "default" } },
+    },
     disabled: { control: "boolean", description: "Disables the toggle." },
     defaultPressed: {
       control: "boolean",
@@ -54,6 +74,7 @@ const meta = {
   args: {
     variant: "default",
     size: "default",
+    intent: "default",
     "aria-label": "Toggle bold",
     children: <HugeiconsIcon icon={TextBoldIcon} />,
   },
@@ -77,12 +98,29 @@ export const Variants: Story = {
   ),
 };
 
-/** Three sizes, from `sm` to `lg`. */
+/** All five sizes, from `xs` to `xl`. */
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex items-center gap-3">
       {sizeOptions.map((size) => (
         <Toggle {...args} key={size} size={size} variant="outline" />
+      ))}
+    </div>
+  ),
+};
+
+/** All five intent colours — shown in the pressed/on state. */
+export const Intents: Story = {
+  render: (args) => (
+    <div className="flex items-center gap-3">
+      {intentOptions.map((intent) => (
+        <Toggle
+          {...args}
+          defaultPressed
+          intent={intent}
+          key={intent}
+          variant="outline"
+        />
       ))}
     </div>
   ),

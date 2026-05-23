@@ -73,4 +73,40 @@ describe("RadioGroup", () => {
       "false"
     );
   });
+
+  it("forwards data-size to the radio-group root", () => {
+    const { container } = render(<Fixture />);
+    // Default size
+    expect(
+      container.querySelector("[data-slot='radio-group']")
+    ).toHaveAttribute("data-size", "default");
+  });
+
+  it("sets data-size=lg on the group when size=lg is passed", () => {
+    const { container } = render(
+      <RadioGroup size="lg">
+        <div className="flex items-center gap-2">
+          <RadioGroupItem id="lg-a" value="a" />
+          <label htmlFor="lg-a">A</label>
+        </div>
+      </RadioGroup>
+    );
+    expect(
+      container.querySelector("[data-slot='radio-group']")
+    ).toHaveAttribute("data-size", "lg");
+  });
+
+  it("sets data-size=sm on the group when size=sm is passed", () => {
+    const { container } = render(
+      <RadioGroup size="sm">
+        <div className="flex items-center gap-2">
+          <RadioGroupItem id="sm-a" value="a" />
+          <label htmlFor="sm-a">A</label>
+        </div>
+      </RadioGroup>
+    );
+    expect(
+      container.querySelector("[data-slot='radio-group']")
+    ).toHaveAttribute("data-size", "sm");
+  });
 });

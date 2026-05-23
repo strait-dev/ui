@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
-import { Input } from "./input";
+import { Input, type InputProps } from "./input";
 import { Textarea } from "./textarea";
 
 /**
@@ -200,10 +200,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
  * its own border and ring so the group wrapper owns all focus/error
  * styling.
  */
-function InputGroupInput({
-  className,
-  ...props
-}: React.ComponentProps<"input">) {
+function InputGroupInput({ className, ...props }: InputProps) {
   return (
     <Input
       className={cn(

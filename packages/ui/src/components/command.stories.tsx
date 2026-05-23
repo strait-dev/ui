@@ -17,6 +17,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  type CommandListSize,
   CommandSeparator,
   CommandShortcut,
 } from "./command";
@@ -46,7 +47,9 @@ const meta: Meta<typeof Command> = {
       },
     },
   },
-  argTypes: {},
+  argTypes: {
+    /** Passed to `CommandList`; controls item density for the whole palette. */
+  },
   args: {},
 };
 
@@ -198,6 +201,51 @@ export const EmptyState: Story = {
       </Command>
     </div>
   ),
+};
+
+/**
+ * All three density sizes (`sm`, `default`, `lg`) side by side.
+ * The `size` prop lives on `CommandList` and cascades via `data-size` so
+ * every `CommandItem` inside responds automatically.
+ */
+export const Sizes: Story = {
+  render: () => {
+    const items = ["Dashboard", "Search", "Settings", "Profile"];
+    const sizes: CommandListSize[] = ["sm", "default", "lg"];
+    const labels: Record<CommandListSize, string> = {
+      sm: "sm — compact",
+      default: "default — standard",
+      lg: "lg — spacious",
+    };
+
+    return (
+      <div className="flex flex-wrap items-start gap-4">
+        {sizes.map((size) => (
+          <div className="flex flex-col gap-1" key={size}>
+            <span className="font-medium text-muted-foreground text-xs">
+              {labels[size]}
+            </span>
+            <div className="w-52 rounded-xl border shadow-sm">
+              <Command>
+                <CommandInput placeholder="Search…" />
+                <CommandList size={size}>
+                  <CommandEmpty>No results.</CommandEmpty>
+                  <CommandGroup heading="Actions">
+                    {items.map((item) => (
+                      <CommandItem key={item} value={item.toLowerCase()}>
+                        <HugeiconsIcon icon={Home01Icon} />
+                        {item}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  },
 };
 
 /** Open the command palette inside a Dialog via `CommandDialog`. */

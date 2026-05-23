@@ -11,6 +11,32 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import * as React from "react";
 import { cn } from "../utils/index";
 
+// ---------------------------------------------------------------------------
+// Size context — set once on Select root, consumed by SelectContent/SelectItem
+// ---------------------------------------------------------------------------
+
+/**
+ * Available size values for the Select component system.
+ *
+ * | Value | Trigger height | Item padding/text |
+ * |-------|---------------|-------------------|
+ * | `sm` | `h-7` | `py-0.5 text-xs` |
+ * | `default` | `h-8` | `py-1 text-sm` |
+ * | `lg` | `h-10` | `py-1.5 text-base` |
+ */
+export type SelectSize = "sm" | "default" | "lg";
+
+/**
+ * Internal context that threads the `size` value from the
+ * {@link Select} root down to {@link SelectContent} and
+ * {@link SelectItem} without prop-drilling.
+ */
+const SelectSizeContext = React.createContext<SelectSize>("default");
+
+// ---------------------------------------------------------------------------
+// Internal items context (unchanged from original)
+// ---------------------------------------------------------------------------
+
 /** Internal map of option value → display label, shared via context. */
 type ItemsMap = Map<string, string>;
 
@@ -29,6 +55,10 @@ const SelectItemsContext = React.createContext<{
   items: new Map(),
 });
 
+// ---------------------------------------------------------------------------
+// Select root
+// ---------------------------------------------------------------------------
+
 /**
  * Accessible single-value dropdown built on Base UI's `Select`
  * primitive.
@@ -43,6 +73,11 @@ const SelectItemsContext = React.createContext<{
  *   `value` to its display label. {@link SelectValue} reads that
  *   registry to show the human-readable label for the current
  *   selection without re-traversing the React tree.
+ * - The optional `size` prop (`"sm" | "default" | "lg"`) is stored in
+ *   {@link SelectSizeContext} and automatically cascades to
+ *   {@link SelectTrigger}, {@link SelectContent}, and every
+ *   {@link SelectItem}. You only need to set it once on the root.
+ *   You can also override size directly on `<SelectTrigger size="…" />`.
  * - For accessible forms, pair the trigger with a `<Label>` whose
  *   `htmlFor` points to the trigger's `id`.
  * - To make the dropdown controlled, pass `value` and
@@ -51,7 +86,7 @@ const SelectItemsContext = React.createContext<{
  *
  * @example
  * ```tsx
- * <Select defaultValue="react">
+ * <Select defaultValue="react" size="lg">
  *   <SelectTrigger className="w-40">
  *     <SelectValue placeholder="Pick a framework" />
  *   </SelectTrigger>
@@ -63,7 +98,14 @@ const SelectItemsContext = React.createContext<{
  * </Select>
  * ```
  */
-function Select({ children, ...props }: SelectPrimitive.Root.Props<string>) {
+function Select({
+  children,
+  size = "default",
+  ...props
+}: SelectPrimitive.Root.Props<string> & {
+  /** Size applied to the entire Select system via context. */
+  size?: SelectSize;
+}) {
   const itemsRef = React.useRef<ItemsMap>(new Map());
   // Dummy counter used only to force a re-render when new items
   // register themselves after the initial mount.
@@ -86,11 +128,17 @@ function Select({ children, ...props }: SelectPrimitive.Root.Props<string>) {
   );
 
   return (
-    <SelectItemsContext.Provider value={contextValue}>
-      <SelectPrimitive.Root {...props}>{children}</SelectPrimitive.Root>
-    </SelectItemsContext.Provider>
+    <SelectSizeContext.Provider value={size}>
+      <SelectItemsContext.Provider value={contextValue}>
+        <SelectPrimitive.Root {...props}>{children}</SelectPrimitive.Root>
+      </SelectItemsContext.Provider>
+    </SelectSizeContext.Provider>
   );
 }
+
+// ---------------------------------------------------------------------------
+// SelectGroup
+// ---------------------------------------------------------------------------
 
 /** Container that visually groups related {@link SelectItem}s. */
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
@@ -102,6 +150,10 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
     />
   );
 }
+
+// ---------------------------------------------------------------------------
+// SelectValue
+// ---------------------------------------------------------------------------
 
 /**
  * Renders the currently selected option's label inside
@@ -139,26 +191,74 @@ function SelectValue({
   );
 }
 
+// ---------------------------------------------------------------------------
+// SelectTrigger
+// ---------------------------------------------------------------------------
+
+/**
+ * Props for {@link SelectTrigger}.
+ *
+ * @remarks
+ * `SelectPrimitive.Trigger.Props` extends `HTMLButtonElement` props via
+ * Base UI's `BaseUIComponentProps<'button', …>`. A native `<button>`
+ * element does **not** expose a `size` attribute in the HTML spec
+ * (unlike `<input>` or `<select>`), so there is no numeric-`size`
+ * collision and no `Omit` is required here.
+ */
+export type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
+  /**
+   * Height / border-radius scale of the trigger button.
+   *
+   * | Value | Height class | Border-radius note |
+   * |-------|-------------|-------------------|
+   * | `sm` | `h-7` | Tighter radius |
+   * | `default` | `h-8` | Standard |
+   * | `lg` | `h-10` | Standard |
+   *
+   * Falls back to the value provided by the nearest {@link Select} root
+   * via context when omitted.
+   */
+  size?: SelectSize;
+};
+
 /**
  * The button that opens the {@link SelectContent} dropdown.
  *
  * @remarks
- * The `size` prop (`"default" | "sm"`) adjusts height and border
- * radius. Always place a {@link SelectValue} inside to display the
- * current selection. The chevron icon is rendered automatically.
+ * The `size` prop (`"sm" | "default" | "lg"`) adjusts height and border
+ * radius. When omitted, inherits the value from the nearest {@link Select}
+ * root via {@link SelectSizeContext}. Always place a {@link SelectValue}
+ * inside to display the current selection. The chevron icon is rendered
+ * automatically.
+ *
+ * A `data-size` attribute is written onto the DOM element so descendent
+ * items can use `group-data-[size=…]` selectors to cascade size-aware
+ * styles (mirroring the `card.tsx` cascade pattern).
  */
 function SelectTrigger({
   className,
-  size = "default",
+  size: sizeProp,
   children,
   ...props
-}: SelectPrimitive.Trigger.Props & {
-  size?: "sm" | "default";
-}) {
+}: SelectTriggerProps) {
+  const contextSize = React.useContext(SelectSizeContext);
+  const size = sizeProp ?? contextSize;
+
   return (
     <SelectPrimitive.Trigger
       className={cn(
-        "flex w-fit select-none items-center justify-between gap-1.5 whitespace-nowrap rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] data-placeholder:text-muted-foreground *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 dark:hover:bg-input/50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "flex w-fit select-none items-center justify-between gap-1.5 whitespace-nowrap rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm outline-none transition-colors",
+        "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",
+        "data-placeholder:text-muted-foreground",
+        "*:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5",
+        "dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 dark:hover:bg-input/50",
+        "[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // size-specific overrides
+        "data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)]",
+        "data-[size=default]:h-8",
+        "data-[size=lg]:h-10 data-[size=lg]:text-base",
         className
       )}
       data-size={size}
@@ -179,6 +279,10 @@ function SelectTrigger({
   );
 }
 
+// ---------------------------------------------------------------------------
+// SelectContent
+// ---------------------------------------------------------------------------
+
 /**
  * Floating dropdown panel rendered via a portal inside
  * {@link Select}.
@@ -190,12 +294,18 @@ function SelectTrigger({
  * the selected item aligns with the trigger, matching native `<select>`
  * behaviour.
  *
+ * Accepts an optional `size` prop that overrides the context value.
+ * The resolved size is written as a `data-size` attribute on the popup
+ * element so individual {@link SelectItem}s can adapt via
+ * `group-data-[size=…]` cascade selectors.
+ *
  * Embed {@link SelectItem}s directly or group them with
  * {@link SelectGroup} / {@link SelectLabel} / {@link SelectSeparator}.
  */
 function SelectContent({
   className,
   children,
+  size: sizeProp,
   side = "bottom",
   sideOffset = 4,
   align = "center",
@@ -206,7 +316,13 @@ function SelectContent({
   Pick<
     SelectPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
-  >) {
+  > & {
+    /** Override the size inherited from {@link Select} root context. */
+    size?: SelectSize;
+  }) {
+  const contextSize = React.useContext(SelectSizeContext);
+  const size = sizeProp ?? contextSize;
+
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Positioner
@@ -219,10 +335,15 @@ function SelectContent({
       >
         <SelectPrimitive.Popup
           className={cn(
-            "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[align-trigger=true]:animate-none data-closed:animate-out data-open:animate-in",
+            "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95",
+            "relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100",
+            "data-[align-trigger=true]:animate-none data-closed:animate-out data-open:animate-in",
+            // group class enables cascade to SelectItem via group-data-[size=…]
+            "group/select-content",
             className
           )}
           data-align-trigger={alignItemWithTrigger}
+          data-size={size}
           data-slot="select-content"
           {...props}
         >
@@ -234,6 +355,10 @@ function SelectContent({
     </SelectPrimitive.Portal>
   );
 }
+
+// ---------------------------------------------------------------------------
+// SelectLabel
+// ---------------------------------------------------------------------------
 
 /** Muted section heading rendered above a {@link SelectGroup}. */
 function SelectLabel({
@@ -249,6 +374,10 @@ function SelectLabel({
   );
 }
 
+// ---------------------------------------------------------------------------
+// SelectItem
+// ---------------------------------------------------------------------------
+
 /**
  * A single selectable option inside {@link SelectContent}.
  *
@@ -259,6 +388,16 @@ function SelectLabel({
  * string it is used as the label; otherwise the raw `value` string
  * is used as a fallback. A checkmark indicator appears on the
  * selected item.
+ *
+ * Item padding and text size cascade automatically from the `data-size`
+ * written by the nearest {@link SelectContent} ancestor via the
+ * `group-data-[size=…]/select-content` pattern:
+ *
+ * | Size | Padding | Text size |
+ * |------|---------|-----------|
+ * | `sm` | `py-0.5` | `text-xs` |
+ * | `default` | `py-1` | `text-sm` |
+ * | `lg` | `py-1.5` | `text-base` |
  */
 function SelectItem({
   className,
@@ -280,7 +419,15 @@ function SelectItem({
   return (
     <SelectPrimitive.Item
       className={cn(
-        "relative flex w-full cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex w-full cursor-default select-none items-center gap-1.5 rounded-md pr-8 pl-1.5 outline-hidden",
+        "focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground",
+        "data-disabled:pointer-events-none data-disabled:opacity-50",
+        "[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "*:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        // size cascade from SelectContent group (default: py-1 text-sm)
+        "py-1 text-sm",
+        "group-data-[size=sm]/select-content:py-0.5 group-data-[size=sm]/select-content:text-xs",
+        "group-data-[size=lg]/select-content:py-1.5 group-data-[size=lg]/select-content:text-base",
         className
       )}
       data-slot="select-item"
@@ -305,6 +452,10 @@ function SelectItem({
   );
 }
 
+// ---------------------------------------------------------------------------
+// SelectSeparator
+// ---------------------------------------------------------------------------
+
 /** Thin horizontal divider between option groups in a {@link Select}. */
 function SelectSeparator({
   className,
@@ -318,6 +469,10 @@ function SelectSeparator({
     />
   );
 }
+
+// ---------------------------------------------------------------------------
+// Scroll buttons
+// ---------------------------------------------------------------------------
 
 /**
  * Arrow button that appears at the top of {@link SelectContent} when

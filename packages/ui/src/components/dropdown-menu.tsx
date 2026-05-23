@@ -6,6 +6,25 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
 import { cn } from "../utils/index";
 
+// ---------------------------------------------------------------------------
+// Size axis
+// ---------------------------------------------------------------------------
+
+/**
+ * The three size steps available on {@link DropdownMenuContent}.
+ *
+ * The size cascades from the content popup to every item via
+ * `data-size` on the popup element and `group-data-[size=…]` selectors on
+ * each item.
+ *
+ * | Value     | Item padding  | Item text |
+ * |-----------|---------------|-----------|
+ * | `sm`      | `px-1 py-0.5` | `text-xs` |
+ * | `default` | `px-1.5 py-1` | `text-sm` |
+ * | `lg`      | `px-2 py-1.5` | `text-sm` |
+ */
+type DropdownMenuSize = "sm" | "default" | "lg";
+
 /**
  * Floating list of actions that opens from a trigger button.
  *
@@ -37,7 +56,7 @@ import { cn } from "../utils/index";
  * ```tsx
  * <DropdownMenu>
  *   <DropdownMenuTrigger>Options</DropdownMenuTrigger>
- *   <DropdownMenuContent>
+ *   <DropdownMenuContent size="sm">
  *     <DropdownMenuLabel>My Account</DropdownMenuLabel>
  *     <DropdownMenuSeparator />
  *     <DropdownMenuItem>
@@ -76,19 +95,30 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
  * @remarks
  * `max-h-(--available-height)` and `overflow-y-auto` let the panel scroll
  * when the viewport is too short to show all items.
+ *
+ * **Size axis** — `size` is stamped onto the popup as `data-size`. Item
+ * components (`DropdownMenuItem`, etc.) read it via `group-data-[size=…]`
+ * selectors to scale their padding and text size.
  */
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  size = "default",
   className,
   ...props
 }: MenuPrimitive.Popup.Props &
   Pick<
     MenuPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
-  >) {
+  > & {
+    /**
+     * Controls item padding and text size for all items inside this menu.
+     * Cascades via `data-size` on the popup + `group-data-[size=…]` on items.
+     */
+    size?: DropdownMenuSize;
+  }) {
   return (
     <MenuPrimitive.Portal>
       {/* isolate prevents z-index bleed from ancestor stacking contexts */}
@@ -101,9 +131,12 @@ function DropdownMenuContent({
       >
         <MenuPrimitive.Popup
           className={cn(
+            // Named group so items can read data-size via group-data-[size=…]/dropdown-menu-content
+            "group/dropdown-menu-content",
             "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 max-h-(--available-height) w-(--anchor-width) min-w-32 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md outline-none ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in data-closed:overflow-hidden",
             className
           )}
+          data-size={size}
           data-slot="dropdown-menu-content"
           {...props}
         />
@@ -126,6 +159,8 @@ function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
  *
  * @remarks
  * `inset` adds `pl-7` to align with icon-bearing items in the same group.
+ * Text size and padding cascade from the nearest `data-size` ancestor via
+ * `group-data-[size=…]` selectors.
  */
 function DropdownMenuLabel({
   className,
@@ -137,7 +172,12 @@ function DropdownMenuLabel({
   return (
     <MenuPrimitive.GroupLabel
       className={cn(
+        // default
         "px-1.5 py-1 font-medium text-muted-foreground text-xs data-inset:pl-7",
+        // sm — tighter
+        "group-data-[size=sm]/dropdown-menu-content:px-1 group-data-[size=sm]/dropdown-menu-content:py-0.5",
+        // lg — looser
+        "group-data-[size=lg]/dropdown-menu-content:px-2 group-data-[size=lg]/dropdown-menu-content:py-1.5",
         className
       )}
       data-inset={inset}
@@ -157,6 +197,8 @@ function DropdownMenuLabel({
  *   to signal an irreversible action.
  * - Optionally append a {@link DropdownMenuShortcut} as the last child to
  *   display a keyboard hint.
+ * - Padding and text size cascade from the nearest `data-size` popup
+ *   element via `group-data-[size=…]` selectors.
  */
 function DropdownMenuItem({
   className,
@@ -170,7 +212,12 @@ function DropdownMenuItem({
   return (
     <MenuPrimitive.Item
       className={cn(
+        // Base (default size)
         "group/dropdown-menu-item relative flex cursor-default select-none items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-[variant=destructive]:text-destructive data-disabled:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[variant=destructive]:*:[svg]:text-destructive",
+        // sm override — tighter padding + smaller text
+        "group-data-[size=sm]/dropdown-menu-content:px-1 group-data-[size=sm]/dropdown-menu-content:py-0.5 group-data-[size=sm]/dropdown-menu-content:text-xs",
+        // lg override — looser padding
+        "group-data-[size=lg]/dropdown-menu-content:px-2 group-data-[size=lg]/dropdown-menu-content:py-1.5",
         className
       )}
       data-inset={inset}
@@ -196,6 +243,7 @@ function DropdownMenuSub({ ...props }: MenuPrimitive.SubmenuRoot.Props) {
  *
  * @remarks
  * `inset` adds `pl-7` indent for alignment with icon items.
+ * Padding and text size cascade from the nearest `data-size` popup element.
  */
 function DropdownMenuSubTrigger({
   className,
@@ -208,7 +256,12 @@ function DropdownMenuSubTrigger({
   return (
     <MenuPrimitive.SubmenuTrigger
       className={cn(
+        // Base (default size)
         "flex cursor-default select-none items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-open:bg-accent data-popup-open:bg-accent data-inset:pl-7 data-open:text-accent-foreground data-popup-open:text-accent-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // sm override
+        "group-data-[size=sm]/dropdown-menu-content:px-1 group-data-[size=sm]/dropdown-menu-content:py-0.5 group-data-[size=sm]/dropdown-menu-content:text-xs",
+        // lg override
+        "group-data-[size=lg]/dropdown-menu-content:px-2 group-data-[size=lg]/dropdown-menu-content:py-1.5",
         className
       )}
       data-inset={inset}
@@ -265,6 +318,7 @@ function DropdownMenuSubContent({
  *
  * @remarks
  * `inset` adds `pl-7` indent to align with other items.
+ * Padding and text size cascade from the nearest `data-size` popup element.
  */
 function DropdownMenuCheckboxItem({
   className,
@@ -279,7 +333,12 @@ function DropdownMenuCheckboxItem({
     <MenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
+        // Base (default size)
         "relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // sm override
+        "group-data-[size=sm]/dropdown-menu-content:py-0.5 group-data-[size=sm]/dropdown-menu-content:pl-1 group-data-[size=sm]/dropdown-menu-content:text-xs",
+        // lg override
+        "group-data-[size=lg]/dropdown-menu-content:py-1.5 group-data-[size=lg]/dropdown-menu-content:pl-2",
         className
       )}
       data-inset={inset}
@@ -322,6 +381,7 @@ function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
  *
  * @remarks
  * `inset` adds `pl-7` indent to align with other items.
+ * Padding and text size cascade from the nearest `data-size` popup element.
  */
 function DropdownMenuRadioItem({
   className,
@@ -334,7 +394,12 @@ function DropdownMenuRadioItem({
   return (
     <MenuPrimitive.RadioItem
       className={cn(
+        // Base (default size)
         "relative flex cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // sm override
+        "group-data-[size=sm]/dropdown-menu-content:py-0.5 group-data-[size=sm]/dropdown-menu-content:pl-1 group-data-[size=sm]/dropdown-menu-content:text-xs",
+        // lg override
+        "group-data-[size=lg]/dropdown-menu-content:py-1.5 group-data-[size=lg]/dropdown-menu-content:pl-2",
         className
       )}
       data-inset={inset}

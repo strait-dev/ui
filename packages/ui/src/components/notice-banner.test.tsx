@@ -126,7 +126,9 @@ describe("NoticeBanner", () => {
         <button type="button">Action</button>
       </NoticeBannerAction>
     );
-    const action = document.querySelector("[data-slot='notice-banner-action']");
+    // NoticeBannerAction is now an alias for BannerActions, so the slot name
+    // updated to "banner-actions".
+    const action = document.querySelector("[data-slot='banner-actions']");
     expect(action).toBeInTheDocument();
   });
 });

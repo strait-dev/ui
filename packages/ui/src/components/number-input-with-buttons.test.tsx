@@ -141,4 +141,13 @@ describe("NumberInputWithButtons", () => {
       container.querySelector("[data-slot='increment-button']")
     ).toBeInTheDocument();
   });
+
+  it("size='sm' applies h-7 to the input group", () => {
+    const { container } = render(
+      <NumberInputWithButtons label="Quantity" name="qty" size="sm" />
+    );
+    expect(container.querySelector("[data-slot='input-group']")).toHaveClass(
+      "h-7"
+    );
+  });
 });

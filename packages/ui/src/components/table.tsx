@@ -1,8 +1,35 @@
 "use client";
 
+import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
-
 import { cn } from "../utils/index";
+
+// ---------------------------------------------------------------------------
+// tableVariants — drives the `variant` axis on the root <table> element.
+// ---------------------------------------------------------------------------
+
+/**
+ * CVA variants for the `Table` component.
+ *
+ * - `default`  — no extra treatment (existing behaviour).
+ * - `striped`  — alternating body-row background via `even:bg-muted/50`.
+ * - `bordered` — cell and row borders on every `th`/`td`.
+ */
+export const tableVariants = cva("w-full caption-bottom text-sm", {
+  variants: {
+    variant: {
+      default: "",
+      striped: "[&_tbody_tr:nth-child(even)]:bg-muted/50",
+      bordered:
+        "[&_td]:border [&_th]:border [&_thead_tr]:border-b [&_tr]:border-b",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+type TableVariantProps = VariantProps<typeof tableVariants>;
 
 /**
  * Responsive data table with a horizontally scrollable container.
@@ -21,10 +48,19 @@ import { cn } from "../utils/index";
  *   libraries.
  * - Cells with a checkbox (`[role=checkbox]`) automatically shed their
  *   right padding via a `:has` selector.
+ * - `size` (`"sm" | "default" | "lg"`) cascades to header and data cells
+ *   via a `data-size` attribute on the container div and
+ *   `group-data-[size=…]/table` Tailwind selectors.
+ *   - `sm`:  `h-6 px-1.5 text-xs`
+ *   - `default`: `h-7 px-2 text-sm` (unchanged)
+ *   - `lg`:  `h-9 px-3 text-sm`
+ * - `variant` (`"default" | "striped" | "bordered"`) controls row/cell
+ *   decoration. `striped` zebra-stripes even body rows; `bordered` adds
+ *   borders to every cell and row; `default` leaves the existing style.
  *
  * @example
  * ```tsx
- * <Table>
+ * <Table size="lg" variant="striped">
  *   <TableHeader>
  *     <TableRow>
  *       <TableHead>Name</TableHead>
@@ -40,15 +76,23 @@ import { cn } from "../utils/index";
  * </Table>
  * ```
  */
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({
+  className,
+  size = "default",
+  variant = "default",
+  ...props
+}: React.ComponentProps<"table"> &
+  TableVariantProps & { size?: "sm" | "default" | "lg" }) {
   return (
-    // Outer div provides horizontal scroll without clipping sticky columns
+    // Outer div provides horizontal scroll without clipping sticky columns.
+    // `group/table` + `data-size` propagate size down to cells.
     <div
-      className="relative w-full overflow-x-auto"
+      className="group/table relative w-full overflow-x-auto"
+      data-size={size}
       data-slot="table-container"
     >
       <table
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn(tableVariants({ variant }), className)}
         data-slot="table"
         {...props}
       />
@@ -113,13 +157,25 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   );
 }
 
-/** Column header cell (`<th>`) with consistent height and typography for a
- * {@link Table}. */
+/**
+ * Column header cell (`<th>`) with consistent height and typography for a
+ * {@link Table}.
+ *
+ * Height and padding respond to the `size` set on the root {@link Table}:
+ * - `sm`:  `h-6 px-1.5 text-xs`
+ * - `default`: `h-7 px-2` (unchanged)
+ * - `lg`:  `h-9 px-3`
+ */
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
+        // default size
         "h-7 whitespace-nowrap px-2 text-left align-middle font-medium text-foreground [&:has([role=checkbox])]:pr-0",
+        // sm size
+        "group-data-[size=sm]/table:h-6 group-data-[size=sm]/table:px-1.5 group-data-[size=sm]/table:text-xs",
+        // lg size
+        "group-data-[size=lg]/table:h-9 group-data-[size=lg]/table:px-3",
         className
       )}
       data-slot="table-head"
@@ -128,13 +184,25 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   );
 }
 
-/** Data cell (`<td>`) with consistent height and padding for a
- * {@link Table}. */
+/**
+ * Data cell (`<td>`) with consistent height and padding for a
+ * {@link Table}.
+ *
+ * Height and padding respond to the `size` set on the root {@link Table}:
+ * - `sm`:  `h-6 px-1.5 text-xs`
+ * - `default`: `h-7 px-2` (unchanged)
+ * - `lg`:  `h-9 px-3`
+ */
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
       className={cn(
+        // default size
         "h-7 whitespace-nowrap px-2 align-middle [&:has([role=checkbox])]:pr-0",
+        // sm size
+        "group-data-[size=sm]/table:h-6 group-data-[size=sm]/table:px-1.5 group-data-[size=sm]/table:text-xs",
+        // lg size
+        "group-data-[size=lg]/table:h-9 group-data-[size=lg]/table:px-3",
         className
       )}
       data-slot="table-cell"

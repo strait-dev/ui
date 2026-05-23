@@ -35,6 +35,8 @@ const meta: Meta<typeof Tooltip> = {
           "keyboard shortcut.",
           "",
           "Placement is controlled by `side` and `align` on `TooltipContent`.",
+          "`TooltipContent` also accepts `variant` (`default | light`) and",
+          "`size` (`default | sm`) to control the surface colour and density.",
         ].join("\n"),
       },
     },
@@ -46,7 +48,12 @@ const meta: Meta<typeof Tooltip> = {
       </TooltipProvider>
     ),
   ],
-  argTypes: {},
+  argTypes: {
+    open: {
+      control: "boolean",
+      description: "Controlled open state.",
+    },
+  },
 };
 
 export default meta;
@@ -232,6 +239,51 @@ export const Toolbar: Story = {
           </TooltipContent>
         </Tooltip>
       ))}
+    </div>
+  ),
+};
+
+/**
+ * All `variant` and `size` combinations shown side-by-side.
+ * Tooltips are forced open with `open` so they render in the canvas without
+ * needing hover/focus.
+ */
+export const Variants: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      {/* variant row */}
+      <div className="flex flex-wrap items-end gap-12">
+        {(["default", "light"] as const).map((variant) => (
+          <div className="flex flex-col items-center gap-3" key={variant}>
+            <Tooltip open>
+              <TooltipTrigger
+                render={<Button variant="outline">{variant}</Button>}
+              />
+              <TooltipContent variant={variant}>
+                Tooltip — {variant}
+              </TooltipContent>
+            </Tooltip>
+            <span className="text-muted-foreground text-xs">
+              variant="{variant}"
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* size row */}
+      <div className="flex flex-wrap items-end gap-12">
+        {(["default", "sm"] as const).map((size) => (
+          <div className="flex flex-col items-center gap-3" key={size}>
+            <Tooltip open>
+              <TooltipTrigger
+                render={<Button variant="outline">{size}</Button>}
+              />
+              <TooltipContent size={size}>Tooltip — {size}</TooltipContent>
+            </Tooltip>
+            <span className="text-muted-foreground text-xs">size="{size}"</span>
+          </div>
+        ))}
+      </div>
     </div>
   ),
 };

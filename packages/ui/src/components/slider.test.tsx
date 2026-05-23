@@ -72,4 +72,68 @@ describe("Slider", () => {
     expect(input).toHaveAttribute("min", "0");
     expect(input).toHaveAttribute("max", "10");
   });
+
+  /* ------------------------------------------------------------------ */
+  /* Size variant                                                        */
+  /* ------------------------------------------------------------------ */
+
+  it("applies sm track thickness class when size=sm", () => {
+    const { container } = render(
+      <Slider aria-label="Volume" defaultValue={[40]} size="sm" />
+    );
+    const track = container.querySelector("[data-slot='slider-track']");
+    // sm size → data-horizontal:h-0.5 applied via cva
+    expect(track?.className).toContain("h-0.5");
+  });
+
+  it("applies lg track thickness class when size=lg", () => {
+    const { container } = render(
+      <Slider aria-label="Volume" defaultValue={[40]} size="lg" />
+    );
+    const track = container.querySelector("[data-slot='slider-track']");
+    expect(track?.className).toContain("h-1.5");
+  });
+
+  it("applies sm thumb size class when size=sm", () => {
+    const { container } = render(
+      <Slider aria-label="Volume" defaultValue={[40]} size="sm" />
+    );
+    const thumb = container.querySelector("[data-slot='slider-thumb']");
+    expect(thumb).toHaveClass("size-2.5");
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Intent variant                                                      */
+  /* ------------------------------------------------------------------ */
+
+  it("applies success bg class to the range when intent=success", () => {
+    const { container } = render(
+      <Slider aria-label="Volume" defaultValue={[40]} intent="success" />
+    );
+    const range = container.querySelector("[data-slot='slider-range']");
+    expect(range).toHaveClass("bg-success");
+  });
+
+  it("applies destructive border/ring class to the thumb when intent=destructive", () => {
+    const { container } = render(
+      <Slider aria-label="Volume" defaultValue={[40]} intent="destructive" />
+    );
+    const thumb = container.querySelector("[data-slot='slider-thumb']");
+    expect(thumb).toHaveClass("border-destructive");
+  });
+
+  it("combines size=lg and intent=warning correctly", () => {
+    const { container } = render(
+      <Slider
+        aria-label="Volume"
+        defaultValue={[40]}
+        intent="warning"
+        size="lg"
+      />
+    );
+    const range = container.querySelector("[data-slot='slider-range']");
+    const thumb = container.querySelector("[data-slot='slider-thumb']");
+    expect(range).toHaveClass("bg-warning");
+    expect(thumb).toHaveClass("size-4");
+  });
 });

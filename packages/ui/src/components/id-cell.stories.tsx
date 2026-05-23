@@ -27,9 +27,16 @@ const meta: Meta<typeof IdCell> = {
       control: "text",
       description: "The full ID string to display and copy.",
     },
+    length: {
+      control: { type: "number", min: 1, step: 1 },
+      description:
+        "Number of characters to show before the trailing ellipsis. Defaults to `6`.",
+      table: { defaultValue: { summary: "6" } },
+    },
   },
   args: {
     id: "usr_01HZ8B3X9KFQW7MPNVE2TDCYS",
+    length: 6,
   },
   decorators: [
     (Story) => (
@@ -72,5 +79,26 @@ export const LongHash: Story = {
 export const MinimalId: Story = {
   args: {
     id: "abc123",
+  },
+};
+
+/**
+ * Three columns showing the same ID truncated to different `length` values.
+ * Demonstrates how `length` lets the column width drive how much context is
+ * visible without changing the copy behaviour.
+ */
+export const LengthDemo: Story = {
+  render: (args) => {
+    const lengths: number[] = [4, 6, 10];
+    return (
+      <div className="flex flex-wrap items-center gap-6">
+        {lengths.map((len) => (
+          <div className="flex flex-col items-start gap-1" key={len}>
+            <span className="text-muted-foreground text-xs">length={len}</span>
+            <IdCell {...args} length={len} />
+          </div>
+        ))}
+      </div>
+    );
   },
 };

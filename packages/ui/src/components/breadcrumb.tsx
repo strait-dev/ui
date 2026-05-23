@@ -5,8 +5,25 @@ import {
   MoreHorizontalCircle01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "../utils/index";
+
+// ---------------------------------------------------------------------------
+// Size axis
+// ---------------------------------------------------------------------------
+
+/**
+ * The three size steps available on the `Breadcrumb` root.
+ *
+ * - `sm`  — compact text (`text-xs`) with tighter gap (`gap-1`).
+ * - `default` — the original look (`text-sm`, `gap-1.5`).
+ * - `lg`  — larger text (`text-base`) with a wider gap (`gap-2`).
+ */
+type BreadcrumbSize = "sm" | "default" | "lg";
+
+// ---------------------------------------------------------------------------
+// Breadcrumb (root)
+// ---------------------------------------------------------------------------
 
 /**
  * Accessible navigation landmark that shows the user's location in the
@@ -26,18 +43,27 @@ import { cn } from "../utils/index";
  * and `aria-disabled="true"` so it is identified as the final crumb but
  * is intentionally non-interactive.
  *
+ * **Size axis** — pass `size` (`sm | default | lg`) on the root to scale
+ * text size and gap uniformly across all descendant parts via a
+ * `data-size` attribute that child parts read with
+ * `group-data-[size=…]` selectors.
+ *
+ * **Default separator** — pass `separator` as a React node to use the same
+ * separator for every position without manually placing
+ * `<BreadcrumbSeparator>` between each item.  Per-item separators
+ * (explicit `<BreadcrumbSeparator>`) always take precedence.
+ *
  * @example
  * ```tsx
- * <Breadcrumb>
+ * // Compact breadcrumb with a slash separator for every crumb.
+ * <Breadcrumb size="sm" separator={<span>/</span>}>
  *   <BreadcrumbList>
  *     <BreadcrumbItem>
  *       <BreadcrumbLink href="/">Home</BreadcrumbLink>
  *     </BreadcrumbItem>
- *     <BreadcrumbSeparator />
  *     <BreadcrumbItem>
  *       <BreadcrumbLink href="/docs">Docs</BreadcrumbLink>
  *     </BreadcrumbItem>
- *     <BreadcrumbSeparator />
  *     <BreadcrumbItem>
  *       <BreadcrumbPage>Components</BreadcrumbPage>
  *     </BreadcrumbItem>
@@ -45,24 +71,64 @@ import { cn } from "../utils/index";
  * </Breadcrumb>
  * ```
  */
-function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
+function Breadcrumb({
+  className,
+  size = "default",
+  separator,
+  ...props
+}: React.ComponentProps<"nav"> & {
+  /** Controls text size and gap across all descendant breadcrumb parts. */
+  size?: BreadcrumbSize;
+  /**
+   * Default separator node rendered between every {@link BreadcrumbItem}
+   * when the caller omits explicit `<BreadcrumbSeparator>` elements.
+   * Forwarded via React context so each `BreadcrumbSeparator` can
+   * fall back to it.
+   */
+  separator?: React.ReactNode;
+}) {
   return (
-    <nav
-      aria-label="breadcrumb"
-      className={cn(className)}
-      data-slot="breadcrumb"
-      {...props}
-    />
+    <BreadcrumbSeparatorContext.Provider value={separator}>
+      <nav
+        aria-label="breadcrumb"
+        className={cn(className)}
+        data-size={size}
+        data-slot="breadcrumb"
+        {...props}
+      />
+    </BreadcrumbSeparatorContext.Provider>
   );
 }
 
-/** Ordered list that lays out {@link BreadcrumbItem} elements in a wrapping
- *  flex row with muted text styling. */
+// ---------------------------------------------------------------------------
+// Context — propagates the root `separator` prop down to BreadcrumbSeparator
+// ---------------------------------------------------------------------------
+
+const BreadcrumbSeparatorContext = React.createContext<
+  React.ReactNode | undefined
+>(undefined);
+
+// ---------------------------------------------------------------------------
+// BreadcrumbList
+// ---------------------------------------------------------------------------
+
+/**
+ * Ordered list that lays out {@link BreadcrumbItem} elements in a wrapping
+ * flex row with muted text styling.
+ *
+ * Reads the `data-size` set by the parent `Breadcrumb` root via
+ * `group-data-[size=…]` selectors to apply the matching text-size and gap.
+ */
 function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   return (
     <ol
       className={cn(
+        // Base (default size)
         "wrap-break-word flex flex-wrap items-center gap-1.5 text-muted-foreground text-sm",
+        // sm override — read from the nav ancestor's data-size
+        "in-data-[size=sm]:gap-1 in-data-[size=sm]:text-xs",
+        // lg override
+        "in-data-[size=lg]:gap-2 in-data-[size=lg]:text-base",
         className
       )}
       data-slot="breadcrumb-list"
@@ -71,20 +137,36 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// BreadcrumbItem
+// ---------------------------------------------------------------------------
+
 /**
  * Single list item inside a {@link BreadcrumbList}; wraps a
  * {@link BreadcrumbLink} or {@link BreadcrumbPage} together with any
  * adjacent {@link BreadcrumbSeparator}.
+ *
+ * Gap between the link/page text and an inline separator is also scaled
+ * by the ancestor `data-size` via `in-data-[size=…]` selectors.
  */
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
-      className={cn("inline-flex items-center gap-1", className)}
+      className={cn(
+        "inline-flex items-center gap-1",
+        "in-data-[size=sm]:gap-0.5",
+        "in-data-[size=lg]:gap-1.5",
+        className
+      )}
       data-slot="breadcrumb-item"
       {...props}
     />
   );
 }
+
+// ---------------------------------------------------------------------------
+// BreadcrumbLink
+// ---------------------------------------------------------------------------
 
 /**
  * Navigable ancestor link inside a {@link BreadcrumbItem}.
@@ -112,6 +194,10 @@ function BreadcrumbLink({
   });
 }
 
+// ---------------------------------------------------------------------------
+// BreadcrumbPage
+// ---------------------------------------------------------------------------
+
 /**
  * Non-interactive indicator for the current page in a {@link Breadcrumb}.
  *
@@ -134,17 +220,31 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// BreadcrumbSeparator
+// ---------------------------------------------------------------------------
+
 /**
  * Decorative divider placed between {@link BreadcrumbItem} elements.
  *
- * Defaults to an arrow icon; pass any `children` to substitute a custom
- * separator. Hidden from assistive technology via `aria-hidden`.
+ * Resolution order for the rendered separator content:
+ * 1. Explicit `children` prop on this instance.
+ * 2. The `separator` prop passed to the root {@link Breadcrumb} (propagated
+ *    via React context).
+ * 3. The default arrow icon.
+ *
+ * Hidden from assistive technology via `aria-hidden`.
  */
 function BreadcrumbSeparator({
   children,
   className,
   ...props
 }: React.ComponentProps<"li">) {
+  const contextSeparator = React.useContext(BreadcrumbSeparatorContext);
+  const content = children ?? contextSeparator ?? (
+    <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />
+  );
+
   return (
     <li
       aria-hidden="true"
@@ -153,10 +253,14 @@ function BreadcrumbSeparator({
       role="presentation"
       {...props}
     >
-      {children ?? <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />}
+      {content}
     </li>
   );
 }
+
+// ---------------------------------------------------------------------------
+// BreadcrumbEllipsis
+// ---------------------------------------------------------------------------
 
 /**
  * Visual placeholder used in place of collapsed middle crumbs in a

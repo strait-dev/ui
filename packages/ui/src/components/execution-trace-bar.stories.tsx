@@ -38,6 +38,13 @@ const meta: Meta<typeof ExecutionTraceBar> = {
       description: "Toggle the segment legend below the bar.",
       table: { defaultValue: { summary: "true" } },
     },
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description:
+        "Bar track height. `sm` is slim for dense UIs; `lg` is thicker for hero views.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     segments: [
@@ -46,6 +53,7 @@ const meta: Meta<typeof ExecutionTraceBar> = {
       { label: "Gamma", value: 25 },
     ],
     showLegend: true,
+    size: "default",
   },
 };
 
@@ -94,4 +102,27 @@ export const WithoutLegend: Story = {
     ],
     formatValue: (n) => `${n}ms`,
   },
+};
+
+/** All three `size` values stacked for visual comparison. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex max-w-xl flex-col gap-6">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div className="flex flex-col gap-1" key={size}>
+          <span className="text-muted-foreground text-xs">size="{size}"</span>
+          <ExecutionTraceBar
+            formatValue={(n) => `${n}ms`}
+            segments={[
+              { label: "Queue", value: 18 },
+              { label: "Execution", value: 412 },
+              { label: "Serialization", value: 34 },
+              { label: "Network", value: 56 },
+            ]}
+            size={size}
+          />
+        </div>
+      ))}
+    </div>
+  ),
 };

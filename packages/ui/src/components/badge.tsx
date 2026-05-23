@@ -1,5 +1,9 @@
+"use client";
+
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { Cancel01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "../utils/index";
@@ -55,6 +59,8 @@ const badgeVariants = cva(
           "border-border bg-background text-destructive-accent dark:bg-input/30",
         "invert-outline":
           "border-border bg-background text-invert-foreground dark:bg-input/30",
+        "secondary-outline":
+          "border-border bg-background text-secondary-foreground dark:bg-input/30",
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
@@ -82,6 +88,48 @@ const badgeVariants = cva(
  * framework `<Link>`).
  */
 interface BadgeProps extends useRender.ComponentProps<"span"> {
+  /**
+   * When `true`, appends a dismiss `<button>` containing {@link Cancel01Icon}.
+   *
+   * Clicking fires {@link BadgeProps.onDismiss} and stops event propagation so
+   * parent click handlers are not triggered.
+   *
+   * @remarks
+   * Do **not** combine `dismissible` with `render`-as-`<button>` — nested
+   * `<button>` elements are invalid HTML and cause accessibility failures.
+   */
+  dismissible?: boolean;
+  /**
+   * When `true`, prepends a small leading dot before children (and before
+   * `iconLeft`). The dot colour tracks `currentColor` (`bg-current`) so it
+   * inherits the variant's text colour automatically.
+   *
+   * Pair with {@link BadgeProps.dotClassName} to override the dot colour.
+   */
+  dot?: boolean;
+  /** Extra Tailwind classes merged onto the leading dot `<span>`. */
+  dotClassName?: string;
+  /**
+   * Icon rendered immediately before children.
+   *
+   * Accepts a `IconSvgElement` from `@hugeicons/core-free-icons`.
+   * The icon is sized to `size-3` (12 × 12 px).
+   */
+  iconLeft?: IconSvgElement;
+  /**
+   * Icon rendered immediately after children.
+   *
+   * Accepts a `IconSvgElement` from `@hugeicons/core-free-icons`.
+   * The icon is sized to `size-3` (12 × 12 px).
+   */
+  iconRight?: IconSvgElement;
+  /**
+   * When `true`, applies `font-mono uppercase tracking-wide` for monospaced
+   * label styling — useful for version numbers, codes, or IDs.
+   */
+  mono?: boolean;
+  /** Called when the dismiss button is clicked. */
+  onDismiss?: () => void;
   size?: VariantProps<typeof badgeVariants>["size"];
   variant?: VariantProps<typeof badgeVariants>["variant"];
 }
@@ -97,10 +145,14 @@ interface BadgeProps extends useRender.ComponentProps<"span"> {
  * @remarks
  * - The full range of semantic colours is available through the `variant`
  *   prop: solid fills, tinted `*-light` fills, and bordered `*-outline`
- *   options.
+ *   options (including the new `secondary-outline`).
  * - When rendered as an interactive element the badge gains a visible
  *   focus ring via `focus-visible:ring-3`.
  * - Embedded SVG icons are automatically sized to 12 × 12.
+ * - Use `iconLeft` / `iconRight` for icons without wrapping them in a
+ *   fragment — they go through `HugeiconsIcon` internally.
+ * - `dismissible` should **not** be combined with `render`-as-`<button>`:
+ *   nesting `<button>` inside `<button>` is invalid HTML.
  *
  * @example
  * ```tsx
@@ -109,19 +161,73 @@ interface BadgeProps extends useRender.ComponentProps<"span"> {
  * <Badge variant="outline" render={<a href="/tags/design" />}>
  *   Design
  * </Badge>
+ * <Badge variant="info-light" iconLeft={InformationCircleIcon} dismissible onDismiss={() => setOpen(false)}>
+ *   Info
+ * </Badge>
+ * <Badge variant="secondary" dot mono>v1.2.3</Badge>
  * ```
  */
-function Badge({ className, variant, size, render, ...props }: BadgeProps) {
+function Badge({
+  className,
+  variant,
+  size,
+  render,
+  children,
+  iconLeft,
+  iconRight,
+  dot,
+  dotClassName,
+  dismissible,
+  onDismiss,
+  mono,
+  ...props
+}: BadgeProps) {
+  const content = (
+    <>
+      {dot ? (
+        <span
+          aria-hidden
+          className={cn(
+            "size-1.5 shrink-0 rounded-full bg-current",
+            dotClassName
+          )}
+          data-slot="badge-dot"
+        />
+      ) : null}
+      {iconLeft ? <HugeiconsIcon className="size-3" icon={iconLeft} /> : null}
+      {children}
+      {iconRight ? <HugeiconsIcon className="size-3" icon={iconRight} /> : null}
+      {dismissible ? (
+        <button
+          aria-label="Dismiss"
+          className="-mr-0.5 ml-0.5 inline-flex items-center justify-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current"
+          data-slot="badge-dismiss"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDismiss?.();
+          }}
+          type="button"
+        >
+          <HugeiconsIcon className="size-3" icon={Cancel01Icon} />
+        </button>
+      ) : null}
+    </>
+  );
+
   const defaultProps = {
     "data-slot": "badge",
-    className: cn(badgeVariants({ variant, size, className })),
+    className: cn(
+      badgeVariants({ variant, size }),
+      mono && "font-mono uppercase tracking-wide",
+      className
+    ),
   };
 
   // useRender lets the badge adopt any element while keeping its styles
   return useRender({
     defaultTagName: "span",
     render,
-    props: mergeProps<"span">(defaultProps, props),
+    props: mergeProps<"span">(defaultProps, { ...props, children: content }),
   });
 }
 

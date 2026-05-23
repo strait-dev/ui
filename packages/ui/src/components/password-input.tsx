@@ -3,7 +3,7 @@
 import { ViewIcon, ViewOffIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
-import { Input } from "../components/input";
+import { Input, type InputProps } from "../components/input";
 import { cn } from "../utils/index";
 
 /**
@@ -11,14 +11,19 @@ import { cn } from "../utils/index";
  *
  * @remarks
  * `type` is omitted because the component manages `"password"` / `"text"`
- * internally via the show/hide toggle.
+ * internally via the show/hide toggle. `size` is forwarded to the underlying
+ * `Input` — use `"sm"` | `"default"` | `"lg"` to control field height.
  */
-export type PasswordInputProps = Omit<React.ComponentProps<"input">, "type"> & {
-  label?: string;
-  showPasswordLabel?: string;
-  hidePasswordLabel?: string;
-  containerClassName?: string;
-};
+export type PasswordInputProps = Omit<
+  React.ComponentProps<"input">,
+  "type" | "size"
+> &
+  Pick<InputProps, "size"> & {
+    label?: string;
+    showPasswordLabel?: string;
+    hidePasswordLabel?: string;
+    containerClassName?: string;
+  };
 
 /**
  * A password field with an inline toggle button that reveals or masks the
@@ -52,6 +57,7 @@ function PasswordInput({
   showPasswordLabel = "Show password",
   hidePasswordLabel = "Hide password",
   containerClassName,
+  size = "default",
   ...props
 }: PasswordInputProps) {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -76,6 +82,7 @@ function PasswordInput({
         <Input
           className={cn("pe-9", className)}
           data-slot="input"
+          size={size}
           type={isVisible ? "text" : "password"}
           {...props}
         />

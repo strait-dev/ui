@@ -29,9 +29,23 @@ const meta = {
       control: "text",
       description: "Label text / content.",
     },
+    size: {
+      control: "inline-radio",
+      options: ["sm", "default", "lg"],
+      description: "Text size of the label.",
+      table: { defaultValue: { summary: "default" } },
+    },
+    required: {
+      control: "boolean",
+      description:
+        "When true, appends an aria-hidden red asterisk after the label text.",
+      table: { defaultValue: { summary: "false" } },
+    },
   },
   args: {
     children: "Email address",
+    size: "default",
+    required: false,
   },
 } satisfies Meta<typeof Label>;
 
@@ -41,6 +55,21 @@ type Story = StoryObj<typeof meta>;
 
 /** Interactive playground. */
 export const Playground: Story = {};
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/** `sm`, `default`, and `lg` text sizes. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-3">
+      <Label size="sm">Small label (text-xs)</Label>
+      <Label size="default">Default label (text-sm)</Label>
+      <Label size="lg">Large label (text-base)</Label>
+    </div>
+  ),
+};
 
 /* ------------------------------------------------------------------ */
 /* Compositions                                                        */
@@ -58,13 +87,12 @@ export const WithInput: Story = {
   ),
 };
 
-/** Label paired with a required field — asterisk hints at the requirement. */
+/** Label with the `required` prop — appends an aria-hidden asterisk. */
 export const Required: Story = {
   render: (args) => (
     <div className="flex w-64 flex-col gap-1.5">
-      <Label {...args} htmlFor="required-input">
+      <Label {...args} htmlFor="required-input" required>
         Full name
-        <span className="text-destructive">*</span>
       </Label>
       <Input id="required-input" placeholder="Jane Doe" required type="text" />
     </div>

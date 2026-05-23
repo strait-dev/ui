@@ -37,6 +37,14 @@ describe("Card", () => {
     );
   });
 
+  it("applies data-size='lg' when size='lg'", () => {
+    const { container } = render(<Card size="lg">Content</Card>);
+    expect(container.querySelector("[data-slot='card']")).toHaveAttribute(
+      "data-size",
+      "lg"
+    );
+  });
+
   it("forwards extra className", () => {
     const { container } = render(
       <Card className="my-custom-class">Content</Card>
@@ -46,6 +54,84 @@ describe("Card", () => {
     );
   });
 });
+
+/* ------------------------------------------------------------------ */
+/* Variant axis                                                        */
+/* ------------------------------------------------------------------ */
+
+describe("Card variant prop", () => {
+  it("renders variant='default' with bg-card and ring classes", () => {
+    const { container } = render(<Card variant="default">Content</Card>);
+    const card = container.querySelector("[data-slot='card']");
+    expect(card?.className).toContain("bg-card");
+    expect(card?.className).toContain("ring-1");
+  });
+
+  it("renders variant='outline' with border class and bg-card", () => {
+    const { container } = render(<Card variant="outline">Content</Card>);
+    const card = container.querySelector("[data-slot='card']");
+    expect(card?.className).toContain("border");
+    expect(card?.className).toContain("bg-card");
+    // should NOT have ring-1
+    expect(card?.className).not.toContain("ring-1");
+  });
+
+  it("renders variant='ghost' with bg-transparent", () => {
+    const { container } = render(<Card variant="ghost">Content</Card>);
+    const card = container.querySelector("[data-slot='card']");
+    expect(card?.className).toContain("bg-transparent");
+    // should NOT have ring-1 or border from cardVariants
+    expect(card?.className).not.toContain("ring-1");
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* lg size cascade                                                     */
+/* ------------------------------------------------------------------ */
+
+describe("Card size='lg' cascade", () => {
+  it("applies lg gap/py classes on the root", () => {
+    const { container } = render(<Card size="lg">Content</Card>);
+    const card = container.querySelector("[data-slot='card']");
+    expect(card?.className).toContain("data-[size=lg]:gap-6");
+    expect(card?.className).toContain("data-[size=lg]:py-6");
+  });
+
+  it("applies lg px class on CardHeader", () => {
+    const { container } = render(
+      <Card size="lg">
+        <CardHeader>Header</CardHeader>
+      </Card>
+    );
+    const header = container.querySelector("[data-slot='card-header']");
+    expect(header?.className).toContain("group-data-[size=lg]/card:px-6");
+  });
+
+  it("applies lg px class on CardContent", () => {
+    const { container } = render(
+      <Card size="lg">
+        <CardContent>Body</CardContent>
+      </Card>
+    );
+    const content = container.querySelector("[data-slot='card-content']");
+    expect(content?.className).toContain("group-data-[size=lg]/card:px-6");
+  });
+
+  it("applies lg px/py classes on CardFooter", () => {
+    const { container } = render(
+      <Card size="lg">
+        <CardFooter>Footer</CardFooter>
+      </Card>
+    );
+    const footer = container.querySelector("[data-slot='card-footer']");
+    expect(footer?.className).toContain("group-data-[size=lg]/card:px-6");
+    expect(footer?.className).toContain("group-data-[size=lg]/card:py-3.5");
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Sub-parts                                                           */
+/* ------------------------------------------------------------------ */
 
 describe("CardHeader", () => {
   it("renders with the card-header data-slot", () => {

@@ -11,12 +11,31 @@ import { Command, CommandGroup, CommandItem, CommandList } from "./command";
 /** Default search debounce delay in milliseconds. */
 const DEFAULT_DEBOUNCE_TIME = 500;
 
+// ---------------------------------------------------------------------------
+// Size mappings
+// ---------------------------------------------------------------------------
+
+/**
+ * Size axis for {@link MultipleSelector}.
+ *
+ * | Value | Control min-height | Chip height | Chip text |
+ * |-------|--------------------|-------------|-----------|
+ * | `sm` | `min-h-8` | `h-6` | `text-xs` |
+ * | `default` | `min-h-[42px]` | `h-8` | `text-sm` |
+ */
+export type MultipleSelectorSize = "sm" | "default";
+
+// ---------------------------------------------------------------------------
+// Helper components
+// ---------------------------------------------------------------------------
+
 // Helper component to render selected option badges
 type SelectedBadgeProps = {
   option: Option;
   disabled?: boolean;
   badgeClassName?: string;
   onUnselect: (option: Option) => void;
+  size: MultipleSelectorSize;
 };
 
 const SelectedBadge: React.FC<SelectedBadgeProps> = ({
@@ -24,10 +43,15 @@ const SelectedBadge: React.FC<SelectedBadgeProps> = ({
   disabled,
   badgeClassName,
   onUnselect,
+  size,
 }) => (
   <div
     className={cn(
-      "relative inline-flex h-8 animate-fadeIn cursor-default items-center rounded-md border bg-background ps-3 pe-8 pl-3 font-medium text-secondary-foreground text-sm transition-all hover:bg-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 data-fixed:pe-3",
+      "relative inline-flex animate-fadeIn cursor-default items-center rounded-md border bg-background font-medium text-secondary-foreground transition-all hover:bg-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 data-fixed:pe-3",
+      // size variants for the chip
+      size === "sm"
+        ? "h-6 ps-2 pe-6 pl-2 text-xs"
+        : "h-8 ps-3 pe-8 pl-3 text-sm",
       badgeClassName
     )}
     data-disabled={disabled || undefined}
@@ -37,7 +61,10 @@ const SelectedBadge: React.FC<SelectedBadgeProps> = ({
     {option.label}
     <button
       aria-label="Remove"
-      className="absolute -inset-y-px -end-px flex size-8 items-center justify-center rounded-e-md border border-transparent p-0 text-muted-foreground/80 outline-none outline-hidden transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      className={cn(
+        "absolute -inset-y-px -end-px flex items-center justify-center rounded-e-md border border-transparent p-0 text-muted-foreground/80 outline-none outline-hidden transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        size === "sm" ? "size-6" : "size-8"
+      )}
       onClick={() => onUnselect(option)}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
@@ -385,6 +412,7 @@ type ClearAllButtonProps = {
   selected: Option[];
   setSelected: React.Dispatch<React.SetStateAction<Option[]>>;
   onChange?: (options: Option[]) => void;
+  size: MultipleSelectorSize;
 };
 
 const ClearAllButton: React.FC<ClearAllButtonProps> = ({
@@ -393,6 +421,7 @@ const ClearAllButton: React.FC<ClearAllButtonProps> = ({
   selected,
   setSelected,
   onChange,
+  size,
 }) => {
   const shouldHide =
     hideClearAllButton ||
@@ -410,7 +439,8 @@ const ClearAllButton: React.FC<ClearAllButtonProps> = ({
     <button
       aria-label="Clear all"
       className={cn(
-        "absolute end-0 top-0 flex size-9 items-center justify-center rounded-md border border-transparent text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        "absolute end-0 top-0 flex items-center justify-center rounded-md border border-transparent text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        size === "sm" ? "size-8" : "size-9",
         shouldHide ? "hidden" : null
       )}
       onClick={handleClear}
@@ -424,6 +454,10 @@ const ClearAllButton: React.FC<ClearAllButtonProps> = ({
     </button>
   );
 };
+
+// ---------------------------------------------------------------------------
+// Public types
+// ---------------------------------------------------------------------------
 
 /**
  * A single selectable option used throughout {@link MultipleSelector}.
@@ -502,6 +536,17 @@ type MultipleSelectorProps = {
   >;
   /** hide the clear all button. */
   hideClearAllButton?: boolean;
+  /**
+   * Size axis controlling control height and chip size.
+   *
+   * | Value | Control min-height | Chip height | Chip text |
+   * |-------|--------------------|-------------|-----------|
+   * | `sm` | `min-h-8` | `h-6` | `text-xs` |
+   * | `default` | `min-h-[42px]` | `h-8` | `text-sm` |
+   *
+   * @default "default"
+   */
+  size?: MultipleSelectorSize;
 };
 
 /**
@@ -515,6 +560,10 @@ export type MultipleSelectorRef = {
   focus: () => void;
   reset: () => void;
 };
+
+// ---------------------------------------------------------------------------
+// Utility hooks
+// ---------------------------------------------------------------------------
 
 /**
  * Returns a debounced copy of `value` that only updates after
@@ -677,6 +726,10 @@ function CreatableItem({
   return;
 }
 
+// ---------------------------------------------------------------------------
+// MultipleSelector
+// ---------------------------------------------------------------------------
+
 /**
  * A multi-value combobox that lets users select (and optionally
  * create) multiple options from a searchable dropdown list.
@@ -706,6 +759,10 @@ function CreatableItem({
  * {@link Option} object to bucket the dropdown items under labeled
  * groups.
  *
+ * **Size** — `size="sm"` renders a more compact control height and
+ * smaller chip badges. Defaults to `"default"` (unchanged original
+ * appearance).
+ *
  * Pair with a `<Label>` for accessible forms.
  *
  * @example
@@ -718,6 +775,11 @@ function CreatableItem({
  *   placeholder="Pick frameworks…"
  *   onChange={(opts) => console.log(opts)}
  * />
+ * ```
+ *
+ * @example Small size
+ * ```tsx
+ * <MultipleSelector size="sm" options={options} placeholder="Filter…" />
  * ```
  */
 function MultipleSelector({
@@ -744,6 +806,7 @@ function MultipleSelector({
   commandProps,
   inputProps,
   hideClearAllButton = false,
+  size = "default",
 }: MultipleSelectorProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
@@ -883,6 +946,9 @@ function MultipleSelector({
       ? !onSearch
       : commandProps.shouldFilter;
 
+  // Derive size-dependent classes
+  const controlMinH = size === "sm" ? "min-h-8" : "min-h-[42px]";
+
   return (
     <Command
       ref={dropdownRef}
@@ -900,7 +966,8 @@ function MultipleSelector({
       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: wrapper only focuses the inner input; the inner combobox input is itself fully keyboard accessible. */}
       <div
         className={cn(
-          "relative min-h-[42px] rounded-lg border border-input text-sm outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-aria-invalid:border-destructive has-disabled:opacity-50 has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
+          "relative rounded-lg border border-input text-sm outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-aria-invalid:border-destructive has-disabled:opacity-50 has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
+          controlMinH,
           {
             "p-1": selected.length !== 0,
             "cursor-text": !disabled && selected.length !== 0,
@@ -918,6 +985,7 @@ function MultipleSelector({
               key={option.value}
               onUnselect={handleUnselect}
               option={option}
+              size={size}
             />
           ))}
           {/* Avoid having the "Search" Icon */}
@@ -950,6 +1018,7 @@ function MultipleSelector({
             onChange={onChange}
             selected={selected}
             setSelected={setSelected}
+            size={size}
           />
         </div>
       </div>

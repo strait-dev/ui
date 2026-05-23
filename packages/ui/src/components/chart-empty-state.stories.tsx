@@ -38,11 +38,19 @@ const meta: Meta<typeof ChartEmptyState> = {
       control: "text",
       description: "Additional Tailwind classes merged onto the root element.",
     },
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description:
+        "Visual scale: `sm` for small panels, `default` unchanged, `lg` for hero states.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     message: "No data available for this period.",
     title: undefined,
     action: undefined,
+    size: "default",
   },
 };
 
@@ -81,4 +89,22 @@ export const CustomIcon: Story = {
     title: "Empty bar chart",
     message: "Run a query to populate this chart.",
   },
+};
+
+/** All three `size` values stacked for visual comparison. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col items-center gap-8">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div className="flex flex-col items-center gap-1" key={size}>
+          <span className="text-muted-foreground text-xs">size="{size}"</span>
+          <ChartEmptyState
+            message="No data available for this period."
+            size={size}
+            title="Nothing to display"
+          />
+        </div>
+      ))}
+    </div>
+  ),
 };

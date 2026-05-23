@@ -17,6 +17,18 @@ const meta = {
           "",
           "Accepts all native `<textarea>` attributes. Pass `aria-invalid={true}`",
           "to show the destructive validation state.",
+          "",
+          "### Size variants",
+          "The `size` prop controls the minimum height:",
+          "- `sm` — compact (`min-h-16`)",
+          "- `default` — standard baseline (`min-h-16`, unchanged)",
+          "- `lg` — tall (`min-h-32`)",
+          "",
+          "### Resize variants",
+          "The `resize` prop controls drag-resize behaviour:",
+          "- `none` — not resizable",
+          "- `vertical` — vertical only (default)",
+          "- `auto` — free resize in both axes",
         ].join("\n"),
       },
     },
@@ -32,12 +44,26 @@ const meta = {
     },
     rows: {
       control: { type: "number", min: 2, max: 20 },
-      description: "Initial visible row count.",
+      description:
+        "Initial visible row count (native attribute, independent of `size`).",
+    },
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description: "Controls the minimum height of the textarea.",
+    },
+    resize: {
+      control: "select",
+      options: ["none", "vertical", "auto"],
+      description:
+        "Controls whether and how the user can drag-resize the textarea.",
     },
   },
   args: {
     placeholder: "Write something…",
     rows: 4,
+    size: "default",
+    resize: "vertical",
   },
 } satisfies Meta<typeof Textarea>;
 
@@ -74,6 +100,72 @@ export const Invalid: Story = {
         placeholder="Enter your message"
       />
       <p className="text-destructive text-sm">Message cannot be empty.</p>
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Size variants                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * All three `size` values side by side.
+ *
+ * - `sm` — `min-h-16` (compact)
+ * - `default` — `min-h-16` (standard baseline, unchanged)
+ * - `lg` — `min-h-32` (tall)
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex w-80 flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <Label>Small (sm)</Label>
+        <Textarea placeholder="Compact textarea…" size="sm" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label>Default</Label>
+        <Textarea placeholder="Standard textarea…" size="default" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label>Large (lg)</Label>
+        <Textarea placeholder="Tall textarea…" size="lg" />
+      </div>
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Resize variants                                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * All three `resize` values side by side.
+ *
+ * - `none` — not resizable
+ * - `vertical` — vertical drag handle (default browser behaviour)
+ * - `auto` — free resize in both axes
+ */
+export const Resize: Story = {
+  render: () => (
+    <div className="flex w-80 flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <Label>No resize</Label>
+        <Textarea placeholder="Cannot be resized." resize="none" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label>Vertical (default)</Label>
+        <Textarea
+          placeholder="Drag the corner to resize vertically."
+          resize="vertical"
+        />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label>Free resize</Label>
+        <Textarea
+          placeholder="Drag the corner freely in both directions."
+          resize="auto"
+        />
+      </div>
     </div>
   ),
 };

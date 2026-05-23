@@ -5,18 +5,15 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 
 import { cn } from "../utils/index";
-import { Input } from "./input";
+import { Input, type InputProps } from "./input";
 
 /**
  * Props for {@link InputWithShowHidePassword}.
  *
  * `type` is omitted — the component controls `"password"` / `"text"` via
- * the inline toggle.
+ * the inline toggle. Inherits the design-system `size` axis from {@link Input}.
  */
-type InputWithShowHidePasswordProps = Omit<
-  React.ComponentProps<"input">,
-  "type"
->;
+type InputWithShowHidePasswordProps = Omit<InputProps, "type">;
 
 /**
  * A minimal password field with a trailing eye-icon toggle that switches the

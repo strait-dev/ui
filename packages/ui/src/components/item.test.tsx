@@ -88,4 +88,34 @@ describe("Item", () => {
       screen.getByText("footer").closest("[data-slot=item-footer]")
     ).toHaveAttribute("data-slot", "item-footer");
   });
+
+  // --- ghost variant ---
+
+  it("ghost variant renders without a resting background class", () => {
+    const { container } = render(<Item variant="ghost">ghost item</Item>);
+    const item = container.querySelector("[data-slot=item]");
+    expect(item).toHaveClass("bg-transparent");
+    expect(item).toHaveClass("hover:bg-muted/60");
+  });
+
+  it("ghost variant still renders as div with item data-slot", () => {
+    const { container } = render(<Item variant="ghost">ghost item</Item>);
+    const item = container.querySelector("[data-slot=item]");
+    expect(item?.tagName).toBe("DIV");
+  });
+
+  // --- xl size ---
+
+  it("size='xl' renders with px-4 and py-4 classes", () => {
+    const { container } = render(<Item size="xl">xl item</Item>);
+    const item = container.querySelector("[data-slot=item]");
+    expect(item).toHaveClass("px-4");
+    expect(item).toHaveClass("py-4");
+  });
+
+  it("size='xl' renders with text-base class", () => {
+    const { container } = render(<Item size="xl">xl item</Item>);
+    const item = container.querySelector("[data-slot=item]");
+    expect(item).toHaveClass("text-base");
+  });
 });

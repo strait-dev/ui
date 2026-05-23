@@ -51,9 +51,14 @@ function ItemSeparator({
  *
  * Exposes two axes:
  * - `variant` — surface style. `"default"` has no border; `"outline"` shows
- *   a visible border; `"muted"` uses a subtle muted background.
+ *   a visible border; `"muted"` uses a subtle muted background; `"ghost"`
+ *   has a fully transparent background that only shows a tint on hover —
+ *   ideal for sidebar navigation or contextual menus where the background
+ *   should remain invisible until the user interacts.
  * - `size` — `"default"` and `"sm"` share the same padding while `"xs"`
  *   is more compact and adjusts padding when nested inside a dropdown menu.
+ *   `"xl"` provides generous padding and slightly larger text for prominent
+ *   list rows such as onboarding steps or feature tiles.
  */
 const itemVariants = cva(
   "group/item flex w-full flex-wrap items-center rounded-lg border text-sm outline-none transition-colors duration-100 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted",
@@ -63,11 +68,22 @@ const itemVariants = cva(
         default: "border-transparent",
         outline: "border-border",
         muted: "border-transparent bg-muted/50",
+        /**
+         * Transparent background with a hover tint only — no resting surface
+         * color. Suitable for sidebar nav rows and contextual menu entries
+         * where the background should only emerge on interaction.
+         */
+        ghost: "border-transparent bg-transparent hover:bg-muted/60",
       },
       size: {
         default: "gap-2.5 px-3 py-2.5",
         sm: "gap-2.5 px-3 py-2.5",
         xs: "gap-2 in-data-[slot=dropdown-menu-content]:p-0 px-2.5 py-2",
+        /**
+         * Generous padding and `text-base` for prominent list entries such as
+         * onboarding steps, feature tiles, or hero-level navigation rows.
+         */
+        xl: "gap-3 px-4 py-4 text-base",
       },
     },
     defaultVariants: {

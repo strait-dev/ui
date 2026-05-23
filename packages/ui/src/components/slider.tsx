@@ -1,9 +1,94 @@
 "use client";
 
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "../utils/index";
+
+/**
+ * Class-variance-authority recipe for the {@link Slider} track thickness.
+ *
+ * Controls `data-horizontal:h-*` / `data-vertical:w-*` on the track element.
+ */
+const sliderTrackVariants = cva(
+  "relative grow select-none overflow-hidden rounded-full bg-muted data-vertical:h-full",
+  {
+    variants: {
+      size: {
+        sm: "data-horizontal:h-0.5 data-horizontal:w-full data-vertical:w-0.5",
+        default: "data-horizontal:h-1 data-horizontal:w-full data-vertical:w-1",
+        lg: "data-horizontal:h-1.5 data-horizontal:w-full data-vertical:w-1.5",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+    },
+  }
+);
+
+/**
+ * Class-variance-authority recipe for the {@link Slider} filled range indicator.
+ *
+ * Colors the filled portion of the track with the appropriate intent token.
+ */
+const sliderRangeVariants = cva(
+  "select-none data-horizontal:h-full data-vertical:w-full",
+  {
+    variants: {
+      intent: {
+        default: "bg-primary",
+        success: "bg-success",
+        warning: "bg-warning",
+        info: "bg-info",
+        destructive: "bg-destructive",
+      },
+    },
+    defaultVariants: {
+      intent: "default",
+    },
+  }
+);
+
+/**
+ * Class-variance-authority recipe for the {@link Slider} thumb element.
+ *
+ * Controls thumb size and the ring/border colour used on hover/focus/active.
+ */
+const sliderThumbVariants = cva(
+  "relative block shrink-0 select-none rounded-full border bg-background transition-[color,box-shadow] after:absolute after:-inset-2 hover:ring-3 focus-visible:outline-hidden focus-visible:ring-3 active:ring-3 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      size: {
+        sm: "size-2.5",
+        default: "size-3",
+        lg: "size-4",
+      },
+      intent: {
+        default: "border-ring ring-ring/50",
+        success: "border-success ring-success/50",
+        warning: "border-warning ring-warning/50",
+        info: "border-info ring-info/50",
+        destructive: "border-destructive ring-destructive/50",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+      intent: "default",
+    },
+  }
+);
+
+/**
+ * Props for {@link Slider}.
+ *
+ * Extends Base UI's slider root props with `size` and `intent` variant axes.
+ */
+export type SliderProps = SliderPrimitive.Root.Props &
+  VariantProps<typeof sliderTrackVariants> &
+  VariantProps<typeof sliderRangeVariants> & {
+    "aria-label"?: string;
+  };
 
 /**
  * A range-input control for selecting a numeric value (or range of
@@ -24,19 +109,21 @@ import { cn } from "../utils/index";
  *   association automatically.
  * - Supports `orientation="vertical"` via Base UI; the component
  *   responds to `data-vertical` / `data-horizontal` on the root.
+ * - `size` controls track thickness and thumb size: `"sm"`, `"default"`, `"lg"`.
+ * - `intent` colors the filled range and thumb: `"default"` (primary),
+ *   `"success"`, `"warning"`, `"info"`, `"destructive"`.
  *
  * @example
  * ```tsx
  * // Single thumb (uncontrolled)
- * <Slider defaultValue={40} aria-label="Volume" />
+ * <Slider defaultValue={[40]} aria-label="Volume" />
  *
- * // Range slider (controlled)
+ * // Range slider (controlled) with success intent
  * <Slider
  *   value={[20, 80]}
  *   onValueChange={([lo, hi]) => setRange([lo, hi])}
- *   min={0}
- *   max={100}
- *   step={5}
+ *   intent="success"
+ *   size="lg"
  * />
  * ```
  */
@@ -46,9 +133,11 @@ function Slider({
   value,
   min = 0,
   max = 100,
+  size = "default",
+  intent = "default",
   "aria-label": ariaLabel,
   ...props
-}: SliderPrimitive.Root.Props & { "aria-label"?: string }) {
+}: SliderProps) {
   const _values = React.useMemo(() => {
     if (Array.isArray(value)) {
       return value;
@@ -72,11 +161,11 @@ function Slider({
     >
       <SliderPrimitive.Control className="relative flex w-full touch-none select-none items-center data-vertical:h-full data-vertical:min-h-40 data-vertical:w-auto data-vertical:flex-col data-disabled:opacity-50">
         <SliderPrimitive.Track
-          className="relative grow select-none overflow-hidden rounded-full bg-muted data-horizontal:h-1 data-vertical:h-full data-horizontal:w-full data-vertical:w-1"
+          className={cn(sliderTrackVariants({ size }))}
           data-slot="slider-track"
         >
           <SliderPrimitive.Indicator
-            className="select-none bg-primary data-horizontal:h-full data-vertical:w-full"
+            className={cn(sliderRangeVariants({ intent }))}
             data-slot="slider-range"
           />
         </SliderPrimitive.Track>
@@ -86,7 +175,7 @@ function Slider({
             // accessible name on the thumb input, not the root). Omitted when
             // undefined so a Field/FieldLabel association still works.
             aria-label={ariaLabel}
-            className="relative block size-3 shrink-0 select-none rounded-full border border-ring bg-background ring-ring/50 transition-[color,box-shadow] after:absolute after:-inset-2 hover:ring-3 focus-visible:outline-hidden focus-visible:ring-3 active:ring-3 disabled:pointer-events-none disabled:opacity-50"
+            className={cn(sliderThumbVariants({ size, intent }))}
             data-slot="slider-thumb"
             // biome-ignore lint/suspicious/noArrayIndexKey: thumbs are positional and identically rendered; index is the stable identity.
             key={index}
@@ -97,4 +186,9 @@ function Slider({
   );
 }
 
-export { Slider };
+export {
+  Slider,
+  sliderRangeVariants,
+  sliderThumbVariants,
+  sliderTrackVariants,
+};

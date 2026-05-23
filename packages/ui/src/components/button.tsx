@@ -10,9 +10,10 @@ import { cn } from "../utils/index";
  *
  * Exposes two axes:
  * - `variant` — emphasis and intent. Each intent (brand, destructive, success,
- *   warning, info) ships in three weights: `-solid` (filled), the bare name
- *   (tinted), and `-outline` (bordered). Neutral tones (`default`, `secondary`,
- *   `outline`) plus the low-emphasis `ghost` and `link` round out the set.
+ *   warning, info, invert) ships in three weights: `-solid` (filled), the bare
+ *   name (tinted), and `-outline` (bordered). Neutral tones (`default`,
+ *   `secondary`, `outline`, `secondary-outline`) plus the low-emphasis `ghost`
+ *   and `link` round out the set.
  * - `size` — height/padding presets, including square `icon*` sizes for
  *   icon-only buttons.
  *
@@ -69,6 +70,39 @@ const buttonVariants = cva(
         info: "bg-info/10 text-info-accent hover:bg-info/15 focus-visible:border-info/40 focus-visible:ring-info/20 dark:bg-info/15 dark:hover:bg-info/25",
         "info-outline":
           "border-info/30 text-info-accent hover:bg-info/10 focus-visible:border-info/40 focus-visible:ring-info/20",
+
+        /* ---- Secondary outline ---- */
+        /**
+         * An outline-style secondary: transparent background, secondary-token
+         * border, and secondary foreground text. Sits between the bare
+         * `secondary` (tinted fill) and the neutral `outline` (grey/border
+         * token) in the emphasis hierarchy.
+         */
+        "secondary-outline":
+          "border-secondary text-secondary-foreground hover:bg-secondary/30 hover:text-foreground focus-visible:border-secondary/60 focus-visible:ring-secondary/20 dark:border-secondary/60 dark:hover:bg-secondary/20",
+
+        /* ---- Invert (dark fill / light text — inverts the surface) ---- */
+        /**
+         * High-emphasis invert: solid `bg-invert` with `text-invert-foreground`.
+         * Useful for CTAs placed on light surfaces where brand/primary colours
+         * are unavailable.
+         */
+        "invert-solid":
+          "bg-invert text-invert-foreground hover:bg-invert/90 focus-visible:border-invert/40 focus-visible:ring-invert/30",
+        /**
+         * Soft invert: lightly tinted `bg-invert/10` background with
+         * foreground text. Matches the soft emphasis level of other intent
+         * families (e.g. `brand`, `info`).
+         */
+        invert:
+          "bg-invert/10 text-foreground hover:bg-invert/15 focus-visible:border-invert/40 focus-visible:ring-invert/20 dark:bg-invert/15 dark:hover:bg-invert/25",
+        /**
+         * Bordered invert: transparent background with an `invert`-tinted
+         * border and foreground text. Mirrors the `*-outline` pattern used by
+         * brand, destructive, success, warning, and info.
+         */
+        "invert-outline":
+          "border-invert/30 text-foreground hover:bg-invert/10 focus-visible:border-invert/40 focus-visible:ring-invert/20",
 
         /* ---- Low emphasis / special ---- */
         ghost:

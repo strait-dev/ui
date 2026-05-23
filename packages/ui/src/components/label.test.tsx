@@ -35,4 +35,28 @@ describe("Label", () => {
     );
     expect(screen.getByText("terms")).toBeInTheDocument();
   });
+
+  it("appends an aria-hidden asterisk when required=true", () => {
+    render(<Label required>Password</Label>);
+    const label = screen.getByText("Password").closest("label");
+    const asterisk = label?.querySelector("[aria-hidden='true']");
+    expect(asterisk).toBeInTheDocument();
+    expect(asterisk).toHaveTextContent("*");
+  });
+
+  it("does not render an asterisk when required is omitted", () => {
+    render(<Label>Username</Label>);
+    const label = screen.getByText("Username").closest("label");
+    expect(label?.querySelector("[aria-hidden='true']")).toBeNull();
+  });
+
+  it("applies text-xs class when size=sm", () => {
+    render(<Label size="sm">Small</Label>);
+    expect(screen.getByText("Small")).toHaveClass("text-xs");
+  });
+
+  it("applies text-base class when size=lg", () => {
+    render(<Label size="lg">Large</Label>);
+    expect(screen.getByText("Large")).toHaveClass("text-base");
+  });
 });

@@ -3,10 +3,11 @@ import {
   Cancel01Icon,
   CheckmarkCircle01Icon,
   InformationCircleIcon,
+  Tag01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { type ComponentProps, Fragment } from "react";
+import { type ComponentProps, Fragment, useState } from "react";
 
 import { Badge } from "./badge";
 
@@ -35,6 +36,7 @@ const variantOptions: BadgeVariant[] = [
   "info-outline",
   "destructive-outline",
   "invert-outline",
+  "secondary-outline",
   "ghost",
   "link",
 ];
@@ -55,6 +57,9 @@ const meta: Meta<typeof Badge> = {
           "",
           "Variants follow an intent × emphasis matrix: solid, light, and outline",
           "flavours for brand, info, success, warning, and destructive intents.",
+          "Includes the new `secondary-outline` variant.",
+          "",
+          "New props: `iconLeft`, `iconRight`, `dismissible`/`onDismiss`, `dot`/`dotClassName`, `mono`.",
         ].join("\n"),
       },
     },
@@ -73,6 +78,12 @@ const meta: Meta<typeof Badge> = {
       table: { defaultValue: { summary: "default" } },
     },
     children: { control: "text", description: "Badge label." },
+    mono: {
+      control: "boolean",
+      description: "Monospaced, uppercase, tracked.",
+    },
+    dot: { control: "boolean", description: "Show leading dot." },
+    dismissible: { control: "boolean", description: "Show dismiss button." },
   },
   args: {
     children: "Badge",
@@ -118,9 +129,10 @@ const outlineVariants: BadgeVariant[] = [
   "warning-outline",
   "destructive-outline",
   "invert-outline",
+  "secondary-outline",
 ];
 
-/** All variant groups: solid, light, outline. */
+/** All variant groups: solid, light, outline (including the new `secondary-outline`). */
 export const Variants: Story = {
   render: (args) => (
     <div className="flex flex-col gap-6">
@@ -164,10 +176,33 @@ export const Sizes: Story = {
 };
 
 /* ------------------------------------------------------------------ */
-/* With icons                                                          */
+/* With icons (iconLeft / iconRight props)                            */
 /* ------------------------------------------------------------------ */
 
-/** Badges with leading icons for status communication. */
+/** Badges using the new `iconLeft` / `iconRight` props. */
+export const WithIconProps: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Badge {...args} iconLeft={CheckmarkCircle01Icon} variant="success-light">
+        Completed
+      </Badge>
+      <Badge {...args} iconLeft={InformationCircleIcon} variant="info-light">
+        In review
+      </Badge>
+      <Badge {...args} iconLeft={Alert01Icon} variant="warning-light">
+        Pending
+      </Badge>
+      <Badge {...args} iconLeft={Cancel01Icon} variant="destructive-light">
+        Failed
+      </Badge>
+      <Badge {...args} iconRight={Tag01Icon} variant="primary-light">
+        Tagged
+      </Badge>
+    </div>
+  ),
+};
+
+/** Badges with leading icons for status communication (legacy JSX pattern). */
 export const WithIcons: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-3">
@@ -186,6 +221,90 @@ export const WithIcons: Story = {
       <Badge {...args} variant="destructive-light">
         <HugeiconsIcon icon={Cancel01Icon} />
         Failed
+      </Badge>
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Dismissible                                                         */
+/* ------------------------------------------------------------------ */
+
+/** Dismissible badges — clicking × fires `onDismiss`. */
+export const Dismissible: Story = {
+  render: (args) => {
+    const [tags, setTags] = useState(["Design", "React", "TypeScript", "UI"]);
+    return (
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <Badge
+            {...args}
+            dismissible
+            key={tag}
+            onDismiss={() => setTags((prev) => prev.filter((t) => t !== tag))}
+            variant="secondary-light"
+          >
+            {tag}
+          </Badge>
+        ))}
+        {tags.length === 0 && (
+          <span className="text-muted-foreground text-xs">
+            All tags dismissed.
+          </span>
+        )}
+      </div>
+    );
+  },
+};
+
+/* ------------------------------------------------------------------ */
+/* Dot                                                                 */
+/* ------------------------------------------------------------------ */
+
+/** Badges with a leading dot — useful for status chips. */
+export const WithDot: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap gap-2">
+      <Badge {...args} dot dotClassName="bg-success" variant="success-light">
+        Active
+      </Badge>
+      <Badge {...args} dot dotClassName="bg-info" variant="info-light">
+        Running
+      </Badge>
+      <Badge {...args} dot dotClassName="bg-warning" variant="warning-light">
+        Pending
+      </Badge>
+      <Badge
+        {...args}
+        dot
+        dotClassName="bg-destructive"
+        variant="destructive-light"
+      >
+        Failed
+      </Badge>
+      <Badge {...args} dot variant="secondary-light">
+        Unknown
+      </Badge>
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Mono                                                                */
+/* ------------------------------------------------------------------ */
+
+/** `mono` applies `font-mono uppercase tracking-wide` — great for version numbers and codes. */
+export const Mono: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-2">
+      <Badge {...args} mono variant="outline">
+        v1.2.3
+      </Badge>
+      <Badge {...args} mono variant="secondary-light">
+        abc-123
+      </Badge>
+      <Badge {...args} mono variant="info-light">
+        sha:a1b2c3
       </Badge>
     </div>
   ),
@@ -262,4 +381,30 @@ export const AsButton: Story = {
       </Badge>
     </div>
   ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Combined / kitchen-sink                                             */
+/* ------------------------------------------------------------------ */
+
+/** Kitchen-sink: dot + iconLeft + dismissible combined. */
+export const Combined: Story = {
+  render: (args) => {
+    const [visible, setVisible] = useState(true);
+    return visible ? (
+      <Badge
+        {...args}
+        dismissible
+        dot
+        dotClassName="bg-info"
+        iconLeft={InformationCircleIcon}
+        onDismiss={() => setVisible(false)}
+        variant="info-light"
+      >
+        New feature available
+      </Badge>
+    ) : (
+      <span className="text-muted-foreground text-xs">Badge dismissed.</span>
+    );
+  },
 };

@@ -3,9 +3,49 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
+
+/**
+ * Class-variance-authority recipe for {@link DialogContent} sizing.
+ *
+ * Controls the `max-width` axis of the dialog panel. The `default` variant
+ * reproduces the original `sm:max-w-sm` cap so upgrading is non-breaking.
+ * For the `full` size a complementary `max-h` cap keeps the panel inside the
+ * viewport on short screens.
+ *
+ * Exported so consumers can derive the same sizing on custom dialog-like
+ * surfaces without re-implementing the class list.
+ *
+ * @remarks
+ * Only the max-width (and for `full`, max-height) axis is managed here.
+ * All positioning, animation, background, and ring classes remain on the
+ * base string inside {@link DialogContent}.
+ *
+ * @example
+ * ```ts
+ * // Derive a class list for a non-Dialog panel that should match `lg` size.
+ * const cls = dialogContentVariants({ size: "lg" });
+ * ```
+ *
+ * {@link DialogContent}
+ */
+const dialogContentVariants = cva("", {
+  variants: {
+    size: {
+      sm: "sm:max-w-sm",
+      default: "sm:max-w-sm",
+      lg: "sm:max-w-2xl",
+      xl: "sm:max-w-4xl",
+      full: "max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-4rem)]",
+    },
+  },
+  defaultVariants: {
+    size: "default",
+  },
+});
 
 /**
  * Modal overlay that interrupts the user to focus on a single task or
@@ -101,21 +141,39 @@ function DialogOverlay({
  * - `showCloseButton` (default `true`) renders a ghost icon button in the
  *   top-right corner. Set to `false` when the footer already provides a
  *   "Close" action or when the dialog must be explicitly confirmed.
+ * - `size` controls the maximum width of the panel. Use `"sm"` for compact
+ *   confirmations, `"lg"` / `"xl"` for content-rich dialogs, and `"full"` for
+ *   near-fullscreen experiences. Defaults to `"default"` which matches the
+ *   original `sm:max-w-sm` cap.
+ *
+ * @example
+ * ```tsx
+ * // Large dialog for a multi-step form
+ * <DialogContent size="lg">
+ *   <DialogHeader>
+ *     <DialogTitle>Import data</DialogTitle>
+ *   </DialogHeader>
+ * </DialogContent>
+ * ```
+ *
+ * {@link dialogContentVariants}
  */
 function DialogContent({
   className,
   children,
   showCloseButton = true,
+  size,
   ...props
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean;
-}) {
+} & VariantProps<typeof dialogContentVariants>) {
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Popup
         className={cn(
-          "data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-background p-4 text-sm outline-none ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in sm:max-w-sm",
+          "data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-background p-4 text-sm outline-none ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in",
+          dialogContentVariants({ size }),
           className
         )}
         data-slot="dialog-content"
@@ -145,11 +203,45 @@ function DialogContent({
 /**
  * Top region of {@link DialogContent} for {@link DialogTitle} and
  * {@link DialogDescription}.
+ *
+ * @remarks
+ * Pass `accent="destructive"` to tint the title text with the destructive
+ * semantic token (`text-destructive`). This is useful for deletion or
+ * irreversible-action dialogs where the header itself should signal danger.
+ * The prop is optional and undefined by default, keeping all existing dialogs
+ * visually unchanged.
+ *
+ * @example
+ * ```tsx
+ * // Destructive-tinted header for a delete confirmation
+ * <DialogHeader accent="destructive">
+ *   <DialogTitle>Delete account</DialogTitle>
+ *   <DialogDescription>This action cannot be undone.</DialogDescription>
+ * </DialogHeader>
+ * ```
+ *
+ * {@link DialogContent}
  */
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+function DialogHeader({
+  className,
+  accent,
+  ...props
+}: React.ComponentProps<"div"> & {
+  /**
+   * Optional colour accent applied to the header.
+   * `"destructive"` tints the title text with `text-destructive` via a CSS
+   * child selector so you don't need to style {@link DialogTitle} individually.
+   */
+  accent?: "destructive";
+}) {
   return (
     <div
-      className={cn("flex flex-col gap-2", className)}
+      className={cn(
+        "flex flex-col gap-2",
+        accent === "destructive" &&
+          "*:data-[slot=dialog-title]:text-destructive",
+        className
+      )}
       data-slot="dialog-header"
       {...props}
     />
@@ -233,4 +325,5 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
+  dialogContentVariants,
 };

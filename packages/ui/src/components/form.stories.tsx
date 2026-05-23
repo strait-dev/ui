@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useForm } from "@tanstack/react-form";
 import type { FC } from "react";
-import { useForm } from "react-hook-form";
 
 import { Button } from "./button";
 import { Checkbox } from "./checkbox";
@@ -25,8 +25,8 @@ import { Textarea } from "./textarea";
 
 const meta = {
   title: "Forms/Form",
-  // Form is react-hook-form's FormProvider (all props required); cast so the
-  // render-only stories don't each have to supply a full form context as args.
+  // Form takes a live `useForm()` instance via the `form` prop; cast so the
+  // render-only stories don't each have to supply one as args.
   component: Form as FC,
   tags: ["autodocs"],
   parameters: {
@@ -34,10 +34,10 @@ const meta = {
     docs: {
       description: {
         component: [
-          "A thin wrapper around **react-hook-form**.",
+          "A thin wrapper around **@tanstack/react-form**.",
           "",
-          "- `Form` is `FormProvider` — pass your `useForm()` return value as props via spread.",
-          "- `FormField` wraps `Controller` and injects field context.",
+          "- `Form` provides the `useForm()` instance via context — pass it as the `form` prop.",
+          "- `FormField` wraps TanStack's `Field` and injects field context.",
           "- `FormItem` provides a unique ID context for label/control/message linkage.",
           "- `FormLabel` auto-associates with the control and turns destructive on error.",
           "- `FormControl` wires `aria-describedby` and `aria-invalid` from field state.",
@@ -53,20 +53,14 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+const EMAIL_RE = /^[^@]+@[^@]+\.[^@]+$/;
+
 /* ------------------------------------------------------------------ */
 /* Playground — simple sign-up form                                   */
 /* ------------------------------------------------------------------ */
 
-type SignUpValues = {
-  username: string;
-  email: string;
-  bio: string;
-  role: string;
-  terms: boolean;
-};
-
 function SignUpForm() {
-  const form = useForm<SignUpValues>({
+  const form = useForm({
     defaultValues: {
       username: "",
       email: "",
@@ -74,27 +68,34 @@ function SignUpForm() {
       role: "",
       terms: false,
     },
+    onSubmit: ({ value }) => {
+      alert(JSON.stringify(value, null, 2));
+    },
   });
 
-  function onSubmit(values: SignUpValues) {
-    alert(JSON.stringify(values, null, 2));
-  }
-
   return (
-    <Form {...form}>
+    <Form form={form}>
       <form
         className="flex w-full max-w-md flex-col gap-6"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
       >
         <FormField
-          control={form.control}
           name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel required>Username</FormLabel>
               <FormControl
-                render={<Input placeholder="johndoe" />}
-                {...field}
+                render={
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="johndoe"
+                    value={field.state.value}
+                  />
+                }
               />
               <FormDescription>
                 This will be your public display name.
@@ -102,34 +103,45 @@ function SignUpForm() {
               <FormMessage />
             </FormItem>
           )}
-          rules={{ required: "Username is required." }}
+          validators={{
+            onSubmit: ({ value }) =>
+              value ? undefined : "Username is required.",
+          }}
         />
 
         <FormField
-          control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel required>Email</FormLabel>
               <FormControl
-                render={<Input placeholder="you@example.com" type="email" />}
-                {...field}
+                render={
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="you@example.com"
+                    type="email"
+                    value={field.state.value}
+                  />
+                }
               />
               <FormDescription>We'll never share your email.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
-          rules={{
-            required: "Email is required.",
-            pattern: {
-              value: /^[^@]+@[^@]+\.[^@]+$/,
-              message: "Please enter a valid email.",
+          validators={{
+            onSubmit: ({ value }) => {
+              if (!value) {
+                return "Email is required.";
+              }
+              return EMAIL_RE.test(String(value))
+                ? undefined
+                : "Please enter a valid email.";
             },
           }}
         />
 
         <FormField
-          control={form.control}
           name="bio"
           render={({ field }) => (
             <FormItem>
@@ -137,11 +149,13 @@ function SignUpForm() {
               <FormControl
                 render={
                   <Textarea
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="Tell us a bit about yourself…"
                     rows={3}
+                    value={field.state.value}
                   />
                 }
-                {...field}
               />
               <FormMessage />
             </FormItem>
@@ -149,12 +163,14 @@ function SignUpForm() {
         />
 
         <FormField
-          control={form.control}
           name="role"
           render={({ field }) => (
             <FormItem>
               <FormLabel required>Role</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select
+                onValueChange={(value) => field.handleChange(value)}
+                value={field.state.value}
+              >
                 <FormControl
                   render={
                     <SelectTrigger className="w-full">
@@ -172,19 +188,23 @@ function SignUpForm() {
               <FormMessage />
             </FormItem>
           )}
-          rules={{ required: "Please select a role." }}
+          validators={{
+            onSubmit: ({ value }) =>
+              value ? undefined : "Please select a role.",
+          }}
         />
 
         <FormField
-          control={form.control}
           name="terms"
           render={({ field }) => (
             <FormItem className="flex flex-row items-start gap-3">
               <FormControl
                 render={
                   <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
+                    checked={field.state.value}
+                    onCheckedChange={(checked) =>
+                      field.handleChange(checked === true)
+                    }
                   />
                 }
               />
@@ -197,7 +217,10 @@ function SignUpForm() {
               </div>
             </FormItem>
           )}
-          rules={{ required: "You must accept the terms." }}
+          validators={{
+            onSubmit: ({ value }) =>
+              value ? undefined : "You must accept the terms.",
+          }}
         />
 
         <Button className="w-full" type="submit">
@@ -217,66 +240,81 @@ export const Playground: Story = {
 /* Validation states                                                   */
 /* ------------------------------------------------------------------ */
 
-type LoginValues = { email: string; password: string };
-
 function LoginWithErrors() {
-  const form = useForm<LoginValues>({
+  const form = useForm({
     defaultValues: { email: "", password: "" },
-    mode: "onTouched",
+    validators: {
+      // Server-style validation that always fails, to showcase error styling.
+      onSubmit: () => ({
+        fields: {
+          email: "No account found with this email.",
+          password: "Password is incorrect.",
+        },
+      }),
+    },
+    onSubmit: () => {
+      // no-op — validation above never passes
+    },
   });
 
-  // Pre-set errors to demonstrate the error state in the story
-  const { setError } = form;
-  const hasSetErrors = form.formState.errors.email;
-
-  function onSubmit() {
-    setError("email", { message: "No account found with this email." });
-    setError("password", { message: "Password is incorrect." });
-  }
-
   return (
-    <Form {...form}>
+    <Form form={form}>
       <form
         className="flex w-full max-w-sm flex-col gap-4"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
       >
         <FormField
-          control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl
-                render={<Input placeholder="you@example.com" type="email" />}
-                {...field}
+                render={
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="you@example.com"
+                    type="email"
+                    value={field.state.value}
+                  />
+                }
               />
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
-          control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl
-                render={<Input placeholder="••••••••" type="password" />}
-                {...field}
+                render={
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="••••••••"
+                    type="password"
+                    value={field.state.value}
+                  />
+                }
               />
               <FormMessage />
             </FormItem>
           )}
         />
         <Button className="w-full" type="submit" variant="default">
-          {hasSetErrors ? "Try again" : "Sign in (click to show errors)"}
+          Sign in (click to show errors)
         </Button>
       </form>
     </Form>
   );
 }
 
-/** Submit triggers server-side validation errors on both fields. */
+/** Submit triggers form-level validation errors on both fields. */
 export const WithValidationErrors: Story = {
   render: () => <LoginWithErrors />,
 };

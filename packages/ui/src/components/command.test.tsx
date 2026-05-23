@@ -8,6 +8,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  type CommandListSize,
   CommandSeparator,
   CommandShortcut,
 } from "./command";
@@ -104,5 +105,54 @@ describe("Command", () => {
     render(<Fixture />);
     const shortcut = screen.getByText("⌘V");
     expect(shortcut).toHaveAttribute("data-slot", "command-shortcut");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CommandList size axis
+// ---------------------------------------------------------------------------
+
+function SizeFixture({ size }: { size?: CommandListSize }) {
+  return (
+    <Command>
+      <CommandList size={size}>
+        <CommandGroup heading="Items">
+          <CommandItem value="alpha">Alpha</CommandItem>
+          <CommandItem value="beta">Beta</CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  );
+}
+
+describe("CommandList size", () => {
+  it("renders with data-size='default' when no size prop is supplied", () => {
+    const { container } = render(<SizeFixture />);
+    const list = container.querySelector("[data-slot='command-list']");
+    expect(list).toHaveAttribute("data-size", "default");
+  });
+
+  it("renders with data-size='sm' when size='sm'", () => {
+    const { container } = render(<SizeFixture size="sm" />);
+    const list = container.querySelector("[data-slot='command-list']");
+    expect(list).toHaveAttribute("data-size", "sm");
+  });
+
+  it("renders with data-size='lg' when size='lg'", () => {
+    const { container } = render(<SizeFixture size="lg" />);
+    const list = container.querySelector("[data-slot='command-list']");
+    expect(list).toHaveAttribute("data-size", "lg");
+  });
+
+  it("items are still visible when size='sm'", () => {
+    render(<SizeFixture size="sm" />);
+    expect(screen.getByText("Alpha")).toBeInTheDocument();
+    expect(screen.getByText("Beta")).toBeInTheDocument();
+  });
+
+  it("items are still visible when size='lg'", () => {
+    render(<SizeFixture size="lg" />);
+    expect(screen.getByText("Alpha")).toBeInTheDocument();
+    expect(screen.getByText("Beta")).toBeInTheDocument();
   });
 });

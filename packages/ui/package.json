@@ -38,6 +38,7 @@
     "@react-stately/overlays": "^3.7.0",
     "@react-types/shared": "^3.34.0",
     "@tailwindcss/postcss": "^4.3.0",
+    "@tanstack/react-form": "^1.32.0",
     "@tanstack/react-table": "^8.21.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -54,10 +55,10 @@
     "next-themes": "^0.4.6",
     "postcss": "^8.5.10",
     "postcss-load-config": "^6.0.1",
+    "qrcode.react": "^4.2.0",
     "react-aria-components": "^1.17.0",
     "react-circle-flags": "^0.0.29",
     "react-day-picker": "^10.0.1",
-    "react-hook-form": "^7.73.1",
     "react-hotkeys-hook": "^5.2.4",
     "react-phone-number-input": "^3.4.16",
     "react-resizable-panels": "^4.10.0",
@@ -204,6 +205,11 @@
       "import": "./dist/components/radial-gauge.js",
       "default": "./dist/components/radial-gauge.js"
     },
+    "./components/banner": {
+      "types": "./dist/components/banner.d.ts",
+      "import": "./dist/components/banner.js",
+      "default": "./dist/components/banner.js"
+    },
     "./components/notice-banner": {
       "types": "./dist/components/notice-banner.d.ts",
       "import": "./dist/components/notice-banner.js",
@@ -213,6 +219,26 @@
       "types": "./dist/components/code-block.d.ts",
       "import": "./dist/components/code-block.js",
       "default": "./dist/components/code-block.js"
+    },
+    "./components/code-block-command": {
+      "types": "./dist/components/code-block-command.d.ts",
+      "import": "./dist/components/code-block-command.js",
+      "default": "./dist/components/code-block-command.js"
+    },
+    "./components/qr-code": {
+      "types": "./dist/components/qr-code.d.ts",
+      "import": "./dist/components/qr-code.js",
+      "default": "./dist/components/qr-code.js"
+    },
+    "./components/relative-time-card": {
+      "types": "./dist/components/relative-time-card.d.ts",
+      "import": "./dist/components/relative-time-card.js",
+      "default": "./dist/components/relative-time-card.js"
+    },
+    "./components/filter": {
+      "types": "./dist/components/filter.d.ts",
+      "import": "./dist/components/filter.js",
+      "default": "./dist/components/filter.js"
     },
     "./components/json-viewer": {
       "types": "./dist/components/json-viewer.d.ts",
@@ -513,11 +539,6 @@
       "types": "./dist/components/slider.d.ts",
       "import": "./dist/components/slider.js",
       "default": "./dist/components/slider.js"
-    },
-    "./components/sonner": {
-      "types": "./dist/components/sonner.d.ts",
-      "import": "./dist/components/sonner.js",
-      "default": "./dist/components/sonner.js"
     },
     "./components/toast": {
       "types": "./dist/components/toast.d.ts",

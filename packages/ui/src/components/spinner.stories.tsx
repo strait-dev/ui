@@ -13,7 +13,7 @@ const meta = {
         component: [
           "An animated loading indicator that wraps the `Loading03Icon` from",
           "HugeIcons. It renders as an `<svg>` so it inherits `currentColor` and",
-          "can be sized with the `className` prop or by setting `width`/`height`.",
+          "can be sized with the `size` prop or by passing `className`.",
           "",
           "Use the `strokeWidth` prop to adjust line thickness.",
         ].join("\n"),
@@ -21,6 +21,12 @@ const meta = {
     },
   },
   argTypes: {
+    size: {
+      control: { type: "select" },
+      options: ["xs", "sm", "default", "lg", "xl"],
+      description: "Dimension preset — maps to a Tailwind `size-*` class.",
+      table: { defaultValue: { summary: "default" } },
+    },
     strokeWidth: {
       control: { type: "range", min: 1, max: 4, step: 0.5 },
       description: "SVG stroke width passed to the icon.",
@@ -29,10 +35,11 @@ const meta = {
     className: {
       control: "text",
       description:
-        "Tailwind classes — use `size-*` to change dimensions and `text-*` for colour.",
+        "Tailwind classes — use `text-*` for colour or additional overrides.",
     },
   },
   args: {
+    size: "default",
     strokeWidth: 2,
   },
 } satisfies Meta<typeof Spinner>;
@@ -44,23 +51,14 @@ type Story = StoryObj<typeof meta>;
 /** Interactive playground. */
 export const Playground: Story = {};
 
-/** Common sizes expressed via `className`. */
+/** All size variants side-by-side. */
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-6">
-      {(
-        [
-          { label: "xs", cls: "size-3" },
-          { label: "sm", cls: "size-4" },
-          { label: "md", cls: "size-5" },
-          { label: "lg", cls: "size-6" },
-          { label: "xl", cls: "size-8" },
-          { label: "2xl", cls: "size-10" },
-        ] as const
-      ).map(({ label, cls }) => (
-        <div className="flex flex-col items-center gap-2" key={label}>
-          <Spinner {...args} className={cls} />
-          <span className="text-muted-foreground text-xs">{label}</span>
+      {(["xs", "sm", "default", "lg", "xl"] as const).map((size) => (
+        <div className="flex flex-col items-center gap-2" key={size}>
+          <Spinner {...args} size={size} />
+          <span className="text-muted-foreground text-xs">{size}</span>
         </div>
       ))}
     </div>
@@ -82,7 +80,7 @@ export const Colors: Story = {
         ] as const
       ).map(({ label, cls }) => (
         <div className="flex flex-col items-center gap-2" key={label}>
-          <Spinner {...args} className={`size-5 ${cls}`} />
+          <Spinner {...args} className={cls} size="default" />
           <span className="text-muted-foreground text-xs">{label}</span>
         </div>
       ))}
@@ -96,7 +94,7 @@ export const StrokeWidths: Story = {
     <div className="flex flex-wrap items-center gap-6">
       {([1, 1.5, 2, 2.5, 3] as const).map((sw) => (
         <div className="flex flex-col items-center gap-2" key={sw}>
-          <Spinner {...args} className="size-6" strokeWidth={sw} />
+          <Spinner {...args} size="lg" strokeWidth={sw} />
           <span className="text-muted-foreground text-xs">sw={sw}</span>
         </div>
       ))}

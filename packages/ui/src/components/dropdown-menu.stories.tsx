@@ -47,6 +47,10 @@ const meta = {
           "",
           "The `variant` prop on `DropdownMenuItem` accepts `default` or `destructive`",
           "for danger actions.",
+          "",
+          "**Size axis** — pass `size` (`sm | default | lg`) on `DropdownMenuContent` to",
+          "cascade padding and text size to all items in that panel via `data-size` on",
+          "the popup and `group-data-[size=…]/dropdown-menu-content` selectors on items.",
         ].join("\n"),
       },
     },
@@ -288,5 +292,45 @@ export const Grouped: Story = {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  ),
+};
+
+/**
+ * All three content sizes side by side. Item padding and text cascade from the
+ * `size` prop on `DropdownMenuContent` to every item via `group-data-[size=…]`
+ * selectors — no per-item changes needed.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex items-start gap-6">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <DropdownMenu defaultOpen key={size}>
+          <DropdownMenuTrigger
+            render={
+              <Button size="sm" variant="outline">
+                {size}
+              </Button>
+            }
+          />
+          <DropdownMenuContent size={size}>
+            <DropdownMenuLabel>Size: {size}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <HugeiconsIcon icon={Edit02Icon} />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <HugeiconsIcon icon={Copy01Icon} />
+              Duplicate
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive">
+              <HugeiconsIcon icon={Delete02Icon} />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ))}
+    </div>
   ),
 };

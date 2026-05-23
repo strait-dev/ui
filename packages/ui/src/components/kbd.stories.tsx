@@ -21,11 +21,22 @@ const meta = {
           "Renders a keyboard key or shortcut. Use a single `Kbd` for one key",
           "and `KbdGroup` to combine several into a chord. `Kbd` adapts its",
           "colors when placed inside a `Button` or a `Tooltip`.",
+          "",
+          "The `size` prop (`'sm' | 'default' | 'lg'`) scales the key cap height,",
+          "padding, and text. `'default'` is unchanged from before.",
         ].join("\n"),
       },
     },
   },
-  args: { children: "⌘" },
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description: "Key cap height, padding, and text size.",
+      table: { defaultValue: { summary: "default" } },
+    },
+  },
+  args: { children: "⌘", size: "default" },
 } satisfies Meta<typeof Kbd>;
 
 export default meta;
@@ -99,5 +110,34 @@ export const InTooltip: Story = {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
+  ),
+};
+
+/** All three `size` values side by side for visual comparison. */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-3">
+        <span className="w-16 text-muted-foreground text-xs">sm</span>
+        <KbdGroup>
+          <Kbd size="sm">⌘</Kbd>
+          <Kbd size="sm">K</Kbd>
+        </KbdGroup>
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="w-16 text-muted-foreground text-xs">default</span>
+        <KbdGroup>
+          <Kbd size="default">⌘</Kbd>
+          <Kbd size="default">K</Kbd>
+        </KbdGroup>
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="w-16 text-muted-foreground text-xs">lg</span>
+        <KbdGroup>
+          <Kbd size="lg">⌘</Kbd>
+          <Kbd size="lg">K</Kbd>
+        </KbdGroup>
+      </div>
+    </div>
   ),
 };

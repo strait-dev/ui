@@ -2,127 +2,229 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import {
+  type AnyFieldApi,
+  type AnyFormApi,
+  Field as TanStackField,
+} from "@tanstack/react-form";
 import type * as React from "react";
 import { createContext, useContext, useId } from "react";
-import {
-  Controller,
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
-  FormProvider,
-  useFormContext,
-} from "react-hook-form";
 
 import { cn } from "../utils/index";
 import { Label } from "./label";
 
 /**
- * Root provider for a react-hook-form managed form.
+ * Internal context carrying the active TanStack `form` instance so that
+ * {@link FormField} can resolve it without prop drilling.
+ */
+const FormContext = createContext<AnyFormApi | null>(null);
+
+/**
+ * Root provider for a `@tanstack/react-form` managed form.
  *
- * Re-exported directly from react-hook-form's `FormProvider`. Pass the
- * object returned by `useForm()` as spread props so that all descendant
- * {@link FormField} and {@link useFormField} calls can access the form
- * context.
+ * Pass the instance returned by `useForm()` via the `form` prop. All
+ * descendant {@link FormField} components read it from context, so you only
+ * wire the form up once.
+ *
+ * @remarks
+ * `Form` renders no DOM of its own — wrap your own `<form>` element inside it
+ * and call `form.handleSubmit()` from its `onSubmit` handler.
  *
  * @example
  * ```tsx
- * const form = useForm<Schema>();
+ * const form = useForm({
+ *   defaultValues: { email: "" },
+ *   onSubmit: ({ value }) => save(value),
+ * });
  * return (
- *   <Form {...form}>
- *     <form onSubmit={form.handleSubmit(onSubmit)}>…</form>
+ *   <Form form={form}>
+ *     <form
+ *       onSubmit={(e) => {
+ *         e.preventDefault();
+ *         form.handleSubmit();
+ *       }}
+ *     >
+ *       …
+ *     </form>
  *   </Form>
  * );
  * ```
  */
-const Form = FormProvider;
+function Form({
+  form,
+  children,
+}: {
+  /** The instance returned by `useForm()`. */
+  form: AnyFormApi;
+  children: React.ReactNode;
+}) {
+  return <FormContext.Provider value={form}>{children}</FormContext.Provider>;
+}
+
+/** Read the enclosing {@link Form}'s TanStack instance. */
+function useFormRoot(): AnyFormApi {
+  const form = useContext(FormContext);
+  if (!form) {
+    throw new Error("Form components must be used within <Form>");
+  }
+  return form;
+}
 
 /**
- * Internal context value carried by each {@link FormField} to its
- * descendants so {@link useFormField} can resolve the field name.
+ * Render-prop payload handed to {@link FormField}'s `render`/`children`.
+ *
+ * `field` is the TanStack field API: read `field.state.value`, write with
+ * `field.handleChange`, and flag blur with `field.handleBlur`.
  */
-type FormFieldContextValue<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = {
-  name: TName;
+type FormFieldRenderApi = { field: AnyFieldApi };
+
+/**
+ * Internal context carrying the active field API so {@link useFormField} (and
+ * the sub-components that call it) can read validation state.
+ */
+const FormFieldContext = createContext<{ field: AnyFieldApi } | null>(null);
+
+/** All props accepted by TanStack's standalone `Field` component. */
+type TanStackFieldProps = React.ComponentProps<typeof TanStackField>;
+
+/**
+ * Props for {@link FormField}.
+ *
+ * Inherits every TanStack `Field` option (`validators`, `mode`,
+ * `asyncDebounceMs`, `listeners`, …) except `form` (resolved from context) and
+ * `children` (replaced with the design-system render contract below).
+ */
+type FormFieldProps = Omit<TanStackFieldProps, "form" | "name" | "children"> & {
+  /** Dot-path of the field within the form's values. */
+  name: string;
+  /** Render the control. Receives the TanStack `field` API. */
+  render?: (api: FormFieldRenderApi) => React.ReactNode;
+  /** Alternative to `render`: a node or a render function. */
+  children?: React.ReactNode | ((api: FormFieldRenderApi) => React.ReactNode);
 };
 
-// Private context — not exported; consumers use useFormField instead.
-const FormFieldContext = createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
-);
-
 /**
- * Connects a single react-hook-form field to the design-system form
+ * Connects a single `@tanstack/react-form` field to the design-system form
  * components.
  *
- * Wraps react-hook-form's `<Controller>` and publishes the field's `name`
- * via a React context so {@link useFormField} (and every sub-component that
- * calls it) can read validation state without prop drilling.
+ * Wraps TanStack's standalone `Field` and publishes its API through context so
+ * {@link useFormField} (and every sub-component that calls it) can read
+ * validation state without prop drilling.
  *
  * @remarks
  * Every field in a {@link Form} should be wrapped in a `FormField`. The
- * `render` prop receives `{ field, fieldState }` and should render the
- * control inside {@link FormItem} → {@link FormControl} for full
- * accessibility wiring.
+ * `render` prop receives `{ field }` and should render the control inside
+ * {@link FormItem} → {@link FormControl} for full accessibility wiring.
  *
  * @example
  * ```tsx
  * <FormField
- *   control={form.control}
  *   name="email"
+ *   validators={{
+ *     onChange: ({ value }) => (value ? undefined : "Email is required"),
+ *   }}
  *   render={({ field }) => (
  *     <FormItem>
  *       <FormLabel>Email</FormLabel>
- *       <FormControl render={<Input type="email" {...field} />} />
+ *       <FormControl
+ *         render={
+ *           <Input
+ *             onBlur={field.handleBlur}
+ *             onChange={(e) => field.handleChange(e.target.value)}
+ *             type="email"
+ *             value={field.state.value}
+ *           />
+ *         }
+ *       />
  *       <FormMessage />
  *     </FormItem>
  *   )}
  * />
  * ```
  */
-function FormField<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({ ...props }: ControllerProps<TFieldValues, TName>) {
+function FormField({ name, render, children, ...fieldProps }: FormFieldProps) {
+  const form = useFormRoot();
+
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
-    </FormFieldContext.Provider>
+    <TanStackField form={form} name={name} {...fieldProps}>
+      {(field: AnyFieldApi) => (
+        <FormFieldContext.Provider value={{ field }}>
+          {renderFieldContent({ field }, render, children)}
+        </FormFieldContext.Provider>
+      )}
+    </TanStackField>
   );
+}
+
+/** Resolve a {@link FormField}'s body from its `render`/`children` props. */
+function renderFieldContent(
+  api: FormFieldRenderApi,
+  render: FormFieldProps["render"],
+  children: FormFieldProps["children"]
+): React.ReactNode {
+  if (typeof children === "function") {
+    return children(api);
+  }
+  if (render) {
+    return render(api);
+  }
+  return children;
+}
+
+/**
+ * Normalise a TanStack validation error into a display string.
+ *
+ * Errors may be plain strings (function validators) or objects with a
+ * `message` property (standard-schema validators). Anything else yields
+ * `undefined` so {@link FormMessage} can fall back to its children.
+ */
+function getFieldErrorMessage(error: unknown): string | undefined {
+  if (!error) {
+    return;
+  }
+  if (typeof error === "string") {
+    return error;
+  }
+  if (typeof error === "object" && "message" in error) {
+    const { message } = error as { message?: unknown };
+    return typeof message === "string" ? message : undefined;
+  }
+  return;
 }
 
 /**
  * Hook that returns the current field's metadata and validation state.
  *
  * Must be called inside a component rendered within {@link FormField}.
- * Returns `id`, `name`, `formItemId`, `formDescriptionId`,
- * `formMessageId`, plus all react-hook-form `fieldState` properties
- * (`error`, `invalid`, `isDirty`, etc.).
+ * Returns `id`, `name`, the three stable element IDs, plus the field's
+ * `errors` array, the first `errorMessage`, `isTouched`, and `isInvalid`.
  *
  * @throws when called outside a {@link FormField} context.
  */
 const useFormField = () => {
   const fieldContext = useContext(FormFieldContext);
   const itemContext = useContext(FormItemContext);
-  const { getFieldState, formState } = useFormContext();
-
-  const fieldState = getFieldState(fieldContext.name, formState);
 
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
   }
 
+  const { field } = fieldContext;
   const { id } = itemContext;
+  const { errors, isTouched } = field.state.meta;
+  const isInvalid = errors.length > 0;
 
   return {
     id,
-    name: fieldContext.name,
+    name: field.name,
+    isTouched,
+    isInvalid,
+    errors,
+    errorMessage: getFieldErrorMessage(errors[0]),
     // Stable IDs for htmlFor / aria-describedby / aria-errormessage
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
-    ...fieldState,
   };
 };
 
@@ -168,7 +270,7 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 /**
- * Label for a react-hook-form controlled field inside {@link FormItem}.
+ * Label for a form field inside {@link FormItem}.
  *
  * Automatically sets `htmlFor` to the matching {@link FormControl} `id`
  * and turns destructive red when the field has a validation error.
@@ -182,12 +284,12 @@ function FormLabel({
   children,
   ...props
 }: React.ComponentProps<"label"> & { required?: boolean }) {
-  const { error, formItemId } = useFormField();
+  const { isInvalid, formItemId } = useFormField();
 
   return (
     <Label
       // Turn label red when the field is in an error state
-      className={cn(error ? "text-destructive" : null, className)}
+      className={cn(isInvalid ? "text-destructive" : null, className)}
       data-slot="form-label"
       htmlFor={formItemId}
       {...props}
@@ -216,7 +318,7 @@ function FormControl({
   render,
   ...props
 }: useRender.ComponentProps<"div"> & React.ComponentProps<"div">) {
-  const { error, formItemId, formDescriptionId, formMessageId } =
+  const { isInvalid, formItemId, formDescriptionId, formMessageId } =
     useFormField();
 
   return useRender({
@@ -225,10 +327,10 @@ function FormControl({
     props: mergeProps<"div">(
       {
         // Include formMessageId in describedby only when there is an error
-        "aria-describedby": error
+        "aria-describedby": isInvalid
           ? `${formDescriptionId} ${formMessageId}`
           : `${formDescriptionId}`,
-        "aria-invalid": !!error,
+        "aria-invalid": isInvalid,
         id: formItemId,
       },
       props
@@ -240,7 +342,7 @@ function FormControl({
 }
 
 /**
- * Muted helper text for a react-hook-form field inside {@link FormItem}.
+ * Muted helper text for a form field inside {@link FormItem}.
  *
  * Automatically receives the `id` that {@link FormControl} references in
  * `aria-describedby`, ensuring screen readers announce the hint.
@@ -259,22 +361,21 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 /**
- * Validation error message for a react-hook-form field inside
- * {@link FormItem}.
+ * Validation error message for a form field inside {@link FormItem}.
  *
- * Shows the react-hook-form `error.message` when present; falls back to
- * explicit `children`. Renders nothing when there is no message. The
- * element's `id` is referenced by {@link FormControl}'s `aria-describedby`
- * on error so screen readers announce the message.
+ * Shows the field's first error message when present; falls back to explicit
+ * `children`. Renders nothing when there is no message. The element's `id` is
+ * referenced by {@link FormControl}'s `aria-describedby` on error so screen
+ * readers announce the message.
  */
 function FormMessage({
   className,
   children,
   ...props
 }: React.ComponentProps<"p">) {
-  const { error, formMessageId } = useFormField();
-  // Prefer RHF error message; fall back to explicit children.
-  const body = error ? String(error?.message) : children;
+  const { errorMessage, formMessageId } = useFormField();
+  // Prefer the field's error message; fall back to explicit children.
+  const body = errorMessage ?? children;
 
   if (!body) {
     return null;
@@ -297,6 +398,7 @@ export {
   FormControl,
   FormDescription,
   FormField,
+  type FormFieldProps,
   FormItem,
   FormLabel,
   FormMessage,

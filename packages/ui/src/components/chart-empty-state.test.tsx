@@ -56,4 +56,50 @@ describe("ChartEmptyState", () => {
     const root = container.firstChild as HTMLElement;
     expect(root).toHaveClass("my-custom-class");
   });
+
+  // --- size axis ---
+
+  it("default size sets data-size='default' on the root element", () => {
+    const { container } = render(<ChartEmptyState message="No data." />);
+    const root = container.firstChild as HTMLElement;
+    expect(root).toHaveAttribute("data-size", "default");
+  });
+
+  it("size='sm' sets data-size='sm' on the root element", () => {
+    const { container } = render(
+      <ChartEmptyState message="No data." size="sm" />
+    );
+    const root = container.firstChild as HTMLElement;
+    expect(root).toHaveAttribute("data-size", "sm");
+  });
+
+  it("size='lg' sets data-size='lg' on the root element", () => {
+    const { container } = render(
+      <ChartEmptyState message="No data." size="lg" />
+    );
+    const root = container.firstChild as HTMLElement;
+    expect(root).toHaveAttribute("data-size", "lg");
+  });
+
+  it("size='sm' uses a smaller icon tile (size-7)", () => {
+    const { container } = render(
+      <ChartEmptyState message="No data." size="sm" />
+    );
+    const tile = container.querySelector(".size-7");
+    expect(tile).toBeInTheDocument();
+  });
+
+  it("size='lg' uses a larger icon tile (size-14)", () => {
+    const { container } = render(
+      <ChartEmptyState message="No data." size="lg" />
+    );
+    const tile = container.querySelector(".size-14");
+    expect(tile).toBeInTheDocument();
+  });
+
+  it("default size uses size-10 icon tile", () => {
+    const { container } = render(<ChartEmptyState message="No data." />);
+    const tile = container.querySelector(".size-10");
+    expect(tile).toBeInTheDocument();
+  });
 });

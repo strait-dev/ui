@@ -24,6 +24,12 @@ const meta = {
           "item can be active (single-choice); set `toggleMultiple` for a",
           "multi-select toolbar. Each `ToggleGroupItem` needs a `value`, and",
           "the group is controlled via `value` / `defaultValue` (an array).",
+          "",
+          "**Size** — five presets cascade from the group to every item:",
+          "`xs`, `sm`, `default`, `lg`, `xl`.",
+          "",
+          "**Intent** — set once on the group; every item inherits the pressed-state",
+          "colour: `default`, `destructive`, `success`, `info`, `warning`.",
         ].join("\n"),
       },
     },
@@ -37,8 +43,14 @@ const meta = {
     },
     size: {
       control: "select",
-      options: ["sm", "default", "lg"],
-      description: "Control height — `sm`, `default`, or `lg`.",
+      options: ["xs", "sm", "default", "lg", "xl"],
+      description: "Control height — `xs`, `sm`, `default`, `lg`, or `xl`.",
+      table: { defaultValue: { summary: "default" } },
+    },
+    intent: {
+      control: "select",
+      options: ["default", "destructive", "success", "info", "warning"],
+      description: "Tints each item's pressed/active state.",
       table: { defaultValue: { summary: "default" } },
     },
     orientation: {
@@ -59,6 +71,7 @@ const meta = {
   args: {
     variant: "outline",
     size: "default",
+    intent: "default",
     orientation: "horizontal",
   },
 } satisfies Meta<typeof ToggleGroup>;
@@ -101,15 +114,35 @@ export const Variants: Story = {
   ),
 };
 
-/** Three sizes. */
+/** All five sizes — `xs` through `xl`. */
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-col items-center gap-4">
-      {(["sm", "default", "lg"] as const).map((size) => (
+      {(["xs", "sm", "default", "lg", "xl"] as const).map((size) => (
         <ToggleGroup {...args} defaultValue={["center"]} key={size} size={size}>
           {alignItems}
         </ToggleGroup>
       ))}
+    </div>
+  ),
+};
+
+/** Five intent colours — pressed items use the matching semantic token. */
+export const Intents: Story = {
+  render: (args) => (
+    <div className="flex flex-col items-center gap-4">
+      {(["default", "destructive", "success", "info", "warning"] as const).map(
+        (intent) => (
+          <ToggleGroup
+            {...args}
+            defaultValue={["center"]}
+            intent={intent}
+            key={intent}
+          >
+            {alignItems}
+          </ToggleGroup>
+        )
+      )}
     </div>
   ),
 };

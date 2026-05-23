@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -13,6 +13,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
+
+beforeAll(() => {
+  globalThis.ResizeObserver ||= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+  Element.prototype.scrollIntoView ||= () => {};
+});
 
 describe("DropdownMenu", () => {
   it("renders the trigger with the correct data-slot", () => {
@@ -118,5 +127,78 @@ describe("DropdownMenu", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("React")).toBeInTheDocument();
     expect(screen.getByText("Vue")).toBeInTheDocument();
+  });
+
+  // -------------------------------------------------------------------------
+  // Size axis
+  // -------------------------------------------------------------------------
+
+  it("content has data-size=default when no size is given", () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+    const content = document.querySelector(
+      "[data-slot='dropdown-menu-content']"
+    );
+    expect(content).toHaveAttribute("data-size", "default");
+  });
+
+  it("content has data-size=sm when size='sm' is given", () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+        <DropdownMenuContent size="sm">
+          <DropdownMenuItem>Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+    const content = document.querySelector(
+      "[data-slot='dropdown-menu-content']"
+    );
+    expect(content).toHaveAttribute("data-size", "sm");
+  });
+
+  it("content has data-size=lg when size='lg' is given", () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+        <DropdownMenuContent size="lg">
+          <DropdownMenuItem>Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+    const content = document.querySelector(
+      "[data-slot='dropdown-menu-content']"
+    );
+    expect(content).toHaveAttribute("data-size", "lg");
+  });
+
+  it("items are still present with sm size", () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+        <DropdownMenuContent size="sm">
+          <DropdownMenuItem>Small Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+    expect(screen.getByText("Small Item")).toBeInTheDocument();
+  });
+
+  it("items are still present with lg size", () => {
+    render(
+      <DropdownMenu defaultOpen>
+        <DropdownMenuTrigger>Open</DropdownMenuTrigger>
+        <DropdownMenuContent size="lg">
+          <DropdownMenuItem>Large Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+    expect(screen.getByText("Large Item")).toBeInTheDocument();
   });
 });

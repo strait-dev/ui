@@ -49,14 +49,16 @@ const meta: Meta<typeof Item> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "outline", "muted"],
-      description: "Border style.",
+      options: ["default", "outline", "muted", "ghost"],
+      description:
+        "Border / surface style. `ghost` has a transparent background that only shows a hover tint.",
       table: { defaultValue: { summary: "default" } },
     },
     size: {
       control: "select",
-      options: ["default", "sm", "xs"],
-      description: "Padding/gap preset.",
+      options: ["default", "sm", "xs", "xl"],
+      description:
+        "Padding/gap preset. `xl` adds generous padding and `text-base` for prominent rows.",
       table: { defaultValue: { summary: "default" } },
     },
   },
@@ -96,11 +98,11 @@ export const Playground: Story = {
 /* Variants                                                            */
 /* ------------------------------------------------------------------ */
 
-/** All three border variants side-by-side. */
+/** All four border variants side-by-side including the new `ghost` variant. */
 export const Variants: Story = {
   render: () => (
     <div className="flex max-w-sm flex-col gap-3">
-      {(["default", "outline", "muted"] as const).map((variant) => (
+      {(["default", "outline", "muted", "ghost"] as const).map((variant) => (
         <Item key={variant} variant={variant}>
           <ItemMedia variant="icon">
             <HugeiconsIcon icon={Folder01Icon} />
@@ -115,19 +117,61 @@ export const Variants: Story = {
   ),
 };
 
-/** All three size presets. */
+/** All four size presets including the new `xl` size. */
 export const Sizes: Story = {
   render: () => (
     <div className="flex max-w-sm flex-col gap-3">
-      {(["default", "sm", "xs"] as const).map((size) => (
+      {(["default", "sm", "xs", "xl"] as const).map((size) => (
         <Item key={size} size={size} variant="outline">
           <ItemMedia variant="icon">
             <HugeiconsIcon icon={Folder01Icon} />
           </ItemMedia>
           <ItemContent>
             <ItemTitle>Item — size "{size}"</ItemTitle>
-            <ItemDescription>Compact list row at size {size}.</ItemDescription>
+            <ItemDescription>List row at size {size}.</ItemDescription>
           </ItemContent>
+        </Item>
+      ))}
+    </div>
+  ),
+};
+
+/** `ghost` variant — transparent background with hover tint only. */
+export const GhostVariant: Story = {
+  render: () => (
+    <div className="flex max-w-sm flex-col gap-1 rounded-lg bg-card p-2">
+      {["Inbox", "Sent", "Drafts", "Archive"].map((label) => (
+        <Item key={label} variant="ghost">
+          <ItemMedia variant="icon">
+            <HugeiconsIcon icon={Mail01Icon} />
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>{label}</ItemTitle>
+          </ItemContent>
+        </Item>
+      ))}
+    </div>
+  ),
+};
+
+/** `xl` size — generous padding and `text-base` for prominent list entries. */
+export const XlSize: Story = {
+  render: () => (
+    <div className="flex max-w-sm flex-col gap-3">
+      {(["Archive", "Delete", "Star"] as const).map((label) => (
+        <Item key={label} size="xl" variant="outline">
+          <ItemMedia variant="icon">
+            <HugeiconsIcon icon={Archive01Icon} />
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>{label}</ItemTitle>
+            <ItemDescription>Extra-large item row.</ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <Button aria-label="Action" size="icon-xs" variant="ghost">
+              <HugeiconsIcon icon={StarIcon} />
+            </Button>
+          </ItemActions>
         </Item>
       ))}
     </div>

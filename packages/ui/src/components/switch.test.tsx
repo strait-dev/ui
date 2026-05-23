@@ -46,4 +46,28 @@ describe("Switch", () => {
       "sm"
     );
   });
+
+  it("applies data-size=lg when size=lg is passed", () => {
+    render(<Switch aria-label="Wifi" size="lg" />);
+    expect(screen.getByRole("switch", { name: "Wifi" })).toHaveAttribute(
+      "data-size",
+      "lg"
+    );
+  });
+
+  it("applies data-intent=destructive when intent=destructive is passed", () => {
+    render(<Switch aria-label="Danger" intent="destructive" />);
+    expect(screen.getByRole("switch", { name: "Danger" })).toHaveAttribute(
+      "data-intent",
+      "destructive"
+    );
+  });
+
+  it("defaults to data-intent=default when no intent is provided", () => {
+    render(<Switch aria-label="Default" />);
+    expect(screen.getByRole("switch", { name: "Default" })).toHaveAttribute(
+      "data-intent",
+      "default"
+    );
+  });
 });

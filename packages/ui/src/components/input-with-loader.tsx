@@ -3,7 +3,7 @@
 import { Loading01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "../utils/index";
-import { Input } from "./input";
+import { Input, type InputProps } from "./input";
 
 /**
  * Props for {@link InputWithLoader}.
@@ -14,7 +14,7 @@ import { Input } from "./input";
  * `endIcon` is always interactive — wrap it with `endIconAriaLabel` for
  * accessibility when using icon-only affordances (e.g. a clear button).
  */
-export type InputWithLoaderProps = React.ComponentProps<"input"> & {
+export type InputWithLoaderProps = InputProps & {
   isLoading?: boolean;
   icon?: React.ReactNode;
   endIcon?: React.ReactNode;

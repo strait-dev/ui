@@ -15,6 +15,13 @@ const meta: Meta<typeof StatusBadge> = {
           "consistent colour, a leading status dot, and a humanised label.",
           "The status → colour mapping lives in the exported `STATUS_CONFIG`;",
           "live states animate the dot with a subtle pulse.",
+          "",
+          "New props: `pulse` (animate-ping ring for live states), `dotOnly`",
+          "(icon-only with `aria-label` for dense UIs). The dot size now scales",
+          "automatically with the badge `size` prop.",
+          "",
+          "New status keywords: `retrying`, `scheduled`, `blocked`, `draft`,",
+          "`archived`, `disabled`, `unknown`, `partial`, `partial_success`.",
         ].join("\n"),
       },
     },
@@ -28,10 +35,19 @@ const meta: Meta<typeof StatusBadge> = {
       control: "boolean",
       description: "Show the leading coloured dot.",
     },
+    pulse: {
+      control: "boolean",
+      description: "Render an animate-ping ring behind the dot.",
+    },
+    dotOnly: {
+      control: "boolean",
+      description:
+        "Show only the dot (no text label). Adds aria-label for a11y.",
+    },
     size: {
       control: "select",
       options: ["xs", "sm", "default", "lg", "xl"],
-      description: "Badge size.",
+      description: "Badge size — the dot scales accordingly.",
     },
   },
   args: {
@@ -71,6 +87,29 @@ export const AllStatuses: Story = {
   ),
 };
 
+const EXTENDED_STATUSES = [
+  "retrying",
+  "scheduled",
+  "blocked",
+  "draft",
+  "archived",
+  "disabled",
+  "unknown",
+  "partial",
+  "partial_success",
+];
+
+/** Newly added status keywords. */
+export const ExtendedStatuses: Story = {
+  render: () => (
+    <div className="flex max-w-md flex-wrap gap-2">
+      {EXTENDED_STATUSES.map((status) => (
+        <StatusBadge key={status} status={status} />
+      ))}
+    </div>
+  ),
+};
+
 /** Without the leading dot, for dense tables. */
 export const WithoutDot: Story = {
   render: () => (
@@ -98,4 +137,59 @@ export const Sizes: Story = {
 /** Unknown statuses degrade to a neutral grey pill rather than throwing. */
 export const UnknownStatus: Story = {
   args: { status: "throttled" },
+};
+
+/* ------------------------------------------------------------------ */
+/* Pulse                                                               */
+/* ------------------------------------------------------------------ */
+
+/**
+ * `pulse=true` adds an `animate-ping` ring behind the dot for a "live"
+ * affordance — use it for truly real-time statuses like `running` or `active`.
+ */
+export const WithPulse: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      <StatusBadge pulse status="running" />
+      <StatusBadge pulse status="executing" />
+      <StatusBadge pulse status="active" />
+      <StatusBadge pulse status="retrying" />
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Dot only                                                            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * `dotOnly=true` renders only the coloured dot — the text label is hidden and
+ * `aria-label` is auto-set from the humanised status so screen readers still
+ * announce the state.  Ideal for very dense table cells or icon columns.
+ */
+export const DotOnly: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      {["running", "completed", "failed", "queued", "delayed", "retrying"].map(
+        (status) => (
+          <StatusBadge dotOnly key={status} size="lg" status={status} />
+        )
+      )}
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Dot only + Pulse                                                    */
+/* ------------------------------------------------------------------ */
+
+/** Combination of `dotOnly` and `pulse` — the live indicator in its most minimal form. */
+export const DotOnlyWithPulse: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      <StatusBadge dotOnly pulse size="default" status="running" />
+      <StatusBadge dotOnly pulse size="lg" status="executing" />
+      <StatusBadge dotOnly pulse size="xl" status="active" />
+    </div>
+  ),
 };

@@ -8,8 +8,9 @@ import { cn } from "../utils/index";
  *
  * Exposes one axis:
  * - `variant` — intent of the message. `"default"` renders a neutral card
- *   surface; `"destructive"` tints the text and icon red to signal an error
- *   or danger condition.
+ *   surface; `"info"`, `"success"`, `"warning"`, and `"destructive"` tint the
+ *   border, background, text, and icon with the matching semantic token so the
+ *   whole alert reads as a single intent.
  *
  * Exported so consumers can derive the same look on non-alert elements
  * without re-implementing the class list.
@@ -20,8 +21,13 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-card text-card-foreground",
+        info: "border-info/30 bg-info/5 text-info-accent *:data-[slot=alert-description]:text-info-accent/90",
+        success:
+          "border-success/30 bg-success/5 text-success-accent *:data-[slot=alert-description]:text-success-accent/90",
+        warning:
+          "border-warning/30 bg-warning/5 text-warning-accent *:data-[slot=alert-description]:text-warning-accent/90",
         destructive:
-          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
+          "border-destructive/30 bg-destructive/5 text-destructive-accent *:data-[slot=alert-description]:text-destructive-accent/90",
       },
     },
     defaultVariants: {
@@ -42,8 +48,9 @@ const alertVariants = cva(
  * @remarks
  * - The root renders with `role="alert"` so screen readers announce it
  *   immediately when it appears in the DOM.
- * - Pass `variant="destructive"` to signal error conditions — the text
- *   and icon colour shift to the destructive semantic token automatically.
+ * - Pass `variant` to signal intent — `"info"`, `"success"`, `"warning"`, and
+ *   `"destructive"` tint the border, background, text, and icon with the
+ *   matching semantic token; `"default"` stays neutral.
  * - Drop any 16 × 16 SVG icon as a direct child; {@link alertVariants}
  *   handles sizing and vertical alignment via CSS selectors.
  *

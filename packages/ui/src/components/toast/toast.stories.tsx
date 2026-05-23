@@ -15,7 +15,8 @@ const meta = {
     docs: {
       description: {
         component: [
-          "A custom toast system built on top of [sonner](https://sonner.emilkowal.ski/).",
+          "Toasts built on [sonner](https://sonner.emilkowal.ski/), rendered with",
+          "Sonner's **built-in styled toasts** themed by the design-system tokens.",
           "Mount **one** `<Toaster />` near your app root, then call the imperative",
           "`toast` API anywhere:",
           "",
@@ -27,11 +28,12 @@ const meta = {
           'toast.warning("Low disk space", { action: { label: "Clean up", onClick: fn } });',
           'toast.info("Update available");',
           'toast.loading("Processing…");',
-          'toast.confirm("Delete this item?", { onConfirm: async () => { /* … */ } });',
+          'toast.confirm("Delete this item?", { onConfirm: () => remove() });',
           "```",
           "",
           "All types except `loading` and `confirm` accept an optional `action`",
-          "(`{ label, onClick }`) that renders an inline action button.",
+          "(`{ label, onClick }`) that renders an inline action button. `confirm`",
+          "renders native `confirm`/`cancel` buttons.",
         ].join("\n"),
       },
     },
@@ -110,9 +112,8 @@ export const Playground: Story = {
               description: "This action cannot be undone.",
               confirmLabel: "Delete",
               cancelLabel: "Cancel",
-              variant: "destructive",
-              onConfirm: async () => {
-                await new Promise((r) => setTimeout(r, 500));
+              onConfirm: () => {
+                toast.success("Project deleted");
               },
             })
           }
@@ -237,7 +238,7 @@ export const WarningAndInfo: Story = {
   ),
 };
 
-/** Confirm toast — shows an inline confirmation prompt. */
+/** Confirm toast — native confirm/cancel buttons. */
 export const ConfirmToast: Story = {
   render: () => (
     <>
@@ -249,12 +250,12 @@ export const ConfirmToast: Story = {
               description: "This cannot be undone.",
               confirmLabel: "Delete",
               cancelLabel: "Cancel",
-              variant: "destructive",
-              onConfirm: async () => {
-                await new Promise((r) => setTimeout(r, 300));
+              onConfirm: () => {
                 toast.success("File deleted");
               },
-              onCancel: () => toast.info("Cancelled"),
+              onCancel: () => {
+                toast.info("Cancelled");
+              },
             })
           }
           variant="destructive-outline"
@@ -266,7 +267,6 @@ export const ConfirmToast: Story = {
           onClick={() =>
             toast.confirm("Archive this project?", {
               confirmLabel: "Archive",
-              variant: "default",
               onConfirm: async () => {
                 await new Promise((r) => setTimeout(r, 300));
                 toast.success("Project archived");
@@ -297,11 +297,6 @@ export const PromiseToast: Story = {
               loading: "Uploading file…",
               success: (data) => `${data.name} uploaded successfully`,
               error: "Upload failed",
-              description: {
-                loading: "This may take a moment.",
-                success: (data) => `${data.name} is now available.`,
-                error: "Please check your connection and retry.",
-              },
             });
           }}
           variant="outline"

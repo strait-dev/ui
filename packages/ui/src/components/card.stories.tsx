@@ -36,10 +36,14 @@ const meta: Meta<typeof Card> = {
           "Compose from: `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`,",
           "`CardContent`, and `CardFooter`.",
           "",
-          "Two sizes: `default` (gap-4 / py-4) and `sm` (gap-3 / py-3).",
+          "**Sizes** (`sm | default | lg`) — gap and padding cascade from the root.",
           "`CardAction` occupies the top-right cell of the header grid.",
           "An `<img>` as the *first* child of `Card` bleeds edge-to-edge and",
           "receives rounded top corners automatically.",
+          "",
+          "**Variants** (`default | outline | ghost`) — `default` keeps the current",
+          "`bg-card ring-1 ring-foreground/10`; `outline` uses a visible `border` +",
+          "`bg-card` and drops the ring; `ghost` is transparent with no ring or border.",
         ].join("\n"),
       },
     },
@@ -47,12 +51,18 @@ const meta: Meta<typeof Card> = {
   argTypes: {
     size: {
       control: "select",
-      options: ["default", "sm"],
+      options: ["default", "sm", "lg"],
       description: "Internal spacing preset.",
       table: { defaultValue: { summary: "default" } },
     },
+    variant: {
+      control: "select",
+      options: ["default", "outline", "ghost"],
+      description: "Surface decoration style.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
-  args: { size: "default" },
+  args: { size: "default", variant: "default" },
 };
 
 export default meta;
@@ -63,7 +73,7 @@ type Story = StoryObj<typeof meta>;
 /* Playground                                                          */
 /* ------------------------------------------------------------------ */
 
-/** Interactive playground — adjust `size` via the controls panel. */
+/** Interactive playground — adjust `size` and `variant` via the controls panel. */
 export const Playground: Story = {
   render: (args) => (
     <Card {...args} className="w-80">
@@ -97,11 +107,11 @@ export const Playground: Story = {
 /* Sizes                                                               */
 /* ------------------------------------------------------------------ */
 
-/** `default` vs `sm` size — note the tighter padding on `sm`. */
+/** `sm`, `default`, and `lg` — note the progressive gap and padding. */
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-wrap items-start gap-4">
-      {(["default", "sm"] as const).map((size) => (
+      {(["sm", "default", "lg"] as const).map((size) => (
         <Card className="w-72" key={size} size={size}>
           <CardHeader>
             <CardTitle>Card — {size}</CardTitle>
@@ -110,6 +120,34 @@ export const Sizes: Story = {
           <CardContent>
             <p className="text-muted-foreground text-sm">
               Content area at the {size} size preset.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button size="sm">Action</Button>
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Variants                                                            */
+/* ------------------------------------------------------------------ */
+
+/** `default`, `outline`, and `ghost` — surface decoration comparison. */
+export const Variants: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-start gap-4">
+      {(["default", "outline", "ghost"] as const).map((variant) => (
+        <Card className="w-72" key={variant} variant={variant}>
+          <CardHeader>
+            <CardTitle>Card — {variant}</CardTitle>
+            <CardDescription>variant="{variant}"</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-sm">
+              Surface style: {variant}.
             </p>
           </CardContent>
           <CardFooter>

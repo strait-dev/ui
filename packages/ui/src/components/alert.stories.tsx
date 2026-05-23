@@ -13,7 +13,13 @@ import { Button } from "./button";
 
 type AlertVariant = NonNullable<ComponentProps<typeof Alert>["variant"]>;
 
-const variantOptions: AlertVariant[] = ["default", "destructive"];
+const variantOptions: AlertVariant[] = [
+  "default",
+  "info",
+  "success",
+  "warning",
+  "destructive",
+];
 
 const meta = {
   title: "Feedback/Alert",
@@ -25,9 +31,11 @@ const meta = {
       description: {
         component: [
           "Inline contextual messages that draw attention to important information.",
-          "Alerts support two variants — `default` (neutral) and `destructive` — and",
-          "compose with an optional leading icon, `AlertTitle`, `AlertDescription`,",
-          "and an `AlertAction` slot for a dismiss/action button.",
+          "Alerts support five variants — `default` (neutral) plus the `info`,",
+          "`success`, `warning`, and `destructive` intents, each tinting the border,",
+          "background, text, and icon with the matching semantic token. Compose with",
+          "an optional leading icon, `AlertTitle`, `AlertDescription`, and an",
+          "`AlertAction` slot for a dismiss/action button.",
         ].join("\n"),
       },
     },
@@ -62,7 +70,7 @@ export const Playground: Story = {
   ),
 };
 
-/** Both variants side by side: `default` and `destructive`. */
+/** All five variants side by side, each with its matching default icon. */
 export const Variants: Story = {
   render: (args) => (
     <div className="flex w-full max-w-lg flex-col gap-4">
@@ -74,52 +82,33 @@ export const Variants: Story = {
         </AlertDescription>
       </Alert>
 
-      <Alert {...args} variant="destructive">
-        <HugeiconsIcon icon={MultiplicationSignCircleIcon} />
-        <AlertTitle>Something went wrong</AlertTitle>
-        <AlertDescription>
-          Your session has expired. Please sign in again to continue.
-        </AlertDescription>
-      </Alert>
-    </div>
-  ),
-};
-
-/** Success and warning semantics implemented via icon colour overrides. */
-export const WithIntents: Story = {
-  render: (args) => (
-    <div className="flex w-full max-w-lg flex-col gap-4">
-      <Alert {...args} variant="default">
-        <HugeiconsIcon
-          className="text-emerald-500"
-          icon={CheckmarkCircle02Icon}
-        />
-        <AlertTitle>Saved successfully</AlertTitle>
-        <AlertDescription>Your changes have been published.</AlertDescription>
-      </Alert>
-
-      <Alert {...args} variant="default">
-        <HugeiconsIcon className="text-amber-500" icon={Alert02Icon} />
-        <AlertTitle>Low disk space</AlertTitle>
-        <AlertDescription>
-          You have less than 500 MB remaining. Consider cleaning up old files.
-        </AlertDescription>
-      </Alert>
-
-      <Alert {...args} variant="default">
-        <HugeiconsIcon className="text-blue-500" icon={InformationCircleIcon} />
+      <Alert {...args} variant="info">
+        <HugeiconsIcon icon={InformationCircleIcon} />
         <AlertTitle>Maintenance scheduled</AlertTitle>
         <AlertDescription>
           The system will be down for maintenance on Saturday at 2 AM UTC.
         </AlertDescription>
       </Alert>
 
+      <Alert {...args} variant="success">
+        <HugeiconsIcon icon={CheckmarkCircle02Icon} />
+        <AlertTitle>Saved successfully</AlertTitle>
+        <AlertDescription>Your changes have been published.</AlertDescription>
+      </Alert>
+
+      <Alert {...args} variant="warning">
+        <HugeiconsIcon icon={Alert02Icon} />
+        <AlertTitle>Low disk space</AlertTitle>
+        <AlertDescription>
+          You have less than 500 MB remaining. Consider cleaning up old files.
+        </AlertDescription>
+      </Alert>
+
       <Alert {...args} variant="destructive">
         <HugeiconsIcon icon={MultiplicationSignCircleIcon} />
-        <AlertTitle>Action required</AlertTitle>
+        <AlertTitle>Something went wrong</AlertTitle>
         <AlertDescription>
-          Your payment method has expired. Update it to keep your subscription
-          active.
+          Your session has expired. Please sign in again to continue.
         </AlertDescription>
       </Alert>
     </div>

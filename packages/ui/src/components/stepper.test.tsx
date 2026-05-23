@@ -171,3 +171,140 @@ describe("Stepper", () => {
     expect(desc).toHaveAttribute("data-slot", "stepper-description");
   });
 });
+
+/* ------------------------------------------------------------------ */
+/* Size axis                                                           */
+/* ------------------------------------------------------------------ */
+
+describe("Stepper size prop", () => {
+  it("sets data-size='default' by default", () => {
+    const { container } = render(<BasicStepper />);
+    const stepper = container.querySelector("[data-slot='stepper']");
+    expect(stepper).toHaveAttribute("data-size", "default");
+  });
+
+  it("sets data-size='sm' when size='sm'", () => {
+    const { container } = render(
+      <Stepper size="sm">
+        <StepperItem step={0}>
+          <StepperTrigger>
+            <StepperIndicator />
+            <StepperTitle>Step</StepperTitle>
+          </StepperTrigger>
+        </StepperItem>
+      </Stepper>
+    );
+    const stepper = container.querySelector("[data-slot='stepper']");
+    expect(stepper).toHaveAttribute("data-size", "sm");
+  });
+
+  it("applies sm size class to StepperIndicator", () => {
+    const { container } = render(
+      <Stepper size="sm">
+        <StepperItem step={0}>
+          <StepperTrigger>
+            <StepperIndicator />
+          </StepperTrigger>
+        </StepperItem>
+      </Stepper>
+    );
+    const indicator = container.querySelector(
+      "[data-slot='stepper-indicator']"
+    );
+    expect(indicator?.className).toContain(
+      "group-data-[size=sm]/stepper:size-6"
+    );
+  });
+
+  it("applies sm size class to StepperTitle", () => {
+    const { container } = render(
+      <Stepper size="sm">
+        <StepperItem step={0}>
+          <StepperTrigger>
+            <StepperIndicator />
+            <StepperTitle>Title</StepperTitle>
+          </StepperTrigger>
+        </StepperItem>
+      </Stepper>
+    );
+    const title = container.querySelector("[data-slot='stepper-title']");
+    expect(title?.className).toContain("group-data-[size=sm]/stepper:text-xs");
+  });
+
+  it("applies sm size class to StepperDescription", () => {
+    const { container } = render(
+      <Stepper size="sm">
+        <StepperItem step={0}>
+          <StepperTrigger>
+            <StepperIndicator />
+          </StepperTrigger>
+          <StepperDescription>Desc</StepperDescription>
+        </StepperItem>
+      </Stepper>
+    );
+    const desc = container.querySelector("[data-slot='stepper-description']");
+    expect(desc?.className).toContain("group-data-[size=sm]/stepper:text-xs");
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Compact variant                                                     */
+/* ------------------------------------------------------------------ */
+
+describe("Stepper compact prop", () => {
+  it("sets data-compact='false' by default", () => {
+    const { container } = render(<BasicStepper />);
+    const stepper = container.querySelector("[data-slot='stepper']");
+    expect(stepper).toHaveAttribute("data-compact", "false");
+  });
+
+  it("sets data-compact='true' when compact=true", () => {
+    const { container } = render(
+      <Stepper compact>
+        <StepperItem step={0}>
+          <StepperTrigger>
+            <StepperIndicator />
+          </StepperTrigger>
+        </StepperItem>
+      </Stepper>
+    );
+    const stepper = container.querySelector("[data-slot='stepper']");
+    expect(stepper).toHaveAttribute("data-compact", "true");
+  });
+
+  it("applies compact gap class to the stepper root", () => {
+    const { container } = render(
+      <Stepper compact>
+        <StepperItem step={0}>
+          <StepperTrigger>
+            <StepperIndicator />
+          </StepperTrigger>
+        </StepperItem>
+      </Stepper>
+    );
+    const stepper = container.querySelector("[data-slot='stepper']");
+    expect(stepper?.className).toContain("data-[compact=true]:gap-1");
+  });
+
+  it("applies compact separator class to StepperSeparator", () => {
+    const { container } = render(
+      <Stepper compact orientation="vertical">
+        <StepperItem step={0}>
+          <StepperTrigger>
+            <StepperIndicator />
+          </StepperTrigger>
+        </StepperItem>
+        <StepperSeparator />
+        <StepperItem step={1}>
+          <StepperTrigger>
+            <StepperIndicator />
+          </StepperTrigger>
+        </StepperItem>
+      </Stepper>
+    );
+    const sep = container.querySelector("[data-slot='stepper-separator']");
+    expect(sep?.className).toContain(
+      "group-data-[compact=true]/stepper:group-data-[orientation=vertical]/stepper:h-8"
+    );
+  });
+});

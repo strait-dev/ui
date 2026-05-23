@@ -73,6 +73,18 @@ describe("InputOTPSlot", () => {
     const slots = document.querySelectorAll("[data-slot='input-otp-slot']");
     expect(slots).toHaveLength(3);
   });
+
+  it("size='lg' applies h-9 to the slot", () => {
+    render(
+      <InputOTP maxLength={1}>
+        <InputOTPGroup>
+          <InputOTPSlot index={0} size="lg" />
+        </InputOTPGroup>
+      </InputOTP>
+    );
+    const slot = document.querySelector("[data-slot='input-otp-slot']");
+    expect(slot).toHaveClass("size-9");
+  });
 });
 
 describe("InputOTPSeparator", () => {

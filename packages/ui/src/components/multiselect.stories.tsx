@@ -20,6 +20,15 @@ const meta = {
           "For async search, provide an `onSearch` callback that returns a",
           "`Promise<Option[]>`. Use `onSearchSync` for synchronous filtering.",
           "",
+          "### Size axis (`sm | default`)",
+          "Controls the minimum height of the control and the height/text of",
+          "selected chips:",
+          "",
+          "| Value | Control min-height | Chip height | Chip text |",
+          "|-------|--------------------|-------------|-----------|",
+          "| `sm` | `min-h-8` | `h-6` | `text-xs` |",
+          "| `default` | `min-h-[42px]` | `h-8` | `text-sm` |",
+          "",
           "Notable props:",
           "- `maxSelected` — caps the number of selections.",
           "- `creatable` — allows the user to create new options.",
@@ -50,12 +59,18 @@ const meta = {
       control: "boolean",
       description: "Hides the clear-all button.",
     },
+    size: {
+      control: "select",
+      options: ["sm", "default"],
+      description: "Size axis controlling control height and chip size.",
+    },
   },
   args: {
     placeholder: "Select skills…",
     disabled: false,
     creatable: false,
     hideClearAllButton: false,
+    size: "default",
   },
 } satisfies Meta<typeof MultipleSelector>;
 
@@ -94,6 +109,50 @@ export const Playground: Story = {
           </p>
         }
       />
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Sizes                                                               */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Both `size` values shown side-by-side.
+ *
+ * - `default` — `min-h-[42px]` control, `h-8` chips, `text-sm`
+ * - `sm` — `min-h-8` control, `h-6` chips, `text-xs`
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex w-80 flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <Label>Default size</Label>
+        <MultipleSelector
+          defaultOptions={skillOptions}
+          emptyIndicator={
+            <p className="text-center text-muted-foreground text-sm">
+              No results.
+            </p>
+          }
+          placeholder="Select skills…"
+          size="default"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label>Small size (sm)</Label>
+        <MultipleSelector
+          defaultOptions={skillOptions}
+          emptyIndicator={
+            <p className="text-center text-muted-foreground text-xs">
+              No results.
+            </p>
+          }
+          placeholder="Select skills…"
+          size="sm"
+        />
+      </div>
     </div>
   ),
 };

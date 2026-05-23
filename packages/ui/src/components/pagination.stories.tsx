@@ -30,12 +30,25 @@ const meta: Meta<typeof Pagination> = {
           'The `isActive` prop applies the `outline` variant and sets `aria-current="page"`.',
           "`PaginationPrevious` and `PaginationNext` include an optional `text` prop",
           "to customise the visible label.",
+          "",
+          "**Size axis** — pass `size` (`sm | default | lg`) on `Pagination` to scale",
+          "all page-button controls uniformly. The size propagates via React context so",
+          "every descendant link/control automatically uses the matching button size.",
         ].join("\n"),
       },
     },
   },
-  argTypes: {},
-  args: {},
+  argTypes: {
+    size: {
+      control: "select",
+      options: ["sm", "default", "lg"],
+      description: "Scales all page-button controls uniformly.",
+      table: { defaultValue: { summary: "default" } },
+    },
+  },
+  args: {
+    size: "default",
+  },
 };
 
 export default meta;
@@ -44,8 +57,8 @@ type Story = StoryObj<typeof meta>;
 
 /** Interactive playground — a standard five-page navigation strip. */
 export const Playground: Story = {
-  render: () => (
-    <Pagination>
+  render: (args) => (
+    <Pagination {...args}>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious href="#" />
@@ -235,5 +248,45 @@ export const CustomLabels: Story = {
         </PaginationItem>
       </PaginationContent>
     </Pagination>
+  ),
+};
+
+/**
+ * All three sizes side by side. Page buttons scale via the Button size system;
+ * Previous/Next use the matching non-icon sizes to keep their text labels.
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6">
+      {(["sm", "default", "lg"] as const).map((size) => (
+        <div className="flex flex-col gap-1" key={size}>
+          <p className="text-muted-foreground text-xs capitalize">{size}</p>
+          <Pagination size={size}>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious href="#" />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">1</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#" isActive>
+                  2
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">3</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext href="#" />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      ))}
+    </div>
   ),
 };
