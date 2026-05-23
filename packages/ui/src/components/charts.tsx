@@ -1,532 +1,714 @@
 "use client";
-import type * as React from "react";
+
+import {
+  type ComponentProps,
+  Fragment,
+  startTransition,
+  useId,
+  useMemo,
+} from "react";
 import {
   Area,
+  AreaChart as AreaChartPrimitive,
   Bar,
-  CartesianGrid,
+  BarChart as BarChartPrimitive,
   Cell,
-  ComposedChart,
   Line,
+  LineChart as LineChartPrimitive,
+  type LineProps,
   Pie,
-  AreaChart as RechartsAreaChart,
-  BarChart as RechartsBarChart,
-  LineChart as RechartsLineChart,
-  PieChart as RechartsPieChart,
-  ResponsiveContainer,
+  PieChart as PieChartPrimitive,
+} from "recharts";
+
+import {
+  type BaseChartProps,
+  CartesianGrid,
+  Chart,
+  type ChartDatum,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  constructCategoryColors,
+  DEFAULT_COLORS,
+  getColorValue,
+  valueToPercent,
   XAxis,
   YAxis,
-} from "recharts";
-import { cn } from "../utils/index";
+} from "./chart";
 
-/** Corner radius applied to the top of every bar in {@link BarChart}. */
-const BAR_RADIUS = 4;
+const slugRegExp = /[^a-zA-Z0-9]/g;
 
-/**
- * Shared props inherited by all simplified chart components in this file.
- *
- * These charts are intentionally opinionated wrappers over Recharts —
- * for full control use {@link ChartContainer} from `chart.tsx` instead.
- */
-type BaseChartProps = {
-  /** Array of data row objects. */
-  data: Record<string, unknown>[];
-  /** Key in each data row used as the X-axis (or Y-axis) category label. */
-  index: string;
-  /** Ordered list of CSS color strings for series. Cycles if fewer than
-   *  the number of series. */
-  colors?: string[];
-  /** Formats numeric tick/value labels for display. */
-  valueFormatter?: (value: number) => string;
-  className?: string;
-};
+const defaultValueFormatter = (value: number) => value.toString();
 
-/** Props for {@link LineChart}. */
-type LineChartProps = BaseChartProps & {
-  /** Data keys to render as separate `<Line>` series. */
-  categories: string[];
-};
+const cartesianMargin = { bottom: 0, left: 0, right: 0, top: 5 } as const;
+const barMargin = { bottom: 0, left: 5, right: 0, top: 5 } as const;
 
-/** Props for {@link BarChart}. */
-type BarChartProps = BaseChartProps & {
-  /** Data keys to render as separate `<Bar>` series. */
-  categories: string[];
-  /** Axis orientation — `"horizontal"` (default) places categories on X. */
-  layout?: "vertical" | "horizontal";
-  /**
-   * When `true`, all series share the same `stackId` so bars are stacked.
-   * Corner radius is applied only to the topmost series.
-   */
-  stacked?: boolean;
-};
+// #region AreaChart --------------------------------------------------------
 
-/** Props for {@link PieChart}. */
-type PieChartProps = BaseChartProps & {
-  /** Data key whose value determines each slice's arc length. */
-  category: string;
-};
-
-/**
- * Opinionated multi-series line chart with sensible defaults.
- *
- * Renders each string in `categories` as a smoothed `monotone` line.
- * Grid lines are horizontal-only; axes have no visible border. For
- * advanced configuration (tooltips, legends, custom colors) compose
- * Recharts primitives directly inside a {@link ChartContainer}.
- *
- * @example
- * ```tsx
- * <LineChart
- *   data={[{ month: "Jan", revenue: 400, cost: 200 }]}
- *   index="month"
- *   categories={["revenue", "cost"]}
- *   valueFormatter={(v) => `$${v}`}
- * />
- * ```
- */
-export const LineChart = ({
-  data,
-  categories,
-  index,
-  colors = ["hsl(var(--primary))"],
-  valueFormatter = (value) => value.toString(),
-  className,
-}: LineChartProps) => (
-  <div data-slot="line-chart">
-    <ResponsiveContainer className={cn(className)} height={300} width="100%">
-      <RechartsLineChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          axisLine={false}
-          dataKey={index}
-          tickLine={false}
-          tickMargin={10}
-        />
-        <YAxis
-          axisLine={false}
-          tickFormatter={valueFormatter}
-          tickLine={false}
-          tickMargin={10}
-        />
-        {categories.map((category, i) => (
-          <Line
-            dataKey={category}
-            dot={false}
-            key={category}
-            stroke={colors[i % colors.length]}
-            strokeWidth={2}
-            type="monotone"
-          />
-        ))}
-      </RechartsLineChart>
-    </ResponsiveContainer>
-  </div>
+const areaFillNone = <stop stopColor="currentColor" stopOpacity={0} />;
+const areaGradientEnd = (
+  <stop offset="95%" stopColor="currentColor" stopOpacity={0} />
 );
 
-/**
- * Opinionated multi-series bar chart with rounded bar tops.
- *
- * Supports `layout="horizontal"` (default, categories on X-axis) and
- * `layout="vertical"` (categories on Y-axis). Axis roles swap automatically
- * — `index` drives the category axis while numeric values go on the
- * perpendicular axis.
- *
- * @example
- * ```tsx
- * <BarChart
- *   data={[{ quarter: "Q1", sales: 3000 }]}
- *   index="quarter"
- *   categories={["sales"]}
- * />
- * ```
- */
-export const BarChart = ({
-  data,
-  categories,
-  index,
-  colors = ["hsl(var(--primary))"],
-  valueFormatter = (value) => value.toString(),
-  layout = "horizontal",
-  stacked = false,
-  className,
-}: BarChartProps) => {
-  const lastIndex = categories.length - 1;
-  return (
-    <div data-slot="bar-chart">
-      <ResponsiveContainer className={cn(className)} height={300} width="100%">
-        <RechartsBarChart
-          data={data}
-          layout={layout}
-          margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-        >
-          <CartesianGrid vertical={false} />
-          <XAxis
-            axisLine={false}
-            dataKey={layout === "horizontal" ? index : undefined}
-            tickLine={false}
-            tickMargin={10}
-            type={layout === "horizontal" ? "category" : "number"}
-          />
-          <YAxis
-            axisLine={false}
-            dataKey={layout === "vertical" ? index : undefined}
-            tickFormatter={valueFormatter}
-            tickLine={false}
-            tickMargin={10}
-            type={layout === "vertical" ? "category" : "number"}
-          />
-          {categories.map((category, i) => {
-            const isLast = i === lastIndex;
-            let stackRadius: [number, number, number, number] = [
-              BAR_RADIUS,
-              BAR_RADIUS,
-              0,
-              0,
-            ];
-            if (stacked && !isLast) {
-              stackRadius = [0, 0, 0, 0];
-            }
-            return (
-              <Bar
-                dataKey={category}
-                fill={colors[i % colors.length]}
-                key={category}
-                radius={stackRadius}
-                stackId={stacked ? "a" : undefined}
-              />
-            );
-          })}
-        </RechartsBarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
-
-/**
- * Opinionated pie chart where each data row becomes one colored slice.
- *
- * Colors cycle through `colors` using the row's position in `data`. A
- * thin `background`-colored stroke separates adjacent slices. Labels and
- * label lines are hidden by default; add a Recharts `<Tooltip>` as needed.
- *
- * @example
- * ```tsx
- * <PieChart
- *   data={[{ name: "Chrome", value: 60 }, { name: "Firefox", value: 40 }]}
- *   index="name"
- *   category="value"
- *   colors={["hsl(var(--primary))", "hsl(var(--muted))"]}
- * />
- * ```
- */
-export const PieChart = ({
-  data,
-  category,
-  index,
-  colors = ["hsl(var(--primary))"],
-  className,
-}: PieChartProps) => (
-  <div className={cn("aspect-square w-full", className)} data-slot="pie-chart">
-    <ResponsiveContainer height="100%" width="100%">
-      <RechartsPieChart>
-        <Pie
-          cx="50%"
-          cy="50%"
-          data={data}
-          dataKey={category}
-          fill="#8884d8"
-          labelLine={false}
-          outerRadius={80}
-        >
-          {data.map((entry) => (
-            <Cell
-              fill={colors[data.indexOf(entry) % colors.length]}
-              key={`${entry[index]}-${entry[category]}`}
-              stroke="hsl(var(--background))"
-              strokeWidth={2}
-            />
-          ))}
-        </Pie>
-      </RechartsPieChart>
-    </ResponsiveContainer>
-  </div>
-);
-
-/* ------------------------------------------------------------------ */
-/* AreaChart                                                           */
-/* ------------------------------------------------------------------ */
+function getAreaFillContent(
+  fillType: AreaChartProps["fillType"],
+  stopOpacity: number
+): React.ReactNode {
+  if (fillType === "none") {
+    return areaFillNone;
+  }
+  if (fillType === "gradient") {
+    return (
+      <>
+        <stop offset="5%" stopColor="currentColor" stopOpacity={stopOpacity} />
+        {areaGradientEnd}
+      </>
+    );
+  }
+  return <stop stopColor="currentColor" stopOpacity={stopOpacity} />;
+}
 
 /** Props for {@link AreaChart}. */
-type AreaChartProps = BaseChartProps & {
-  /** Data keys to render as separate `<Area>` series. */
-  categories: string[];
-  /** Stack all areas on top of each other. Defaults to `false`. */
-  stacked?: boolean;
-  /** Opacity of the area fill. Defaults to `0.2`. */
-  fillOpacity?: number;
-};
+export interface AreaChartProps extends BaseChartProps {
+  areaProps?: Partial<ComponentProps<typeof Area>>;
+  chartProps?: Omit<
+    ComponentProps<typeof AreaChartPrimitive>,
+    "data" | "stackOffset"
+  >;
+  /** Join across null gaps instead of breaking the area. */
+  connectNulls?: boolean;
+  /** Fill treatment beneath each area. Defaults to `"gradient"`. */
+  fillType?: "gradient" | "solid" | "none";
+}
 
 /**
- * Opinionated multi-series area chart with gradient fills.
+ * Config-driven multi-series area chart.
  *
- * Each string in `categories` becomes an `Area` with `type="monotone"`.
- * When `stacked` is `true` all series share the same `stackId`. Grid lines
- * are horizontal-only. For advanced configuration use Recharts primitives
- * directly inside a {@link ChartContainer}.
+ * Series are derived from the `config` keys; each gets a gradient (or solid)
+ * fill and an on-palette stroke. Supports `type="stacked"` / `"percent"`,
+ * `connectNulls`, an interactive legend (clicking a series isolates it), and
+ * a frosted tooltip — all via the shared {@link Chart} root.
  *
  * @example
  * ```tsx
  * <AreaChart
- *   data={[{ month: "Jan", revenue: 4200, cost: 2400 }]}
- *   index="month"
- *   categories={["revenue", "cost"]}
- *   colors={["var(--chart-1)", "var(--chart-2)"]}
- *   stacked
+ *   data={data}
+ *   dataKey="month"
+ *   config={{
+ *     revenue: { label: "Revenue", color: "chart-1" },
+ *     cost: { label: "Cost", color: "chart-2" },
+ *   }}
+ *   type="stacked"
  * />
  * ```
  */
-export const AreaChart = ({
-  data,
-  categories,
-  index,
-  colors = ["hsl(var(--primary))"],
-  valueFormatter = (value) => value.toString(),
-  stacked = false,
-  fillOpacity = 0.2,
-  className,
-}: AreaChartProps) => (
-  <div className={cn(className)} data-slot="area-chart">
-    <ResponsiveContainer height={300} width="100%">
-      <RechartsAreaChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          axisLine={false}
-          dataKey={index}
-          tickLine={false}
-          tickMargin={10}
-        />
-        <YAxis
-          axisLine={false}
-          tickFormatter={valueFormatter}
-          tickLine={false}
-          tickMargin={10}
-        />
-        {categories.map((category, i) => {
-          const color = colors[i % colors.length];
-          return (
-            <Area
-              dataKey={category}
-              fill={color}
-              fillOpacity={fillOpacity}
-              isAnimationActive={false}
-              key={category}
-              stackId={stacked ? "a" : undefined}
-              stroke={color}
-              strokeWidth={2}
-              type="monotone"
-            />
-          );
-        })}
-      </RechartsAreaChart>
-    </ResponsiveContainer>
-  </div>
-);
+export function AreaChart({
+  data = [],
+  dataKey,
+  colors = DEFAULT_COLORS,
+  connectNulls = false,
+  type = "default",
+  fillType = "gradient",
+  config,
+  children,
+  areaProps,
+  tooltip = true,
+  tooltipProps,
+  cartesianGridProps,
+  legend = true,
+  legendProps,
+  intervalType = "equidistantPreserveStart",
+  valueFormatter = defaultValueFormatter,
+  displayEdgeLabelsOnly = false,
+  hideXAxis = false,
+  xAxisProps,
+  hideYAxis = false,
+  yAxisProps,
+  hideGridLines = false,
+  chartProps,
+  ...props
+}: AreaChartProps) {
+  const configKeys = useMemo(() => Object.keys(config), [config]);
+  const categoryColors = useMemo(
+    () => constructCategoryColors(configKeys, colors),
+    [configKeys, colors]
+  );
+  const configEntries = useMemo(() => Object.entries(config), [config]);
+  const stacked = type === "stacked" || type === "percent";
+  const areaId = useId();
 
-/* ------------------------------------------------------------------ */
-/* DonutChart                                                          */
-/* ------------------------------------------------------------------ */
-
-/** Props for {@link DonutChart}. */
-type DonutChartProps = PieChartProps & {
-  /** Inner radius of the donut ring in px. Defaults to `60`. */
-  innerRadius?: number;
-  /** Outer radius of the donut ring in px. Defaults to `80`. */
-  outerRadius?: number;
-  /** Content rendered in the center hole of the donut. */
-  centerLabel?: React.ReactNode;
-};
-
-/**
- * Donut chart — a {@link PieChart} variant with a hollow center.
- *
- * The `innerRadius` / `outerRadius` props control ring thickness. Pass
- * `centerLabel` to render arbitrary content (e.g. a total) in the center
- * hole via an absolutely-positioned overlay.
- *
- * @example
- * ```tsx
- * <div className="size-[280px]">
- *   <DonutChart
- *     data={[{ name: "A", value: 60 }, { name: "B", value: 40 }]}
- *     index="name"
- *     category="value"
- *     centerLabel={<span className="text-xl font-bold">100</span>}
- *   />
- * </div>
- * ```
- */
-export const DonutChart = ({
-  data,
-  category,
-  index,
-  colors = ["hsl(var(--primary))"],
-  innerRadius = 60,
-  outerRadius = 80,
-  centerLabel,
-  className,
-}: DonutChartProps) => (
-  <div
-    className={cn("relative aspect-square w-full", className)}
-    data-slot="donut-chart"
-  >
-    <ResponsiveContainer height="100%" width="100%">
-      <RechartsPieChart>
-        <Pie
-          cx="50%"
-          cy="50%"
-          data={data}
-          dataKey={category}
-          fill="#8884d8"
-          innerRadius={innerRadius}
-          labelLine={false}
-          outerRadius={outerRadius}
-        >
-          {data.map((entry) => (
-            <Cell
-              fill={colors[data.indexOf(entry) % colors.length]}
-              key={`${entry[index]}-${entry[category]}`}
-              stroke="hsl(var(--background))"
-              strokeWidth={2}
-            />
-          ))}
-        </Pie>
-      </RechartsPieChart>
-    </ResponsiveContainer>
-    {centerLabel ? (
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        {centerLabel}
-      </div>
-    ) : null}
-  </div>
-);
-
-/* ------------------------------------------------------------------ */
-/* ComboChart                                                          */
-/* ------------------------------------------------------------------ */
-
-/** Props for {@link ComboChart}. */
-type ComboChartProps = BaseChartProps & {
-  /** Data keys rendered as bars on the left Y-axis. */
-  barCategories: string[];
-  /** Data keys rendered as lines. */
-  lineCategories: string[];
-  /**
-   * When `true` (default), line series use the right Y-axis; bars use the
-   * left. Set to `false` to put all series on the left axis.
-   */
-  rightAxis?: boolean;
-};
-
-/**
- * Combination bar + line chart using two Y-axes.
- *
- * `barCategories` are rendered as rounded bars on the left Y-axis.
- * `lineCategories` are rendered as smooth lines on the right Y-axis
- * (or left when `rightAxis={false}`). Colors cycle through the `colors`
- * prop across all series combined.
- *
- * @example
- * ```tsx
- * <ComboChart
- *   data={monthlyData}
- *   index="month"
- *   barCategories={["revenue"]}
- *   lineCategories={["growthRate"]}
- *   colors={["var(--chart-1)", "var(--chart-2)"]}
- *   valueFormatter={(v) => `$${v}`}
- * />
- * ```
- */
-export const ComboChart = ({
-  data,
-  index,
-  barCategories,
-  lineCategories,
-  colors = ["hsl(var(--primary))"],
-  valueFormatter = (value) => value.toString(),
-  rightAxis = true,
-  className,
-}: ComboChartProps) => (
-  <div className={cn(className)} data-slot="combo-chart">
-    <ResponsiveContainer height={300} width="100%">
-      <ComposedChart
-        data={data}
-        margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-      >
-        <CartesianGrid vertical={false} />
-        <XAxis
-          axisLine={false}
-          dataKey={index}
-          tickLine={false}
-          tickMargin={10}
-        />
-        <YAxis
-          axisLine={false}
-          tickFormatter={valueFormatter}
-          tickLine={false}
-          tickMargin={10}
-          yAxisId="left"
-        />
-        {rightAxis ? (
-          <YAxis
-            axisLine={false}
-            orientation="right"
-            tickFormatter={valueFormatter}
-            tickLine={false}
-            tickMargin={10}
-            yAxisId="right"
-          />
-        ) : null}
-        {barCategories.map((category, i) => (
-          <Bar
-            dataKey={category}
-            fill={colors[i % colors.length]}
-            key={category}
-            radius={[BAR_RADIUS, BAR_RADIUS, 0, 0]}
-            yAxisId="left"
-          />
-        ))}
-        {lineCategories.map((category, i) => {
-          const colorIndex = barCategories.length + i;
-          return (
-            <Line
-              dataKey={category}
-              dot={false}
-              isAnimationActive={false}
-              key={category}
-              stroke={colors[colorIndex % colors.length]}
-              strokeWidth={2}
-              type="monotone"
-              yAxisId={rightAxis ? "right" : "left"}
-            />
-          );
-        })}
-      </ComposedChart>
-    </ResponsiveContainer>
-  </div>
-);
-
-/**
- * Placeholder component for a future map chart.
- *
- * @remarks Not yet implemented — renders a centered informational message.
- */
-export const MapChart = () => {
-  // TODO: Implement map chart
   return (
-    <div className="aspect-square w-full" data-slot="map-chart">
-      <div className="flex h-full items-center justify-center text-muted-foreground">
-        Map chart component not implemented yet
-      </div>
-    </div>
+    <Chart config={config} data={data} dataKey={dataKey} {...props}>
+      {({ onLegendSelect, selectedLegend }) => (
+        <AreaChartPrimitive
+          data={data}
+          margin={cartesianMargin}
+          onClick={() => onLegendSelect(null)}
+          stackOffset={type === "percent" ? "expand" : undefined}
+          {...chartProps}
+        >
+          {!hideGridLines && (
+            <CartesianGrid strokeDasharray="3 3" {...cartesianGridProps} />
+          )}
+          <XAxis
+            displayEdgeLabelsOnly={displayEdgeLabelsOnly}
+            hide={hideXAxis}
+            intervalType={intervalType}
+            {...xAxisProps}
+          />
+          <YAxis
+            hide={hideYAxis}
+            tickFormatter={type === "percent" ? valueToPercent : valueFormatter}
+            {...yAxisProps}
+          />
+          {legend && (
+            <ChartLegend
+              content={
+                typeof legend === "boolean" ? <ChartLegendContent /> : legend
+              }
+              {...legendProps}
+            />
+          )}
+          {tooltip && (
+            <ChartTooltip
+              content={
+                typeof tooltip === "boolean" ? (
+                  <ChartTooltipContent
+                    hideIndicator={tooltipProps?.hideIndicator}
+                    hideLabel={tooltipProps?.hideLabel}
+                    indicator={tooltipProps?.indicator}
+                    labelSeparator={tooltipProps?.labelSeparator}
+                  />
+                ) : (
+                  tooltip
+                )
+              }
+              {...tooltipProps}
+            />
+          )}
+          {children
+            ? children
+            : configEntries.map(([category, values]) => {
+                const categoryId = `${areaId}-${category.replace(slugRegExp, "")}`;
+                const dimmed = selectedLegend && selectedLegend !== category;
+                const strokeOpacity = dimmed ? 0.1 : 1;
+                const stopOpacity = dimmed ? 0.1 : 0.5;
+                const color = getColorValue(
+                  values.color || categoryColors.get(category)
+                );
+
+                return (
+                  <Fragment key={categoryId}>
+                    <defs>
+                      <linearGradient
+                        id={categoryId}
+                        style={{ color }}
+                        x1="0"
+                        x2="0"
+                        y1="0"
+                        y2="1"
+                      >
+                        {getAreaFillContent(fillType, stopOpacity)}
+                      </linearGradient>
+                    </defs>
+                    <Area
+                      connectNulls={connectNulls}
+                      dataKey={category}
+                      dot={false}
+                      fill={`url(#${categoryId})`}
+                      name={category}
+                      stackId={stacked ? "stack" : undefined}
+                      stroke={color}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{ strokeWidth: 2, strokeOpacity }}
+                      {...areaProps}
+                    />
+                  </Fragment>
+                );
+              })}
+        </AreaChartPrimitive>
+      )}
+    </Chart>
+  );
+}
+
+// #region BarChart ---------------------------------------------------------
+
+/** Props for {@link BarChart}. */
+export interface BarChartProps extends BaseChartProps {
+  barCategoryGap?: number;
+  barGap?: number;
+  barProps?: Partial<ComponentProps<typeof Bar>>;
+  barRadius?: number;
+  barSize?: number;
+  chartProps?: Omit<
+    ComponentProps<typeof BarChartPrimitive>,
+    "data" | "stackOffset"
+  >;
+}
+
+/**
+ * Config-driven multi-series bar chart.
+ *
+ * Series come from `config` keys. Supports `layout="horizontal" | "vertical"`,
+ * `type="stacked"` / `"percent"`, configurable bar radius/gap/size, an
+ * interactive legend (clicking a bar or legend entry isolates that series),
+ * and the frosted tooltip.
+ *
+ * @example
+ * ```tsx
+ * <BarChart
+ *   data={data}
+ *   dataKey="quarter"
+ *   config={{ sales: { label: "Sales", color: "chart-1" } }}
+ * />
+ * ```
+ */
+export function BarChart({
+  data = [],
+  dataKey,
+  colors = DEFAULT_COLORS,
+  type = "default",
+  config,
+  children,
+  layout = "horizontal",
+  tooltip = true,
+  tooltipProps,
+  legend = true,
+  legendProps,
+  intervalType = "equidistantPreserveStart",
+  barCategoryGap = 5,
+  barGap,
+  barSize,
+  barRadius,
+  barProps,
+  valueFormatter = defaultValueFormatter,
+  displayEdgeLabelsOnly = false,
+  xAxisProps,
+  hideXAxis = false,
+  yAxisProps,
+  hideYAxis = false,
+  hideGridLines = false,
+  cartesianGridProps,
+  chartProps,
+  ...props
+}: BarChartProps) {
+  const configKeys = useMemo(() => Object.keys(config), [config]);
+  const categoryColors = useMemo(
+    () => constructCategoryColors(configKeys, colors),
+    [configKeys, colors]
+  );
+  const configEntries = useMemo(() => Object.entries(config), [config]);
+  const stacked = type === "stacked" || type === "percent";
+  const defaultBarRadius = stacked ? undefined : 4;
+
+  const percentOffset = type === "percent" ? "expand" : undefined;
+  const stackOffset = stacked && type !== "percent" ? "sign" : percentOffset;
+
+  return (
+    <Chart
+      config={config}
+      data={data}
+      dataKey={dataKey}
+      layout={layout}
+      {...props}
+    >
+      {({ onLegendSelect, selectedLegend }) => (
+        <BarChartPrimitive
+          barCategoryGap={barCategoryGap}
+          barGap={barGap}
+          barSize={barSize}
+          data={data}
+          layout={layout === "radial" ? "horizontal" : layout}
+          margin={barMargin}
+          onClick={() => onLegendSelect(null)}
+          stackOffset={stackOffset}
+          {...chartProps}
+        >
+          {!hideGridLines && (
+            <CartesianGrid strokeDasharray="4 4" {...cartesianGridProps} />
+          )}
+          <XAxis
+            displayEdgeLabelsOnly={displayEdgeLabelsOnly}
+            hide={hideXAxis}
+            intervalType={intervalType}
+            {...xAxisProps}
+          />
+          <YAxis
+            hide={hideYAxis}
+            tickFormatter={type === "percent" ? valueToPercent : valueFormatter}
+            {...yAxisProps}
+          />
+          {legend && (
+            <ChartLegend
+              content={
+                typeof legend === "boolean" ? <ChartLegendContent /> : legend
+              }
+              {...legendProps}
+            />
+          )}
+          {tooltip && (
+            <ChartTooltip
+              content={
+                typeof tooltip === "boolean" ? <ChartTooltipContent /> : tooltip
+              }
+              {...tooltipProps}
+            />
+          )}
+          {children
+            ? children
+            : configEntries.map(([category, values]) => {
+                const color = getColorValue(
+                  values.color || categoryColors.get(category)
+                );
+                const dimmed = selectedLegend && selectedLegend !== category;
+                const strokeOpacity = dimmed ? 0.2 : 0;
+                const fillOpacity = dimmed ? 0.1 : 1;
+
+                return (
+                  <Bar
+                    dataKey={category}
+                    fill={color}
+                    fillOpacity={fillOpacity}
+                    key={category}
+                    name={category}
+                    onClick={(_item, _index, event) => {
+                      event.stopPropagation();
+                      startTransition(() => onLegendSelect(category));
+                    }}
+                    radius={barRadius ?? defaultBarRadius}
+                    stackId={stacked ? "stack" : undefined}
+                    stroke={color}
+                    strokeOpacity={strokeOpacity}
+                    strokeWidth={1}
+                    {...barProps}
+                  />
+                );
+              })}
+        </BarChartPrimitive>
+      )}
+    </Chart>
+  );
+}
+
+// #region LineChart --------------------------------------------------------
+
+/** Props for {@link LineChart}. */
+export interface LineChartProps extends BaseChartProps {
+  chartProps?: Omit<
+    ComponentProps<typeof LineChartPrimitive>,
+    "data" | "stackOffset"
+  >;
+  connectNulls?: boolean;
+  lineProps?: Partial<LineProps>;
+}
+
+/**
+ * Config-driven multi-series line chart.
+ *
+ * Series come from `config` keys; each line is on-palette with rounded caps.
+ * Supports `connectNulls`, an interactive legend, `type="percent"`
+ * normalisation, and the frosted tooltip.
+ *
+ * @example
+ * ```tsx
+ * <LineChart
+ *   data={data}
+ *   dataKey="month"
+ *   config={{ revenue: { label: "Revenue", color: "chart-1" } }}
+ * />
+ * ```
+ */
+export function LineChart({
+  data = [],
+  dataKey,
+  colors = DEFAULT_COLORS,
+  connectNulls = false,
+  type = "default",
+  config,
+  children,
+  tooltip = true,
+  tooltipProps,
+  legend = true,
+  legendProps,
+  intervalType = "equidistantPreserveStart",
+  valueFormatter = defaultValueFormatter,
+  displayEdgeLabelsOnly = false,
+  xAxisProps,
+  hideXAxis = false,
+  yAxisProps,
+  hideYAxis = false,
+  hideGridLines = false,
+  cartesianGridProps,
+  chartProps,
+  lineProps,
+  ...props
+}: LineChartProps) {
+  const configKeys = useMemo(() => Object.keys(config), [config]);
+  const categoryColors = useMemo(
+    () => constructCategoryColors(configKeys, colors),
+    [configKeys, colors]
+  );
+  const configEntries = useMemo(() => Object.entries(config), [config]);
+
+  return (
+    <Chart config={config} data={data} dataKey={dataKey} {...props}>
+      {({ onLegendSelect, selectedLegend }) => (
+        <LineChartPrimitive
+          data={data}
+          margin={cartesianMargin}
+          onClick={() => onLegendSelect(null)}
+          stackOffset={type === "percent" ? "expand" : undefined}
+          {...chartProps}
+        >
+          {!hideGridLines && (
+            <CartesianGrid strokeDasharray="4 4" {...cartesianGridProps} />
+          )}
+          <XAxis
+            displayEdgeLabelsOnly={displayEdgeLabelsOnly}
+            hide={hideXAxis}
+            intervalType={intervalType}
+            {...xAxisProps}
+          />
+          <YAxis
+            hide={hideYAxis}
+            tickFormatter={type === "percent" ? valueToPercent : valueFormatter}
+            {...yAxisProps}
+          />
+          {legend && (
+            <ChartLegend
+              content={
+                typeof legend === "boolean" ? <ChartLegendContent /> : legend
+              }
+              {...legendProps}
+            />
+          )}
+          {tooltip && (
+            <ChartTooltip
+              content={
+                typeof tooltip === "boolean" ? <ChartTooltipContent /> : tooltip
+              }
+              {...tooltipProps}
+            />
+          )}
+          {children
+            ? children
+            : configEntries.map(([category, values]) => {
+                const dimmed = selectedLegend && selectedLegend !== category;
+                const strokeOpacity = dimmed ? 0.1 : 1;
+                const color = getColorValue(
+                  values.color || categoryColors.get(category)
+                );
+
+                return (
+                  <Line
+                    connectNulls={connectNulls}
+                    dataKey={category}
+                    dot={false}
+                    key={category}
+                    name={category}
+                    stroke={color}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={
+                      {
+                        strokeOpacity,
+                        strokeWidth: 2,
+                        "--line-color": color,
+                      } as React.CSSProperties
+                    }
+                    type="linear"
+                    {...lineProps}
+                  />
+                );
+              })}
+        </LineChartPrimitive>
+      )}
+    </Chart>
+  );
+}
+
+// #region PieChart / DonutChart -------------------------------------------
+
+function sumNumericValues(data: ChartDatum[], valueKey: string): number {
+  return data.reduce((sum, row) => {
+    const value = row[valueKey];
+    return sum + (typeof value === "number" ? value : 0);
+  }, 0);
+}
+
+function resolveConfigKey(datum: ChartDatum): string | undefined {
+  if (typeof datum.code === "string") {
+    return datum.code;
+  }
+  if (typeof datum.name === "string") {
+    return datum.name;
+  }
+  return;
+}
+
+/** Props for {@link PieChart}. */
+interface PieChartProps
+  extends Omit<
+    BaseChartProps,
+    | "hideGridLines"
+    | "hideXAxis"
+    | "hideYAxis"
+    | "xAxisProps"
+    | "yAxisProps"
+    | "displayEdgeLabelsOnly"
+    | "legend"
+    | "legendProps"
+  > {
+  chartProps?: Omit<
+    ComponentProps<typeof PieChartPrimitive>,
+    "data" | "stackOffset"
+  >;
+  /** Centre label text for the donut variant. Defaults to the value sum. */
+  label?: string;
+  nameKey?: string;
+  pieProps?: Omit<ComponentProps<typeof Pie>, "data" | "dataKey" | "name">;
+  /** Show the centre label (donut variant only). */
+  showLabel?: boolean;
+  /** `"pie"` (solid) or `"donut"` (hollow centre). Defaults to `"pie"`. */
+  variant?: "pie" | "donut";
+}
+
+/**
+ * Config-driven pie / donut chart.
+ *
+ * Each data row becomes one slice, colored from `config[code|name].color` or
+ * the cycling palette. Set `variant="donut"` for a hollow centre, and
+ * `showLabel` to render a centred total (or custom `label`).
+ *
+ * @example
+ * ```tsx
+ * <PieChart
+ *   data={[{ name: "Chrome", value: 60 }, { name: "Safari", value: 40 }]}
+ *   dataKey="value"
+ *   nameKey="name"
+ *   variant="donut"
+ *   showLabel
+ *   config={{ Chrome: { label: "Chrome", color: "chart-1" } }}
+ * />
+ * ```
+ */
+const PieChart = ({
+  data = [],
+  dataKey,
+  colors = DEFAULT_COLORS,
+  config,
+  children,
+  label,
+  showLabel,
+  tooltip = true,
+  tooltipProps,
+  variant = "pie",
+  nameKey,
+  chartProps,
+  valueFormatter = defaultValueFormatter,
+  pieProps,
+  ...props
+}: PieChartProps) => {
+  const centerLabel = label || valueFormatter(sumNumericValues(data, dataKey));
+
+  return (
+    <Chart
+      config={config}
+      data={data}
+      dataKey={dataKey}
+      layout="radial"
+      {...props}
+    >
+      {({ onLegendSelect }) => (
+        <PieChartPrimitive
+          data={data}
+          margin={{ bottom: 0, left: 0, right: 0, top: 0 }}
+          onClick={() => onLegendSelect(null)}
+          {...chartProps}
+        >
+          {showLabel && variant === "donut" && (
+            <text
+              className="fill-foreground font-semibold"
+              data-slot="label"
+              dominantBaseline="middle"
+              textAnchor="middle"
+              x="50%"
+              y="50%"
+            >
+              {centerLabel}
+            </text>
+          )}
+          {children ? (
+            children
+          ) : (
+            <Pie
+              cx={pieProps?.cx ?? "50%"}
+              cy={pieProps?.cy ?? "50%"}
+              data={data}
+              dataKey={dataKey}
+              endAngle={pieProps?.endAngle ?? -270}
+              innerRadius={variant === "donut" ? "50%" : "0%"}
+              isAnimationActive
+              name={nameKey}
+              startAngle={pieProps?.startAngle ?? 90}
+              strokeLinejoin="round"
+              {...pieProps}
+            >
+              {data.map((datum, index) => {
+                const configKey = resolveConfigKey(datum);
+                return (
+                  <Cell
+                    fill={getColorValue(
+                      config?.[configKey ?? ""]?.color ??
+                        colors[index % colors.length]
+                    )}
+                    key={`cell-${configKey ?? index}`}
+                  />
+                );
+              })}
+            </Pie>
+          )}
+          {tooltip && (
+            <ChartTooltip
+              content={
+                typeof tooltip === "boolean" ? (
+                  <ChartTooltipContent hideLabel labelSeparator={false} />
+                ) : (
+                  tooltip
+                )
+              }
+              {...tooltipProps}
+            />
+          )}
+        </PieChartPrimitive>
+      )}
+    </Chart>
   );
 };
+
+/**
+ * Donut chart — a thin convenience wrapper over {@link PieChart} with
+ * `variant="donut"` and the centre label enabled by default.
+ *
+ * @example
+ * ```tsx
+ * <DonutChart
+ *   data={data}
+ *   dataKey="value"
+ *   nameKey="name"
+ *   config={config}
+ * />
+ * ```
+ */
+const DonutChart = ({
+  showLabel = true,
+  ...props
+}: Omit<PieChartProps, "variant">) => (
+  <PieChart showLabel={showLabel} variant="donut" {...props} />
+);
+
+export type { PieChartProps };
+export { DonutChart, PieChart };

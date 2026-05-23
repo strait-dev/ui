@@ -1,14 +1,8 @@
 import { render } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
-import {
-  AreaChart,
-  BarChart,
-  ComboChart,
-  DonutChart,
-  LineChart,
-  MapChart,
-  PieChart,
-} from "./charts";
+
+import type { ChartConfig } from "./chart";
+import { AreaChart, BarChart, DonutChart, LineChart, PieChart } from "./charts";
 
 beforeAll(() => {
   globalThis.ResizeObserver ||= class {
@@ -28,11 +22,16 @@ beforeAll(() => {
   });
 });
 
-const lineBarData = [
-  { month: "Jan", revenue: 4000, cost: 2400 },
-  { month: "Feb", revenue: 3000, cost: 1398 },
-  { month: "Mar", revenue: 5000, cost: 2800 },
+const salesData = [
+  { month: "Jan", revenue: 4000, expenses: 2400 },
+  { month: "Feb", revenue: 3000, expenses: 1398 },
+  { month: "Mar", revenue: 5000, expenses: 2800 },
 ];
+
+const salesConfig: ChartConfig = {
+  revenue: { label: "Revenue", color: "chart-1" },
+  expenses: { label: "Expenses", color: "chart-2" },
+};
 
 const pieData = [
   { name: "Chrome", value: 60 },
@@ -40,36 +39,76 @@ const pieData = [
   { name: "Safari", value: 15 },
 ];
 
-describe("LineChart", () => {
-  it("renders with data-slot='line-chart'", () => {
-    render(
-      <LineChart
-        categories={["revenue", "cost"]}
-        data={lineBarData}
-        index="month"
-      />
-    );
-    expect(
-      document.querySelector("[data-slot='line-chart']")
-    ).toBeInTheDocument();
+const pieConfig: ChartConfig = {
+  Chrome: { label: "Chrome", color: "chart-1" },
+  Firefox: { label: "Firefox", color: "chart-2" },
+  Safari: { label: "Safari", color: "chart-3" },
+};
+
+describe("AreaChart", () => {
+  it("renders the chart root", () => {
+    render(<AreaChart config={salesConfig} data={salesData} dataKey="month" />);
+    expect(document.querySelector("[data-slot='chart']")).toBeInTheDocument();
   });
 
-  it("renders without throwing with minimal props", () => {
+  it("injects per-series color CSS variables", () => {
+    const { container } = render(
+      <AreaChart config={salesConfig} data={salesData} dataKey="month" />
+    );
+    const style = container.querySelector("style");
+    expect(style?.innerHTML).toContain("--color-revenue");
+    expect(style?.innerHTML).toContain("--color-expenses");
+  });
+
+  it("renders without throwing for every fill type", () => {
+    for (const fillType of ["gradient", "solid", "none"] as const) {
+      expect(() =>
+        render(
+          <AreaChart
+            config={salesConfig}
+            data={salesData}
+            dataKey="month"
+            fillType={fillType}
+          />
+        )
+      ).not.toThrow();
+    }
+  });
+
+  it("renders without throwing when stacked / percent", () => {
+    for (const type of ["stacked", "percent"] as const) {
+      expect(() =>
+        render(
+          <AreaChart
+            config={salesConfig}
+            data={salesData}
+            dataKey="month"
+            type={type}
+          />
+        )
+      ).not.toThrow();
+    }
+  });
+
+  it("accepts controlled and uncontrolled selection without throwing", () => {
     expect(() =>
       render(
-        <LineChart categories={["revenue"]} data={lineBarData} index="month" />
+        <AreaChart
+          config={salesConfig}
+          data={salesData}
+          dataKey="month"
+          onSelectedSeriesChange={() => undefined}
+          selectedSeries="revenue"
+        />
       )
     ).not.toThrow();
-  });
-
-  it("accepts valueFormatter without throwing", () => {
     expect(() =>
       render(
-        <LineChart
-          categories={["revenue"]}
-          data={lineBarData}
-          index="month"
-          valueFormatter={(v) => `$${v}`}
+        <AreaChart
+          config={salesConfig}
+          data={salesData}
+          dataKey="month"
+          defaultSelectedSeries="expenses"
         />
       )
     ).not.toThrow();
@@ -77,238 +116,168 @@ describe("LineChart", () => {
 });
 
 describe("BarChart", () => {
-  it("renders with data-slot='bar-chart'", () => {
-    render(
-      <BarChart
-        categories={["revenue", "cost"]}
-        data={lineBarData}
-        index="month"
-      />
-    );
-    expect(
-      document.querySelector("[data-slot='bar-chart']")
-    ).toBeInTheDocument();
+  it("renders the chart root", () => {
+    render(<BarChart config={salesConfig} data={salesData} dataKey="month" />);
+    expect(document.querySelector("[data-slot='chart']")).toBeInTheDocument();
   });
 
-  it("renders without throwing with layout='vertical'", () => {
+  it("renders without throwing for vertical layout", () => {
     expect(() =>
       render(
         <BarChart
-          categories={["revenue"]}
-          data={lineBarData}
-          index="month"
+          config={salesConfig}
+          data={salesData}
+          dataKey="month"
           layout="vertical"
         />
       )
     ).not.toThrow();
   });
 
-  it("accepts custom colors without throwing", () => {
+  it("renders without throwing when stacked", () => {
     expect(() =>
       render(
         <BarChart
-          categories={["revenue"]}
-          colors={["#ff0000", "#00ff00"]}
-          data={lineBarData}
-          index="month"
+          config={salesConfig}
+          data={salesData}
+          dataKey="month"
+          type="stacked"
         />
       )
     ).not.toThrow();
+  });
+
+  it("injects per-series color CSS variables", () => {
+    const { container } = render(
+      <BarChart config={salesConfig} data={salesData} dataKey="month" />
+    );
+    const style = container.querySelector("style");
+    expect(style?.innerHTML).toContain("--color-revenue");
+    expect(style?.innerHTML).toContain("--color-expenses");
+  });
+
+  it("accepts a controlled selectedSeries without throwing", () => {
+    expect(() =>
+      render(
+        <BarChart
+          config={salesConfig}
+          data={salesData}
+          dataKey="month"
+          onSelectedSeriesChange={() => undefined}
+          selectedSeries="expenses"
+        />
+      )
+    ).not.toThrow();
+  });
+});
+
+describe("LineChart", () => {
+  it("renders the chart root", () => {
+    render(<LineChart config={salesConfig} data={salesData} dataKey="month" />);
+    expect(document.querySelector("[data-slot='chart']")).toBeInTheDocument();
+  });
+
+  it("accepts a valueFormatter without throwing", () => {
+    expect(() =>
+      render(
+        <LineChart
+          config={salesConfig}
+          data={salesData}
+          dataKey="month"
+          valueFormatter={(v) => `$${v}`}
+        />
+      )
+    ).not.toThrow();
+  });
+
+  it("injects per-series color CSS variables", () => {
+    const { container } = render(
+      <LineChart config={salesConfig} data={salesData} dataKey="month" />
+    );
+    const style = container.querySelector("style");
+    expect(style?.innerHTML).toContain("--color-revenue");
+    expect(style?.innerHTML).toContain("--color-expenses");
   });
 });
 
 describe("PieChart", () => {
-  it("renders with data-slot='pie-chart'", () => {
-    render(<PieChart category="value" data={pieData} index="name" />);
-    expect(
-      document.querySelector("[data-slot='pie-chart']")
-    ).toBeInTheDocument();
+  it("renders the chart root", () => {
+    render(
+      <PieChart
+        config={pieConfig}
+        data={pieData}
+        dataKey="value"
+        nameKey="name"
+      />
+    );
+    expect(document.querySelector("[data-slot='chart']")).toBeInTheDocument();
   });
 
-  it("renders without throwing", () => {
-    expect(() =>
-      render(<PieChart category="value" data={pieData} index="name" />)
-    ).not.toThrow();
-  });
-
-  it("accepts custom colors without throwing", () => {
+  it("renders without throwing with custom colors", () => {
     expect(() =>
       render(
         <PieChart
-          category="value"
-          colors={["#ff0000", "#00ff00", "#0000ff"]}
+          colors={["chart-3", "chart-4", "chart-5"]}
+          config={pieConfig}
           data={pieData}
-          index="name"
+          dataKey="value"
+          nameKey="name"
         />
       )
     ).not.toThrow();
   });
-});
 
-describe("MapChart", () => {
-  it("renders with data-slot='map-chart'", () => {
-    render(<MapChart />);
-    expect(
-      document.querySelector("[data-slot='map-chart']")
-    ).toBeInTheDocument();
-  });
-
-  it("renders the placeholder message", () => {
-    const { getByText } = render(<MapChart />);
-    expect(
-      getByText("Map chart component not implemented yet")
-    ).toBeInTheDocument();
-  });
-});
-
-describe("BarChart stacked", () => {
-  it("renders with data-slot='bar-chart' when stacked", () => {
-    render(
-      <BarChart
-        categories={["revenue", "expenses"]}
-        data={lineBarData}
-        index="month"
-        stacked
+  it("injects per-slice color CSS variables", () => {
+    const { container } = render(
+      <PieChart
+        config={pieConfig}
+        data={pieData}
+        dataKey="value"
+        nameKey="name"
       />
     );
-    expect(
-      document.querySelector("[data-slot='bar-chart']")
-    ).toBeInTheDocument();
-  });
-
-  it("renders without throwing with stacked=false (default)", () => {
-    expect(() =>
-      render(
-        <BarChart
-          categories={["revenue"]}
-          data={lineBarData}
-          index="month"
-          stacked={false}
-        />
-      )
-    ).not.toThrow();
-  });
-});
-
-describe("AreaChart", () => {
-  it("renders with data-slot='area-chart'", () => {
-    render(
-      <AreaChart
-        categories={["revenue", "cost"]}
-        data={lineBarData}
-        index="month"
-      />
-    );
-    expect(
-      document.querySelector("[data-slot='area-chart']")
-    ).toBeInTheDocument();
-  });
-
-  it("renders without throwing with stacked=true", () => {
-    expect(() =>
-      render(
-        <AreaChart
-          categories={["revenue", "cost"]}
-          data={lineBarData}
-          index="month"
-          stacked
-        />
-      )
-    ).not.toThrow();
-  });
-
-  it("accepts fillOpacity without throwing", () => {
-    expect(() =>
-      render(
-        <AreaChart
-          categories={["revenue"]}
-          data={lineBarData}
-          fillOpacity={0.4}
-          index="month"
-        />
-      )
-    ).not.toThrow();
+    const style = container.querySelector("style");
+    expect(style?.innerHTML).toContain("--color-Chrome");
+    expect(style?.innerHTML).toContain("--color-Safari");
   });
 });
 
 describe("DonutChart", () => {
-  it("renders with data-slot='donut-chart'", () => {
-    render(<DonutChart category="value" data={pieData} index="name" />);
-    expect(
-      document.querySelector("[data-slot='donut-chart']")
-    ).toBeInTheDocument();
-  });
-
-  it("renders without throwing", () => {
-    expect(() =>
-      render(<DonutChart category="value" data={pieData} index="name" />)
-    ).not.toThrow();
-  });
-
-  it("renders a center label when provided", () => {
-    const { getByText } = render(
+  it("renders the chart root", () => {
+    render(
       <DonutChart
-        category="value"
-        centerLabel={<span>Total</span>}
+        config={pieConfig}
         data={pieData}
-        index="name"
+        dataKey="value"
+        nameKey="name"
       />
     );
-    expect(getByText("Total")).toBeInTheDocument();
+    expect(document.querySelector("[data-slot='chart']")).toBeInTheDocument();
   });
 
-  it("accepts custom innerRadius and outerRadius without throwing", () => {
+  it("renders without throwing with a custom centre label", () => {
     expect(() =>
       render(
         <DonutChart
-          category="value"
+          config={pieConfig}
           data={pieData}
-          index="name"
-          innerRadius={40}
-          outerRadius={70}
-        />
-      )
-    ).not.toThrow();
-  });
-});
-
-describe("ComboChart", () => {
-  it("renders with data-slot='combo-chart'", () => {
-    render(
-      <ComboChart
-        barCategories={["revenue"]}
-        data={lineBarData}
-        index="month"
-        lineCategories={["cost"]}
-      />
-    );
-    expect(
-      document.querySelector("[data-slot='combo-chart']")
-    ).toBeInTheDocument();
-  });
-
-  it("renders without throwing with rightAxis=false", () => {
-    expect(() =>
-      render(
-        <ComboChart
-          barCategories={["revenue"]}
-          data={lineBarData}
-          index="month"
-          lineCategories={["cost"]}
-          rightAxis={false}
+          dataKey="value"
+          label="Total"
+          nameKey="name"
         />
       )
     ).not.toThrow();
   });
 
-  it("renders without throwing with multiple bar and line categories", () => {
+  it("renders without throwing when the centre label is hidden", () => {
     expect(() =>
       render(
-        <ComboChart
-          barCategories={["revenue", "cost"]}
-          data={lineBarData}
-          index="month"
-          lineCategories={["revenue"]}
+        <DonutChart
+          config={pieConfig}
+          data={pieData}
+          dataKey="value"
+          nameKey="name"
+          showLabel={false}
         />
       )
     ).not.toThrow();

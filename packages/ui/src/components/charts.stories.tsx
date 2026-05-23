@@ -1,17 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useState } from "react";
 
 import {
-  AreaChart,
-  BarChart,
-  ComboChart,
-  DonutChart,
-  LineChart,
-  PieChart,
-} from "./charts";
-
-/* ------------------------------------------------------------------ */
-/* Mock datasets                                                       */
-/* ------------------------------------------------------------------ */
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./card";
+import { type ChartConfig, ChartSeriesSelector } from "./chart";
+import { AreaChart, BarChart, DonutChart, LineChart, PieChart } from "./charts";
+import { MetricCard } from "./metric-card";
 
 type MonthlySales = {
   month: string;
@@ -28,10 +27,12 @@ const monthlySales: MonthlySales[] = [
   { month: "Jun", revenue: 5900, expenses: 2900 },
 ];
 
-type CategoryShare = {
-  name: string;
-  value: number;
-};
+const salesConfig = {
+  revenue: { label: "Revenue", color: "chart-1" },
+  expenses: { label: "Expenses", color: "chart-2" },
+} satisfies ChartConfig;
+
+type CategoryShare = { name: string; value: number };
 
 const categoryShare: CategoryShare[] = [
   { name: "Product A", value: 400 },
@@ -40,66 +41,46 @@ const categoryShare: CategoryShare[] = [
   { name: "Product D", value: 100 },
 ];
 
-const brandColors = [
-  "var(--primary)",
-  "var(--info)",
-  "var(--success)",
-  "var(--warning)",
-];
+const shareConfig = {
+  "Product A": { label: "Product A", color: "chart-1" },
+  "Product B": { label: "Product B", color: "chart-2" },
+  "Product C": { label: "Product C", color: "chart-3" },
+  "Product D": { label: "Product D", color: "chart-4" },
+} satisfies ChartConfig;
 
 const usdFormatter = (v: number) => `$${(v / 1000).toFixed(1)}k`;
 
-/* ------------------------------------------------------------------ */
-/* Meta (use LineChart as the primary component for autodocs)         */
-/* ------------------------------------------------------------------ */
+const Frame = ({ children }: { children: React.ReactNode }) => (
+  <div className="w-full max-w-2xl">{children}</div>
+);
 
-/* ------------------------------------------------------------------ */
-/* Additional mock datasets                                           */
-/* ------------------------------------------------------------------ */
-
-type MonthlyWithRate = {
-  month: string;
-  revenue: number;
-  expenses: number;
-  growthRate: number;
-};
-
-const monthlySalesWithRate: MonthlyWithRate[] = [
-  { month: "Jan", revenue: 4200, expenses: 2400, growthRate: 8 },
-  { month: "Feb", revenue: 3800, expenses: 1980, growthRate: -10 },
-  { month: "Mar", revenue: 5100, expenses: 2800, growthRate: 34 },
-  { month: "Apr", revenue: 4700, expenses: 2200, growthRate: -8 },
-  { month: "May", revenue: 6300, expenses: 3100, growthRate: 34 },
-  { month: "Jun", revenue: 5900, expenses: 2900, growthRate: -6 },
-];
-
-const chartColors = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-];
-
-const meta: Meta<typeof LineChart> = {
+const meta: Meta<typeof AreaChart> = {
   title: "Data Display/Charts",
-  component: LineChart,
+  component: AreaChart,
   tags: ["autodocs"],
+  args: {
+    config: salesConfig,
+    data: monthlySales,
+    dataKey: "month",
+    valueFormatter: usdFormatter,
+  },
   parameters: {
     layout: "padded",
     docs: {
       description: {
         component: [
-          "Thin wrappers around **Recharts** primitives: `LineChart`, `BarChart`,",
-          "`PieChart`, `AreaChart`, `DonutChart`, and `ComboChart`. Each is a",
-          "self-contained `ResponsiveContainer` — drop them inside any fixed-height",
-          "container.",
+          "Config-driven charts inspired by Intent UI, rebuilt on our design",
+          "system: `AreaChart`, `BarChart`, `LineChart`, `PieChart`, and the",
+          "`DonutChart` convenience wrapper.",
           "",
-          "Common props: `data` (array), `index` (x-axis key), `categories` /",
-          "`category` (data keys for series), `colors`, `valueFormatter`.",
-          "",
-          "`BarChart` also accepts `layout: 'vertical' | 'horizontal'` (default",
-          "`horizontal`) and `stacked: boolean`.",
+          "Series come from the `config` keys; colors use the `chart-1…chart-5`",
+          "tokens. Shared props: `data`, `dataKey` (category axis), `config`,",
+          "`colors`, `type` (`default | stacked | percent`), `valueFormatter`,",
+          "`tooltip`, `legend`. Clicking a legend entry (or a bar) isolates that",
+          "series; click again to clear. Drive that same selection from outside",
+          "the chart with `<ChartSeriesSelector>` (a header metric toggle) by",
+          "sharing state via `selectedSeries` / `onSelectedSeriesChange` — see",
+          "the **Interactive** stories.",
         ].join("\n"),
       },
     },
@@ -110,288 +91,360 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/* ------------------------------------------------------------------ */
-/* LineChart                                                           */
-/* ------------------------------------------------------------------ */
+// #region Area -------------------------------------------------------------
 
-/** Single-series line chart — revenue over 6 months. */
-export const LineChartSingle: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
+export const Area: Story = {
+  render: (args) => (
+    <Frame>
+      <AreaChart {...args} />
+    </Frame>
+  ),
+};
+
+export const AreaStacked: Story = {
+  render: (args) => (
+    <Frame>
+      <AreaChart {...args} type="stacked" />
+    </Frame>
+  ),
+};
+
+export const AreaPercent: Story = {
+  render: (args) => (
+    <Frame>
+      <AreaChart {...args} type="percent" />
+    </Frame>
+  ),
+};
+
+export const AreaSolidFill: Story = {
+  render: (args) => (
+    <Frame>
+      <AreaChart {...args} fillType="solid" />
+    </Frame>
+  ),
+};
+
+export const AreaNoFill: Story = {
+  render: (args) => (
+    <Frame>
+      <AreaChart {...args} fillType="none" />
+    </Frame>
+  ),
+};
+
+// #region Bar --------------------------------------------------------------
+
+export const Bar: Story = {
+  render: (args) => (
+    <Frame>
+      <BarChart {...args} />
+    </Frame>
+  ),
+};
+
+export const BarStacked: Story = {
+  render: (args) => (
+    <Frame>
+      <BarChart {...args} type="stacked" />
+    </Frame>
+  ),
+};
+
+export const BarPercent: Story = {
+  render: (args) => (
+    <Frame>
+      <BarChart {...args} type="percent" />
+    </Frame>
+  ),
+};
+
+export const BarVertical: Story = {
+  render: (args) => (
+    <Frame>
+      <BarChart {...args} layout="vertical" />
+    </Frame>
+  ),
+};
+
+// #region Line -------------------------------------------------------------
+
+export const Line: Story = {
+  render: (args) => (
+    <Frame>
+      <LineChart {...args} />
+    </Frame>
+  ),
+};
+
+export const LineSingleSeries: Story = {
+  render: (args) => (
+    <Frame>
       <LineChart
-        categories={["revenue"]}
-        colors={["var(--primary)"]}
-        data={monthlySales}
-        index="month"
-        valueFormatter={usdFormatter}
+        {...args}
+        config={{ revenue: { label: "Revenue", color: "chart-1" } }}
       />
-    </div>
+    </Frame>
   ),
 };
 
-/** Multi-series line chart — revenue vs expenses. */
-export const LineChartMultiSeries: Story = {
+// #region Pie / Donut ------------------------------------------------------
+
+export const Pie: Story = {
   render: () => (
-    <div className="h-[300px] w-full">
-      <LineChart
-        categories={["revenue", "expenses"]}
-        colors={["var(--primary)", "var(--destructive)"]}
-        data={monthlySales}
-        index="month"
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/* ------------------------------------------------------------------ */
-/* BarChart                                                            */
-/* ------------------------------------------------------------------ */
-
-/** Horizontal bar chart (default layout). */
-export const BarChartHorizontal: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
-      <BarChart
-        categories={["revenue"]}
-        colors={["var(--primary)"]}
-        data={monthlySales}
-        index="month"
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/** Multi-category horizontal bar chart. */
-export const BarChartMultiCategory: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
-      <BarChart
-        categories={["revenue", "expenses"]}
-        colors={["var(--primary)", "var(--info)"]}
-        data={monthlySales}
-        index="month"
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/** Vertical bar chart — good for category comparisons. */
-export const BarChartVertical: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
-      <BarChart
-        categories={["revenue"]}
-        colors={["var(--primary)"]}
-        data={monthlySales}
-        index="month"
-        layout="vertical"
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/* ------------------------------------------------------------------ */
-/* PieChart                                                            */
-/* ------------------------------------------------------------------ */
-
-/** Pie chart showing product category share. */
-export const PieChartBasic: Story = {
-  render: () => (
-    <div className="mx-auto h-[280px] w-[280px]">
+    <div className="mx-auto size-[320px]">
       <PieChart
-        category="value"
-        colors={brandColors}
+        config={shareConfig}
+        containerHeight={320}
         data={categoryShare}
-        index="name"
+        dataKey="value"
+        nameKey="name"
       />
     </div>
   ),
 };
 
-/* ------------------------------------------------------------------ */
-/* Composition in a card                                              */
-/* ------------------------------------------------------------------ */
+export const Donut: Story = {
+  render: () => (
+    <div className="mx-auto size-[320px]">
+      <DonutChart
+        config={shareConfig}
+        containerHeight={320}
+        data={categoryShare}
+        dataKey="value"
+        nameKey="name"
+      />
+    </div>
+  ),
+};
 
-/** Charts inside cards — the most common real-world composition. */
+// #region Interactive selection -------------------------------------------
+
+/**
+ * Header metric selector wired to the chart: pick a series (e.g. Revenue or
+ * Expenses) to isolate it. The header toggles and the in-chart interactive
+ * legend share one piece of state (`selectedSeries` / `onSelectedSeriesChange`).
+ */
+export const Interactive: Story = {
+  render: () => {
+    const [series, setSeries] = useState<string | null>("revenue");
+    return (
+      <Frame>
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue vs expenses</CardTitle>
+            <CardDescription>
+              Pick a metric to focus it — click it again to clear.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ChartSeriesSelector
+              config={salesConfig}
+              data={monthlySales}
+              onValueChange={setSeries}
+              showTotal
+              value={series}
+              valueFormatter={usdFormatter}
+            />
+            <AreaChart
+              config={salesConfig}
+              containerHeight={260}
+              data={monthlySales}
+              dataKey="month"
+              onSelectedSeriesChange={setSeries}
+              selectedSeries={series}
+              valueFormatter={usdFormatter}
+            />
+          </CardContent>
+        </Card>
+      </Frame>
+    );
+  },
+};
+
+/**
+ * Same shared-state pattern with a compact (no-total) selector driving a bar
+ * chart. Clicking a bar also updates the selection.
+ */
+export const BarInteractive: Story = {
+  render: () => {
+    const [series, setSeries] = useState<string | null>(null);
+    return (
+      <Frame>
+        <Card>
+          <CardHeader>
+            <CardTitle>Quarterly performance</CardTitle>
+            <CardDescription>
+              Selected:{" "}
+              {series
+                ? (salesConfig[series as keyof typeof salesConfig]?.label ??
+                  series)
+                : "all series"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ChartSeriesSelector
+              config={salesConfig}
+              onValueChange={setSeries}
+              value={series}
+            />
+            <BarChart
+              config={salesConfig}
+              containerHeight={260}
+              data={monthlySales}
+              dataKey="month"
+              onSelectedSeriesChange={setSeries}
+              selectedSeries={series}
+              valueFormatter={usdFormatter}
+            />
+          </CardContent>
+        </Card>
+      </Frame>
+    );
+  },
+};
+
+// #region Composition ------------------------------------------------------
+
+/** Charts living inside design-system `Card`s. */
 export const InCards: Story = {
   render: () => (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div className="rounded-xl border bg-card p-4">
-        <p className="mb-4 font-medium text-sm">Monthly Revenue</p>
-        <div className="h-[200px]">
-          <LineChart
-            categories={["revenue"]}
-            colors={["var(--primary)"]}
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle>Monthly revenue</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AreaChart
+            config={{ revenue: { label: "Revenue", color: "chart-1" } }}
+            containerHeight={220}
             data={monthlySales}
-            index="month"
+            dataKey="month"
             valueFormatter={usdFormatter}
           />
-        </div>
-      </div>
-      <div className="rounded-xl border bg-card p-4">
-        <p className="mb-4 font-medium text-sm">Revenue vs Expenses</p>
-        <div className="h-[200px]">
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Revenue vs expenses</CardTitle>
+        </CardHeader>
+        <CardContent>
           <BarChart
-            categories={["revenue", "expenses"]}
-            colors={["var(--primary)", "var(--destructive)"]}
+            config={salesConfig}
+            containerHeight={220}
             data={monthlySales}
-            index="month"
+            dataKey="month"
             valueFormatter={usdFormatter}
           />
+        </CardContent>
+      </Card>
+    </div>
+  ),
+};
+
+/**
+ * A dashboard slice: a responsive row of {@link MetricCard}s (each with its own
+ * sparkline) above a full chart card.
+ */
+export const InMetricCards: Story = {
+  render: () => {
+    const revenue = monthlySales.reduce((sum, m) => sum + m.revenue, 0);
+    const expenses = monthlySales.reduce((sum, m) => sum + m.expenses, 0);
+    const net = revenue - expenses;
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <MetricCard
+            color="var(--chart-1)"
+            data={monthlySales.map((m) => m.revenue)}
+            delta={{ value: 12, label: "vs last period" }}
+            title="Revenue"
+            value={usdFormatter(revenue)}
+          />
+          <MetricCard
+            color="var(--chart-2)"
+            data={monthlySales.map((m) => m.expenses)}
+            delta={{ value: -4, label: "vs last period" }}
+            title="Expenses"
+            value={usdFormatter(expenses)}
+          />
+          <MetricCard
+            color="var(--chart-3)"
+            delta={{ value: 8, label: "vs last period" }}
+            title="Net"
+            value={usdFormatter(net)}
+          />
         </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue vs expenses</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AreaChart
+              config={salesConfig}
+              containerHeight={240}
+              data={monthlySales}
+              dataKey="month"
+              valueFormatter={usdFormatter}
+            />
+          </CardContent>
+        </Card>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
-/* ------------------------------------------------------------------ */
-/* AreaChart                                                           */
-/* ------------------------------------------------------------------ */
-
-/** Single-series area chart — revenue trend. */
-export const AreaChartSingle: Story = {
+/**
+ * Charts are fluid: each `ResponsiveContainer` fills its grid cell, so the same
+ * chart reflows as the layout breaks from one to three columns.
+ */
+export const Responsive: Story = {
   render: () => (
-    <div className="h-[300px] w-full">
-      <AreaChart
-        categories={["revenue"]}
-        colors={[chartColors[0]]}
-        data={monthlySales}
-        index="month"
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/** Multi-series area chart — revenue vs expenses. */
-export const AreaChartMultiSeries: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
-      <AreaChart
-        categories={["revenue", "expenses"]}
-        colors={[chartColors[0], chartColors[1]]}
-        data={monthlySales}
-        index="month"
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/** Stacked area chart — proportional revenue vs expenses. */
-export const AreaChartStacked: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
-      <AreaChart
-        categories={["expenses", "revenue"]}
-        colors={[chartColors[1], chartColors[0]]}
-        data={monthlySales}
-        fillOpacity={0.4}
-        index="month"
-        stacked
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/* ------------------------------------------------------------------ */
-/* DonutChart                                                          */
-/* ------------------------------------------------------------------ */
-
-/** Basic donut chart — product category share. */
-export const DonutChartBasic: Story = {
-  render: () => (
-    <div className="mx-auto h-[280px] w-[280px]">
-      <DonutChart
-        category="value"
-        colors={chartColors}
-        data={categoryShare}
-        index="name"
-      />
-    </div>
-  ),
-};
-
-/** Donut chart with a center label showing the total. */
-export const DonutChartWithCenter: Story = {
-  render: () => (
-    <div className="mx-auto h-[280px] w-[280px]">
-      <DonutChart
-        category="value"
-        centerLabel={
-          <div className="flex flex-col items-center">
-            <span className="font-bold text-xl">1,000</span>
-            <span className="text-muted-foreground text-xs">Total</span>
-          </div>
-        }
-        colors={chartColors}
-        data={categoryShare}
-        index="name"
-        innerRadius={70}
-        outerRadius={90}
-      />
-    </div>
-  ),
-};
-
-/* ------------------------------------------------------------------ */
-/* ComboChart                                                          */
-/* ------------------------------------------------------------------ */
-
-/** Combo chart — bars for revenue, line for growth rate. */
-export const ComboChartBasic: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
-      <ComboChart
-        barCategories={["revenue"]}
-        colors={[chartColors[0], chartColors[2]]}
-        data={monthlySalesWithRate}
-        index="month"
-        lineCategories={["growthRate"]}
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/** Combo chart with both axes on the left. */
-export const ComboChartSingleAxis: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
-      <ComboChart
-        barCategories={["expenses"]}
-        colors={[chartColors[1], chartColors[0]]}
-        data={monthlySales}
-        index="month"
-        lineCategories={["revenue"]}
-        rightAxis={false}
-        valueFormatter={usdFormatter}
-      />
-    </div>
-  ),
-};
-
-/* ------------------------------------------------------------------ */
-/* BarChart stacked                                                    */
-/* ------------------------------------------------------------------ */
-
-/** Stacked bar chart — expenses and revenue per month. */
-export const StackedBar: Story = {
-  render: () => (
-    <div className="h-[300px] w-full">
-      <BarChart
-        categories={["expenses", "revenue"]}
-        colors={[chartColors[1], chartColors[0]]}
-        data={monthlySales}
-        index="month"
-        stacked
-        valueFormatter={usdFormatter}
-      />
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Area</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AreaChart
+            config={{ revenue: { label: "Revenue", color: "chart-1" } }}
+            containerHeight={180}
+            data={monthlySales}
+            dataKey="month"
+            legend={false}
+            valueFormatter={usdFormatter}
+          />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Bars</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <BarChart
+            config={{ expenses: { label: "Expenses", color: "chart-2" } }}
+            containerHeight={180}
+            data={monthlySales}
+            dataKey="month"
+            legend={false}
+            valueFormatter={usdFormatter}
+          />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Share</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DonutChart
+            config={shareConfig}
+            containerHeight={180}
+            data={categoryShare}
+            dataKey="value"
+            nameKey="name"
+          />
+        </CardContent>
+      </Card>
     </div>
   ),
 };
