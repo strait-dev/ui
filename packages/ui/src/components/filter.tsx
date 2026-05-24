@@ -22,6 +22,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandShortcut,
 } from "./command";
 import {
   DropdownMenu,
@@ -1165,10 +1166,9 @@ function AddFilterMenu({
                       {field.icon ? <HugeiconsIcon icon={field.icon} /> : null}
                       <span>{field.label}</span>
                       {fieldHasOptions(field) ? (
-                        <HugeiconsIcon
-                          className="ml-auto text-muted-foreground"
-                          icon={ArrowRight01Icon}
-                        />
+                        <CommandShortcut>
+                          <HugeiconsIcon icon={ArrowRight01Icon} />
+                        </CommandShortcut>
                       ) : null}
                     </CommandItem>
                   ))}

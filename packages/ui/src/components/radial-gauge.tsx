@@ -127,22 +127,30 @@ function RadialGauge({
   const chartData = [{ value: percent }];
 
   return (
-    <div className={cn("relative", className)} data-slot="radial-gauge">
+    <div
+      className={cn("relative size-full", className)}
+      data-slot="radial-gauge"
+    >
       <ResponsiveContainer height="100%" width="100%">
         <RadialBarChart
-          barSize={8}
           cx="50%"
           cy="50%"
           data={chartData}
           endAngle={-270}
-          innerRadius="65%"
-          outerRadius="85%"
+          innerRadius="70%"
+          outerRadius="90%"
           startAngle={90}
         >
-          <PolarAngleAxis domain={[0, 100]} tick={false} type="number" />
+          <PolarAngleAxis
+            angleAxisId={0}
+            domain={[0, 100]}
+            tick={false}
+            type="number"
+          />
           <RadialBar
+            angleAxisId={0}
             background={{ fill: "var(--muted)" }}
-            cornerRadius={4}
+            cornerRadius={999}
             dataKey="value"
             fill={fill}
             isAnimationActive={false}

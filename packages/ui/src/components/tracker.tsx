@@ -29,7 +29,7 @@ interface TrackerBlockProps {
 }
 
 const blockOuter =
-  "size-full overflow-hidden px-[0.5px] transition first:rounded-s-sm first:ps-0 last:rounded-e-sm last:pe-0 sm:px-px";
+  "h-full min-w-0 flex-1 overflow-hidden rounded-[2px] first:rounded-s-md last:rounded-e-md";
 
 const Block = ({
   color,
@@ -38,25 +38,26 @@ const Block = ({
   defaultBackgroundColor = "bg-secondary",
 }: TrackerBlockProps) => {
   const fill = (
-    <div className={blockOuter}>
-      <div
-        className={cn(
-          "size-full rounded-[1px] transition hover:opacity-60",
-          color || defaultBackgroundColor
-        )}
-        data-slot="tracker-block"
-      />
-    </div>
+    <div
+      className={cn(
+        "size-full transition hover:opacity-70",
+        color || defaultBackgroundColor
+      )}
+      data-slot="tracker-block"
+    />
   );
 
   if (disabledTooltip || !tooltip) {
-    return fill;
+    return <div className={blockOuter}>{fill}</div>;
   }
 
   return (
     <Tooltip>
       <TooltipTrigger
-        className="size-full outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+        className={cn(
+          blockOuter,
+          "outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+        )}
         render={<div />}
       >
         {fill}
@@ -111,7 +112,7 @@ const Tracker = ({
 }: TrackerProps) => (
   <TooltipProvider>
     <div
-      className={cn("group flex h-8 w-full items-center", className)}
+      className={cn("group flex h-8 w-full items-stretch gap-0.5", className)}
       data-slot="tracker"
       ref={ref}
       {...props}

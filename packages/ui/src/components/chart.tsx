@@ -946,7 +946,13 @@ const ChartLegendContent = ({
               selected && "bg-secondary/70 text-secondary-foreground"
             )}
             key={key}
-            onClick={() => onLegendSelect(selected ? null : key)}
+            onClick={(event) => {
+              // Recharts renders the legend inside the chart wrapper, which
+              // carries the chart-level onClick that clears the selection.
+              // Stop the bubble so the toggle isn't immediately undone.
+              event.stopPropagation();
+              onLegendSelect(selected ? null : key);
+            }}
             type="button"
           >
             {itemConfig?.icon && !hideIcon ? (
