@@ -1,0 +1,688 @@
+// scripts/generate-llms.ts
+// Generates LLM-discoverability artifacts for @strait/ui by walking the
+// component source with ts-morph:
+//   - llms.txt        index (llmstxt.org spec): category sections, one line
+//                     per component with its import path + summary.
+//   - llms-full.txt   the same skeleton expanded with full TSDoc, prop tables,
+//                     cva variants, data-slots, and heavy-dep notes.
+//   - components.json  one machine-readable entry per public component export.
+//
+// Outputs are written to packages/ui/ (shipped on npm via package.json
+// `files`) and copied to apps/storybook/public/ (served on the docs site).
+//
+// Run: `bun scripts/generate-llms.ts` (idempotent).
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import {
+  Node,
+  type ObjectLiteralExpression,
+  Project,
+  type SourceFile,
+} from "ts-morph";
+
+const PKG_DIR = "packages/ui";
+const COMPONENTS_DIR = join(PKG_DIR, "src/components");
+const STORYBOOK_PUBLIC = "apps/storybook/public";
+const PKG_NAME = "@strait/ui";
+
+// Heavyweight runtime deps worth surfacing to consumers (kept in sync with
+// scripts/check-heavy-deps.mjs).
+const HEAVY = [
+  "recharts",
+  "shiki",
+  "motion",
+  "vaul",
+  "embla-carousel-react",
+  "react-day-picker",
+  "react-phone-number-input",
+  "@tanstack/react-table",
+];
+
+const LIBRARY_SUMMARY =
+  "Strait UI (@strait/ui) is a React + Tailwind v4 design system of 120+ " +
+  "accessible components built on Base UI primitives. Every component ships " +
+  "as its own tree-shakeable subpath export, is styled with semantic design " +
+  "tokens and class-variance-authority recipes, and exposes a named `*Props` " +
+  "type. Components render a polymorphic root via the Base UI `render` prop " +
+  "and tag their parts with `data-slot` attributes for styling and testing.";
+
+// Category ordering for the generated index (most actionable first).
+const CATEGORY_ORDER = [
+  "Actions",
+  "Forms",
+  "Data Display",
+  "Navigation",
+  "Overlays",
+  "Feedback",
+  "Layout",
+  "Patterns",
+  "Uncategorized",
+];
+
+type PropDoc = {
+  name: string;
+  type: string;
+  optional: boolean;
+  default?: string;
+  description?: string;
+};
+
+type TypeDoc = {
+  /** The exported `*Props` type name. */
+  name: string;
+  /** Inline-declared props (own members of the type literal/interface). */
+  props: PropDoc[];
+  /** Types it intersects/extends whose members we can't statically expand. */
+  extends: string[];
+};
+
+type ComponentDoc = {
+  name: string;
+  importPath: string;
+  category: string;
+  description: string;
+  exports: string[];
+  /** One entry per exported `*Props` type in the module. */
+  types: TypeDoc[];
+  variants: Record<string, string[]>;
+  defaultVariants: Record<string, string>;
+  slots: string[];
+  dependencies: string[];
+};
+
+const isSource = (f: string) =>
+  f.endsWith(".tsx") && !f.endsWith(".stories.tsx") && !f.endsWith(".test.tsx");
+
+const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+/**
+ * Flatten TSDoc inline `{@link …}` tags to plain text. Handles both
+ * `{@link Target}` and `{@link Target|display}` / `{@link Target display}`
+ * forms; for a bare member link (`{@link Foo.bar}` / `{@link Foo#bar}`) keeps
+ * the last segment so the prose reads naturally.
+ */
+function stripLinks(text: string): string {
+  return text.replace(/\{@link\s+([^}]+)\}/g, (_match, body: string) => {
+    const trimmed = body.trim();
+    // Prefer an explicit display label after `|` or whitespace.
+    const sep = trimmed.search(/[|\s]/);
+    if (sep !== -1) {
+      return trimmed.slice(sep + 1).trim();
+    }
+    // Bare target: drop the qualifier for member links.
+    const lastSegment = trimmed.split(/[.#]/).pop() ?? trimmed;
+    return lastSegment.trim();
+  });
+}
+
+/** First paragraph of a TSDoc description, flattened to a single line. */
+function firstParagraph(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed) {
+    return "";
+  }
+  const [para] = trimmed.split(/\n\s*\n/);
+  return stripLinks(para.replace(/\s+/g, " ").trim());
+}
+
+function jsDocText(node: Node): string {
+  // Variable-declared values (`const X = …`) hang their JSDoc on the parent
+  // VariableStatement, not the declaration — mirror check-docs.mjs.
+  const docs = Node.isVariableDeclaration(node)
+    ? (node.getVariableStatement()?.getJsDocs() ?? [])
+    : Node.isJSDocable(node)
+      ? node.getJsDocs()
+      : [];
+  for (const d of docs) {
+    const desc = d.getDescription()?.trim();
+    if (desc) {
+      return desc;
+    }
+  }
+  return "";
+}
+
+/** Pull the description text out of a raw `/** … *\/` block comment. */
+function parseBlockComment(raw: string): string {
+  const body = raw
+    .replace(/^\/\*\*?/, "")
+    .replace(/\*\/$/, "")
+    .split("\n")
+    .map((line) => line.replace(/^\s*\* ?/, ""))
+    .join("\n");
+  // The description is everything before the first block tag (`@param`, …).
+  const [beforeTag] = body.split(/\n\s*@/);
+  return firstParagraph(beforeTag);
+}
+
+/**
+ * Description from a leading `/** … *\/` block on a node. ts-morph does not
+ * model JSDoc on `export { … }` declarations, so re-export shims (whose
+ * symbols resolve to another file) carry their doc as a leading comment.
+ */
+function leadingDocText(node: Node): string {
+  const ranges = node.getLeadingCommentRanges();
+  for (let i = ranges.length - 1; i >= 0; i--) {
+    const text = ranges[i].getText();
+    if (text.startsWith("/**")) {
+      return parseBlockComment(text);
+    }
+  }
+  return "";
+}
+
+/** Read `title: "Category/Name"` from the colocated stories file. */
+function readStoryMeta(name: string): { category?: string; display?: string } {
+  const path = join(COMPONENTS_DIR, `${name}.stories.tsx`);
+  let src: string;
+  try {
+    src = readFileSync(path, "utf8");
+  } catch {
+    return {};
+  }
+  const m = src.match(/title:\s*["']([^"']+)["']/);
+  if (!m) {
+    return {};
+  }
+  const parts = m[1].split("/");
+  return {
+    category: parts[0]?.trim(),
+    display: parts.slice(1).join("/").trim(),
+  };
+}
+
+/** Unique `data-slot` values declared anywhere in the source. */
+function extractSlots(src: string): string[] {
+  const slots = new Set<string>();
+  const re = /data-slot["']?\s*[:=]\s*["']([\w-]+)["']/g;
+  let m: RegExpExecArray | null;
+  // biome-ignore lint/suspicious/noAssignInExpressions: standard regex loop
+  while ((m = re.exec(src)) !== null) {
+    slots.add(m[1]);
+  }
+  return [...slots].sort();
+}
+
+/** Heavy deps imported by the module. */
+function extractHeavyDeps(src: string): string[] {
+  return HEAVY.filter((dep) => {
+    const escaped = dep.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`from\\s+["']${escaped}(?:/[^"']*)?["']`).test(src);
+  });
+}
+
+/** Keys of an object-literal property whose value is itself an object. */
+function objectKeys(obj: ObjectLiteralExpression, prop: string): string[] {
+  const p = obj.getProperty(prop);
+  if (!(p && Node.isPropertyAssignment(p))) {
+    return [];
+  }
+  const init = p.getInitializer();
+  if (!(init && Node.isObjectLiteralExpression(init))) {
+    return [];
+  }
+  return init
+    .getProperties()
+    .map((member) => {
+      if (
+        Node.isPropertyAssignment(member) ||
+        Node.isShorthandPropertyAssignment(member)
+      ) {
+        return member.getName().replace(/^["']|["']$/g, "");
+      }
+      return "";
+    })
+    .filter(Boolean);
+}
+
+/** Extract cva `variants` axes and `defaultVariants` from a source file. */
+function extractCva(sourceFile: SourceFile, fileName: string) {
+  const variants: Record<string, string[]> = {};
+  const defaultVariants: Record<string, string> = {};
+
+  const cvaDecls = sourceFile.getVariableDeclarations().filter((d) => {
+    const init = d.getInitializer();
+    return (
+      Node.isCallExpression(init) && init.getExpression().getText() === "cva"
+    );
+  });
+  if (cvaDecls.length === 0) {
+    return { variants, defaultVariants };
+  }
+
+  // Prefer the recipe named `<file>Variants`; otherwise the first cva call.
+  const primary =
+    cvaDecls.find(
+      (d) => normalize(d.getName()) === `${normalize(fileName)}variants`
+    ) ?? cvaDecls[0];
+  const call = primary.getInitializer();
+  if (!Node.isCallExpression(call)) {
+    return { variants, defaultVariants };
+  }
+  const config = call.getArguments()[1];
+  if (!(config && Node.isObjectLiteralExpression(config))) {
+    return { variants, defaultVariants };
+  }
+
+  const variantsProp = config.getProperty("variants");
+  if (variantsProp && Node.isPropertyAssignment(variantsProp)) {
+    const variantsObj = variantsProp.getInitializer();
+    if (variantsObj && Node.isObjectLiteralExpression(variantsObj)) {
+      for (const axis of variantsObj.getProperties()) {
+        if (Node.isPropertyAssignment(axis)) {
+          const axisName = axis.getName().replace(/^["']|["']$/g, "");
+          variants[axisName] = objectKeys(variantsObj, axisName);
+        }
+      }
+    }
+  }
+
+  const defaultsProp = config.getProperty("defaultVariants");
+  if (defaultsProp && Node.isPropertyAssignment(defaultsProp)) {
+    const defaultsObj = defaultsProp.getInitializer();
+    if (defaultsObj && Node.isObjectLiteralExpression(defaultsObj)) {
+      for (const member of defaultsObj.getProperties()) {
+        if (Node.isPropertyAssignment(member)) {
+          const key = member.getName().replace(/^["']|["']$/g, "");
+          defaultVariants[key] =
+            member
+              .getInitializer()
+              ?.getText()
+              .replace(/^["']|["']$/g, "") ?? "";
+        }
+      }
+    }
+  }
+
+  return { variants, defaultVariants };
+}
+
+/** Map of prop name -> default value text from a component's destructured params. */
+function extractDefaults(decl: Node): Record<string, string> {
+  const defaults: Record<string, string> = {};
+  let fn: Node | undefined;
+  if (Node.isFunctionDeclaration(decl)) {
+    fn = decl;
+  } else if (Node.isVariableDeclaration(decl)) {
+    const init = decl.getInitializer();
+    if (Node.isArrowFunction(init) || Node.isFunctionExpression(init)) {
+      fn = init;
+    } else if (Node.isCallExpression(init)) {
+      // forwardRef(...) / memo(...) — first arg is the render fn.
+      const arg = init.getArguments()[0];
+      if (
+        arg &&
+        (Node.isArrowFunction(arg) || Node.isFunctionExpression(arg))
+      ) {
+        fn = arg;
+      }
+    }
+  }
+  if (!(fn && "getParameters" in fn)) {
+    return defaults;
+  }
+  // @ts-expect-error narrowed to a function-like node above.
+  const param = fn.getParameters()[0];
+  const binding = param?.getNameNode();
+  if (binding && Node.isObjectBindingPattern(binding)) {
+    for (const element of binding.getElements()) {
+      const init = element.getInitializer();
+      if (init) {
+        defaults[element.getName()] = init.getText();
+      }
+    }
+  }
+  return defaults;
+}
+
+/** Collect inline property signatures + intersected/extended type texts. */
+function extractProps(
+  decl: Node,
+  defaults: Record<string, string>
+): { props: PropDoc[]; extendsList: string[] } {
+  const props: PropDoc[] = [];
+  const extendsList: string[] = [];
+
+  const pushProp = (sig: Node) => {
+    if (!Node.isPropertySignature(sig)) {
+      return;
+    }
+    const name = sig.getName().replace(/^["']|["']$/g, "");
+    props.push({
+      name,
+      type: sig.getTypeNode()?.getText().replace(/\s+/g, " ") ?? "unknown",
+      optional: sig.hasQuestionToken(),
+      default: defaults[name],
+      description: firstParagraph(jsDocText(sig)) || undefined,
+    });
+  };
+
+  if (Node.isInterfaceDeclaration(decl)) {
+    for (const ext of decl.getExtends()) {
+      extendsList.push(ext.getText().replace(/\s+/g, " "));
+    }
+    for (const p of decl.getProperties()) {
+      pushProp(p);
+    }
+  } else if (Node.isTypeAliasDeclaration(decl)) {
+    const node = decl.getTypeNode();
+    if (node) {
+      const arms = Node.isIntersectionTypeNode(node)
+        ? node.getTypeNodes()
+        : [node];
+      for (const arm of arms) {
+        if (Node.isTypeLiteral(arm)) {
+          for (const p of arm.getProperties()) {
+            pushProp(p);
+          }
+        } else {
+          extendsList.push(arm.getText().replace(/\s+/g, " "));
+        }
+      }
+    }
+  }
+  return { props, extendsList };
+}
+
+// --- build the model -------------------------------------------------------
+
+const project = new Project({
+  skipAddingFilesFromTsConfig: true,
+  skipFileDependencyResolution: true,
+  compilerOptions: { allowJs: false, jsx: 4 /* react-jsx */ },
+});
+
+const files = readdirSync(COMPONENTS_DIR).filter(isSource).sort();
+for (const file of files) {
+  project.addSourceFileAtPath(join(COMPONENTS_DIR, file));
+}
+
+const docs: ComponentDoc[] = [];
+
+for (const file of files) {
+  const name = file.replace(/\.tsx$/, "");
+  const sourceFile = project.getSourceFileOrThrow(join(COMPONENTS_DIR, file));
+  const filePath = sourceFile.getFilePath();
+  const src = sourceFile.getFullText();
+
+  const exported = sourceFile.getExportedDeclarations();
+
+  // Locally-declared exported components (PascalCase function/const values).
+  const localComponents: { name: string; decl: Node }[] = [];
+  const propsTypes: { name: string; decl: Node }[] = [];
+  // Default exports surface under the key "default"; recover the real
+  // identifier so PascalCase detection and naming still work, and so the
+  // exports list can show e.g. `MultipleSelector (default)`.
+  let defaultExportName: string | undefined;
+  const declName = (d: Node): string | undefined =>
+    Node.isFunctionDeclaration(d) ||
+    Node.isVariableDeclaration(d) ||
+    Node.isClassDeclaration(d)
+      ? d.getName()
+      : undefined;
+  for (const [exportName, decls] of exported) {
+    for (const decl of decls) {
+      if (decl.getSourceFile().getFilePath() !== filePath) {
+        continue;
+      }
+      const resolvedName =
+        exportName === "default" ? (declName(decl) ?? exportName) : exportName;
+      if (exportName === "default" && resolvedName !== "default") {
+        defaultExportName = resolvedName;
+      }
+      const isComponent =
+        /^[A-Z]/.test(resolvedName) &&
+        (Node.isFunctionDeclaration(decl) ||
+          (Node.isVariableDeclaration(decl) &&
+            (() => {
+              const init = decl.getInitializer();
+              return (
+                Node.isArrowFunction(init) ||
+                Node.isFunctionExpression(init) ||
+                Node.isCallExpression(init)
+              );
+            })()));
+      if (isComponent) {
+        localComponents.push({ name: resolvedName, decl });
+      }
+      if (
+        exportName.endsWith("Props") &&
+        (Node.isInterfaceDeclaration(decl) || Node.isTypeAliasDeclaration(decl))
+      ) {
+        propsTypes.push({ name: exportName, decl });
+      }
+    }
+  }
+
+  const exportNames = [...exported.keys()]
+    .map((k) =>
+      k === "default" && defaultExportName
+        ? `${defaultExportName} (default)`
+        : k
+    )
+    .sort();
+
+  const story = readStoryMeta(name);
+  const category = story.category ?? "Uncategorized";
+
+  // Primary component: the one whose normalized name matches the file name,
+  // else the first declared component.
+  const primary =
+    localComponents.find((c) => normalize(c.name) === normalize(name)) ??
+    localComponents[0];
+  const displayName = story.display || primary?.name || name;
+
+  let description = primary ? firstParagraph(jsDocText(primary.decl)) : "";
+  if (!description) {
+    // Re-export shim modules (e.g. notice-banner, direction) document the
+    // module on the `export { … }` declaration itself; the re-exported
+    // symbols resolve to another file and are filtered out above.
+    for (const exportDecl of sourceFile.getExportDeclarations()) {
+      const text = leadingDocText(exportDecl);
+      if (text) {
+        description = text;
+        break;
+      }
+    }
+  }
+
+  // Index local components by name so each `*Props` type can pull defaults
+  // from the destructured params of its own component.
+  const componentByName = new Map(localComponents.map((c) => [c.name, c.decl]));
+
+  const types: TypeDoc[] = propsTypes
+    .map(({ name: typeName, decl }) => {
+      const ownerName = typeName.replace(/Props$/, "");
+      const ownerDecl = componentByName.get(ownerName);
+      const defaults = ownerDecl ? extractDefaults(ownerDecl) : {};
+      const { props, extendsList } = extractProps(decl, defaults);
+      return { name: typeName, props, extends: extendsList };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const { variants, defaultVariants } = extractCva(sourceFile, name);
+
+  docs.push({
+    name: displayName,
+    importPath: `${PKG_NAME}/components/${name}`,
+    category,
+    description,
+    exports: exportNames,
+    types,
+    variants,
+    defaultVariants,
+    slots: extractSlots(src),
+    dependencies: extractHeavyDeps(src),
+  });
+}
+
+// --- group + sort ----------------------------------------------------------
+
+const byCategory = new Map<string, ComponentDoc[]>();
+for (const doc of docs) {
+  const list = byCategory.get(doc.category) ?? [];
+  list.push(doc);
+  byCategory.set(doc.category, list);
+}
+const orderedCategories = [...byCategory.keys()].sort((a, b) => {
+  const ia = CATEGORY_ORDER.indexOf(a);
+  const ib = CATEGORY_ORDER.indexOf(b);
+  return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib) || a.localeCompare(b);
+});
+for (const list of byCategory.values()) {
+  list.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// --- render llms.txt -------------------------------------------------------
+
+function renderIndex(): string {
+  const lines = ["# Strait UI", "", `> ${LIBRARY_SUMMARY}`, ""];
+  for (const category of orderedCategories) {
+    lines.push(`## ${category}`, "");
+    for (const doc of byCategory.get(category) ?? []) {
+      const summary = doc.description ? `: ${doc.description}` : "";
+      lines.push(`- [${doc.name}](${doc.importPath})${summary}`);
+    }
+    lines.push("");
+  }
+  return `${lines.join("\n").trim()}\n`;
+}
+
+// --- render llms-full.txt --------------------------------------------------
+
+function renderType(type: TypeDoc): string[] {
+  const lines: string[] = [`Props (\`${type.name}\`):`];
+  if (type.extends.length) {
+    lines.push(`Extends: ${type.extends.map((e) => `\`${e}\``).join(", ")}`);
+  }
+  if (type.props.length === 0) {
+    lines.push("");
+    return lines;
+  }
+  lines.push(
+    "",
+    "| Prop | Type | Required | Default | Description |",
+    "| --- | --- | --- | --- | --- |"
+  );
+  for (const p of type.props) {
+    const ty = `\`${p.type}\``.replace(/\|/g, "\\|");
+    const required = p.optional ? "" : "yes";
+    const def = p.default ? `\`${p.default}\``.replace(/\|/g, "\\|") : "";
+    const desc = (p.description ?? "").replace(/\|/g, "\\|");
+    lines.push(`| \`${p.name}\` | ${ty} | ${required} | ${def} | ${desc} |`);
+  }
+  lines.push("");
+  return lines;
+}
+
+function renderFull(): string {
+  const lines = [
+    "# Strait UI — Full Reference",
+    "",
+    `> ${LIBRARY_SUMMARY}`,
+    "",
+  ];
+  for (const category of orderedCategories) {
+    lines.push(`## ${category}`, "");
+    for (const doc of byCategory.get(category) ?? []) {
+      lines.push(`### ${doc.name}`, "");
+      lines.push(`Import: \`import { ... } from "${doc.importPath}";\``, "");
+      if (doc.description) {
+        lines.push(doc.description, "");
+      }
+      if (doc.exports.length) {
+        lines.push(
+          `Exports: ${doc.exports.map((e) => `\`${e}\``).join(", ")}`,
+          ""
+        );
+      }
+      for (const type of doc.types) {
+        lines.push(...renderType(type));
+      }
+      const axes = Object.keys(doc.variants);
+      if (axes.length) {
+        lines.push("Variants:");
+        for (const axis of axes) {
+          const def = doc.defaultVariants[axis];
+          const suffix = def ? ` (default: \`${def}\`)` : "";
+          lines.push(
+            `- \`${axis}\`: ${doc.variants[axis].map((v) => `\`${v}\``).join(", ")}${suffix}`
+          );
+        }
+        lines.push("");
+      }
+      if (doc.slots.length) {
+        lines.push(
+          `Data slots: ${doc.slots.map((s) => `\`${s}\``).join(", ")}`,
+          ""
+        );
+      }
+      if (doc.dependencies.length) {
+        lines.push(
+          `Heavy dependencies: ${doc.dependencies.map((d) => `\`${d}\``).join(", ")}`,
+          ""
+        );
+      }
+    }
+  }
+  return `${lines.join("\n").trim()}\n`;
+}
+
+// --- write outputs ---------------------------------------------------------
+
+const index = renderIndex();
+const full = renderFull();
+const json = `${JSON.stringify(docs, null, 2)}\n`;
+
+const artifacts: [string, string][] = [
+  ["llms.txt", index],
+  ["llms-full.txt", full],
+  ["components.json", json],
+];
+
+const targets = (file: string) => [
+  join(PKG_DIR, file),
+  join(STORYBOOK_PUBLIC, file),
+];
+
+// `--check` is the CI drift gate: render in-memory and diff against the
+// committed artifacts without writing. Anything stale fails the build.
+if (process.argv.includes("--check")) {
+  const drifted: string[] = [];
+  for (const [file, content] of artifacts) {
+    for (const path of targets(file)) {
+      let existing: string | null = null;
+      try {
+        existing = readFileSync(path, "utf8");
+      } catch {
+        existing = null;
+      }
+      if (existing !== content) {
+        drifted.push(path);
+      }
+    }
+  }
+  if (drifted.length > 0) {
+    console.error(
+      `✗ Docs artifacts are out of date (${drifted.length}):\n` +
+        `${drifted.map((p) => `  - ${p}`).join("\n")}\n` +
+        "Run `bun run docs:generate` and commit the result."
+    );
+    process.exit(1);
+  }
+  console.log(
+    `✓ Docs artifacts are up to date for ${docs.length} components ` +
+      `(${orderedCategories.length} categories).`
+  );
+} else {
+  mkdirSync(STORYBOOK_PUBLIC, { recursive: true });
+  for (const [file, content] of artifacts) {
+    for (const path of targets(file)) {
+      writeFileSync(path, content);
+    }
+  }
+  console.log(
+    `✓ Generated llms.txt, llms-full.txt, components.json for ${docs.length} components ` +
+      `(${orderedCategories.length} categories) → ${PKG_DIR}/ and ${STORYBOOK_PUBLIC}/`
+  );
+}

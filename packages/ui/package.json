@@ -13,7 +13,10 @@
     "dist",
     "src/globals.css",
     "tailwind.config.ts",
-    "postcss.config.mjs"
+    "postcss.config.mjs",
+    "llms.txt",
+    "llms-full.txt",
+    "components.json"
   ],
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",
@@ -701,6 +704,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^6.0.2",
     "bunchee": "^6.10.0",
+    "expect-type": "^1.2.1",
     "jsdom": "^29.1.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",

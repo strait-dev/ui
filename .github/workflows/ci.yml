@@ -19,6 +19,12 @@ jobs:
         run: bunx @biomejs/biome check .
       - name: Component contract
         run: bun scripts/check-conventions.mjs
+      - name: Heavy-dependency isolation
+        run: bun scripts/check-heavy-deps.mjs
+      - name: TSDoc coverage
+        run: bun scripts/check-docs.mjs
+      - name: Docs artifact drift
+        run: bun scripts/generate-llms.ts --check
       - name: Build package
         run: bun run --filter @strait/ui build
       - name: Typecheck

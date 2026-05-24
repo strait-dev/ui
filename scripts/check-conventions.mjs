@@ -13,13 +13,28 @@ const files = readdirSync(DIR).filter(
 
 // Per-rule exemptions: { ruleId: Set<filename> }
 // Only headless components that render NO DOM of their own are exempt from
-// data-slot: direction.tsx is a provider re-export, and checkbox-tree.tsx is a
-// render-prop where the consumer owns all the markup. Every other rule applies
-// to every component with no exceptions.
+// data-slot: direction.tsx is a provider re-export, checkbox-tree.tsx is a
+// render-prop where the consumer owns all the markup, and notice-banner.tsx is
+// a thin re-export shim over banner.tsx. Every other rule applies to every
+// component with no exceptions.
 const EXEMPT = {
-  rawColor: new Set([]),
-  dataSlot: new Set(["direction.tsx", "checkbox-tree.tsx"]),
-  cn: new Set([]),
+  // code-block.tsx intentionally forces a dark terminal surface
+  // (bg-neutral-950 text-neutral-50) regardless of the active colour scheme;
+  // there is no semantic token for an always-dark surface.
+  rawColor: new Set(["code-block.tsx"]),
+  dataSlot: new Set([
+    "direction.tsx",
+    "checkbox-tree.tsx",
+    "notice-banner.tsx",
+  ]),
+  // charts.tsx's only className is a static internal recharts SVG label (no
+  // consumer passthrough); checkbox-tree.tsx's only className lives in a JSDoc
+  // @example block, not real markup.
+  cn: new Set(["charts.tsx", "checkbox-tree.tsx"]),
+  // command-menu.tsx uses React.HTMLAttributes<HTMLElement> only for internal
+  // cloneElement annotations on an unknown trigger element, where there is no
+  // ComponentProps equivalent — these are not component prop definitions.
+  propTyping: new Set(["command-menu.tsx"]),
 };
 
 const RAW_COLOR =
@@ -100,15 +115,17 @@ for (const file of files) {
   }
 
   // Rule: no React.HTMLAttributes / InputHTMLAttributes (prefer ComponentProps)
-  lines.forEach((ln, i) => {
-    if (
-      /React\.(HTMLAttributes|InputHTMLAttributes|TextareaHTMLAttributes)</.test(
-        ln
-      )
-    ) {
-      add(file, "propTyping", `:${i + 1} prefer React.ComponentProps<...>`);
-    }
-  });
+  if (!EXEMPT.propTyping.has(file)) {
+    lines.forEach((ln, i) => {
+      if (
+        /React\.(HTMLAttributes|InputHTMLAttributes|TextareaHTMLAttributes)</.test(
+          ln
+        )
+      ) {
+        add(file, "propTyping", `:${i + 1} prefer React.ComponentProps<...>`);
+      }
+    });
+  }
 }
 
 if (violations.length) {
