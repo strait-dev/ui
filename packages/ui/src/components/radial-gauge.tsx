@@ -121,7 +121,10 @@ function RadialGauge({
   const warningThreshold = thresholds?.warning ?? 70;
   const dangerThreshold = thresholds?.danger ?? 90;
 
-  const percent = clamp((value / max) * 100, 0, 100);
+  // Guard against a zero/negative max, which would make value / max produce
+  // NaN (0 / 0) or Infinity and surface as "NaN%" in the center label.
+  const safeMax = max > 0 ? max : 1;
+  const percent = clamp((value / safeMax) * 100, 0, 100);
   const fill = resolveColor(percent, color, warningThreshold, dangerThreshold);
 
   const chartData = [{ value: percent }];

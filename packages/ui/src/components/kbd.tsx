@@ -75,7 +75,7 @@ function Kbd({
  * shortcut chord (e.g. ⌘ + Shift + K). Rendered as a `<kbd>` element
  * for correct semantic nesting.
  */
-function KbdGroup({ className, ...props }: React.ComponentProps<"div">) {
+function KbdGroup({ className, ...props }: React.ComponentProps<"kbd">) {
   return (
     <kbd
       className={cn("inline-flex items-center gap-1", className)}

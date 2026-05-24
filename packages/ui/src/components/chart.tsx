@@ -599,9 +599,15 @@ const XAxis = ({
   className,
   intervalType = "preserveStartEnd",
   minTickGap = 5,
+  type,
   ...props
 }: XAxisProps) => {
   const { dataKey, data, layout } = useChart();
+
+  // In a vertical layout the X axis carries the numeric values, so it must be
+  // a number axis with no category dataKey. Defaulting to category here (the
+  // recharts default) produces NaN ticks because there is no category source.
+  const isVertical = layout === "vertical";
 
   const ticks =
     displayEdgeLabelsOnly && data?.length && dataKey
@@ -623,6 +629,7 @@ const XAxis = ({
       tick={tick as XAxisPrimitiveProps["tick"]}
       tickLine={false}
       ticks={ticks as XAxisPrimitiveProps["ticks"]}
+      type={type ?? (isVertical ? "number" : "category")}
       {...props}
     />
   );
@@ -942,7 +949,7 @@ const ChartLegendContent = ({
             aria-pressed={selected}
             className={cn(
               "flex items-center gap-2 rounded-sm px-2 py-1 text-muted-foreground *:[svg]:-mx-0.5 *:[svg]:size-2.5 *:[svg]:shrink-0 *:[svg]:text-muted-foreground",
-              "hover:bg-secondary/70 hover:text-secondary-foreground",
+              "hover:bg-secondary/70 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
               selected && "bg-secondary/70 text-secondary-foreground"
             )}
             key={key}
@@ -1102,7 +1109,7 @@ function ChartSeriesSelector({
             <button
               aria-pressed={isActive}
               className={cn(
-                "flex flex-1 flex-col gap-1 rounded-lg border px-3 py-2 text-left transition-colors hover:bg-secondary/50",
+                "flex flex-1 flex-col gap-1 rounded-lg border px-3 py-2 text-left transition-colors hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
                 isActive
                   ? "border-foreground/20 bg-secondary/60"
                   : "border-transparent bg-secondary/20"
@@ -1132,7 +1139,7 @@ function ChartSeriesSelector({
           <button
             aria-pressed={isActive}
             className={cn(
-              "flex items-center gap-1.5 rounded-sm px-2 py-1 text-muted-foreground text-xs transition-colors hover:bg-secondary/70 hover:text-secondary-foreground",
+              "flex items-center gap-1.5 rounded-sm px-2 py-1 text-muted-foreground text-xs transition-colors hover:bg-secondary/70 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
               isActive && "bg-secondary/70 text-secondary-foreground"
             )}
             data-active={isActive}
