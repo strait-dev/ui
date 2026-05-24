@@ -10,7 +10,7 @@ import { cn } from "../utils/index";
  * collapsing to `never` (HTML's numeric `size` attribute vs. the design
  * token string union). The design-token `size` is added back below.
  */
-type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
+export type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
   /**
    * Height preset for the select control.
    * - `sm`      — 28 px tall, tighter border radius.

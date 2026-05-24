@@ -321,17 +321,17 @@ describe("Filters", () => {
 
 describe("exports", () => {
   it("DEFAULT_OPERATORS covers each field type", () => {
-    expect(DEFAULT_OPERATORS.select.map((o) => o.value)).toEqual([
+    expect(DEFAULT_OPERATORS.select?.map((o) => o.value)).toEqual([
       "is",
       "is_not",
       "empty",
       "not_empty",
     ]);
-    expect(DEFAULT_OPERATORS.text.some((o) => o.value === "contains")).toBe(
+    expect(DEFAULT_OPERATORS.text?.some((o) => o.value === "contains")).toBe(
       true
     );
     expect(
-      DEFAULT_OPERATORS.multiselect.some((o) => o.value === "is_any_of")
+      DEFAULT_OPERATORS.multiselect?.some((o) => o.value === "is_any_of")
     ).toBe(true);
   });
 

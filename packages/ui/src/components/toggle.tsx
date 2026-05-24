@@ -53,12 +53,17 @@ const toggleVariants = cva(
   }
 );
 
+/** Props for {@link Toggle}. */
+export type ToggleProps = TogglePrimitive.Props &
+  VariantProps<typeof toggleVariants>;
+
 /**
  * A two-state button that toggles between pressed and unpressed.
  *
  * Built on Base UI's `Toggle` primitive, so it manages `aria-pressed` and
  * forwards all native button props. Styling is driven by
- * {@link toggleVariants}; pass `variant`, `size`, and `intent` to pick an appearance.
+ * {@link toggleVariants}; pass `variant`, `size`, and `intent` to pick an
+ * appearance.
  *
  * @remarks
  * - The pressed state is reflected via `aria-pressed` and the Tailwind
@@ -67,23 +72,13 @@ const toggleVariants = cva(
  *   action (e.g. `aria-label="Bold"`).
  * - To manage a set of related toggles together, use
  *   {@link ToggleGroup} / {@link ToggleGroupItem} instead.
- * - `size` now includes `"xs"` (24 px) and `"xl"` (40 px) in addition to
- *   the existing `"sm"`, `"default"`, and `"lg"` presets.
- * - `intent` tints the pressed/active state with semantic colour tokens:
- *   `"destructive"`, `"success"`, `"info"`, `"warning"`. The `"default"` intent
- *   uses the muted fill (unchanged existing behaviour).
  *
  * @example
  * ```tsx
  * <Toggle aria-label="Bold">
  *   <BoldIcon />
  * </Toggle>
- *
  * <Toggle variant="outline" size="xl" intent="success">Save</Toggle>
- *
- * <Toggle size="xs" intent="destructive" aria-label="Delete">
- *   <TrashIcon />
- * </Toggle>
  * ```
  */
 function Toggle({
@@ -92,7 +87,7 @@ function Toggle({
   size = "default",
   intent = "default",
   ...props
-}: TogglePrimitive.Props & VariantProps<typeof toggleVariants>) {
+}: ToggleProps) {
   return (
     <TogglePrimitive
       className={cn(toggleVariants({ variant, size, intent, className }))}

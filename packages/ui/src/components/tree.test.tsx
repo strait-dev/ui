@@ -115,7 +115,7 @@ describe("Tree", () => {
     expect(screen.queryByText("resume.pdf")).not.toBeInTheDocument();
     // Click the chevron button (slot=chevron) inside the Documents row
     const buttons = screen.getAllByRole("button");
-    await user.click(buttons[0]);
+    await user.click(buttons[0]!);
     expect(screen.getByText("resume.pdf")).toBeInTheDocument();
   });
 });

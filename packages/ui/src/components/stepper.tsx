@@ -75,10 +75,20 @@ const useStepItem = () => {
 // Stepper (root)
 // ---------------------------------------------------------------------------
 
-type StepperProps = React.ComponentProps<"div"> & {
+/** Props for {@link Stepper}. */
+export type StepperProps = React.ComponentProps<"div"> & {
+  /** Initial active step index used in uncontrolled mode; ignored when
+   *  {@link value} is provided.
+   *  @default 0 */
   defaultValue?: number;
+  /** Controlled active step index; when set the component skips internal
+   *  state and defers all updates to `onValueChange`. */
   value?: number;
+  /** Called with the new step index whenever a {@link StepperTrigger} is
+   *  clicked or `setActiveStep` is invoked programmatically. */
   onValueChange?: (value: number) => void;
+  /** Layout direction; cascades to all sub-components via `data-orientation`.
+   *  @default "horizontal" */
   orientation?: "horizontal" | "vertical";
   /**
    * Scaling preset that controls indicator size and label text.

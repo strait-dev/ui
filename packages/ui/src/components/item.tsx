@@ -93,6 +93,10 @@ const itemVariants = cva(
   }
 );
 
+/** Props for {@link Item}. */
+export type ItemProps = useRender.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants>;
+
 /**
  * Flexible row-level container for list entries, menu rows, or card-like
  * tiles in an {@link ItemGroup}.
@@ -136,7 +140,7 @@ function Item({
   size = "default",
   render,
   ...props
-}: useRender.ComponentProps<"div"> & VariantProps<typeof itemVariants>) {
+}: ItemProps) {
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(

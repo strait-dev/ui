@@ -127,7 +127,7 @@ const DOT_SIZE_MAP: Record<NonNullable<BadgeProps["size"]>, string> = {
  * Extends {@link Badge} (so `size`, `render`, etc. pass through) but derives
  * `variant` from `status` unless explicitly overridden.
  */
-type StatusBadgeProps = Omit<BadgeProps, "children"> & {
+export type StatusBadgeProps = Omit<BadgeProps, "children"> & {
   /** The status keyword, e.g. `"running"`, `"failed"`, `"timed_out"`. */
   status: string;
   /** Show the leading coloured dot. Defaults to `true`. */
@@ -257,6 +257,5 @@ export {
   getStatusConfig,
   STATUS_CONFIG,
   StatusBadge,
-  type StatusBadgeProps,
   type StatusConfig,
 };

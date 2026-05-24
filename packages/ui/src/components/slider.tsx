@@ -87,6 +87,10 @@ const sliderThumbVariants = cva(
 export type SliderProps = SliderPrimitive.Root.Props &
   VariantProps<typeof sliderTrackVariants> &
   VariantProps<typeof sliderRangeVariants> & {
+    /**
+     * Accessible name forwarded to every thumb input. Omit when the slider
+     * is associated with a `<FieldLabel>` via Base UI's `Field` context.
+     */
     "aria-label"?: string;
   };
 

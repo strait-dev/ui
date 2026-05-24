@@ -16,12 +16,19 @@ import { Input, type InputProps } from "./input";
  *   {@link Button}.
  */
 type InputWithInlineButtonProps = InputProps & {
+  /** Custom element rendered instead of the built-in {@link Button}. */
   button?: React.ReactNode;
+  /** Label text rendered inside the built-in {@link Button}. */
   buttonText?: string;
+  /** Click handler forwarded to the built-in {@link Button}. */
   onButtonClick?: () => void;
+  /** Extra classes merged onto the button or its container element. */
   buttonClassName?: string;
+  /** `aria-label` for the built-in {@link Button} when `buttonText` is insufficient. */
   buttonAriaLabel?: string;
+  /** Extra classes merged onto the outer flex wrapper `<div>`. */
   wrapperClassName?: string;
+  /** HTML `type` attribute of the built-in {@link Button}. @default "submit" */
   buttonType?: "button" | "submit" | "reset";
 };
 

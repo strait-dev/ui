@@ -7,6 +7,9 @@ import { Button } from "./button";
 import { Input, type InputProps } from "./input";
 import { Textarea } from "./textarea";
 
+/** Props for {@link InputGroup}. */
+export type InputGroupProps = React.ComponentProps<"div">;
+
 /**
  * A composite control that visually merges an input (or textarea)
  * with leading/trailing addons, icons, buttons, or labels into a
@@ -40,7 +43,7 @@ import { Textarea } from "./textarea";
  * </InputGroup>
  * ```
  */
-function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
+function InputGroup({ className, ...props }: InputGroupProps) {
   return (
     // biome-ignore lint/a11y/useSemanticElements: an input group bundles a control with addons; role="group" on a div is the intended pattern (no native element fits).
     <div

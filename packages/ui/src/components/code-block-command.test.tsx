@@ -16,7 +16,7 @@ class LocalStorageMock {
   private store: Record<string, string> = {};
 
   getItem(key: string): string | null {
-    return Object.hasOwn(this.store, key) ? this.store[key] : null;
+    return Object.hasOwn(this.store, key) ? (this.store[key] ?? null) : null;
   }
 
   setItem(key: string, value: string): void {

@@ -17,8 +17,8 @@ type CarouselOptions = UseCarouselParameters[0];
 /** Embla plugin array forwarded to `useEmblaCarousel`. */
 type CarouselPlugin = UseCarouselParameters[1];
 
-/** Public props accepted by {@link Carousel}. */
-type CarouselProps = {
+/** Props for {@link Carousel}. */
+export type CarouselProps = {
   /** Embla options forwarded directly to `useEmblaCarousel`. */
   opts?: CarouselOptions;
   /** Embla plugins (e.g. autoplay, wheel gestures). */

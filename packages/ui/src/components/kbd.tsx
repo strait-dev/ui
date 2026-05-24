@@ -28,6 +28,10 @@ const kbdVariants = cva(
   }
 );
 
+/** Props for {@link Kbd}. */
+export type KbdProps = React.ComponentProps<"kbd"> &
+  VariantProps<typeof kbdVariants>;
+
 /**
  * Renders a single keyboard key badge using the semantic `<kbd>` element.
  *
@@ -56,11 +60,7 @@ const kbdVariants = cva(
  * </KbdGroup>
  * ```
  */
-function Kbd({
-  className,
-  size = "default",
-  ...props
-}: React.ComponentProps<"kbd"> & VariantProps<typeof kbdVariants>) {
+function Kbd({ className, size = "default", ...props }: KbdProps) {
   return (
     <kbd
       className={cn(kbdVariants({ size }), className)}

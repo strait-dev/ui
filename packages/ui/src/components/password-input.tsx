@@ -19,9 +19,19 @@ export type PasswordInputProps = Omit<
   "type" | "size"
 > &
   Pick<InputProps, "size"> & {
+    /** Optional `<label>` text rendered above the input and linked via
+     *  `htmlFor={props.id}`; requires `id` to be set. */
     label?: string;
+    /** `aria-label` for the toggle button when password is currently visible;
+     *  announcing the action to screen readers.
+     *  @default "Show password" */
     showPasswordLabel?: string;
+    /** `aria-label` for the toggle button when password is currently hidden;
+     *  announcing the action to screen readers.
+     *  @default "Hide password" */
     hidePasswordLabel?: string;
+    /** Additional classes merged onto the relative wrapper `<div>` that
+     *  contains the input and the visibility-toggle button. */
     containerClassName?: string;
   };
 

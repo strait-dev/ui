@@ -24,7 +24,8 @@ import type { DateRange } from "react-day-picker";
 import { cn } from "../utils/index";
 import { RangeCalendarWithPresets } from "./range-calendar-with-presets";
 
-type DateRangePickerWithPresetsProps = {
+/** Props for {@link DateRangePickerWithPresets}. */
+export type DateRangePickerWithPresetsProps = {
   /**
    * The current value of the date range picker.
    * @type DateRange | undefined

@@ -1,5 +1,10 @@
 "use client";
 
+import type { NoticeBanner } from "./banner";
+
+/** Props for {@link NoticeBanner}. */
+export type NoticeBannerProps = React.ComponentProps<typeof NoticeBanner>;
+
 /**
  * Thin re-export shim — all logic now lives in {@link ./banner}.
  *

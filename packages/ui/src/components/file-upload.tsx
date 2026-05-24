@@ -442,7 +442,10 @@ export function FileUpload({
     }
 
     if (!multiple) {
-      commit([accepted[0]]);
+      const [first] = accepted;
+      if (first) {
+        commit([first]);
+      }
       return;
     }
 

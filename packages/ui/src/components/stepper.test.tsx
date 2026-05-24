@@ -83,7 +83,7 @@ describe("Stepper", () => {
   it("advances to next step when trigger is clicked", async () => {
     const { container } = render(<BasicStepper defaultValue={0} />);
     const triggers = screen.getAllByRole("button");
-    await userEvent.click(triggers[1]);
+    await userEvent.click(triggers[1]!);
     const items = container.querySelectorAll("[data-slot='stepper-item']");
     expect(items[1]).toHaveAttribute("data-state", "active");
   });
@@ -92,7 +92,7 @@ describe("Stepper", () => {
     const onValueChange = vi.fn();
     render(<BasicStepper onValueChange={onValueChange} />);
     const triggers = screen.getAllByRole("button");
-    await userEvent.click(triggers[2]);
+    await userEvent.click(triggers[2]!);
     expect(onValueChange).toHaveBeenCalledWith(2);
   });
 

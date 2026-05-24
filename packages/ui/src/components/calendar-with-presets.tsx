@@ -20,7 +20,8 @@ type CalendarPreset = {
   value: Date | DateRange;
 };
 
-type CalendarWithPresetsProps = {
+/** Props for {@link CalendarWithPresets}. */
+export type CalendarWithPresetsProps = {
   /**
    * The mode of the calendar.
    * @default "single"

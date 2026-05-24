@@ -25,6 +25,9 @@ import { cn } from "../utils/index";
  */
 type DropdownMenuSize = "sm" | "default" | "lg";
 
+/** Props for {@link DropdownMenu}. */
+export type DropdownMenuProps = MenuPrimitive.Root.Props;
+
 /**
  * Floating list of actions that opens from a trigger button.
  *
@@ -68,7 +71,7 @@ type DropdownMenuSize = "sm" | "default" | "lg";
  * </DropdownMenu>
  * ```
  */
-function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
+function DropdownMenu({ ...props }: DropdownMenuProps) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
 

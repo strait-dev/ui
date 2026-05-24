@@ -25,6 +25,25 @@ const ToggleGroupContext = React.createContext<
   orientation: "horizontal",
 });
 
+/** Props for {@link ToggleGroup}. */
+export type ToggleGroupProps = ToggleGroupPrimitive.Props &
+  VariantProps<typeof toggleVariants> & {
+    /**
+     * Pixel gap between items, passed as `--gap` CSS custom property.
+     * When `0` (default), items are fused edge-to-edge with shared
+     * borders collapsed.
+     */
+    spacing?: number;
+    /**
+     * Layout direction of the group.
+     * - `"horizontal"` — items are arranged in a row (default).
+     * - `"vertical"` — items are stacked in a column.
+     * Note: `aria-orientation` is suppressed because `role="group"` does
+     * not permit that attribute.
+     */
+    orientation?: "horizontal" | "vertical";
+  };
+
 /**
  * A managed group of {@link ToggleGroupItem} controls, handling single or
  * multiple selection and keyboard navigation.
@@ -59,6 +78,7 @@ const ToggleGroupContext = React.createContext<
  * </ToggleGroup>
  * ```
  */
+
 function ToggleGroup({
   className,
   variant,
@@ -68,11 +88,7 @@ function ToggleGroup({
   orientation = "horizontal",
   children,
   ...props
-}: ToggleGroupPrimitive.Props &
-  VariantProps<typeof toggleVariants> & {
-    spacing?: number;
-    orientation?: "horizontal" | "vertical";
-  }) {
+}: ToggleGroupProps) {
   return (
     <ToggleGroupPrimitive
       // role="group" does not permit aria-orientation; strip the attribute

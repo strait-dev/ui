@@ -4,6 +4,9 @@ import type * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { cn } from "../utils/index";
 
+/** Props for {@link Drawer}. */
+export type DrawerProps = React.ComponentProps<typeof DrawerPrimitive.Root>;
+
 /**
  * Edge-anchored panel that slides in from any side of the viewport,
  * powered by the Vaul library.
@@ -46,9 +49,7 @@ import { cn } from "../utils/index";
  * </Drawer>
  * ```
  */
-function Drawer({
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) {
+function Drawer({ ...props }: DrawerProps) {
   return <DrawerPrimitive.Root data-slot="drawer" {...props} />;
 }
 

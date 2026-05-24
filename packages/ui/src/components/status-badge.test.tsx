@@ -53,7 +53,7 @@ describe("StatusBadge", () => {
   });
 
   it("exposes the status map and label helper", () => {
-    expect(STATUS_CONFIG.completed.variant).toBe("success-light");
+    expect(STATUS_CONFIG.completed?.variant).toBe("success-light");
     expect(formatStatusLabel("dead_letter")).toBe("Dead letter");
   });
 

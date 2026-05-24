@@ -56,7 +56,7 @@ const Block = ({
       <TooltipTrigger
         className={cn(
           blockOuter,
-          "outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50"
+          "outline-hidden focus-visible:ring-3 focus-visible:ring-ring/50"
         )}
         render={<div />}
       >

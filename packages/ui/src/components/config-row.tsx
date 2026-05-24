@@ -23,6 +23,7 @@ type ConfigRowProps = {
    * pinned to the far right of the row.
    */
   action?: React.ReactNode;
+  /** Additional classes merged onto the root `div` element. */
   className?: string;
   /**
    * When provided, used as the value content in place of the `value` prop.

@@ -57,7 +57,7 @@ describe("Pagination", () => {
     render(<PaginationFixture />);
     const links = document.querySelectorAll("[data-slot=pagination-link]");
     expect(links.length).toBeGreaterThan(0);
-    expect(links[0].tagName).toBe("A");
+    expect(links[0]?.tagName).toBe("A");
   });
 
   it("active link has aria-current page and data-active", () => {

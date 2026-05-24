@@ -5,6 +5,9 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "../utils/index";
 
+/** Props for {@link Tabs}. */
+export type TabsProps = TabsPrimitive.Root.Props;
+
 /**
  * Layered content panel controlled by a row (or column) of tab buttons.
  *
@@ -34,11 +37,7 @@ import { cn } from "../utils/index";
  * </Tabs>
  * ```
  */
-function Tabs({
-  className,
-  orientation = "horizontal",
-  ...props
-}: TabsPrimitive.Root.Props) {
+function Tabs({ className, orientation = "horizontal", ...props }: TabsProps) {
   return (
     <TabsPrimitive.Root
       className={cn(

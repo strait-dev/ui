@@ -7,6 +7,9 @@ import type * as React from "react";
 import { cn } from "../utils/index";
 import { Button } from "./button";
 
+/** Props for {@link Sheet}. */
+export type SheetProps = SheetPrimitive.Root.Props;
+
 /**
  * Edge-anchored sliding panel built on Base UI's Dialog primitive.
  *
@@ -28,9 +31,6 @@ import { Button } from "./button";
  * - `showCloseButton` (default `true`) renders a ghost icon button in the
  *   top-right corner. Set to `false` when you manage dismissal via footer
  *   actions.
- * - `SheetTrigger` sets `nativeButton={false}` so Base UI does not assert
- *   that the trigger is a `<button>` element — useful when the trigger is
- *   styled as another element via `render`.
  * - Always provide a {@link SheetTitle} for screen-reader accessibility.
  *
  * @example
@@ -40,9 +40,7 @@ import { Button } from "./button";
  *   <SheetContent side="right">
  *     <SheetHeader>
  *       <SheetTitle>Settings</SheetTitle>
- *       <SheetDescription>
- *         Manage your preferences.
- *       </SheetDescription>
+ *       <SheetDescription>Manage your preferences.</SheetDescription>
  *     </SheetHeader>
  *     <div className="px-4 flex-1">…</div>
  *     <SheetFooter>
@@ -52,7 +50,7 @@ import { Button } from "./button";
  * </Sheet>
  * ```
  */
-function Sheet({ ...props }: SheetPrimitive.Root.Props) {
+function Sheet({ ...props }: SheetProps) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
 

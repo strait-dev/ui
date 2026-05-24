@@ -11,7 +11,9 @@ import {
   TooltipTrigger,
 } from "./tooltip";
 
+/** Props for {@link NavigationRail}. */
 export type NavigationRailProps = React.ComponentProps<"div"> & {
+  /** Side of the layout the rail is anchored to; flips border and order. */
   orientation?: "left" | "right";
 };
 
@@ -72,13 +74,22 @@ export const NavigationRail = ({
   </div>
 );
 
+/** Props for {@link NavigationRailItem}. */
 export type NavigationRailItemProps = {
+  /** Hugeicons SVG element rendered as the button icon. */
   icon: IconSvgElement;
+  /** Accessible text shown in the tooltip and as `sr-only` content. */
   label: string;
+  /** Optional URL; pass when the item should behave as an anchor. */
   href?: string;
+  /** Click handler for the icon button. */
   onClick?: () => void;
+  /** Marks the item as the currently active route. */
   isActive?: boolean;
+  /** Disables pointer events and reduces opacity when `true`. */
   disabled?: boolean;
+  /** Optional indicator node (e.g. `<Ping>`) absolutely positioned at the
+   * top-right corner of the button. */
   badge?: React.ReactNode;
 };
 
@@ -139,8 +150,11 @@ export const NavigationRailItem = ({
   </Tooltip>
 );
 
+/** Props for {@link NavigationRailSection}. */
 export type NavigationRailSectionProps = {
+  /** {@link NavigationRailItem} elements to render in this group. */
   children: React.ReactNode;
+  /** Additional class names merged onto the section wrapper. */
   className?: string;
 };
 
@@ -164,8 +178,11 @@ export const NavigationRailSection = ({
   </div>
 );
 
+/** Props for {@link NavigationRailHeader}. */
 export type NavigationRailHeaderProps = {
+  /** Content rendered inside the header (typically a logo or app icon). */
   children: React.ReactNode;
+  /** Additional class names merged onto the header wrapper. */
   className?: string;
 };
 
@@ -192,8 +209,11 @@ export const NavigationRailHeader = ({
   </div>
 );
 
+/** Props for {@link NavigationRailFooter}. */
 export type NavigationRailFooterProps = {
+  /** Content rendered inside the footer (typically a profile item). */
   children: React.ReactNode;
+  /** Additional class names merged onto the footer wrapper. */
   className?: string;
 };
 

@@ -33,7 +33,7 @@ describe("DateInput", () => {
     const onChange = vi.fn();
     render(<DateInput onChange={onChange} value={new Date(2025, 0, 15)} />);
     const inputs = screen.getAllByRole("textbox");
-    const dayInput = inputs[1];
+    const dayInput = inputs[1]!;
     await userEvent.clear(dayInput);
     await userEvent.type(dayInput, "20");
     expect(onChange).toHaveBeenCalled();
@@ -43,7 +43,7 @@ describe("DateInput", () => {
     const onChange = vi.fn();
     render(<DateInput onChange={onChange} value={new Date(2025, 0, 15)} />);
     const inputs = screen.getAllByRole("textbox");
-    const dayInput = inputs[1];
+    const dayInput = inputs[1]!;
     await userEvent.click(dayInput);
     await userEvent.keyboard("{ArrowUp}");
     expect(onChange).toHaveBeenCalled();

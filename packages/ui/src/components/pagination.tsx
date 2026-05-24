@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
@@ -34,6 +36,12 @@ const PaginationSizeContext = React.createContext<PaginationSize>("default");
 // ---------------------------------------------------------------------------
 // Pagination (root)
 // ---------------------------------------------------------------------------
+
+/** Props for {@link Pagination}. */
+export type PaginationProps = React.ComponentProps<"nav"> & {
+  /** Scales all page-button controls uniformly. */
+  size?: PaginationSize;
+};
 
 /**
  * Accessible navigation landmark for moving between pages of content.
@@ -85,10 +93,7 @@ function Pagination({
   className,
   size = "default",
   ...props
-}: React.ComponentProps<"nav"> & {
-  /** Scales all page-button controls uniformly. */
-  size?: PaginationSize;
-}) {
+}: PaginationProps) {
   return (
     <PaginationSizeContext.Provider value={size}>
       <nav

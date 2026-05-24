@@ -78,9 +78,13 @@ export interface FilterOperator {
 
 /** Arguments passed to a field's {@link FilterFieldConfig.customRenderer}. */
 export interface CustomRendererProps {
+  /** The {@link FilterFieldConfig} whose value is being edited. */
   field: FilterFieldConfig;
+  /** Callback to commit a new set of selected values for this filter. */
   onChange: (values: string[]) => void;
+  /** The operator value currently applied to the filter chip. */
   operator: string;
+  /** Currently selected values for this filter. */
   values: string[];
 }
 
@@ -300,9 +304,9 @@ function getOperatorsForField(
     fieldType = "multiselect";
   }
   if (fieldType === "multiselect") {
-    return operators.multiselect;
+    return operators.multiselect ?? [];
   }
-  return operators[fieldType] ?? operators.select;
+  return operators[fieldType] ?? operators.select ?? [];
 }
 
 // ---------------------------------------------------------------------------
@@ -884,8 +888,11 @@ function FilterChip({
 
 /** Props for {@link FiltersContent}. */
 export interface FiltersContentProps {
+  /** Field definitions (flat list or grouped) used to resolve chip labels. */
   fields: FilterFieldsConfig;
+  /** Controlled list of active {@link Filter} chips to render. */
   filters: Filter[];
+  /** Called with the updated filter list whenever a chip is changed or removed. */
   onChange: (filters: Filter[]) => void;
 }
 
@@ -1190,6 +1197,7 @@ function AddFilterMenu({
 export interface FiltersProps {
   /** Allow the same field to be filtered more than once. @default true */
   allowMultiple?: boolean;
+  /** Extra classes merged onto the root container `<div>`. */
   className?: string;
   /** Bind a keyboard shortcut that opens the add-filter menu. @default false */
   enableShortcut?: boolean;

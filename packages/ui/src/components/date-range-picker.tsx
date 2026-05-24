@@ -21,7 +21,8 @@ import type { DateRange } from "react-day-picker";
 import { cn } from "../utils/index";
 import { Calendar } from "./calendar";
 
-type DateRangePickerProps = {
+/** Props for {@link DateRangePicker}. */
+export type DateRangePickerProps = {
   /**
    * The selected date range.
    * @type DateRange | undefined

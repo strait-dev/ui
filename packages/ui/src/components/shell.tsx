@@ -25,9 +25,17 @@ const shellVariants = cva("flex flex-col gap-4", {
   },
 });
 
+/** Props for {@link Shell}. */
 type ShellProps = React.ComponentProps<"div"> &
   VariantProps<typeof shellVariants> & {
+    /** Additional CSS classes merged onto the wrapper `<div>`. */
     className?: string;
+    /**
+     * Layout preset applied via {@link shellVariants}.
+     * - `"default"` — full-width with responsive horizontal padding.
+     * - `"centered"` — adds `items-center` to horizontally centre children.
+     * - `"fluid"` — identical to `"default"` for unrestricted-width layouts.
+     */
     variant?: "default" | "centered" | "fluid";
   };
 

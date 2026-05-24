@@ -47,6 +47,9 @@ const dialogContentVariants = cva("", {
   },
 });
 
+/** Props for {@link Dialog}. */
+export type DialogProps = DialogPrimitive.Root.Props;
+
 /**
  * Modal overlay that interrupts the user to focus on a single task or
  * message.
@@ -88,7 +91,7 @@ const dialogContentVariants = cva("", {
  * </Dialog>
  * ```
  */
-function Dialog({ ...props }: DialogPrimitive.Root.Props) {
+function Dialog({ ...props }: DialogProps) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 

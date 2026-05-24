@@ -132,6 +132,10 @@ const buttonVariants = cva(
   }
 );
 
+/** Props for {@link Button}. */
+export type ButtonProps = ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants>;
+
 /**
  * The primary interactive control for actions and navigation.
  *
@@ -140,15 +144,15 @@ const buttonVariants = cva(
  * and `size` to pick an appearance.
  *
  * @remarks
- * - Use the `render` prop to project the styling onto another element — e.g.
- *   `render={<a href="…" />}` — when the button should be a link or a
- *   framework `<Link>`. Doing so automatically relaxes the native-button
+ * - Use the `render` prop to project the styling onto another element —
+ *   e.g. `render={<a href="…" />}` — when the button should be a link or
+ *   a framework `<Link>`. Doing so automatically relaxes the native-button
  *   semantics (see `nativeButton` below).
  * - Icon-only buttons should use an `icon*` size and always carry an
  *   `aria-label`.
  * - Wrap leading/trailing icons in an element with
- *   `data-icon="inline-start"` / `data-icon="inline-end"` to get the tuned
- *   asymmetric padding.
+ *   `data-icon="inline-start"` / `data-icon="inline-end"` to get the
+ *   tuned asymmetric padding.
  *
  * @example
  * ```tsx
@@ -163,7 +167,7 @@ function Button({
   size = "default",
   render,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
   // When render overrides the element (e.g. <a>, <Link>), disable
   // nativeButton so Base UI doesn't warn about non-<button> semantics.
   const nativeButton = render == null;

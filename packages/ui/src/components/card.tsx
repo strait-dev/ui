@@ -32,6 +32,20 @@ export const cardVariants = cva(
 
 type CardVariantProps = VariantProps<typeof cardVariants>;
 
+/** Props for {@link Card}. */
+export type CardProps = React.ComponentProps<"div"> &
+  CardVariantProps & {
+    /**
+     * Spacing preset that cascades to all sub-parts via `data-size`.
+     * - `"sm"` — gap-3 / py-3; header/content `px-3`; footer `px-3 py-2`.
+     * - `"default"` — gap-4 / py-4; header/content `px-4`;
+     *   footer `px-4 py-2.5`.
+     * - `"lg"` — gap-6 / py-6; header/content `px-6`;
+     *   footer `px-6 py-3.5`.
+     */
+    size?: "default" | "sm" | "lg";
+  };
+
 /**
  * A surface that groups related content and actions into a bordered container.
  *
@@ -77,8 +91,7 @@ function Card({
   size = "default",
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> &
-  CardVariantProps & { size?: "default" | "sm" | "lg" }) {
+}: CardProps) {
   return (
     <div
       className={cn(

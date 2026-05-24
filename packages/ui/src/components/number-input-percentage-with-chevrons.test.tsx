@@ -82,7 +82,7 @@ describe("NumberInputPercentageWithChevrons", () => {
     );
     expect(onChange).toHaveBeenCalled();
     // The fraction 0.51 * 100 = 51
-    const called = onChange.mock.calls[0][0] as number;
+    const called = onChange.mock.calls[0]?.[0] as number;
     expect(called).toBeCloseTo(51, 0);
   });
 
@@ -100,7 +100,7 @@ describe("NumberInputPercentageWithChevrons", () => {
       screen.getByRole("button", { name: "Decrease percentage" })
     );
     expect(onChange).toHaveBeenCalled();
-    const called = onChange.mock.calls[0][0] as number;
+    const called = onChange.mock.calls[0]?.[0] as number;
     expect(called).toBeCloseTo(49, 0);
   });
 

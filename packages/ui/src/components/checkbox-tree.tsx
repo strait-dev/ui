@@ -102,8 +102,16 @@ function useCheckboxTree(initialTree: TreeNode) {
 }
 
 /** Props for {@link CheckboxTree}. */
-type CheckboxTreeProps = {
+export type CheckboxTreeProps = {
+  /** Root {@link TreeNode} whose entire hierarchy is rendered and managed. */
   tree: TreeNode;
+  /**
+   * Render-prop called for every node in the tree.
+   *
+   * Receives the node data, its computed tri-state `isChecked` value,
+   * an `onCheckedChange` toggle handler, and already-rendered
+   * `children` for branch nodes.
+   */
   renderNode: (props: {
     node: TreeNode;
     isChecked: boolean | "indeterminate";

@@ -39,6 +39,7 @@ type RadialGaugeProps = {
   color?: string;
   /** Thresholds used to pick warning/danger colors automatically. */
   thresholds?: RadialGaugeThresholds;
+  /** Additional class names merged onto the outermost gauge wrapper div. */
   className?: string;
 };
 

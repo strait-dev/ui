@@ -91,7 +91,7 @@ function ToggleButton({
     <button
       aria-expanded={expanded}
       aria-label={expanded ? "Collapse" : "Expand"}
-      className="inline-flex items-center gap-0.5 rounded-sm text-foreground opacity-70 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      className="inline-flex items-center gap-0.5 rounded-sm text-foreground opacity-70 hover:opacity-100 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
       onClick={onToggle}
       type="button"
     >

@@ -8,6 +8,11 @@ import { cn } from "../utils/index";
 // Open / close hover delay in milliseconds.
 const PREVIEW_CARD_DELAY = 300;
 
+/** Props for {@link PreviewCard}. */
+export type PreviewCardProps = React.ComponentProps<
+  typeof PreviewCardPrimitive.Root
+>;
+
 /**
  * A hover-activated floating card that previews rich content for a
  * trigger element, built on Base UI's `PreviewCard` primitives.
@@ -46,9 +51,7 @@ const PREVIEW_CARD_DELAY = 300;
  * </PreviewCard>
  * ```
  */
-function PreviewCard({
-  ...props
-}: React.ComponentProps<typeof PreviewCardPrimitive.Root>) {
+function PreviewCard({ ...props }: PreviewCardProps) {
   return <PreviewCardPrimitive.Root data-slot="preview-card" {...props} />;
 }
 

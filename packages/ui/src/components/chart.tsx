@@ -258,7 +258,8 @@ function getPayloadConfigFromPayload(
  * Shared props consumed by the cartesian chart wrappers
  * ({@link AreaChart}, {@link BarChart}, {@link LineChart}).
  */
-interface BaseChartProps extends React.HTMLAttributes<HTMLDivElement> {
+interface BaseChartProps extends React.ComponentProps<"div"> {
+  /** Props forwarded to the recharts `CartesianGrid` element. */
   cartesianGridProps?: CartesianGridProps;
   /** Ordered palette; cycles when shorter than the number of series. */
   colors?: readonly ChartColorKeys[];
@@ -276,8 +277,11 @@ interface BaseChartProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Render only the first and last X-axis labels. */
   displayEdgeLabelsOnly?: boolean;
 
+  /** Hides the {@link CartesianGrid} when `true`. */
   hideGridLines?: boolean;
+  /** Hides the {@link XAxis} when `true`. */
   hideXAxis?: boolean;
+  /** Hides the {@link YAxis} when `true`. */
   hideYAxis?: boolean;
   /** Axis tick interval strategy. */
   intervalType?: IntervalType;
@@ -286,6 +290,7 @@ interface BaseChartProps extends React.HTMLAttributes<HTMLDivElement> {
 
   /** `true` for the default interactive legend, or custom recharts content. */
   legend?: LegendContentType | boolean;
+  /** Extra props forwarded to the recharts `Legend` element. */
   legendProps?: Omit<
     React.ComponentProps<typeof LegendPrimitive>,
     "content" | "ref"
@@ -302,6 +307,7 @@ interface BaseChartProps extends React.HTMLAttributes<HTMLDivElement> {
 
   /** `true` for the default styled tooltip, or a custom recharts content. */
   tooltip?: TooltipContentType<ValueType, NameType> | boolean;
+  /** Extra props forwarded to the recharts `Tooltip` element. */
   tooltipProps?: Omit<TooltipProps, "content"> & {
     hideLabel?: boolean;
     labelSeparator?: boolean;
@@ -315,7 +321,9 @@ interface BaseChartProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Formats numeric value-axis ticks and tooltip values. */
   valueFormatter?: (value: number) => string;
 
+  /** Extra props forwarded to the recharts `XAxis` element. */
   xAxisProps?: XAxisPrimitiveProps;
+  /** Extra props forwarded to the recharts `YAxis` element. */
   yAxisProps?: YAxisPrimitiveProps;
 }
 
@@ -535,6 +543,7 @@ ${colorConfig
 
 // #region Tooltip & cursor -------------------------------------------------
 
+/** Props for {@link ChartTooltip}. */
 type ChartTooltipProps = TooltipProps<ValueType, NameType>;
 
 const tooltipWrapperStyle = { outline: "none" } as const;
@@ -571,6 +580,7 @@ const ChartTooltip = (props: TooltipProps) => {
   );
 };
 
+/** Props for {@link ChartLegend}. */
 type ChartLegendProps = Omit<
   React.ComponentProps<typeof LegendPrimitive>,
   "ref"
@@ -583,8 +593,11 @@ const ChartLegend = (props: ChartLegendProps) => (
 
 // #region Axes & grid ------------------------------------------------------
 
+/** Props for {@link XAxis}. */
 interface XAxisProps extends Omit<XAxisPrimitiveProps, "ref"> {
+  /** Render only the first and last tick labels, hiding all intermediate ones. */
   displayEdgeLabelsOnly?: boolean;
+  /** Recharts tick interval strategy forwarded to the `XAxis` primitive. */
   intervalType?: IntervalType;
 }
 
@@ -895,10 +908,14 @@ function renderIndicator({
 
 // #region Legend content ---------------------------------------------------
 
+/** Props for {@link ChartLegendContent}. */
 type ChartLegendContentProps = React.ComponentProps<"div"> &
   Pick<LegendProps, "align" | "verticalAlign"> & {
+    /** Recharts legend payload injected automatically by the `Legend` wrapper. */
     payload?: readonly LegendPayload[];
+    /** When `true`, suppresses the color icon/dot for each legend entry. */
     hideIcon?: boolean;
+    /** Data key used to look up the series label in {@link ChartConfig}. */
     nameKey?: string;
   };
 
@@ -949,7 +966,7 @@ const ChartLegendContent = ({
             aria-pressed={selected}
             className={cn(
               "flex items-center gap-2 rounded-sm px-2 py-1 text-muted-foreground *:[svg]:-mx-0.5 *:[svg]:size-2.5 *:[svg]:shrink-0 *:[svg]:text-muted-foreground",
-              "hover:bg-secondary/70 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+              "hover:bg-secondary/70 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
               selected && "bg-secondary/70 text-secondary-foreground"
             )}
             key={key}
@@ -1109,7 +1126,7 @@ function ChartSeriesSelector({
             <button
               aria-pressed={isActive}
               className={cn(
-                "flex flex-1 flex-col gap-1 rounded-lg border px-3 py-2 text-left transition-colors hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                "flex flex-1 flex-col gap-1 rounded-lg border px-3 py-2 text-left transition-colors hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                 isActive
                   ? "border-foreground/20 bg-secondary/60"
                   : "border-transparent bg-secondary/20"
@@ -1139,7 +1156,7 @@ function ChartSeriesSelector({
           <button
             aria-pressed={isActive}
             className={cn(
-              "flex items-center gap-1.5 rounded-sm px-2 py-1 text-muted-foreground text-xs transition-colors hover:bg-secondary/70 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+              "flex items-center gap-1.5 rounded-sm px-2 py-1 text-muted-foreground text-xs transition-colors hover:bg-secondary/70 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
               isActive && "bg-secondary/70 text-secondary-foreground"
             )}
             data-active={isActive}

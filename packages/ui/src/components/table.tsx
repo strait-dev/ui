@@ -31,6 +31,21 @@ export const tableVariants = cva("w-full caption-bottom text-sm", {
 
 type TableVariantProps = VariantProps<typeof tableVariants>;
 
+/** Props for {@link Table}. */
+export type TableProps = React.ComponentProps<"table"> &
+  TableVariantProps & {
+    /**
+     * Controls cell height and padding for all {@link TableHead} and
+     * {@link TableCell} elements via a `data-size` attribute on the
+     * container div.
+     * - `sm` — `h-6 px-1.5 text-xs` (compact)
+     * - `default` — `h-7 px-2 text-sm` (unchanged)
+     * - `lg` — `h-9 px-3 text-sm` (spacious)
+     * @defaultValue "default"
+     */
+    size?: "sm" | "default" | "lg";
+  };
+
 /**
  * Responsive data table with a horizontally scrollable container.
  *
@@ -44,19 +59,9 @@ type TableVariantProps = VariantProps<typeof tableVariants>;
  * - The outer scroll container is given `data-slot="table-container"`;
  *   target it in CSS to adjust overflow behaviour.
  * - {@link TableRow} highlights on hover and applies a selected style
- *   when `data-state="selected"` is set — useful with headless selection
- *   libraries.
- * - Cells with a checkbox (`[role=checkbox]`) automatically shed their
- *   right padding via a `:has` selector.
- * - `size` (`"sm" | "default" | "lg"`) cascades to header and data cells
- *   via a `data-size` attribute on the container div and
- *   `group-data-[size=…]/table` Tailwind selectors.
- *   - `sm`:  `h-6 px-1.5 text-xs`
- *   - `default`: `h-7 px-2 text-sm` (unchanged)
- *   - `lg`:  `h-9 px-3 text-sm`
+ *   when `data-state="selected"` is set.
  * - `variant` (`"default" | "striped" | "bordered"`) controls row/cell
- *   decoration. `striped` zebra-stripes even body rows; `bordered` adds
- *   borders to every cell and row; `default` leaves the existing style.
+ *   decoration via {@link tableVariants}.
  *
  * @example
  * ```tsx
@@ -81,8 +86,7 @@ function Table({
   size = "default",
   variant = "default",
   ...props
-}: React.ComponentProps<"table"> &
-  TableVariantProps & { size?: "sm" | "default" | "lg" }) {
+}: TableProps) {
   return (
     // Outer div provides horizontal scroll without clipping sticky columns.
     // `group/table` + `data-size` propagate size down to cells.

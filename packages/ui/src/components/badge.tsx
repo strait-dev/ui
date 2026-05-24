@@ -130,7 +130,16 @@ interface BadgeProps extends useRender.ComponentProps<"span"> {
   mono?: boolean;
   /** Called when the dismiss button is clicked. */
   onDismiss?: () => void;
+  /**
+   * Size preset applied via {@link badgeVariants}.
+   * `"xs"` through `"xl"`; controls height, padding, and font size.
+   */
   size?: VariantProps<typeof badgeVariants>["size"];
+  /**
+   * Colour and emphasis style applied via {@link badgeVariants}.
+   * Includes solid fills, tinted `*-light` fills, bordered `*-outline`
+   * variants, `ghost`, and `link`.
+   */
   variant?: VariantProps<typeof badgeVariants>["variant"];
 }
 
@@ -200,7 +209,7 @@ function Badge({
       {dismissible ? (
         <button
           aria-label="Dismiss"
-          className="-mr-0.5 ml-0.5 inline-flex items-center justify-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="-mr-0.5 ml-0.5 inline-flex items-center justify-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           data-slot="badge-dismiss"
           onClick={(e) => {
             e.stopPropagation();

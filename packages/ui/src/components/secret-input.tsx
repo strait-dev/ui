@@ -85,7 +85,7 @@ function SecretInput({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" data-slot="secret-input">
       <Input
         className={cn(trailingPaddingClass, className)}
         type={inputType}

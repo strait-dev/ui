@@ -36,6 +36,10 @@ const alertVariants = cva(
   }
 );
 
+/** Props for {@link Alert}. */
+export type AlertProps = React.ComponentProps<"div"> &
+  VariantProps<typeof alertVariants>;
+
 /**
  * Inline feedback banner for status messages, warnings, and errors.
  *
@@ -48,9 +52,9 @@ const alertVariants = cva(
  * @remarks
  * - The root renders with `role="alert"` so screen readers announce it
  *   immediately when it appears in the DOM.
- * - Pass `variant` to signal intent — `"info"`, `"success"`, `"warning"`, and
- *   `"destructive"` tint the border, background, text, and icon with the
- *   matching semantic token; `"default"` stays neutral.
+ * - Pass `variant` to signal intent — `"info"`, `"success"`, `"warning"`,
+ *   and `"destructive"` tint the border, background, text, and icon with
+ *   the matching semantic token; `"default"` stays neutral.
  * - Drop any 16 × 16 SVG icon as a direct child; {@link alertVariants}
  *   handles sizing and vertical alignment via CSS selectors.
  *
@@ -68,11 +72,7 @@ const alertVariants = cva(
  * </Alert>
  * ```
  */
-function Alert({
-  className,
-  variant,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
+function Alert({ className, variant, ...props }: AlertProps) {
   return (
     <div
       className={cn(alertVariants({ variant }), className)}

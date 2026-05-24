@@ -115,6 +115,17 @@ const fieldVariants = cva(
   }
 );
 
+/** Props for {@link Field}. */
+export type FieldProps = React.ComponentProps<"div"> &
+  VariantProps<typeof fieldVariants> & {
+    /**
+     * Spacing size that cascades to sub-parts via
+     * `group-data-[size=…]/field` selectors.
+     * @defaultValue "default"
+     */
+    size?: "sm" | "default" | "lg";
+  };
+
 /**
  * Single form field: associates a label, control, description, and error.
  *
@@ -148,15 +159,7 @@ function Field({
   orientation = "vertical",
   size = "default",
   ...props
-}: React.ComponentProps<"div"> &
-  VariantProps<typeof fieldVariants> & {
-    /**
-     * Spacing size that cascades to sub-parts via
-     * `group-data-[size=…]/field` selectors.
-     * @defaultValue "default"
-     */
-    size?: "sm" | "default" | "lg";
-  }) {
+}: FieldProps) {
   return (
     // biome-ignore lint/a11y/useSemanticElements: a field groups a label/control/description; role="group" on a div is the intended pattern (<fieldset> would impose unwanted layout/legend semantics).
     <div

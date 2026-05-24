@@ -31,7 +31,7 @@ describe("Rating", () => {
     );
     const radios = screen.getAllByRole("radio");
     // Click the third star (index 2 → value 3)
-    await userEvent.click(radios[2]);
+    await userEvent.click(radios[2]!);
     expect(onValueChange).toHaveBeenCalledWith(3);
   });
 

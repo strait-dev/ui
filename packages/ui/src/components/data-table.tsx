@@ -47,7 +47,7 @@ import {
  * @typeParam TData - The shape of a single row record.
  * @typeParam TValue - The inferred cell value type used by TanStack Table.
  */
-type DataTableProps<TData, TValue> = {
+export type DataTableProps<TData, TValue> = {
   /** TanStack Table column definitions for the table. */
   columns: ColumnDef<TData, TValue>[];
   /** Array of row records to display. */
@@ -65,6 +65,7 @@ type DataTableProps<TData, TValue> = {
   showPagination?: boolean;
   /** Number of rows per page when pagination is enabled. */
   pageSize?: number;
+  /** Additional class names merged onto the outermost table wrapper div. */
   className?: string;
 };
 

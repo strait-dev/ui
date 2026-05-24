@@ -75,7 +75,7 @@ describe("Select", () => {
     // Wait for the options to appear — Base UI may animate the portal in
     const options = await screen.findAllByRole("option");
     // click "Vue" — second option
-    await user.click(options[1]);
+    await user.click(options[1]!);
     // Base UI passes the value string as first arg; extra event details follow
     expect(onValueChange).toHaveBeenCalledWith("vue", expect.anything());
   });

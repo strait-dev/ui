@@ -16,6 +16,15 @@ import {
 import { cn } from "../utils/index";
 import { Button, buttonVariants } from "./button";
 
+/** Props for {@link Calendar}. */
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  /**
+   * {@link Button} `variant` applied to the previous/next navigation
+   * buttons. Defaults to `"ghost"`.
+   */
+  buttonVariant?: React.ComponentProps<typeof Button>["variant"];
+};
+
 /**
  * A styled date-picker calendar built on top of `react-day-picker`'s
  * `DayPicker`.
@@ -64,9 +73,7 @@ function Calendar({
   formatters,
   components,
   ...props
-}: React.ComponentProps<typeof DayPicker> & {
-  buttonVariant?: React.ComponentProps<typeof Button>["variant"];
-}) {
+}: CalendarProps) {
   const defaultClassNames = getDefaultClassNames();
 
   return (

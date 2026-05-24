@@ -224,12 +224,12 @@ function TimelineContent({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+type TimelineDateProps = useRender.ComponentProps<"time">;
+
 /**
  * Timestamp label rendered above a {@link TimelineItem}'s title. Uses Base
  * UI's `useRender` so the element can be swapped via the `render` prop.
  */
-type TimelineDateProps = useRender.ComponentProps<"time">;
-
 function TimelineDate({ render, className, ...props }: TimelineDateProps) {
   return useRender({
     render,
@@ -256,14 +256,7 @@ function TimelineHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-/**
- * Visual dot/badge placed at the step position inside a
- * {@link TimelineItem}. Marked `aria-hidden`. Filled border color switches
- * when the parent item carries `data-completed`, driven by the current intent.
- * When `icon` is provided the indicator becomes a flex-center container and
- * renders the icon; `children` may also be nested for custom content.
- * Icon takes visual precedence when both are supplied.
- */
+/** Props for {@link TimelineIndicator}. */
 type TimelineIndicatorProps = React.ComponentProps<"div"> & {
   /**
    * Optional Hugeicons icon rendered centered inside the indicator bubble.
@@ -273,6 +266,13 @@ type TimelineIndicatorProps = React.ComponentProps<"div"> & {
   icon?: IconSvgElement;
 };
 
+/**
+ * Visual dot/badge placed at the step position inside a
+ * {@link TimelineItem}. Marked `aria-hidden`. Border colour switches when
+ * the parent item carries `data-completed`, driven by the current intent.
+ * When `icon` is provided the indicator becomes a flex-center container
+ * and renders the icon; `children` may also be nested for custom content.
+ */
 function TimelineIndicator({
   className,
   children,

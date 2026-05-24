@@ -59,6 +59,11 @@ const progressIndicatorVariants = cva("h-full transition-all", {
   },
 });
 
+/** Props for {@link Progress}. */
+export type ProgressProps = ProgressPrimitive.Root.Props &
+  VariantProps<typeof progressTrackVariants> &
+  VariantProps<typeof progressIndicatorVariants>;
+
 /**
  * Determinate progress bar that displays a numeric completion percentage.
  *
@@ -96,9 +101,7 @@ function Progress({
   size,
   intent,
   ...props
-}: ProgressPrimitive.Root.Props &
-  VariantProps<typeof progressTrackVariants> &
-  VariantProps<typeof progressIndicatorVariants>) {
+}: ProgressProps) {
   return (
     <ProgressPrimitive.Root
       className={cn("flex flex-wrap gap-3", className)}

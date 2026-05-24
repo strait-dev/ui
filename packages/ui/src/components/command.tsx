@@ -27,6 +27,9 @@ import { InputGroup, InputGroupAddon } from "./input-group";
  */
 type CommandListSize = "sm" | "default" | "lg";
 
+/** Props for {@link Command}. */
+export type CommandProps = React.ComponentProps<typeof CommandPrimitive>;
+
 /**
  * A keyboard-navigable command palette built on the `cmdk` primitive.
  *
@@ -60,10 +63,7 @@ type CommandListSize = "sm" | "default" | "lg";
  * </Command>
  * ```
  */
-function Command({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive>) {
+function Command({ className, ...props }: CommandProps) {
   return (
     <CommandPrimitive
       className={cn(

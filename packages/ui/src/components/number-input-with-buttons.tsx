@@ -30,16 +30,27 @@ export type NumberInputWithButtonsProps = Omit<
   React.ComponentProps<"input">,
   "value" | "onChange" | "defaultValue" | "size"
 > & {
+  /** Uncontrolled initial value passed to the underlying `NumberField`. */
   defaultValue?: number;
+  /** `name` attribute of the hidden input; also used as the aria-label base. */
   name: string;
+  /** Controlled value passed to the underlying `NumberField`. */
   value?: number;
+  /** Called with the new numeric value whenever it changes. */
   onChange?: (value: number) => void;
+  /** Minimum allowed value; forwarded to `NumberField` as `minValue`. */
   min?: number;
+  /** Maximum allowed value; forwarded to `NumberField` as `maxValue`. */
   max?: number;
+  /** Amount to increment/decrement per step. Defaults to `1`. */
   step?: number;
+  /** Disables the entire field when `true`. */
   disabled?: boolean;
+  /** Accessible label; used as `aria-label` on both the field and the input. */
   label?: string;
+  /** Extra classes merged onto the inner `<Input>` element. */
   className?: string;
+  /** Extra classes merged onto the `<Group>` wrapper element. */
   containerClassName?: string;
   /** Controls the height of the input group. Defaults to `"default"` (h-8). */
   size?: VariantProps<typeof numberInputGroupVariants>["size"];

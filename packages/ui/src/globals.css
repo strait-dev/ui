@@ -546,15 +546,15 @@
  * instead of the theme's own background.
  */
 .strait-shiki {
-  margin: 0;
   padding: 0;
-  background: transparent !important;
-  color: var(--shiki-light);
+  margin: 0;
   overflow: visible;
+  color: var(--shiki-light);
   /* Shiki separates lines with literal "\n" text nodes, so the default
      pre whitespace handling already renders one visual line per code line —
      no per-line block styling needed (which would double the spacing). */
   white-space: pre;
+  background: transparent !important;
 }
 
 .strait-shiki span {
@@ -567,8 +567,8 @@
 }
 
 .strait-shiki.wrap {
-  white-space: pre-wrap;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 /* ============================================

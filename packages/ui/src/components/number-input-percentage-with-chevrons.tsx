@@ -40,12 +40,19 @@ export type NumberInputPercentageWithChevronsProps = Omit<
   React.ComponentProps<"input">,
   "value" | "onChange" | "defaultValue" | "size"
 > & {
+  /** Initial percentage value (0–100) used when the input is uncontrolled. */
   defaultValue?: number;
+  /** `aria-label` base and `name` attribute forwarded to the inner `Input`. */
   name: string;
+  /** Controlled percentage value (0–100); converted to 0–1 internally. */
   value?: number;
+  /** Called with the new integer percentage (0–100) on every change. */
   onChange?: (value: number) => void;
+  /** Disables the entire `NumberField` including the chevron buttons. */
   disabled?: boolean;
+  /** Accessible label text applied to the `NumberField` and inner `Input`. */
   label?: string;
+  /** Extra classes applied to the outer `Group` container element. */
   containerClassName?: string;
   /** Controls the height of the input group. Defaults to `"default"` (h-8). */
   size?: VariantProps<typeof numberInputGroupVariants>["size"];

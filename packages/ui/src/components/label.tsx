@@ -4,6 +4,24 @@ import type * as React from "react";
 
 import { cn } from "../utils/index";
 
+/** Props for {@link Label}. */
+export type LabelProps = React.ComponentProps<"label"> & {
+  /**
+   * Text size of the label.
+   * - `sm`      — `text-xs`
+   * - `default` — `text-sm` (unchanged)
+   * - `lg`      — `text-base`
+   * @defaultValue "default"
+   */
+  size?: "sm" | "default" | "lg";
+  /**
+   * When `true`, appends an `aria-hidden` red asterisk after the label text
+   * to signal that the associated control is required.
+   * @defaultValue false
+   */
+  required?: boolean;
+};
+
 /**
  * Accessible label for a form control.
  *
@@ -43,22 +61,7 @@ function Label({
   required = false,
   size = "default",
   ...props
-}: React.ComponentProps<"label"> & {
-  /**
-   * Text size of the label.
-   * - `sm`      — `text-xs`
-   * - `default` — `text-sm` (unchanged)
-   * - `lg`      — `text-base`
-   * @defaultValue "default"
-   */
-  size?: "sm" | "default" | "lg";
-  /**
-   * When `true`, appends an `aria-hidden` red asterisk after the label text
-   * to signal that the associated control is required.
-   * @defaultValue false
-   */
-  required?: boolean;
-}) {
+}: LabelProps) {
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: this is a reusable Label primitive; consumers associate it with a control via htmlFor or by nesting one.
     <label

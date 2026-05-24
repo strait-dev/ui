@@ -30,29 +30,52 @@ export type SelectOption = {
 };
 
 /** Props for {@link SelectWithSearch}. */
-type SelectWithSearchProps = {
+export type SelectWithSearchProps = {
+  /** List of options to render in the virtualized dropdown list. */
   options: SelectOption[];
+  /** Currently selected value; drives controlled mode. */
   value?: string;
+  /** Called with the new value when the user selects an option. */
   onValueChange?: (value: string) => void;
+  /** Text shown in the trigger button when no option is selected. */
   placeholder?: string;
+  /** Accessible label rendered above the trigger via {@link Label}. */
   label?: string;
+  /** Placeholder inside the search {@link CommandInput}. */
   searchPlaceholder?: string;
+  /** Message shown by {@link CommandEmpty} when the option list is empty. */
   noResultsText?: string;
+  /** Additional classes merged onto the outermost wrapper `div`. */
   className?: string;
+  /** When `true`, the trigger button is disabled and non-interactive. */
   disabled?: boolean;
+  /** When `true`, renders the trigger border in `destructive` color. */
   error?: boolean;
+  /** When `true`, appends a red asterisk to the label. */
   required?: boolean;
+  /** Native `name` attribute forwarded to the trigger button element. */
   name?: string;
+  /** Called with the current search string on every keystroke. */
   onSearchChange?: (search: string) => void;
+  /** `id` forwarded to the trigger button; falls back to `name`. */
   id?: string;
+  /** Called with the new open state whenever the popover opens or closes. */
   onOpenChange?: (open: boolean) => void;
+  /** Called by `Virtuoso` when the user scrolls to the bottom of the list. */
   onEndReached?: () => void;
+  /** Custom renderer for each option row; receives the option and selection state. */
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
+  /** Custom renderer for the selected value shown inside the trigger button. */
   renderSelectedOption?: (option: SelectOption) => React.ReactNode;
+  /** Renders a loading indicator used both for initial load and next-page fetches. */
   renderLoading?: () => React.ReactNode;
+  /** Renders empty-state content when `options` is empty and not loading. */
   renderEmpty?: () => React.ReactNode;
+  /** When `true`, shows `renderLoading` instead of the option list. */
   isLoading?: boolean;
+  /** When `true`, appends the `renderLoading` footer below the virtualized list. */
   isFetchingNextPage?: boolean;
+  /** Controls the size variant passed to the trigger {@link Button}. */
   size?: "default" | "sm" | "lg" | "icon";
 };
 

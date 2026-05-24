@@ -71,7 +71,9 @@ function getAreaFillContent(
 
 /** Props for {@link AreaChart}. */
 export interface AreaChartProps extends BaseChartProps {
+  /** Props forwarded to the underlying recharts `<Area>`. */
   areaProps?: Partial<ComponentProps<typeof Area>>;
+  /** Props forwarded to the underlying recharts `<AreaChart>`. */
   chartProps?: Omit<
     ComponentProps<typeof AreaChartPrimitive>,
     "data" | "stackOffset"
@@ -238,11 +240,17 @@ export function AreaChart({
 
 /** Props for {@link BarChart}. */
 export interface BarChartProps extends BaseChartProps {
+  /** Gap between bar groups (categories) in pixels. */
   barCategoryGap?: number;
+  /** Gap between individual bars within a group in pixels. */
   barGap?: number;
+  /** Props forwarded to the underlying recharts `<Bar>`. */
   barProps?: Partial<ComponentProps<typeof Bar>>;
+  /** Border-radius applied to the top corners of each bar. */
   barRadius?: number;
+  /** Fixed width in pixels for each bar. */
   barSize?: number;
+  /** Props forwarded to the underlying recharts `<BarChart>`. */
   chartProps?: Omit<
     ComponentProps<typeof BarChartPrimitive>,
     "data" | "stackOffset"
@@ -397,11 +405,14 @@ export function BarChart({
 
 /** Props for {@link LineChart}. */
 export interface LineChartProps extends BaseChartProps {
+  /** Props forwarded to the underlying recharts `<LineChart>`. */
   chartProps?: Omit<
     ComponentProps<typeof LineChartPrimitive>,
     "data" | "stackOffset"
   >;
+  /** Join across null gaps instead of breaking the line. */
   connectNulls?: boolean;
+  /** Props forwarded to the underlying recharts `<Line>`. */
   lineProps?: Partial<LineProps>;
 }
 
@@ -562,13 +573,16 @@ interface PieChartProps
     | "legend"
     | "legendProps"
   > {
+  /** Props forwarded to the underlying recharts `<PieChart>`. */
   chartProps?: Omit<
     ComponentProps<typeof PieChartPrimitive>,
     "data" | "stackOffset"
   >;
   /** Centre label text for the donut variant. Defaults to the value sum. */
   label?: string;
+  /** Data key used as the slice name (maps rows to `config` entries). */
   nameKey?: string;
+  /** Props forwarded to the underlying recharts `<Pie>`. */
   pieProps?: Omit<ComponentProps<typeof Pie>, "data" | "dataKey" | "name">;
   /** Show the centre label (donut variant only). */
   showLabel?: boolean;

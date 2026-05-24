@@ -30,8 +30,15 @@ export type InputPasswordWithStrengthIndicatorProps = Omit<
   React.ComponentProps<"input">,
   "type"
 > & {
+  /** Optional `<Label>` rendered above the input; linked via `htmlFor={id}`.
+   *  Requires `id` to be set on the component for the association to work. */
   label?: string;
+  /** When `true`, applies a destructive border and forces `aria-invalid`
+   *  regardless of the computed strength score. */
   error?: boolean;
+  /** When `false`, hides the strength progress bar and requirements checklist,
+   *  rendering the field as a plain show/hide password input.
+   *  @default true */
   showStrengthIndicator?: boolean;
 };
 

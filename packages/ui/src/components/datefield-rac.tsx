@@ -2,7 +2,7 @@
 
 import {
   composeRenderProps,
-  type DateFieldProps,
+  type DateFieldProps as DateFieldPropsRac,
   DateField as DateFieldRac,
   type DateInputProps as DateInputPropsRac,
   DateInput as DateInputRac,
@@ -14,6 +14,9 @@ import {
   type TimeValue as TimeValueRac,
 } from "react-aria-components";
 import { cn } from "../utils/index";
+
+/** Props for {@link DateField}. */
+export type DateFieldProps<T extends DateValueRac> = DateFieldPropsRac<T>;
 
 /**
  * An accessible date field that renders each date part (year, month,
@@ -39,7 +42,7 @@ function DateField<T extends DateValueRac>({
   className,
   children,
   ...props
-}: DateFieldProps<T>) {
+}: DateFieldPropsRac<T>) {
   return (
     <div data-slot="date-field">
       <DateFieldRac
@@ -122,7 +125,12 @@ const dateInputStyle =
 
 /** Props for {@link DateInput}. */
 type DateInputProps = DateInputPropsRac & {
+  /** Additional classes merged onto the React Aria `DateInput` element via
+   *  `composeRenderProps`; appended after the default {@link dateInputStyle}
+   *  classes (or all classes when `unstyled` is `true`). */
   className?: string;
+  /** When `true`, suppresses the default {@link dateInputStyle} base classes
+   *  so the container can be fully re-styled by the caller. */
   unstyled?: boolean;
 };
 

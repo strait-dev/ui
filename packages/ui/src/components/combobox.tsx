@@ -45,6 +45,8 @@ import {
  * </Combobox>
  * ```
  */
+/** Props for {@link Combobox}. */
+export type ComboboxProps = React.ComponentProps<typeof ComboboxPrimitive.Root>;
 const Combobox = ComboboxPrimitive.Root;
 
 /** Renders the current value of a {@link Combobox}. */

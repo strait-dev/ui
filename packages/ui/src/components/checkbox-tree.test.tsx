@@ -174,7 +174,7 @@ describe("CheckboxTree", () => {
     render(<CheckboxTree renderNode={renderNode} tree={simpleTree} />);
     // renderNode is called once per node in the tree (root + 2 children = 3)
     expect(renderNode).toHaveBeenCalledTimes(3);
-    const firstCall = renderNode.mock.calls[0][0];
+    const firstCall = renderNode.mock.calls[0]?.[0];
     expect(firstCall).toHaveProperty("node");
     expect(firstCall).toHaveProperty("isChecked");
     expect(firstCall).toHaveProperty("onCheckedChange");

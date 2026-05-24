@@ -11,7 +11,8 @@ import { toast } from "./toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 /** Props for {@link IdCell}. */
-interface IdCellProps {
+export interface IdCellProps {
+  /** Additional classes merged onto the outermost wrapper `div`. */
   className?: string;
   /** Full identifier string to display and copy. */
   id: string;

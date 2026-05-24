@@ -25,6 +25,9 @@ import { cn } from "../utils/index";
  */
 type ContextMenuSize = "sm" | "default" | "lg";
 
+/** Props for {@link ContextMenu}. */
+export type ContextMenuProps = ContextMenuPrimitive.Root.Props;
+
 /**
  * Right-click (or long-press) contextual menu anchored to an arbitrary
  * region of the page.
@@ -68,7 +71,7 @@ type ContextMenuSize = "sm" | "default" | "lg";
  * </ContextMenu>
  * ```
  */
-function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props) {
+function ContextMenu({ ...props }: ContextMenuProps) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
 }
 

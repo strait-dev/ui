@@ -98,7 +98,7 @@ describe("FileUpload", () => {
     // Only doc should remain
     const [remaining] = handleChange.mock.calls[0] as [File[]];
     expect(remaining).toHaveLength(1);
-    expect(remaining[0].name).toBe("document.pdf");
+    expect(remaining[0]?.name).toBe("document.pdf");
   });
 
   it("applies the 'sm' size variant class to the dropzone", () => {

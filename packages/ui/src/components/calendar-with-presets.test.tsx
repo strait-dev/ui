@@ -41,7 +41,7 @@ describe("CalendarWithPresets", () => {
     const hojeButton = screen.getByRole("button", { name: /Hoje/i });
     await userEvent.click(hojeButton);
     expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect.mock.calls[0][0]).toBeInstanceOf(Date);
+    expect(onSelect.mock.calls[0]?.[0]).toBeInstanceOf(Date);
   });
 
   it("renders custom presets when provided", () => {

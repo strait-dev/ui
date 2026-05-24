@@ -63,7 +63,7 @@ describe("JsonViewer", () => {
       name: "Collapse",
     });
     // Click the root collapse button
-    await userEvent.click(collapseButtons[0]);
+    await userEvent.click(collapseButtons[0]!);
     // After collapsing root, the summary text should appear (singular or plural)
     const viewer = document.querySelector("[data-slot='json-viewer']");
     expect(viewer?.textContent).toMatch(/key|keys/);

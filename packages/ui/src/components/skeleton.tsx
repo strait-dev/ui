@@ -1,12 +1,15 @@
 import { cn } from "../utils/index";
 
+/** Props for {@link Skeleton}. */
+export type SkeletonProps = React.ComponentProps<"div">;
+
 /**
  * Pulsing placeholder used while content is loading.
  *
  * Renders a rounded muted rectangle with a CSS `animate-pulse` animation.
- * Size the element with `w-*`/`h-*` (or `size-*`) utility classes to match
- * the content it stands in for. Multiple `Skeleton` elements can be composed
- * to replicate a full content layout.
+ * Size the element with `w-*`/`h-*` (or `size-*`) utility classes to
+ * match the content it stands in for. Multiple `Skeleton` elements can be
+ * composed to replicate a full content layout.
  *
  * @remarks
  * The component is a plain `<div>`, so it carries no ARIA role. Wrap a
@@ -23,7 +26,7 @@ import { cn } from "../utils/index";
  * </div>
  * ```
  */
-function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
+function Skeleton({ className, ...props }: SkeletonProps) {
   return (
     <div
       className={cn("animate-pulse rounded-md bg-muted", className)}

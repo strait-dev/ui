@@ -24,13 +24,20 @@ export type Tag = {
  * `onTagsChange`. Duplicate tag text (case-sensitive, trimmed) is silently
  * ignored.
  */
-type InputWithInnerTagsProps = {
+export type InputWithInnerTagsProps = {
+  /** `id` forwarded to the inner `<Input>` for external `<label htmlFor>`. */
   id?: string;
+  /** Placeholder text shown in the inner `<Input>` when no value is typed. */
   placeholder?: string;
+  /** Controlled list of current tags; update via {@link InputWithInnerTagsProps.onTagsChange}. */
   tags: Tag[];
+  /** Called with the full updated tag list after every add or remove action. */
   onTagsChange: (newTags: Tag[]) => void;
+  /** Disables the inner `<Input>` and all remove buttons. */
   disabled?: boolean;
+  /** Extra classes merged onto the inner `<Input>` element. */
   className?: string;
+  /** Extra classes merged onto the outermost container `<div>`. */
   containerClassName?: string;
 };
 

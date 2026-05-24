@@ -13,7 +13,7 @@ import { Input, type InputProps } from "./input";
  * `type` is omitted — the component controls `"password"` / `"text"` via
  * the inline toggle. Inherits the design-system `size` axis from {@link Input}.
  */
-type InputWithShowHidePasswordProps = Omit<InputProps, "type">;
+export type InputWithShowHidePasswordProps = Omit<InputProps, "type">;
 
 /**
  * A minimal password field with a trailing eye-icon toggle that switches the

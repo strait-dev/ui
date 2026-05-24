@@ -6,6 +6,17 @@ import type * as React from "react";
 
 import { cn } from "../utils/index";
 
+/** Props for {@link Avatar}. */
+export type AvatarProps = AvatarPrimitive.Root.Props & {
+  /**
+   * Size preset that cascades to every sub-part via `data-size`.
+   * Controls the avatar's width/height:
+   * `"xs"` (20px) · `"sm"` (24px) · `"default"` (32px) ·
+   * `"lg"` (40px) · `"xl"` (48px).
+   */
+  size?: "xs" | "default" | "sm" | "lg" | "xl";
+};
+
 /**
  * Rounded user-identity image with automatic fallback text.
  *
@@ -33,13 +44,7 @@ import { cn } from "../utils/index";
  * </Avatar>
  * ```
  */
-function Avatar({
-  className,
-  size = "default",
-  ...props
-}: AvatarPrimitive.Root.Props & {
-  size?: "xs" | "default" | "sm" | "lg" | "xl";
-}) {
+function Avatar({ className, size = "default", ...props }: AvatarProps) {
   return (
     <AvatarPrimitive.Root
       className={cn(

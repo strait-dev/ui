@@ -1,3 +1,5 @@
+"use client";
+
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import {
@@ -24,6 +26,19 @@ type BreadcrumbSize = "sm" | "default" | "lg";
 // ---------------------------------------------------------------------------
 // Breadcrumb (root)
 // ---------------------------------------------------------------------------
+
+/** Props for {@link Breadcrumb}. */
+export type BreadcrumbProps = React.ComponentProps<"nav"> & {
+  /** Controls text size and gap across all descendant breadcrumb parts. */
+  size?: BreadcrumbSize;
+  /**
+   * Default separator node rendered between every {@link BreadcrumbItem}
+   * when the caller omits explicit `<BreadcrumbSeparator>` elements.
+   * Forwarded via React context so each `BreadcrumbSeparator` can
+   * fall back to it.
+   */
+  separator?: React.ReactNode;
+};
 
 /**
  * Accessible navigation landmark that shows the user's location in the
@@ -76,17 +91,7 @@ function Breadcrumb({
   size = "default",
   separator,
   ...props
-}: React.ComponentProps<"nav"> & {
-  /** Controls text size and gap across all descendant breadcrumb parts. */
-  size?: BreadcrumbSize;
-  /**
-   * Default separator node rendered between every {@link BreadcrumbItem}
-   * when the caller omits explicit `<BreadcrumbSeparator>` elements.
-   * Forwarded via React context so each `BreadcrumbSeparator` can
-   * fall back to it.
-   */
-  separator?: React.ReactNode;
-}) {
+}: BreadcrumbProps) {
   return (
     <BreadcrumbSeparatorContext.Provider value={separator}>
       <nav

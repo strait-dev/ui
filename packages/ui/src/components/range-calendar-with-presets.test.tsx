@@ -31,7 +31,7 @@ describe("RangeCalendarWithPresets", () => {
     render(<RangeCalendarWithPresets onSelect={onSelect} />);
     await userEvent.click(screen.getByRole("button", { name: "Hoje" }));
     expect(onSelect).toHaveBeenCalledTimes(1);
-    const called = onSelect.mock.calls[0][0];
+    const called = onSelect.mock.calls[0]?.[0];
     expect(called).toHaveProperty("from");
     expect(called).toHaveProperty("to");
   });

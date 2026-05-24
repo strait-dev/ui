@@ -36,6 +36,7 @@ function useQRCodeContext(): QRCodeContextValue {
 // QRCode
 // ---------------------------------------------------------------------------
 
+/** Props for {@link QRCode}. */
 export interface QRCodeProps
   extends Omit<
     React.ComponentProps<"div">,
@@ -144,6 +145,7 @@ function QRCode({
 // QRCodeOverlay
 // ---------------------------------------------------------------------------
 
+/** Props for {@link QRCodeOverlay}. */
 export interface QRCodeOverlayProps extends React.ComponentProps<"div"> {
   /** Logo, icon, or any content to display centred over the QR code. */
   children?: React.ReactNode;
@@ -197,6 +199,7 @@ function QRCodeOverlay({
 // QRCodeDownload
 // ---------------------------------------------------------------------------
 
+/** Props for {@link QRCodeDownload}. */
 export interface QRCodeDownloadProps
   extends React.ComponentProps<typeof Button> {
   /**
@@ -313,6 +316,7 @@ function QRCodeDownload({
 // QRCodeSkeleton
 // ---------------------------------------------------------------------------
 
+/** Props for {@link QRCodeSkeleton}. */
 export interface QRCodeSkeletonProps extends React.ComponentProps<"div"> {
   /**
    * Pixel size of the skeleton square — should match the intended {@link QRCode} `size`.

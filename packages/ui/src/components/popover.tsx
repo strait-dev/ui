@@ -24,6 +24,9 @@ type PopoverSize = "sm" | "default" | "lg";
 // Popover (root)
 // ---------------------------------------------------------------------------
 
+/** Props for {@link Popover}. */
+export type PopoverProps = PopoverPrimitive.Root.Props;
+
 /**
  * Floating panel anchored to a trigger element for rich non-modal content.
  *
@@ -61,7 +64,7 @@ type PopoverSize = "sm" | "default" | "lg";
  * </Popover>
  * ```
  */
-function Popover({ ...props }: PopoverPrimitive.Root.Props) {
+function Popover({ ...props }: PopoverProps) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
 

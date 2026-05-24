@@ -146,7 +146,8 @@ function DropdownWrapper({
   };
 }
 
-type DatePickerWithMonthYearProps = {
+/** Props for {@link DatePickerWithMonthYear}. */
+export type DatePickerWithMonthYearProps = {
   /** The current value (controlled). */
   value?: Date;
   /** Handler that is called when the value changes. */

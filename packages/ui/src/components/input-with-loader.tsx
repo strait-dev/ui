@@ -16,10 +16,19 @@ import { Input, type InputProps } from "./input";
  * accessibility when using icon-only affordances (e.g. a clear button).
  */
 export type InputWithLoaderProps = InputProps & {
+  /** When `true`, replaces the {@link icon} slot with an animated spinner. */
   isLoading?: boolean;
+  /** Decorative node rendered at the leading edge; replaced by the spinner
+   *  while `isLoading` is `true`. */
   icon?: React.ReactNode;
+  /** Node rendered as a clickable button at the trailing edge of the input
+   *  (e.g. a clear or submit icon). Requires {@link endIconAriaLabel}. */
   endIcon?: React.ReactNode;
+  /** Click handler forwarded to the trailing-edge button wrapping
+   *  {@link endIcon}. */
   onEndIconClick?: () => void;
+  /** Accessible label for the trailing-edge {@link endIcon} button;
+   *  required by screen readers when using an icon-only affordance. */
   endIconAriaLabel?: string;
 };
 

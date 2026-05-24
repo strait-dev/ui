@@ -5,6 +5,16 @@ import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
 
 import { cn } from "../utils/index";
 
+/** Props for {@link RadioGroup}. */
+export type RadioGroupProps = RadioGroupPrimitive.Props & {
+  /**
+   * Size of each radio circle. Cascades to all nested {@link RadioGroupItem}s
+   * via `group-data-[size=…]/radio-group` selectors.
+   * @defaultValue "default"
+   */
+  size?: "sm" | "default" | "lg";
+};
+
 /**
  * A group of mutually exclusive radio options.
  *
@@ -48,14 +58,7 @@ function RadioGroup({
   className,
   size = "default",
   ...props
-}: RadioGroupPrimitive.Props & {
-  /**
-   * Size of each radio circle. Cascades to all nested {@link RadioGroupItem}s
-   * via `group-data-[size=…]/radio-group` selectors.
-   * @defaultValue "default"
-   */
-  size?: "sm" | "default" | "lg";
-}) {
+}: RadioGroupProps) {
   return (
     <RadioGroupPrimitive
       className={cn(

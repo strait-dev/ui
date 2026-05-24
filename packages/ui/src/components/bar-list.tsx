@@ -98,7 +98,7 @@ function BarList<T>({
               className={cn(
                 "truncate whitespace-nowrap rounded-sm text-foreground text-sm/6",
                 "hover:underline hover:underline-offset-2",
-                "outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50"
+                "outline-hidden focus-visible:ring-3 focus-visible:ring-ring/50"
               )}
               href={item.href}
               onClick={(event) => event.stopPropagation()}
@@ -133,7 +133,7 @@ function BarList<T>({
               <button
                 className={cn(
                   "group block w-full rounded-sm text-left",
-                  "outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50"
+                  "outline-hidden focus-visible:ring-3 focus-visible:ring-ring/50"
                 )}
                 key={item.key ?? item.name}
                 onClick={() => onValueChange?.(item)}

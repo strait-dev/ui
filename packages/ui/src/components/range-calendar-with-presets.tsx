@@ -29,7 +29,8 @@ type RangePreset = {
   value: DateRange;
 };
 
-type RangeCalendarWithPresetsProps = {
+/** Props for {@link RangeCalendarWithPresets}. */
+export type RangeCalendarWithPresetsProps = {
   /**
    * The selected date range.
    */

@@ -57,6 +57,7 @@ type DetailSheetProps = {
    * @default "right"
    */
   side?: "left" | "right" | "top" | "bottom";
+  /** Additional classes merged onto the `SheetContent` element. */
   className?: string;
 };
 
@@ -74,6 +75,7 @@ type DetailSheetSectionProps = {
   heading: React.ReactNode;
   /** The section body; typically one or more {@link DetailSheetRow}s. */
   children: React.ReactNode;
+  /** Additional classes merged onto the `<section>` element. */
   className?: string;
 };
 
@@ -90,6 +92,7 @@ type DetailSheetRowProps = {
    * styling by default. Pass a pre-styled node to override the wrapper.
    */
   children: React.ReactNode;
+  /** Additional classes merged onto the row's `flex` wrapper `<div>`. */
   className?: string;
 };
 
@@ -148,12 +151,9 @@ function DetailSheet({
   className,
 }: DetailSheetProps) {
   // Base UI Dialog's onOpenChange receives (open, eventDetails). Our public
-  // API narrows this to just the boolean so callers can pass a plain setState.
-  const handleOpenChange = (
-    nextOpen: boolean,
-    // biome-ignore lint/suspicious/noExplicitAny: Base UI eventDetails type is internal
-    _eventDetails: any
-  ) => {
+  // API narrows this to just the boolean so callers can pass a plain setState;
+  // a one-arg handler is assignable to Base UI's wider signature.
+  const handleOpenChange = (nextOpen: boolean) => {
     onOpenChange(nextOpen);
   };
 

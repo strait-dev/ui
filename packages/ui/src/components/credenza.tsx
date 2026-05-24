@@ -29,12 +29,15 @@ type BaseProps = {
   children: React.ReactNode;
 };
 
-type RootCredenzaProps = BaseProps & {
+/** Props for {@link Credenza}. */
+export type CredenzaProps = BaseProps & {
+  /** Controlled open state; pair with {@link CredenzaProps.onOpenChange}. */
   open?: boolean;
+  /** Called when the overlay requests an open/close transition. */
   onOpenChange?: (open: boolean) => void;
 };
 
-type CredenzaProps = Omit<BaseProps, "children"> & {
+type CredenzaContentProps = Omit<BaseProps, "children"> & {
   children?: React.ReactNode;
   className?: string;
   render?: React.ReactElement;
@@ -109,7 +112,7 @@ const useCredenzaContext = () => {
  * </Credenza>
  * ```
  */
-const Credenza = ({ children, ...props }: RootCredenzaProps) => {
+const Credenza = ({ children, ...props }: CredenzaProps) => {
   // Evaluate breakpoint reactively so server and client stay in sync.
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const Component = isDesktop ? Dialog : Drawer;
@@ -138,7 +141,7 @@ const CredenzaTrigger = ({
   children,
   render,
   ...props
-}: CredenzaProps) => {
+}: CredenzaContentProps) => {
   const { isDesktop } = useCredenzaContext();
 
   // Dialog (Base UI) consumes `render`; Drawer (vaul) consumes `asChild`.
@@ -179,7 +182,7 @@ const CredenzaClose = ({
   children,
   render,
   ...props
-}: CredenzaProps) => {
+}: CredenzaContentProps) => {
   const { isDesktop } = useCredenzaContext();
 
   // Dialog (Base UI) consumes `render`; Drawer (vaul) consumes `asChild`.
@@ -214,7 +217,11 @@ const CredenzaClose = ({
  * Renders {@link DialogContent} on desktop and {@link DrawerContent} on
  * mobile. Both include their own portal and overlay internally.
  */
-const CredenzaContent = ({ className, children, ...props }: CredenzaProps) => {
+const CredenzaContent = ({
+  className,
+  children,
+  ...props
+}: CredenzaContentProps) => {
   const { isDesktop } = useCredenzaContext();
   const Component = isDesktop ? DialogContent : DrawerContent;
 
@@ -235,7 +242,7 @@ const CredenzaDescription = ({
   className,
   children,
   ...props
-}: CredenzaProps) => {
+}: CredenzaContentProps) => {
   const { isDesktop } = useCredenzaContext();
   const Component = isDesktop ? DialogDescription : DrawerDescription;
 
@@ -257,7 +264,11 @@ const CredenzaDescription = ({
  * Delegates to {@link DialogHeader} on desktop and `DrawerHeader` on
  * mobile.
  */
-const CredenzaHeader = ({ className, children, ...props }: CredenzaProps) => {
+const CredenzaHeader = ({
+  className,
+  children,
+  ...props
+}: CredenzaContentProps) => {
   const { isDesktop } = useCredenzaContext();
   const Component = isDesktop ? DialogHeader : DrawerHeader;
 
@@ -274,7 +285,11 @@ const CredenzaHeader = ({ className, children, ...props }: CredenzaProps) => {
  *
  * Delegates to {@link DialogTitle} on desktop and `DrawerTitle` on mobile.
  */
-const CredenzaTitle = ({ className, children, ...props }: CredenzaProps) => {
+const CredenzaTitle = ({
+  className,
+  children,
+  ...props
+}: CredenzaContentProps) => {
   const { isDesktop } = useCredenzaContext();
   const Component = isDesktop ? DialogTitle : DrawerTitle;
 
@@ -293,7 +308,11 @@ const CredenzaTitle = ({ className, children, ...props }: CredenzaProps) => {
  * mobile (`px-4`) that is removed on desktop (`md:px-0`) to match the
  * visual conventions of each primitive.
  */
-const CredenzaBody = ({ className, children, ...props }: CredenzaProps) => (
+const CredenzaBody = ({
+  className,
+  children,
+  ...props
+}: CredenzaContentProps) => (
   <div
     className={cn("px-4 md:px-0", className)}
     data-slot="credenza-body"
@@ -309,7 +328,11 @@ const CredenzaBody = ({ className, children, ...props }: CredenzaProps) => (
  * Delegates to {@link DialogFooter} on desktop and `DrawerFooter` on
  * mobile.
  */
-const CredenzaFooter = ({ className, children, ...props }: CredenzaProps) => {
+const CredenzaFooter = ({
+  className,
+  children,
+  ...props
+}: CredenzaContentProps) => {
   const { isDesktop } = useCredenzaContext();
   const Component = isDesktop ? DialogFooter : DrawerFooter;
 

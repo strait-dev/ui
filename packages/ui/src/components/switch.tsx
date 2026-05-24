@@ -4,6 +4,19 @@ import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
 
 import { cn } from "../utils/index";
 
+/** Props for {@link Switch}. */
+export type SwitchProps = SwitchPrimitive.Root.Props & {
+  /** Physical size of the switch track and thumb. @defaultValue "default" */
+  size?: "sm" | "default" | "lg";
+  /**
+   * Colour intent of the checked track.
+   * - `"default"` — uses the `primary` token (unchanged from before).
+   * - `"destructive"` — uses `bg-destructive` when checked.
+   * @defaultValue "default"
+   */
+  intent?: "default" | "destructive";
+};
+
 /**
  * A toggle control that switches between on and off states.
  *
@@ -26,11 +39,6 @@ import { cn } from "../utils/index";
  * - Pair with a {@link Label} or {@link FieldLabel} via `htmlFor` / `id`
  *   for accessibility. An expanded tap-target is applied via an `after:`
  *   pseudo-element (`after:-inset-x-3 after:-inset-y-2`).
- * - `data-checked` / `data-unchecked` drive the track background color and
- *   the thumb translation; `data-disabled` handles pointer-events and
- *   opacity.
- * - `aria-invalid` is set by {@link FormControl} on validation failure,
- *   triggering a destructive ring.
  * - Pass `defaultChecked` (uncontrolled) or `checked` + `onCheckedChange`
  *   (controlled) to manage state.
  *
@@ -48,17 +56,7 @@ function Switch({
   intent = "default",
   size = "default",
   ...props
-}: SwitchPrimitive.Root.Props & {
-  /** Physical size of the switch track and thumb. @defaultValue "default" */
-  size?: "sm" | "default" | "lg";
-  /**
-   * Colour intent of the checked track.
-   * - `"default"` — uses the `primary` token (unchanged from before).
-   * - `"destructive"` — uses `bg-destructive` when checked.
-   * @defaultValue "default"
-   */
-  intent?: "default" | "destructive";
-}) {
+}: SwitchProps) {
   return (
     <SwitchPrimitive.Root
       className={cn(

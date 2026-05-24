@@ -11,8 +11,14 @@ import { cn } from "../utils/index";
  * pointer-events-disabled overlay at the leading edge.
  */
 export type InputWithStartIconProps = InputProps & {
+  /** Decorative node overlaid at the leading edge of the input; rendered
+   *  `pointer-events-none` so it never intercepts clicks or focus. */
   icon?: React.ReactNode;
+  /** Optional `<label>` text rendered above the input and linked via
+   *  `htmlFor={props.id}`; requires `id` to be set for the association. */
   label?: string;
+  /** Additional classes merged onto the relative wrapper `<div>` that
+   *  contains the input and the icon overlay. */
   containerClassName?: string;
 };
 

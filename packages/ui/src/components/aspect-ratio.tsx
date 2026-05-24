@@ -1,5 +1,14 @@
 import { cn } from "../utils/index";
 
+/** Props for {@link AspectRatio}. */
+export type AspectRatioProps = React.ComponentProps<"div"> & {
+  /**
+   * Width-to-height ratio as a plain number (e.g. `16 / 9`, `4 / 3`, `1`).
+   * Passed to the `--ratio` CSS custom property consumed by `aspect-(--ratio)`.
+   */
+  ratio: number;
+};
+
 /**
  * Container that enforces a fixed width-to-height ratio on its content.
  *
@@ -24,11 +33,7 @@ import { cn } from "../utils/index";
  * </AspectRatio>
  * ```
  */
-function AspectRatio({
-  ratio,
-  className,
-  ...props
-}: React.ComponentProps<"div"> & { ratio: number }) {
+function AspectRatio({ ratio, className, ...props }: AspectRatioProps) {
   return (
     <div
       className={cn("relative aspect-(--ratio)", className)}

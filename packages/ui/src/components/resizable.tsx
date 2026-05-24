@@ -4,18 +4,21 @@ import * as ResizablePrimitive from "react-resizable-panels";
 
 import { cn } from "../utils/index";
 
+/** Props for {@link ResizablePanelGroup}. */
+export type ResizablePanelGroupProps = ResizablePrimitive.GroupProps;
+
 /**
  * Root layout container for a set of drag-resizable panels.
  *
  * Wraps `react-resizable-panels`' `Group` primitive. Compose it with
- * {@link ResizablePanel} for content areas and {@link ResizableHandle} for
- * the drag handles between them. The group flex-direction is derived from
- * `aria-orientation` on the underlying element: horizontal by default,
- * vertical when `orientation="vertical"` is set on the primitive.
+ * {@link ResizablePanel} for content areas and {@link ResizableHandle}
+ * for the drag handles between them. The group flex-direction is derived
+ * from `aria-orientation` on the underlying element: horizontal by
+ * default, vertical when `orientation="vertical"` is set.
  *
  * @remarks
- * - Panels must be given unique `id` props (or auto-generated ones) so the
- *   library can persist and restore sizes across renders.
+ * - Panels must be given unique `id` props so the library can persist and
+ *   restore sizes across renders.
  * - Use `defaultSize` on each {@link ResizablePanel} to set initial sizes
  *   as percentages (must sum to 100).
  *
@@ -31,7 +34,7 @@ import { cn } from "../utils/index";
 function ResizablePanelGroup({
   className,
   ...props
-}: ResizablePrimitive.GroupProps) {
+}: ResizablePanelGroupProps) {
   return (
     <ResizablePrimitive.Group
       className={cn(

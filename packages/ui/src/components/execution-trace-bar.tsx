@@ -80,6 +80,7 @@ type ExecutionTraceBarProps = {
    * - `"lg"` — thick bar (`h-9`) for hero or drill-down views.
    */
   size?: VariantProps<typeof executionTraceBarVariants>["size"];
+  /** Additional classes merged onto the outermost wrapper `div`. */
   className?: string;
 };
 
@@ -100,7 +101,7 @@ function resolveColor(segment: TraceSegment, index: number): string {
   if (segment.color) {
     return segment.color;
   }
-  return CHART_COLORS[index % CHART_COLORS.length];
+  return CHART_COLORS[index % CHART_COLORS.length] ?? "var(--chart-1)";
 }
 
 /**
@@ -163,7 +164,7 @@ function ExecutionTraceBar({
                   render={
                     <button
                       aria-label={tooltipLabel}
-                      className="h-full cursor-pointer appearance-none border-0 p-0 focus-visible:relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                      className="h-full cursor-pointer appearance-none border-0 p-0 focus-visible:relative focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                       data-slot="execution-trace-bar-segment"
                       style={{
                         width: `${pct}%`,

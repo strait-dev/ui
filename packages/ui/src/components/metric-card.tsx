@@ -241,7 +241,9 @@ type MetricCardProps = {
    *   dashboard grids.
    */
   size?: "default" | "sm";
+  /** Extra classes merged onto the root `<Card>` element. */
   className?: string;
+  /** Additional content rendered after the description line, before the sparkline. */
   children?: React.ReactNode;
 };
 

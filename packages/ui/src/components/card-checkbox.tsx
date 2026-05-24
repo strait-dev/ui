@@ -59,9 +59,17 @@ CardCheckboxGroup.displayName = "CardCheckboxGroup";
 /** Props for {@link CardCheckboxItem}. */
 type CardCheckboxItemProps = React.ComponentPropsWithoutRef<typeof Checkbox> &
   VariantProps<typeof cardCheckboxVariants> & {
+    /** Optional icon rendered to the left of the label and description;
+     *  dimmed via `text-muted-foreground` when the item is disabled. */
     icon?: React.ReactNode;
+    /** Primary text for the card; rendered as a `<span>` linked to the
+     *  checkbox via `aria-labelledby`. */
     label: React.ReactNode;
+    /** Supporting text rendered below the label; also linked to the checkbox
+     *  via `aria-describedby` when `id` is provided. */
     description?: React.ReactNode;
+    /** Disables the {@link Checkbox} and applies `cursor-not-allowed` styling
+     *  to the card via the CVA `disabled` variant. */
     disabled?: boolean;
   };
 

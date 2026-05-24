@@ -4,6 +4,9 @@ import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card
 
 import { cn } from "../utils/index";
 
+/** Props for {@link HoverCard}. */
+export type HoverCardProps = PreviewCardPrimitive.Root.Props;
+
 /**
  * Floating preview panel that appears on hover, built on Base UI's
  * `PreviewCard` primitive.
@@ -40,7 +43,7 @@ import { cn } from "../utils/index";
  * </HoverCard>
  * ```
  */
-function HoverCard({ ...props }: PreviewCardPrimitive.Root.Props) {
+function HoverCard({ ...props }: HoverCardProps) {
   return <PreviewCardPrimitive.Root data-slot="hover-card" {...props} />;
 }
 

@@ -31,21 +31,36 @@ export type SelectOptionWithSearchAndButton = {
 };
 
 /** Props for {@link SelectWithSearchAndButton}. */
-type SelectWithSearchAndButtonProps = {
+export type SelectWithSearchAndButtonProps = {
+  /** List of options to display in the searchable dropdown. */
   options: SelectOptionWithSearchAndButton[];
+  /** Currently selected value; drives controlled mode. */
   value?: string;
+  /** Called with the new value when the user selects or deselects an option. */
   onValueChange?: (value: string) => void;
+  /** Text shown in the trigger button when no option is selected. */
   placeholder?: string;
+  /** Accessible label rendered above the trigger via {@link Label}. */
   label?: string;
+  /** Placeholder inside the search {@link CommandInput}. */
   searchPlaceholder?: string;
+  /** Message shown by {@link CommandEmpty} when no options match the search. */
   noResultsText?: string;
+  /** Additional classes merged onto the outermost wrapper `div`. */
   className?: string;
+  /** When `true`, the trigger button is disabled and non-interactive. */
   disabled?: boolean;
+  /** When `true`, renders the trigger border in `destructive` color. */
   error?: boolean;
+  /** When `true`, appends a red asterisk to the label. */
   required?: boolean;
+  /** `name` / `id` forwarded to the trigger button element. */
   name?: string;
+  /** Label text rendered inside the action button below the option list. */
   buttonText?: string;
+  /** Called when the user clicks the action button; also closes the dropdown. */
   onButtonClick?: () => void;
+  /** Icon node rendered to the left of `buttonText` inside the action button. */
   buttonIcon?: React.ReactNode;
 };
 

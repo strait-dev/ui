@@ -58,6 +58,16 @@ function useSidebar() {
   return context;
 }
 
+/** Props for {@link SidebarProvider}. */
+export type SidebarProviderProps = React.ComponentProps<"div"> & {
+  /** Initial open state when uncontrolled; defaults to `true`. */
+  defaultOpen?: boolean;
+  /** Controlled open state; pair with {@link SidebarProviderProps.onOpenChange}. */
+  open?: boolean;
+  /** Called when the sidebar's open state changes in controlled mode. */
+  onOpenChange?: (open: boolean) => void;
+};
+
 /**
  * Root provider that manages sidebar open/collapsed state and keyboard
  * shortcut registration for an entire sidebar layout.
@@ -88,6 +98,7 @@ function useSidebar() {
  * </SidebarProvider>
  * ```
  */
+
 function SidebarProvider({
   defaultOpen = true,
   open: openProp,
@@ -96,11 +107,7 @@ function SidebarProvider({
   style,
   children,
   ...props
-}: React.ComponentProps<"div"> & {
-  defaultOpen?: boolean;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}) {
+}: SidebarProviderProps) {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
 
@@ -187,6 +194,27 @@ function SidebarProvider({
   );
 }
 
+/** Props for {@link Sidebar}. */
+export type SidebarProps = React.ComponentProps<"div"> & {
+  /** Viewport edge the panel anchors to; `"left"` (default) or `"right"`. */
+  side?: "left" | "right";
+  /**
+   * Visual treatment of the sidebar surface.
+   * - `"sidebar"` — flat panel flush with the viewport edge (default).
+   * - `"floating"` — rounded corners and a shadow ring.
+   * - `"inset"` — makes the content area ({@link SidebarInset}) appear
+   *   nested inside the sidebar colour.
+   */
+  variant?: "sidebar" | "floating" | "inset";
+  /**
+   * Collapse mode when the sidebar is toggled closed.
+   * - `"offcanvas"` — slides the panel fully off-screen (default).
+   * - `"icon"` — shrinks to icon width, hiding labels.
+   * - `"none"` — disables collapsing; the panel is always visible.
+   */
+  collapsible?: "offcanvas" | "icon" | "none";
+};
+
 /**
  * The sidebar panel itself — a collapsible column rendered inside a
  * {@link SidebarProvider}.
@@ -210,6 +238,7 @@ function SidebarProvider({
  *   collapse mode: `"offcanvas"` slides the panel fully off-screen;
  *   `"icon"` shrinks it to icon width.
  */
+
 function Sidebar({
   side = "left",
   variant = "sidebar",
@@ -218,11 +247,7 @@ function Sidebar({
   children,
   dir,
   ...props
-}: React.ComponentProps<"div"> & {
-  side?: "left" | "right";
-  variant?: "sidebar" | "floating" | "inset";
-  collapsible?: "offcanvas" | "icon" | "none";
-}) {
+}: SidebarProps) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
   if (collapsible === "none") {

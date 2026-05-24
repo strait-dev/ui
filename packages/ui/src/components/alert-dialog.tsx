@@ -44,6 +44,9 @@ const alertDialogContentVariants = cva("", {
   },
 });
 
+/** Props for {@link AlertDialog}. */
+export type AlertDialogProps = AlertDialogPrimitive.Root.Props;
+
 /**
  * Blocking confirmation dialog that requires the user to make a choice
  * before continuing.
@@ -94,7 +97,7 @@ const alertDialogContentVariants = cva("", {
  * </AlertDialog>
  * ```
  */
-function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
+function AlertDialog({ ...props }: AlertDialogProps) {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
 }
 

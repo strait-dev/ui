@@ -2,6 +2,9 @@
 
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
 
+/** Props for {@link Collapsible}. */
+export type CollapsibleProps = CollapsiblePrimitive.Root.Props;
+
 /**
  * A lightweight single-panel show/hide container driven by a trigger.
  *
@@ -11,8 +14,8 @@ import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
  * which manages `aria-expanded` and keyboard interaction automatically.
  *
  * @remarks
- * - Use `open` + `onOpenChange` for controlled mode, or `defaultOpen` for
- *   uncontrolled.
+ * - Use `open` + `onOpenChange` for controlled mode, or `defaultOpen`
+ *   for uncontrolled.
  * - For a list of collapsible sections with coordinated single-open
  *   behaviour, prefer {@link Accordion} instead.
  *
@@ -24,7 +27,7 @@ import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
  * </Collapsible>
  * ```
  */
-function Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {
+function Collapsible({ ...props }: CollapsibleProps) {
   return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
 }
 

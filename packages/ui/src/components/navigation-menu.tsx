@@ -4,6 +4,10 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { cva } from "class-variance-authority";
 import { cn } from "../utils/index";
 
+/** Props for {@link NavigationMenu}. */
+export type NavigationMenuProps = NavigationMenuPrimitive.Root.Props &
+  Pick<NavigationMenuPrimitive.Positioner.Props, "align">;
+
 /**
  * Horizontal navigation bar with flyout content panels.
  *
@@ -50,8 +54,7 @@ function NavigationMenu({
   className,
   children,
   ...props
-}: NavigationMenuPrimitive.Root.Props &
-  Pick<NavigationMenuPrimitive.Positioner.Props, "align">) {
+}: NavigationMenuProps) {
   return (
     <NavigationMenuPrimitive.Root
       className={cn(

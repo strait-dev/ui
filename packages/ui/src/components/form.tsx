@@ -19,6 +19,14 @@ import { Label } from "./label";
  */
 const FormContext = createContext<AnyFormApi | null>(null);
 
+/** Props for {@link Form}. */
+export type FormProps = {
+  /** The instance returned by `useForm()`. */
+  form: AnyFormApi;
+  /** Form content — typically a `<form>` element containing {@link FormField}s. */
+  children: React.ReactNode;
+};
+
 /**
  * Root provider for a `@tanstack/react-form` managed form.
  *
@@ -50,14 +58,7 @@ const FormContext = createContext<AnyFormApi | null>(null);
  * );
  * ```
  */
-function Form({
-  form,
-  children,
-}: {
-  /** The instance returned by `useForm()`. */
-  form: AnyFormApi;
-  children: React.ReactNode;
-}) {
+function Form({ form, children }: FormProps) {
   return <FormContext.Provider value={form}>{children}</FormContext.Provider>;
 }
 

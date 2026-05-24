@@ -14,10 +14,16 @@ const DESKTOP_BREAKPOINT = 1024;
 // Matches a single digit keystroke; used to allow/block key events.
 const NUMERIC_REGEX = /^[0-9]$/;
 
-/** Props for the {@link DateInput} component. */
-type DateInputProps = {
+/** Props for {@link DateInput}. */
+export type DateInputProps = {
+  /** Currently selected date; the component mirrors this into its internal
+   *  segment state on each render cycle. */
   value?: Date;
+  /** Called with a fully valid `Date` whenever the user commits a change;
+   *  not fired for partial or out-of-range inputs. */
   onChange: (date: Date) => void;
+  /** Additional classes merged onto the outermost wrapper `<div>` that
+   *  provides the border, background, and flex layout. */
   className?: string;
 };
 

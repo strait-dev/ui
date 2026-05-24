@@ -4,6 +4,9 @@ import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 
 import { cn } from "../utils/index";
 
+/** Props for {@link ScrollArea}. */
+export type ScrollAreaProps = ScrollAreaPrimitive.Root.Props;
+
 /**
  * A cross-browser custom scroll container with styled overlaid scrollbars.
  *
@@ -27,11 +30,7 @@ import { cn } from "../utils/index";
  * </ScrollArea>
  * ```
  */
-function ScrollArea({
-  className,
-  children,
-  ...props
-}: ScrollAreaPrimitive.Root.Props) {
+function ScrollArea({ className, children, ...props }: ScrollAreaProps) {
   return (
     <ScrollAreaPrimitive.Root
       className={cn("relative", className)}

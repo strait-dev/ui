@@ -31,14 +31,18 @@ const buttonGroupVariants = cva(
   }
 );
 
+/** Props for {@link ButtonGroup}. */
+export type ButtonGroupProps = React.ComponentProps<"div"> &
+  VariantProps<typeof buttonGroupVariants>;
+
 /**
  * A toolbar-style container that fuses a set of related controls into a
  * single visual unit.
  *
- * Compose it with {@link ButtonGroupText}, {@link ButtonGroupSeparator}, and
- * any number of `Button`, `Select`, or `Input` elements. Sibling controls
- * have their interior borders removed and their adjacent corners squared off
- * so the group reads as one cohesive element.
+ * Compose it with {@link ButtonGroupText}, {@link ButtonGroupSeparator},
+ * and any number of `Button`, `Select`, or `Input` elements. Sibling
+ * controls have their interior borders removed and their adjacent corners
+ * squared off so the group reads as one cohesive element.
  *
  * @remarks
  * - `orientation` defaults to `"horizontal"`; set it to `"vertical"` to
@@ -58,11 +62,7 @@ const buttonGroupVariants = cva(
  * </ButtonGroup>
  * ```
  */
-function ButtonGroup({
-  className,
-  orientation,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof buttonGroupVariants>) {
+function ButtonGroup({ className, orientation, ...props }: ButtonGroupProps) {
   return (
     // biome-ignore lint/a11y/useSemanticElements: a button toolbar groups related actions; role="group" on a div is the intended, accessible pattern (no native element fits).
     <div

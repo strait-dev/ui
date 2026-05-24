@@ -106,6 +106,9 @@ function TooltipProvider({
   );
 }
 
+/** Props for {@link Tooltip}. */
+export type TooltipProps = TooltipPrimitive.Root.Props;
+
 /**
  * Short, non-interactive label that appears near an element on hover or
  * focus, built on Base UI's `Tooltip` primitive.
@@ -123,11 +126,8 @@ function TooltipProvider({
  * @remarks
  * - `TooltipContent` accepts `side`, `sideOffset`, `align`, and
  *   `alignOffset` to control placement.
- * - An arrow pointing to the trigger is rendered automatically inside the
- *   content panel.
- * - The content panel supports a `data-slot="kbd"` child to show a
- *   keyboard shortcut badge; padding is tuned automatically when one is
- *   present.
+ * - An arrow pointing to the trigger is rendered automatically inside
+ *   the content panel.
  * - Always ensure the trigger element has an accessible label — do not
  *   rely solely on the tooltip text for a11y.
  *
@@ -135,7 +135,9 @@ function TooltipProvider({
  * ```tsx
  * <TooltipProvider>
  *   <Tooltip>
- *     <TooltipTrigger render={<Button size="icon" aria-label="Settings" />}>
+ *     <TooltipTrigger
+ *       render={<Button size="icon" aria-label="Settings" />}
+ *     >
  *       <SettingsIcon />
  *     </TooltipTrigger>
  *     <TooltipContent>Settings</TooltipContent>
@@ -143,7 +145,7 @@ function TooltipProvider({
  * </TooltipProvider>
  * ```
  */
-function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
+function Tooltip({ ...props }: TooltipProps) {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
 }
 

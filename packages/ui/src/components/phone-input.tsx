@@ -209,13 +209,17 @@ const FlagComponent = ({ country, countryName }: FlagComponentProps) => {
  * `undefined` for incomplete numbers. `size` controls the height of the
  * underlying text input — `"sm"` | `"default"` | `"lg"`.
  */
-type PhoneInputProps = Omit<
+export type PhoneInputProps = Omit<
   React.ComponentProps<"input">,
   "onChange" | "value" | "ref" | "size"
 > &
   Omit<React.ComponentProps<typeof RPNInput>, "onChange" | "size"> &
   Pick<InputProps, "size"> & {
+    /** Called with the formatted E.164 phone number string as the user types;
+     *  receives an empty string instead of `undefined` for partial inputs. */
     onChange?: (value: Value) => void;
+    /** Called whenever the user selects a different country in the
+     *  {@link CountrySelect} popover. */
     onCountryChange?: (country: Country) => void;
   };
 

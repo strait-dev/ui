@@ -22,6 +22,9 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 
+/** Props for {@link Menubar}. */
+export type MenubarProps = MenubarPrimitive.Props;
+
 /**
  * A horizontal bar of labeled menu triggers, each opening a dropdown panel.
  *
@@ -60,7 +63,7 @@ import {
  * </Menubar>
  * ```
  */
-function Menubar({ className, ...props }: MenubarPrimitive.Props) {
+function Menubar({ className, ...props }: MenubarProps) {
   return (
     <MenubarPrimitive
       className={cn(

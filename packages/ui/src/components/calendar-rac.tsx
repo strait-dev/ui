@@ -23,7 +23,9 @@ type BaseCalendarProps = {
 };
 
 // These types merge the full RAC prop surface with the local className override.
-type CalendarProps = ComponentProps<typeof CalendarRac> & BaseCalendarProps;
+/** Props for {@link Calendar}. */
+export type CalendarProps = ComponentProps<typeof CalendarRac> &
+  BaseCalendarProps;
 type RangeCalendarProps = ComponentProps<typeof RangeCalendarRac> &
   BaseCalendarProps;
 

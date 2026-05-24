@@ -5,6 +5,9 @@ import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "../utils/index";
 
+/** Props for {@link Accordion}. */
+export type AccordionProps = AccordionPrimitive.Root.Props;
+
 /**
  * A vertically stacked set of collapsible sections, each with a trigger
  * and an animated content panel.
@@ -35,7 +38,7 @@ import { cn } from "../utils/index";
  * </Accordion>
  * ```
  */
-function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
+function Accordion({ className, ...props }: AccordionProps) {
   return (
     <AccordionPrimitive.Root
       className={cn("flex w-full flex-col", className)}

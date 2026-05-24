@@ -2,6 +2,9 @@
 
 import { cn } from "../utils/index";
 
+/** Props for {@link Leaderboard}. */
+export type LeaderboardProps = React.ComponentProps<"div">;
+
 /**
  * Root of a {@link Leaderboard}. A vertical stack of ranked rows, each with
  * a value-proportional fill bar behind its label.
@@ -25,7 +28,7 @@ import { cn } from "../utils/index";
  * </Leaderboard>
  * ```
  */
-function Leaderboard({ className, ...props }: React.ComponentProps<"div">) {
+function Leaderboard({ className, ...props }: LeaderboardProps) {
   return (
     <div
       className={cn(
@@ -174,7 +177,7 @@ function LeaderboardItem({
         <div
           className={cn(
             baseClassName,
-            "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            "cursor-pointer focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           )}
           onClick={onAction}
           onKeyDown={(event) => {

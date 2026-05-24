@@ -30,6 +30,12 @@ const otpSlotVariants = cva("", {
   },
 });
 
+/** Props for {@link InputOTP}. */
+export type InputOTPProps = React.ComponentProps<typeof OTPInput> & {
+  /** Extra classes merged onto the `OTPInput` container `<div>`. */
+  containerClassName?: string;
+};
+
 /**
  * One-time-password input that renders a fixed-length sequence of digit
  * slots driven by the `input-otp` library.
@@ -66,13 +72,7 @@ const otpSlotVariants = cva("", {
  * </InputOTP>
  * ```
  */
-function InputOTP({
-  className,
-  containerClassName,
-  ...props
-}: React.ComponentProps<typeof OTPInput> & {
-  containerClassName?: string;
-}) {
+function InputOTP({ className, containerClassName, ...props }: InputOTPProps) {
   return (
     <OTPInput
       className={cn("disabled:cursor-not-allowed", className)}

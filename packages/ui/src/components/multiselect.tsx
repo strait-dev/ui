@@ -479,11 +479,15 @@ type GroupOption = {
   [key: string]: Option[];
 };
 
-type MultipleSelectorProps = {
+/** Props for {@link MultipleSelector}. */
+export type MultipleSelectorProps = {
+  /** Controlled selection; keep in sync via {@link MultipleSelectorProps.onChange}. */
   value?: Option[];
+  /** Initial options shown in the dropdown before any search. */
   defaultOptions?: Option[];
   /** manually controlled options */
   options?: Option[];
+  /** Input placeholder text shown when no options are selected. */
   placeholder?: string;
   /** Loading component. */
   loadingIndicator?: React.ReactNode;
@@ -504,6 +508,7 @@ type MultipleSelectorProps = {
    * i.e.: creatable, groupBy, delay.
    */
   onSearchSync?: (value: string) => Option[];
+  /** Called with the full updated selection whenever options are added or removed. */
   onChange?: (options: Option[]) => void;
   /** Limit the maximum number of selected options. */
   maxSelected?: number;
@@ -511,10 +516,13 @@ type MultipleSelectorProps = {
   onMaxSelected?: (maxLimit: number) => void;
   /** Hide the placeholder when there are options selected. */
   hidePlaceholderWhenSelected?: boolean;
+  /** Disables the control; pointer events are blocked and opacity is reduced. */
   disabled?: boolean;
   /** Group the options base on provided key. */
   groupBy?: string;
+  /** Extra classes merged onto the outer input wrapper element. */
   className?: string;
+  /** Extra classes merged onto each selected-option badge chip. */
   badgeClassName?: string;
   /**
    * First item selected is a default behavior by cmdk. That is why the default is true.

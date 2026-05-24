@@ -9,8 +9,13 @@ import { cn } from "../utils/index";
  * omitting both renders a plain bordered input.
  */
 export type InputWithAddonsProps = React.ComponentProps<"input"> & {
+  /** Content rendered in the muted panel before the input (e.g. `"https://"`
+   *  or a currency symbol). Omit to suppress the leading addon. */
   leading?: React.ReactNode;
+  /** Content rendered in the muted panel after the input (e.g. `".com"` or a
+   *  unit label). Omit to suppress the trailing addon. */
   trailing?: React.ReactNode;
+  /** Additional classes merged onto the outer bordered wrapper `<div>`. */
   containerClassName?: string;
 };
 

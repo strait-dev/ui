@@ -11,12 +11,21 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 /** Props for the {@link DatePicker} component. */
 type DatePickerProps = {
+  /** Currently selected date; pass `undefined` to show the placeholder. */
   value?: Date;
+  /** Called with the selected `Date` (or `undefined`) when the user picks
+   *  a day or clears the selection via the calendar. */
   onChange?: (date: Date | undefined) => void;
+  /** Disables the trigger button, preventing the calendar from opening. */
   disabled?: boolean;
+  /** When `true`, appends a red asterisk to the {@link label} text. */
   isRequired?: boolean;
+  /** Optional `<label>` rendered above the trigger button; linked via
+   *  `htmlFor` to the button's generated id. */
   label?: string;
+  /** Additional classes merged onto the outermost wrapper `<div>`. */
   className?: string;
+  /** When `true`, applies a destructive border to the trigger button. */
   error?: boolean;
 };
 
