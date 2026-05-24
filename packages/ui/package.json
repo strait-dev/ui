@@ -91,6 +91,31 @@
       "import": "./dist/components/accordion.js",
       "default": "./dist/components/accordion.js"
     },
+    "./components/rating": {
+      "types": "./dist/components/rating.d.ts",
+      "import": "./dist/components/rating.js",
+      "default": "./dist/components/rating.js"
+    },
+    "./components/description-list": {
+      "types": "./dist/components/description-list.d.ts",
+      "import": "./dist/components/description-list.js",
+      "default": "./dist/components/description-list.js"
+    },
+    "./components/tag-group": {
+      "types": "./dist/components/tag-group.d.ts",
+      "import": "./dist/components/tag-group.js",
+      "default": "./dist/components/tag-group.js"
+    },
+    "./components/tree": {
+      "types": "./dist/components/tree.d.ts",
+      "import": "./dist/components/tree.js",
+      "default": "./dist/components/tree.js"
+    },
+    "./components/file-upload": {
+      "types": "./dist/components/file-upload.d.ts",
+      "import": "./dist/components/file-upload.js",
+      "default": "./dist/components/file-upload.js"
+    },
     "./components/alert": {
       "types": "./dist/components/alert.d.ts",
       "import": "./dist/components/alert.js",
