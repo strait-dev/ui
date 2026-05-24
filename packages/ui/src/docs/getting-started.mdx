@@ -1,0 +1,81 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Getting Started/Introduction" />
+
+# Strait UI
+
+Strait is a React 19 design system: ~90 accessible components built on
+[Base UI](https://base-ui.com) primitives, styled with [Tailwind CSS v4](https://tailwindcss.com)
+and a cohesive set of `oklch` design tokens. It ships compiled, tree-shakeable,
+and dark-mode-ready.
+
+This Storybook is the living reference — browse components in the sidebar, flip
+between light and dark with the toolbar, read the auto-generated prop tables, and
+copy the source of any story.
+
+## What's inside
+
+- **Foundations** — the colour, typography, spacing, radius, shadow, and icon
+  tokens every component is built from.
+- **Components** — grouped by purpose (Actions, Forms, Overlays, Navigation,
+  Feedback, Data Display, Layout) with a Playground and rich usage examples.
+- **Getting Started** — installation, theming, and contribution guides.
+
+## Five-minute quick start
+
+Install the package and React (see **Installation** for the full setup including
+the Tailwind wiring):
+
+```bash
+bun add @strait/ui react@^19 react-dom@^19
+```
+
+Import the stylesheet once at your app root, then render your first components:
+
+```tsx
+import "@strait/ui/css";
+
+import { Button } from "@strait/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@strait/ui/components/dialog";
+
+export function App() {
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button variant="brand-solid">Get started</Button>} />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Welcome to Strait</DialogTitle>
+          <DialogDescription>
+            You just rendered a themed Button and an accessible Dialog.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter showCloseButton>
+          <Button variant="default">Done</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+That's it — the Button picks up the brand token and the Dialog handles focus
+trapping, the backdrop, and keyboard dismissal for you. Switch your app's theme
+by toggling a `.dark` class (see **Theming**) and both re-style automatically.
+
+## Conventions worth knowing
+
+- **Composition over configuration.** Triggers accept a `render` prop so you can
+  swap in your own element while keeping behaviour — e.g.
+  `<DialogTrigger render={<Button />} />`.
+- **Accessible by default.** Icon-only controls require an `aria-label`; form
+  controls pair with a `<Label>`.
+- **Variants via props.** Visual variations are typed props (`variant`, `size`),
+  not class soup. Each component's Playground lists them.

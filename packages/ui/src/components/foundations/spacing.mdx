@@ -1,0 +1,60 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Spacing" />
+
+export const Bar = ({ step, rem }) => {
+  const px = Math.round(rem * 16);
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "60px 90px 1fr",
+        alignItems: "center",
+        gap: 16,
+        padding: "6px 0",
+      }}
+    >
+      <code style={{ fontSize: 12 }}>{step}</code>
+      <span style={{ fontSize: 12, opacity: 0.7 }}>
+        {rem}rem · {px}px
+      </span>
+      <div
+        style={{
+          height: 16,
+          width: `${rem}rem`,
+          maxWidth: "100%",
+          background: "var(--brand)",
+          borderRadius: 3,
+        }}
+      />
+    </div>
+  );
+};
+
+# Spacing
+
+Spacing uses Tailwind's default scale, where each step is a multiple of
+`0.25rem` (4px at the default root size). The same scale drives padding,
+margin, and `gap`, so layouts stay on a consistent rhythm. Reach for the
+common steps below before inventing a one-off value.
+
+<div>
+  <Bar step="0.5" rem={0.125} />
+  <Bar step="1" rem={0.25} />
+  <Bar step="1.5" rem={0.375} />
+  <Bar step="2" rem={0.5} />
+  <Bar step="2.5" rem={0.625} />
+  <Bar step="3" rem={0.75} />
+  <Bar step="4" rem={1} />
+  <Bar step="5" rem={1.25} />
+  <Bar step="6" rem={1.5} />
+  <Bar step="8" rem={2} />
+  <Bar step="10" rem={2.5} />
+  <Bar step="12" rem={3} />
+  <Bar step="16" rem={4} />
+  <Bar step="20" rem={5} />
+  <Bar step="24" rem={6} />
+</div>
+
+The numeric class (`p-4`, `gap-2`, `mt-6`, …) is the step value — `p-4` is
+`1rem` of padding on every side, `gap-2` is `0.5rem` between flex/grid children.

@@ -1,0 +1,194 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Colors" />
+
+export const Swatch = ({ token, label }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    <div
+      style={{
+        height: 56,
+        borderRadius: 8,
+        background: `var(--${token})`,
+        border: "1px solid color-mix(in oklch, var(--foreground) 12%, transparent)",
+      }}
+    />
+    <code style={{ fontSize: 12 }}>--{token}</code>
+    {label ? (
+      <span style={{ fontSize: 11, opacity: 0.7 }}>{label}</span>
+    ) : null}
+  </div>
+);
+
+export const Grid = ({ tokens }) => (
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+      gap: 16,
+    }}
+  >
+    {tokens.map((t) => (
+      <Swatch key={t.token} token={t.token} label={t.label} />
+    ))}
+  </div>
+);
+
+export const Pair = ({ base, fg, label }) => (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 6,
+    }}
+  >
+    <div
+      style={{
+        height: 64,
+        borderRadius: 8,
+        background: `var(--${base})`,
+        color: `var(--${fg})`,
+        border: "1px solid color-mix(in oklch, var(--foreground) 12%, transparent)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 13,
+        fontWeight: 600,
+      }}
+    >
+      Aa
+    </div>
+    <code style={{ fontSize: 12 }}>--{base}</code>
+    <span style={{ fontSize: 11, opacity: 0.7 }}>{label}</span>
+  </div>
+);
+
+export const Themes = ({ children }) => (
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+    {["light", "dark"].map((mode) => (
+      <div
+        key={mode}
+        className={mode === "dark" ? "dark" : undefined}
+        style={{
+          padding: 20,
+          borderRadius: 12,
+          background: "var(--background)",
+          color: "var(--foreground)",
+          border: "1px solid var(--border)",
+        }}
+      >
+        <div
+          style={{
+            fontSize: 11,
+            textTransform: "uppercase",
+            letterSpacing: ".06em",
+            opacity: 0.6,
+            marginBottom: 14,
+          }}
+        >
+          {mode}
+        </div>
+        {children}
+      </div>
+    ))}
+  </div>
+);
+
+# Colors
+
+Every colour in Strait is a semantic token defined as an `oklch` CSS custom
+property in `globals.css`. Components reference the Tailwind colour utilities
+that map to these tokens (`bg-primary`, `text-muted-foreground`, …) — never raw
+hex or named colours. The same token names resolve to different values under
+`:root` (light) and `.dark`, so theming is a single class flip.
+
+Use the toolbar paintbrush to switch the page theme, or compare both below.
+
+## Surfaces
+
+Backgrounds and the foreground text that sits on them.
+
+<Themes>
+  <Grid
+    tokens={[
+      { token: "background", label: "Page background" },
+      { token: "foreground", label: "Body text" },
+      { token: "card", label: "Card surface" },
+      { token: "popover", label: "Popover / menu" },
+      { token: "muted", label: "Muted surface" },
+      { token: "muted-foreground", label: "Muted text" },
+      { token: "accent", label: "Accent surface" },
+      { token: "secondary", label: "Secondary surface" },
+    ]}
+  />
+</Themes>
+
+## Brand & primary
+
+`--primary` is warm ink (used for default buttons); `--brand` is the GitBook
+orange used for emphasis. Each has a `-foreground` for text drawn on top.
+
+<Themes>
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+      gap: 16,
+    }}
+  >
+    <Pair base="primary" fg="primary-foreground" label="Default action" />
+    <Pair base="brand" fg="brand-foreground" label="Brand emphasis" />
+  </div>
+</Themes>
+
+## Status intents
+
+Each intent has three tokens: the solid `base` (fills), `-foreground` (text on
+the solid fill), and `-accent` (readable text/border for soft and outline
+emphasis on tinted surfaces). The `-accent` values are tuned to clear WCAG AA
+4.5:1 on a 10%-opacity tint.
+
+<Themes>
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+      gap: 16,
+    }}
+  >
+    <Pair base="success" fg="success-foreground" label="Success" />
+    <Pair base="destructive" fg="destructive-foreground" label="Destructive" />
+    <Pair base="info" fg="info-foreground" label="Info" />
+    <Pair base="warning" fg="warning-foreground" label="Warning" />
+  </div>
+</Themes>
+
+## Utility
+
+Borders, inputs, focus rings, and the inverted surface.
+
+<Themes>
+  <Grid
+    tokens={[
+      { token: "border", label: "Hairline borders" },
+      { token: "input", label: "Input borders" },
+      { token: "ring", label: "Focus ring" },
+      { token: "invert", label: "Inverted surface" },
+    ]}
+  />
+</Themes>
+
+## Charts
+
+A five-step categorical palette for data visualisation.
+
+<Themes>
+  <Grid
+    tokens={[
+      { token: "chart-1" },
+      { token: "chart-2" },
+      { token: "chart-3" },
+      { token: "chart-4" },
+      { token: "chart-5" },
+    ]}
+  />
+</Themes>

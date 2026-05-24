@@ -1,0 +1,34 @@
+{
+  "name": "strait",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "bun@1.3.14",
+  "scripts": {
+    "dev": "turbo run dev",
+    "storybook": "turbo run storybook",
+    "build-storybook": "turbo run build-storybook",
+    "chromatic": "turbo run build-storybook && bun run --filter @strait/storybook chromatic",
+    "build": "turbo run build",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "check:conventions": "bun scripts/check-conventions.mjs",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:stories": "bun run --filter @strait/storybook test-storybook",
+    "verify": "biome check . && bun scripts/check-conventions.mjs && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
+    "clean": "turbo run clean && rm -rf node_modules .turbo"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.15",
+    "http-server": "^14.1.1",
+    "turbo": "^2.9.14",
+    "typescript": "^6.0.3",
+    "ultracite": "^7.7.0",
+    "wait-on": "^9.0.10"
+  }
+}

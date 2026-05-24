@@ -1,0 +1,6 @@
+# Bun configuration for the Strait monorepo.
+# Workspaces are declared in package.json ("workspaces"); Bun uses its default
+# hoisted node_modules layout, which Turborepo and Storybook both expect.
+
+[install]
+exact = false
