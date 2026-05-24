@@ -33,12 +33,16 @@ const meta: Meta<typeof CodeBlock> = {
     docs: {
       description: {
         component: [
-          "Read-only code display surface with an optional language label,",
-          "line numbers, and a clipboard copy button.",
+          "Read-only code display surface with **Shiki-powered syntax",
+          "highlighting**, an optional language label, line numbers, and a",
+          "clipboard copy button.",
           "",
-          "Renders **plain text** — no syntax-highlighting library is used.",
-          "Use `showLineNumbers` for numbered gutter rendering and `maxHeight`",
-          "to constrain long snippets with internal scrolling.",
+          "Any Shiki-supported `language` is accepted (`tsx`, `ruby`, `go`,",
+          "`python`, `rust`, `sql`, …) and is themed with Strait's bespoke",
+          "light/dark syntax palette. Highlighting runs asynchronously — plain",
+          "text shows first, then swaps to highlighted markup. Use",
+          "`showLineNumbers` for a numbered gutter and `maxHeight` to constrain",
+          "long snippets with internal scrolling.",
           "",
           "The `variant` prop controls the surface treatment:",
           "- `default` — muted background with border (original).",
@@ -116,6 +120,69 @@ export const Bash: Story = {
     code: BASH_SAMPLE,
     language: "bash",
   },
+};
+
+/**
+ * The same component highlights any Shiki-supported language. Here Ruby, Go,
+ * Python, Rust, and SQL are rendered with Strait's syntax theme.
+ */
+export const Languages: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Demonstrates language-agnostic highlighting. Pass any Shiki language id to `language` (`ruby`, `go`, `python`, `rust`, `sql`, …) and the snippet is tokenised and themed with Strait's palette. Unknown languages degrade gracefully to plain text.",
+      },
+    },
+  },
+  render: () => (
+    <div className="grid gap-6 md:grid-cols-2">
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">ruby</p>
+        <CodeBlock
+          code={`class Greeter\n  def initialize(name)\n    @name = name\n  end\n\n  def greet\n    puts "Hello, #{@name}!"\n  end\nend`}
+          language="ruby"
+        />
+      </div>
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">go</p>
+        <CodeBlock
+          code={`package main\n\nimport "fmt"\n\nfunc main() {\n\tname := "world"\n\tfmt.Printf("Hello, %s!\\n", name)\n}`}
+          language="go"
+        />
+      </div>
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">python</p>
+        <CodeBlock
+          code={`def greet(name: str) -> str:\n    """Return a greeting."""\n    return f"Hello, {name}!"\n\n\nprint(greet("world"))`}
+          language="python"
+        />
+      </div>
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">rust</p>
+        <CodeBlock
+          code={`fn main() {\n    let name = "world";\n    println!("Hello, {name}!");\n}`}
+          language="rust"
+        />
+      </div>
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">sql</p>
+        <CodeBlock
+          code={
+            "SELECT u.id, u.name, count(o.id) AS orders\nFROM users u\nLEFT JOIN orders o ON o.user_id = u.id\nWHERE u.active = true\nGROUP BY u.id, u.name;"
+          }
+          language="sql"
+        />
+      </div>
+      <div>
+        <p className="mb-2 font-mono text-muted-foreground text-xs">json</p>
+        <CodeBlock
+          code={`{\n  "name": "@strait/ui",\n  "version": "1.0.0",\n  "private": false\n}`}
+          language="json"
+        />
+      </div>
+    </div>
+  ),
 };
 
 /* ------------------------------------------------------------------ */

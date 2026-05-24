@@ -536,6 +536,42 @@
 }
 
 /* ============================================
+   CodeBlock — Shiki dual-theme wiring
+   ============================================ */
+
+/*
+ * Shiki emits per-token `--shiki-light` / `--shiki-dark` CSS variables (via
+ * `defaultColor: false`). We apply only the foreground colour so the
+ * CodeBlock `variant` surface (bg-muted / dark / transparent) shows through
+ * instead of the theme's own background.
+ */
+.strait-shiki {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  color: var(--shiki-light);
+  overflow: visible;
+  /* Shiki separates lines with literal "\n" text nodes, so the default
+     pre whitespace handling already renders one visual line per code line —
+     no per-line block styling needed (which would double the spacing). */
+  white-space: pre;
+}
+
+.strait-shiki span {
+  color: var(--shiki-light);
+}
+
+.dark .strait-shiki,
+.dark .strait-shiki span {
+  color: var(--shiki-dark);
+}
+
+.strait-shiki.wrap {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ============================================
    Hover Lift Effect
    ============================================ */
 
