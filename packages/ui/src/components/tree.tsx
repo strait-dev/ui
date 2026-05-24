@@ -155,9 +155,9 @@ function TreeItem<T extends object = object>({
           const rowClass = cn(
             "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-foreground text-sm transition-colors",
             "data-[hovered]:bg-accent data-[selected]:bg-accent",
-            "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring",
+            "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring/50",
             isSelected && "bg-accent",
-            isFocusVisible && "ring-2 ring-ring",
+            isFocusVisible && "ring-2 ring-ring/50",
             isDisabled && "pointer-events-none opacity-50"
           );
 

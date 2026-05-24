@@ -151,7 +151,7 @@ export function DateRangePicker({
           <Group
             className={cn(
               "flex h-8 w-full items-center rounded-lg border border-input bg-background text-sm ring-offset-background",
-              "focus-within:outline-hidden focus-within:ring-[3px] focus-within:ring-ring/50 focus-within:ring-offset-2",
+              "focus-within:outline-hidden focus-within:ring-3 focus-within:ring-ring/50 focus-within:ring-offset-2",
               "disabled:cursor-not-allowed disabled:opacity-50"
             )}
           >
@@ -180,7 +180,7 @@ export function DateRangePicker({
                 />
               )}
             </DateInput>
-            <Button className="mr-2 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-muted">
+            <Button className="mr-2 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
               <HugeiconsIcon className="size-4" icon={Calendar03Icon} />
             </Button>
           </Group>

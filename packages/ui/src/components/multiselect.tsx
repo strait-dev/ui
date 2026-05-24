@@ -6,6 +6,7 @@ import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { cn } from "../utils/index";
+import { Button } from "./button";
 import { Command, CommandGroup, CommandItem, CommandList } from "./command";
 
 /** Default search debounce delay in milliseconds. */
@@ -21,7 +22,7 @@ const DEFAULT_DEBOUNCE_TIME = 500;
  * | Value | Control min-height | Chip height | Chip text |
  * |-------|--------------------|-------------|-----------|
  * | `sm` | `min-h-8` | `h-6` | `text-xs` |
- * | `default` | `min-h-[42px]` | `h-8` | `text-sm` |
+ * | `default` | `min-h-10` | `h-8` | `text-sm` |
  */
 export type MultipleSelectorSize = "sm" | "default";
 
@@ -59,12 +60,9 @@ const SelectedBadge: React.FC<SelectedBadgeProps> = ({
     key={option.value}
   >
     {option.label}
-    <button
+    <Button
       aria-label="Remove"
-      className={cn(
-        "absolute -inset-y-px -end-px flex items-center justify-center rounded-e-md border border-transparent p-0 text-muted-foreground/80 outline-none outline-hidden transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-        size === "sm" ? "size-6" : "size-8"
-      )}
+      className="absolute -inset-y-px -end-px rounded-e-md"
       onClick={() => onUnselect(option)}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
@@ -75,14 +73,16 @@ const SelectedBadge: React.FC<SelectedBadgeProps> = ({
         e.preventDefault();
         e.stopPropagation();
       }}
+      size={size === "sm" ? "icon-xs" : "icon"}
       type="button"
+      variant="ghost"
     >
       <HugeiconsIcon
         aria-hidden="true"
         className="size-4"
         icon={Cancel01Icon}
       />
-    </button>
+    </Button>
   </div>
 );
 
@@ -436,22 +436,20 @@ const ClearAllButton: React.FC<ClearAllButtonProps> = ({
   }, [selected, setSelected, onChange]);
 
   return (
-    <button
+    <Button
       aria-label="Clear all"
-      className={cn(
-        "absolute end-0 top-0 flex items-center justify-center rounded-md border border-transparent text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-        size === "sm" ? "size-8" : "size-9",
-        shouldHide ? "hidden" : null
-      )}
+      className={cn("absolute end-0 top-0", shouldHide ? "hidden" : null)}
       onClick={handleClear}
+      size={size === "sm" ? "icon-sm" : "icon-lg"}
       type="button"
+      variant="ghost"
     >
       <HugeiconsIcon
         aria-hidden="true"
         className="size-4"
         icon={Cancel01Icon}
       />
-    </button>
+    </Button>
   );
 };
 
@@ -542,7 +540,7 @@ type MultipleSelectorProps = {
    * | Value | Control min-height | Chip height | Chip text |
    * |-------|--------------------|-------------|-----------|
    * | `sm` | `min-h-8` | `h-6` | `text-xs` |
-   * | `default` | `min-h-[42px]` | `h-8` | `text-sm` |
+   * | `default` | `min-h-10` | `h-8` | `text-sm` |
    *
    * @default "default"
    */
@@ -947,7 +945,7 @@ function MultipleSelector({
       : commandProps.shouldFilter;
 
   // Derive size-dependent classes
-  const controlMinH = size === "sm" ? "min-h-8" : "min-h-[42px]";
+  const controlMinH = size === "sm" ? "min-h-8" : "min-h-10";
 
   return (
     <Command
@@ -966,7 +964,7 @@ function MultipleSelector({
       {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: wrapper only focuses the inner input; the inner combobox input is itself fully keyboard accessible. */}
       <div
         className={cn(
-          "relative rounded-lg border border-input text-sm outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-aria-invalid:border-destructive has-disabled:opacity-50 has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
+          "relative rounded-lg border border-input text-sm outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-aria-invalid:border-destructive has-disabled:opacity-50 has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
           controlMinH,
           {
             "p-1": selected.length !== 0,

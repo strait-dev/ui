@@ -3,6 +3,7 @@
 import { Loading01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "../utils/index";
+import { Button } from "./button";
 import { Input, type InputProps } from "./input";
 
 /**
@@ -83,15 +84,17 @@ function InputWithLoader({
         </div>
       ) : null}
       {endIcon ? (
-        <button
+        <Button
           aria-label={endIconAriaLabel}
-          className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 transition-colors hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="absolute inset-y-0 end-0 rounded-e-md"
           data-slot="end-icon"
           onClick={onEndIconClick}
+          size="icon-sm"
           type="button"
+          variant="ghost"
         >
           {endIcon}
-        </button>
+        </Button>
       ) : null}
     </div>
   );

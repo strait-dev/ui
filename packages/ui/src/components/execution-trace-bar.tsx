@@ -161,12 +161,16 @@ function ExecutionTraceBar({
               <Tooltip key={segment.label}>
                 <TooltipTrigger
                   render={
-                    <div
+                    <button
+                      aria-label={tooltipLabel}
+                      className="h-full cursor-pointer appearance-none border-0 p-0 focus-visible:relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                       data-slot="execution-trace-bar-segment"
                       style={{
                         width: `${pct}%`,
                         backgroundColor: color,
                       }}
+                      tabIndex={0}
+                      type="button"
                     />
                   }
                 />

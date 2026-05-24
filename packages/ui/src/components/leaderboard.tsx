@@ -174,7 +174,7 @@ function LeaderboardItem({
         <div
           className={cn(
             baseClassName,
-            "cursor-pointer focus-visible:ring-2 focus-visible:ring-ring"
+            "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           )}
           onClick={onAction}
           onKeyDown={(event) => {

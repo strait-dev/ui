@@ -217,7 +217,7 @@ export function SelectWithSearch({
   const buttonClassName = useMemo(
     () =>
       cn(
-        "w-full justify-between bg-transparent px-3 font-normal outline-offset-0 hover:bg-transparent focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20",
+        "w-full justify-between bg-transparent px-3 font-normal hover:bg-transparent focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
         !selectedValue && "text-muted-foreground",
         error ? "border-destructive" : undefined,
         disabled ? "cursor-not-allowed opacity-50" : undefined
@@ -237,7 +237,7 @@ export function SelectWithSearch({
 
       return (
         <CommandItem
-          className={cn("", isSelected ? "bg-primary/10" : null)}
+          className={cn(isSelected && "bg-accent")}
           data-value={option.value}
           key={option.value}
           onSelect={handleSelect}

@@ -289,7 +289,7 @@ function StepperTrigger({
       {
         className: cn(
           "inline-flex items-center gap-3 rounded-md text-sm outline-none",
-          "focus-visible:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+          "focus-visible:z-10 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
           "disabled:pointer-events-none disabled:opacity-50",
           // compact: tighter internal gap
           "group-data-[compact=true]/stepper:gap-1.5",

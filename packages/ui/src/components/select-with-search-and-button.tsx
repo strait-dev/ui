@@ -139,7 +139,7 @@ export function SelectWithSearchAndButton({
             <Button
               aria-expanded={open}
               className={cn(
-                "w-full justify-between bg-background px-3 font-normal outline-offset-0 hover:bg-background focus-visible:border-ring focus-visible:outline-[3px] focus-visible:outline-ring/20",
+                "w-full justify-between bg-background px-3 font-normal hover:bg-background focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
                 !selectedValue && "text-muted-foreground",
                 error ? "border-destructive" : null,
                 disabled ? "cursor-not-allowed opacity-50" : null

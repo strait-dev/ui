@@ -37,7 +37,7 @@ const tagVariants = cva(
     "inline-flex cursor-default items-center gap-1 rounded-md border px-2 py-0.5 font-medium text-xs outline-hidden transition-colors",
     "data-hovered:bg-accent",
     "data-selected:border-transparent data-selected:bg-primary data-selected:text-primary-foreground",
-    "data-focus-visible:ring-2 data-focus-visible:ring-ring data-focus-visible:ring-offset-1",
+    "data-focus-visible:ring-2 data-focus-visible:ring-ring/50",
     "data-disabled:cursor-not-allowed data-disabled:opacity-50",
   ].join(" "),
   {
@@ -237,7 +237,7 @@ function Tag({ children, className, variant, ...props }: TagProps) {
           {resolvedChildren}
           {allowsRemoving ? (
             <Button
-              className="ml-0.5 inline-flex size-3.5 items-center justify-center rounded-sm opacity-60 outline-hidden hover:opacity-100 data-focus-visible:ring-2 data-focus-visible:ring-ring"
+              className="ml-0.5 inline-flex size-3.5 items-center justify-center rounded-sm opacity-60 outline-hidden hover:opacity-100 data-focus-visible:ring-2 data-focus-visible:ring-ring/50"
               slot="remove"
             >
               <HugeiconsIcon icon={Cancel01Icon} size={12} />

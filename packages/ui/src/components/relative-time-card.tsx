@@ -137,7 +137,7 @@ function TimezoneRow({
 }
 
 const triggerVariants = cva(
-  "inline-flex w-fit cursor-default items-center justify-center text-foreground/70 text-sm transition-colors hover:text-foreground/90 focus-visible:rounded-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+  "inline-flex w-fit cursor-default items-center justify-center text-foreground/70 text-sm transition-colors hover:text-foreground/90 focus-visible:rounded-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
   {
     variants: {
       variant: {

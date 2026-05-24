@@ -131,7 +131,7 @@ export function InputWithInnerTags({
 
   return (
     <div className={containerClassName} data-slot="input-with-inner-tags">
-      <div className="flex h-auto min-h-8 w-full min-w-0 flex-wrap items-center gap-2 rounded-lg border border-input bg-input/20 px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:ring-destructive/40">
+      <div className="flex h-auto min-h-8 w-full min-w-0 flex-wrap items-center gap-2 rounded-lg border border-input bg-input/20 px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:ring-destructive/40">
         {/* Render existing tags */}
         {tags.map((tag) => (
           <Badge
@@ -142,7 +142,7 @@ export function InputWithInnerTags({
             {tag.text}
             <Button
               aria-label={`Remove ${tag.text}`}
-              className="ml-0.5 inline-flex size-4 h-auto items-center justify-center rounded px-0.5 text-secondary-foreground/70 transition-colors hover:bg-secondary-foreground/20 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="ml-0.5 inline-flex size-4 h-auto items-center justify-center rounded px-0.5 text-secondary-foreground/70 transition-colors hover:bg-secondary-foreground/20 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50"
               disabled={disabled}
               onClick={() => handleRemoveTag(tag.id)}
               size="icon"

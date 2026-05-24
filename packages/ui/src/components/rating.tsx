@@ -175,7 +175,7 @@ function InteractiveRating({
               type="radio"
               value={n}
             />
-            <span className="block rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <span className="block rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
               <StarIconDisplay filled={filled} pixelSize={pixelSize} />
             </span>
           </label>

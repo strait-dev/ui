@@ -200,7 +200,7 @@ function Badge({
       {dismissible ? (
         <button
           aria-label="Dismiss"
-          className="-mr-0.5 ml-0.5 inline-flex items-center justify-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current"
+          className="-mr-0.5 ml-0.5 inline-flex items-center justify-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           data-slot="badge-dismiss"
           onClick={(e) => {
             e.stopPropagation();

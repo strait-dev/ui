@@ -312,7 +312,7 @@ function BannerClose({ className, ...props }: React.ComponentProps<"button">) {
     <button
       aria-label="Dismiss"
       className={cn(
-        "inline-flex size-5 items-center justify-center rounded opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current",
+        "inline-flex size-5 items-center justify-center rounded opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
         className
       )}
       data-slot="banner-close"
