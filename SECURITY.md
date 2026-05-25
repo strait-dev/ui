@@ -49,6 +49,14 @@ would flow straight to consumers. The repo is configured to make that hard.
   Pages workflows request write/`id-token` scopes, and only where required.
 - **No `pull_request_target`.** Workflows run on `pull_request`, which uses the
   fork's read-only token and never exposes secrets to PR code.
+- **Checkouts don't persist credentials.** Every `actions/checkout` sets
+  `persist-credentials: false` except the release job, which needs them to push
+  version bumps and tags.
+- **Static analysis with [zizmor](https://github.com/zizmorcore/zizmor).** A CI
+  job (`zizmor` in `ci.yml`) audits every workflow for template injection,
+  credential leakage, and misconfigured permissions, and **fails the build** on
+  any finding (`advanced-security: false`). Documented exceptions live in
+  `.github/zizmor.yml`.
 
 ### Publishing
 

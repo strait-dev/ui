@@ -21,6 +21,7 @@ jobs:
         with:
           # Chromatic needs full git history to detect baseline changes.
           fetch-depth: 0
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: latest

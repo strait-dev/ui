@@ -55,8 +55,11 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         run: |
           bun scripts/build-release-notes.mjs \
-            --published '${{ steps.changesets.outputs.publishedPackages }}' \
+            --published "$PUBLISHED" \
             --repo "$GITHUB_REPOSITORY"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          # Pass through env rather than interpolating ${{ }} into the run block
+          # (zizmor template-injection).
+          PUBLISHED: ${{ steps.changesets.outputs.publishedPackages }}
