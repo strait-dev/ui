@@ -6,6 +6,10 @@ from CI using **OIDC trusted publishing** — there is no long-lived npm token
 stored in the repo. The Storybook workspace (`@strait/storybook`) is private and
 excluded from versioning.
 
+> See [`SECURITY.md`](./SECURITY.md) for the repo's full supply-chain hardening
+> (dependency cooldown, SHA-pinned actions, install-script policy) and the
+> one-time npm/GitHub account settings that back this pipeline.
+
 ---
 
 ## Day-to-day: shipping a change
@@ -21,6 +25,12 @@ excluded from versioning.
    backwards-compatible components/props), or **major** (breaking changes) — and
    write a one-line summary. This creates a markdown file under `.changeset/`.
    Commit it with your PR.
+
+   **Start the summary with a Conventional Commits type** (`feat:`, `fix:`,
+   `perf:`, `refactor:`, `docs:`, …). The `check:changeset` gate enforces this,
+   and the prefix is what sorts each entry into the right bucket (🚀 Features,
+   🐛 Bug Fixes, ⚡ Performance, …) of the GitHub Release notes. Example:
+   `fix: give the QRCode SVG an accessible name`.
 3. Merge the PR into `main`.
 4. The **Release** workflow (`.github/workflows/release.yml`) runs on `main` and
    opens (or updates) a **"Version Packages"** PR. That PR consumes all pending
@@ -28,7 +38,9 @@ excluded from versioning.
    lockfile, and updates `CHANGELOG.md`.
 5. **Merge the "Version Packages" PR.** With no changesets left, the same
    workflow runs `changeset publish`, which publishes `@strait/ui` to npm with
-   provenance and pushes the git tag.
+   provenance and pushes the git tag. A follow-up step then publishes a
+   **categorized GitHub Release** for that tag (see
+   [GitHub Release notes](#github-release-notes-reference) below).
 
 > The current starting version is **`0.1.0`**. A minor changeset takes it to
 > `0.2.0`, a patch to `0.1.1`, and a major to `1.0.0`.
@@ -106,6 +118,42 @@ above, and attaches provenance automatically.
 falls back to `npm publish`. That is why this bun-based repo still gets OIDC —
 the actual publish is performed by npm, not by `bun publish` (which does not
 support OIDC).
+
+## GitHub Release notes (reference)
+
+The CHANGELOG that Changesets writes is flat. To get readable, categorized
+release notes we publish the GitHub Release ourselves instead of letting the
+action do it:
+
+- `release.yml` sets `createGithubReleases: false` on the `changesets/action`
+  step and captures its `publishedPackages` output.
+- When something publishes, a follow-up step runs
+  `bun scripts/build-release-notes.mjs`, which reads
+  `packages/ui/CHANGELOG.md`, parses the section for the just-published version,
+  buckets each entry by its Conventional Commits prefix, appends an **Install**
+  block + **Docs** link + **Full Changelog** compare link, and creates the
+  release with `gh release create <tag>`.
+- The pure formatter lives in `scripts/release-notes.mjs` and is unit-tested by
+  `scripts/release-notes.test.mjs` (`bun run test:release-notes`); the CLI
+  wrapper supports `--dry-run` to preview notes without publishing.
+
+Because bucketing relies on the prefix, the `check:changeset` gate
+(`scripts/check-changeset-format.mjs`) fails CI if any changeset summary is
+missing a Conventional Commits type.
+
+## Commit & PR hygiene (reference)
+
+These gates keep history clean enough for the notes pipeline to read:
+
+- **Commit messages** are linted by commitlint (`commitlint.config.mjs`,
+  Conventional Commits) via a lefthook `commit-msg` hook. Hooks install
+  automatically on `bun install` through the root `prepare` script.
+- **PR titles** are checked by `.github/workflows/pr-checks.yml`
+  (`amannn/action-semantic-pull-request`) so the squash-merge subject stays
+  conventional.
+- **A changeset must be present** on every PR. The same workflow runs
+  `changeset status` against the base branch; add the **`skip-changeset`** label
+  for releaseless PRs (docs-only, CI, repo chores) to bypass it.
 
 ## Re-baselining / troubleshooting
 
