@@ -5927,6 +5927,12 @@
             "description": "Inline style overrides for the wrapper `<div>`."
           },
           {
+            "name": "title",
+            "type": "string",
+            "optional": true,
+            "description": "Accessible name for the QR code `<svg>` (rendered as an SVG `<title>`). A QR code is meaningful content a screen reader cannot otherwise convey, so it always carries an accessible name."
+          },
+          {
             "name": "value",
             "type": "string",
             "optional": false,
