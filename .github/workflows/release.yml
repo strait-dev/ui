@@ -38,9 +38,25 @@ jobs:
       # (it only special-cases pnpm), so OIDC applies. The package's
       # prepublishOnly hook builds dist/ during publish.
       - name: Create release PR or publish to npm
+        id: changesets
         uses: changesets/action@v1
         with:
           version: bun run version-packages
           publish: bun run release
+          # We craft richer, Conventional-Commit-categorized notes ourselves in
+          # the next step; let the action publish + tag but not open releases.
+          createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # When a publish happened, turn the new CHANGELOG.md section into a
+      # categorized GitHub Release (Features / Bug Fixes / Performance / Other)
+      # with an install snippet and a full-changelog compare link.
+      - name: Publish categorized GitHub Release
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          bun scripts/build-release-notes.mjs \
+            --published '${{ steps.changesets.outputs.publishedPackages }}' \
+            --repo "$GITHUB_REPOSITORY"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}

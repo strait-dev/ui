@@ -20,6 +20,8 @@
     "check:heavy": "bun scripts/check-heavy-deps.mjs",
     "check:docs": "bun scripts/check-docs.mjs",
     "check:docs:drift": "bun scripts/generate-llms.ts --check",
+    "check:changeset": "bun scripts/check-changeset-format.mjs",
+    "test:release-notes": "node --test scripts/release-notes.test.mjs",
     "docs:generate": "bun scripts/generate-llms.ts",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
@@ -27,11 +29,12 @@
     "changeset": "changeset",
     "version-packages": "changeset version && bun install",
     "release": "changeset publish",
-    "verify": "biome check . && bun scripts/check-conventions.mjs && bun scripts/check-heavy-deps.mjs && bun scripts/check-docs.mjs && bun scripts/generate-llms.ts --check && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
+    "verify": "biome check . && bun scripts/check-conventions.mjs && bun scripts/check-heavy-deps.mjs && bun scripts/check-docs.mjs && bun scripts/check-changeset-format.mjs && bun scripts/generate-llms.ts --check && node --test scripts/release-notes.test.mjs && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
+    "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "http-server": "^14.1.1",
     "playwright-core": "^1.60.0",
