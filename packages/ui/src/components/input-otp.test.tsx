@@ -23,7 +23,7 @@ beforeAll(() => {
 describe("InputOTP", () => {
   it("renders the hidden OTP input with data-slot='input-otp'", () => {
     render(
-      <InputOTP maxLength={4}>
+      <InputOTP maxLength={4} pushPasswordManagerStrategy="none">
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
@@ -38,7 +38,7 @@ describe("InputOTP", () => {
 
   it("renders spellCheck=false on the underlying input", () => {
     render(
-      <InputOTP maxLength={4}>
+      <InputOTP maxLength={4} pushPasswordManagerStrategy="none">
         <InputOTPGroup>
           <InputOTPSlot index={0} />
         </InputOTPGroup>
@@ -62,7 +62,7 @@ describe("InputOTPGroup", () => {
 describe("InputOTPSlot", () => {
   it("renders slot cells with data-slot='input-otp-slot'", () => {
     render(
-      <InputOTP maxLength={3}>
+      <InputOTP maxLength={3} pushPasswordManagerStrategy="none">
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
@@ -76,7 +76,7 @@ describe("InputOTPSlot", () => {
 
   it("size='lg' applies h-9 to the slot", () => {
     render(
-      <InputOTP maxLength={1}>
+      <InputOTP maxLength={1} pushPasswordManagerStrategy="none">
         <InputOTPGroup>
           <InputOTPSlot index={0} size="lg" />
         </InputOTPGroup>
@@ -99,7 +99,7 @@ describe("InputOTPSeparator", () => {
 describe("InputOTP with separator", () => {
   it("renders groups and separator", () => {
     render(
-      <InputOTP maxLength={6}>
+      <InputOTP maxLength={6} pushPasswordManagerStrategy="none">
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
