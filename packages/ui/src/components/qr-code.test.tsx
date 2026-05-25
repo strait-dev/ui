@@ -55,6 +55,20 @@ describe("QRCode", () => {
     const wrapper = container.querySelector("[data-slot='qr-code']");
     expect(wrapper?.classList.contains("custom-class")).toBe(true);
   });
+
+  it("gives the SVG an accessible name derived from value by default", () => {
+    const { container } = render(<QRCode value="https://example.com" />);
+    const title = container.querySelector("[data-slot='qr-code'] svg title");
+    expect(title?.textContent).toBe("QR code for https://example.com");
+  });
+
+  it("uses a custom title when provided", () => {
+    const { container } = render(
+      <QRCode title="Scan to pay" value="https://example.com" />
+    );
+    const title = container.querySelector("[data-slot='qr-code'] svg title");
+    expect(title?.textContent).toBe("Scan to pay");
+  });
 });
 
 // ---------------------------------------------------------------------------
