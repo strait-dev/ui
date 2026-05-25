@@ -706,6 +706,11 @@
       "types": "./dist/components/navigation-rail.d.ts",
       "import": "./dist/components/navigation-rail.js",
       "default": "./dist/components/navigation-rail.js"
+    },
+    "./components/sortable": {
+      "types": "./dist/components/sortable.d.ts",
+      "import": "./dist/components/sortable.js",
+      "default": "./dist/components/sortable.js"
     }
   },
   "devDependencies": {
