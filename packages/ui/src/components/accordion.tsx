@@ -3,10 +3,57 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
 import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { cva } from "class-variance-authority";
+import { createContext, useContext } from "react";
 import { cn } from "../utils/index";
 
+/**
+ * Visual style shared across an {@link Accordion} and its items.
+ * - `default` — flush sections separated by a bottom divider.
+ * - `outline` — each item is a bordered, rounded card with internal padding.
+ * - `solid` — each item is a filled muted card with internal padding.
+ */
+type AccordionVariant = "default" | "outline" | "solid";
+
+/** Spacing applied to the {@link Accordion} root per variant. */
+const accordionRootVariants = cva("flex w-full flex-col", {
+  variants: {
+    variant: {
+      default: "",
+      outline: "gap-2",
+      solid: "gap-2",
+    },
+  },
+  defaultVariants: { variant: "default" },
+});
+
+/**
+ * Class-variance-authority recipe for an {@link AccordionItem}.
+ *
+ * Exported so consumers can derive the same per-item look on custom markup.
+ */
+const accordionItemVariants = cva("", {
+  variants: {
+    variant: {
+      default: "not-last:border-b",
+      outline: "rounded-lg border px-4",
+      solid: "rounded-lg bg-muted/50 px-4",
+    },
+  },
+  defaultVariants: { variant: "default" },
+});
+
+/** Propagates the {@link Accordion} `variant` down to each {@link AccordionItem}. */
+const AccordionContext = createContext<AccordionVariant>("default");
+
 /** Props for {@link Accordion}. */
-export type AccordionProps = AccordionPrimitive.Root.Props;
+export type AccordionProps = AccordionPrimitive.Root.Props & {
+  /**
+   * Visual style applied to every item. Each {@link AccordionItem} can
+   * override it locally with its own `variant`. Defaults to `"default"`.
+   */
+  variant?: AccordionVariant;
+};
 
 /**
  * A vertically stacked set of collapsible sections, each with a trigger
@@ -25,10 +72,12 @@ export type AccordionProps = AccordionPrimitive.Root.Props;
  *   the item is expanded, via `group-aria-expanded` CSS selectors.
  * - Custom icons can be placed inside the trigger with
  *   `data-slot="accordion-trigger-icon"` to pick up automatic sizing.
+ * - Use `variant` to switch between flush (`"default"`), bordered card
+ *   (`"outline"`), and filled card (`"solid"`) layouts.
  *
  * @example
  * ```tsx
- * <Accordion type="single" collapsible>
+ * <Accordion type="single" collapsible variant="outline">
  *   <AccordionItem value="item-1">
  *     <AccordionTrigger>Is it accessible?</AccordionTrigger>
  *     <AccordionContent>
@@ -38,25 +87,46 @@ export type AccordionProps = AccordionPrimitive.Root.Props;
  * </Accordion>
  * ```
  */
-function Accordion({ className, ...props }: AccordionProps) {
+function Accordion({
+  className,
+  variant = "default",
+  ...props
+}: AccordionProps) {
   return (
-    <AccordionPrimitive.Root
-      className={cn("flex w-full flex-col", className)}
-      data-slot="accordion"
-      {...props}
-    />
+    <AccordionContext.Provider value={variant}>
+      <AccordionPrimitive.Root
+        className={cn(accordionRootVariants({ variant }), className)}
+        data-slot="accordion"
+        {...props}
+      />
+    </AccordionContext.Provider>
   );
+}
+
+/** Props for {@link AccordionItem}. */
+export interface AccordionItemProps extends AccordionPrimitive.Item.Props {
+  /**
+   * Visual style for this item. Overrides the variant inherited from the
+   * parent {@link Accordion} when set.
+   */
+  variant?: AccordionVariant;
 }
 
 /**
  * A single collapsible section inside an {@link Accordion}; wraps one
- * {@link AccordionTrigger} and one {@link AccordionContent}.
- * Renders a bottom border except on the last item.
+ * {@link AccordionTrigger} and one {@link AccordionContent}. Inherits the
+ * parent's `variant` unless its own `variant` prop is supplied.
  */
-function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
+function AccordionItem({ className, variant, ...props }: AccordionItemProps) {
+  const inheritedVariant = useContext(AccordionContext);
+  const resolvedVariant = variant ?? inheritedVariant;
+
   return (
     <AccordionPrimitive.Item
-      className={cn("not-last:border-b", className)}
+      className={cn(
+        accordionItemVariants({ variant: resolvedVariant }),
+        className
+      )}
       data-slot="accordion-item"
       {...props}
     />
@@ -131,4 +201,11 @@ function AccordionContent({
   );
 }
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };
+export type { AccordionVariant };
+export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  accordionItemVariants,
+};

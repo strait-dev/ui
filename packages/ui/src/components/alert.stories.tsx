@@ -19,6 +19,7 @@ const variantOptions: AlertVariant[] = [
   "success",
   "warning",
   "destructive",
+  "invert",
 ];
 
 const meta = {
@@ -31,11 +32,12 @@ const meta = {
       description: {
         component: [
           "Inline contextual messages that draw attention to important information.",
-          "Alerts support five variants — `default` (neutral) plus the `info`,",
+          "Alerts support six variants — `default` (neutral) plus the `info`,",
           "`success`, `warning`, and `destructive` intents, each tinting the border,",
-          "background, text, and icon with the matching semantic token. Compose with",
-          "an optional leading icon, `AlertTitle`, `AlertDescription`, and an",
-          "`AlertAction` slot for a dismiss/action button.",
+          "background, text, and icon with the matching semantic token, and `invert`",
+          "for a high-contrast solid surface. Compose with an optional leading icon,",
+          "`AlertTitle`, `AlertDescription`, and an `AlertAction` slot for a",
+          "dismiss/action button.",
         ].join("\n"),
       },
     },
@@ -111,7 +113,36 @@ export const Variants: Story = {
           Your session has expired. Please sign in again to continue.
         </AlertDescription>
       </Alert>
+
+      <Alert {...args} variant="invert">
+        <HugeiconsIcon icon={InformationCircleIcon} />
+        <AlertTitle>Now in beta</AlertTitle>
+        <AlertDescription>
+          Workspace insights are rolling out to all teams this week.
+        </AlertDescription>
+      </Alert>
     </div>
+  ),
+};
+
+/**
+ * Invert variant — a high-contrast solid surface for the highest-emphasis
+ * announcements. Set `variant="invert"`.
+ */
+export const Invert: Story = {
+  render: (args) => (
+    <Alert {...args} className="max-w-lg" variant="invert">
+      <HugeiconsIcon icon={InformationCircleIcon} />
+      <AlertTitle>Now in beta</AlertTitle>
+      <AlertDescription>
+        Workspace insights are rolling out to all teams this week.
+      </AlertDescription>
+      <AlertAction>
+        <Button size="xs" variant="outline">
+          Learn more
+        </Button>
+      </AlertAction>
+    </Alert>
   ),
 };
 

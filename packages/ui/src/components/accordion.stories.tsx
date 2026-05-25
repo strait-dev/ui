@@ -24,6 +24,8 @@ const meta = {
           "- **`defaultValue`** — array of open item values on first render.",
           "- **`value` / `onValueChange`** — controlled open state.",
           "- **`disabled`** — disables all triggers.",
+          "- **`variant`** — `default` (flush) | `outline` (bordered cards) |",
+          "  `solid` (filled cards); overridable per `AccordionItem`.",
           "",
           "Each `AccordionItem` needs a `value` string. Triggers include",
           "animated chevrons via `ArrowDown01Icon` / `ArrowUp01Icon`.",
@@ -42,10 +44,17 @@ const meta = {
       description: "Disable all accordion triggers.",
       table: { defaultValue: { summary: "false" } },
     },
+    variant: {
+      control: "select",
+      options: ["default", "outline", "solid"],
+      description: "Visual style applied to every item.",
+      table: { defaultValue: { summary: "default" } },
+    },
   },
   args: {
     multiple: false,
     disabled: false,
+    variant: "default",
   },
 } satisfies Meta<typeof Accordion>;
 
@@ -143,6 +152,42 @@ export const AllClosed: Story = {
 /** Disabled — all triggers are non-interactive. */
 export const Disabled: Story = {
   args: { disabled: true, defaultValue: ["item-2"] },
+  render: (args) => (
+    <Accordion {...args} className="w-96">
+      {faqItems.map((item) => (
+        <AccordionItem key={item.value} value={item.value}>
+          <AccordionTrigger>{item.trigger}</AccordionTrigger>
+          <AccordionContent>{item.content}</AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  ),
+};
+
+/**
+ * Outline variant — each item is a bordered, rounded card with internal
+ * padding. Set `variant="outline"` on the root.
+ */
+export const Outline: Story = {
+  args: { variant: "outline", defaultValue: ["item-1"] },
+  render: (args) => (
+    <Accordion {...args} className="w-96">
+      {faqItems.map((item) => (
+        <AccordionItem key={item.value} value={item.value}>
+          <AccordionTrigger>{item.trigger}</AccordionTrigger>
+          <AccordionContent>{item.content}</AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  ),
+};
+
+/**
+ * Solid variant — each item is a filled muted card. Set `variant="solid"`
+ * on the root.
+ */
+export const Solid: Story = {
+  args: { variant: "solid", defaultValue: ["item-1"] },
   render: (args) => (
     <Accordion {...args} className="w-96">
       {faqItems.map((item) => (
