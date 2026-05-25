@@ -4,6 +4,7 @@ import { ContextMenu as ContextMenuPrimitive } from "@base-ui/react/context-menu
 import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
+import { createContext, useContext } from "react";
 import { cn } from "../utils/index";
 
 // ---------------------------------------------------------------------------
@@ -165,13 +166,17 @@ function ContextMenuContent({
   );
 }
 
+const ContextMenuGroupContext = createContext(false);
+
 /**
  * Semantic grouping wrapper for related {@link ContextMenuItem}s.
  * Pair with {@link ContextMenuLabel} to add a visible group heading.
  */
 function ContextMenuGroup({ ...props }: ContextMenuPrimitive.Group.Props) {
   return (
-    <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />
+    <ContextMenuGroupContext.Provider value={true}>
+      <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />
+    </ContextMenuGroupContext.Provider>
   );
 }
 
@@ -190,7 +195,8 @@ function ContextMenuLabel({
 }: ContextMenuPrimitive.GroupLabel.Props & {
   inset?: boolean;
 }) {
-  return (
+  const inGroup = useContext(ContextMenuGroupContext);
+  const label = (
     <ContextMenuPrimitive.GroupLabel
       className={cn(
         // default
@@ -205,6 +211,14 @@ function ContextMenuLabel({
       data-slot="context-menu-label"
       {...props}
     />
+  );
+  // base-ui's GroupLabel must render inside a Menu.Group or it throws
+  // "MenuGroupContext is missing". When the label is used as a standalone
+  // heading (not wrapped in ContextMenuGroup), provide a Group ourselves.
+  return inGroup ? (
+    label
+  ) : (
+    <ContextMenuPrimitive.Group>{label}</ContextMenuPrimitive.Group>
   );
 }
 
