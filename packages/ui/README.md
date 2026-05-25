@@ -1,9 +1,7 @@
 # @strait/ui
 
 [![npm version](https://img.shields.io/npm/v/@strait/ui?logo=npm&color=cb3837)](https://www.npmjs.com/package/@strait/ui)
-[![npm downloads](https://img.shields.io/npm/dm/@strait/ui?color=cb3837)](https://www.npmjs.com/package/@strait/ui)
-[![install size](https://packagephobia.com/badge?p=@strait/ui)](https://packagephobia.com/result?p=@strait/ui)
-[![license](https://img.shields.io/npm/l/@strait/ui?color=blue)](https://github.com/strait-dev/ui/blob/main/LICENSE)
+[![license](https://img.shields.io/github/license/strait-dev/ui?color=blue)](https://github.com/strait-dev/ui/blob/main/LICENSE)
 [![CI](https://github.com/strait-dev/ui/actions/workflows/ci.yml/badge.svg)](https://github.com/strait-dev/ui/actions/workflows/ci.yml)
 [![published with provenance](https://img.shields.io/badge/provenance-npm-3b82f6?logo=npm)](https://docs.npmjs.com/generating-provenance-statements)
 
