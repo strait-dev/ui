@@ -24,6 +24,9 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:stories": "bun run --filter @strait/storybook test-storybook",
+    "changeset": "changeset",
+    "version-packages": "changeset version && bun install",
+    "release": "changeset publish",
     "verify": "biome check . && bun scripts/check-conventions.mjs && bun scripts/check-heavy-deps.mjs && bun scripts/check-docs.mjs && bun scripts/generate-llms.ts --check && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },

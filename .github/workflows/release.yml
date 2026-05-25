@@ -1,14 +1,21 @@
 name: Release
 on:
-  release:
-    types: [published]
-  workflow_dispatch:
+  push:
+    branches: [main]
+# Never cancel an in-flight publish.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
-  publish:
+  release:
+    # Stays dormant until the npm package + trusted publisher are bootstrapped
+    # (see RELEASING.md). Set the repo variable RELEASE_ENABLED=true to activate.
+    if: vars.RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      id-token: write # required for npm provenance
+      contents: write # commit version bumps + create git tags
+      pull-requests: write # open/update the "Version Packages" PR
+      id-token: write # npm OIDC trusted publishing (mints token + provenance)
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -16,13 +23,24 @@ jobs:
           bun-version: latest
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22 # OIDC requires Node >= 22.14.0
           registry-url: https://registry.npmjs.org
+      # OIDC trusted publishing needs npm >= 11.5.1, newer than the npm bundled
+      # with Node 22. The trusted publisher configured on npmjs.com mints a
+      # short-lived token at publish time, so there is deliberately no
+      # NODE_AUTH_TOKEN/NPM_TOKEN here, and provenance is attached automatically.
+      - name: Upgrade npm for OIDC trusted publishing
+        run: npm install -g npm@latest
       - run: bun install --frozen-lockfile
-      - name: Build package
-        run: bun run --filter @strait/ui build
-      - name: Publish to npm
-        working-directory: packages/ui
-        run: npm publish --access public --provenance
+      # On a push that contains changesets, this opens/updates the
+      # "Version Packages" PR. When that PR is merged (no changesets left), the
+      # publish command runs: `changeset publish` falls back to `npm publish`
+      # (it only special-cases pnpm), so OIDC applies. The package's
+      # prepublishOnly hook builds dist/ during publish.
+      - name: Create release PR or publish to npm
+        uses: changesets/action@v1
+        with:
+          version: bun run version-packages
+          publish: bun run release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
