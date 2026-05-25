@@ -2,6 +2,9 @@ name: Release
 on:
   push:
     branches: [main]
+  # Manual trigger: lets a maintainer kick off the Changesets flow on demand
+  # (e.g. to cut a release without waiting for the next push to main).
+  workflow_dispatch:
 # Never cancel an in-flight publish.
 concurrency:
   group: release-${{ github.ref }}
