@@ -677,10 +677,10 @@
       "import": "./dist/components/item.js",
       "default": "./dist/components/item.js"
     },
-    "./components/combobox": {
-      "types": "./dist/components/combobox.d.ts",
-      "import": "./dist/components/combobox.js",
-      "default": "./dist/components/combobox.js"
+    "./components/autocomplete": {
+      "types": "./dist/components/autocomplete.d.ts",
+      "import": "./dist/components/autocomplete.js",
+      "default": "./dist/components/autocomplete.js"
     },
     "./components/stepper": {
       "types": "./dist/components/stepper.d.ts",
