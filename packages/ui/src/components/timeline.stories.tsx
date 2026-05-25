@@ -1,8 +1,12 @@
 import {
   Cancel01Icon,
   CheckmarkCircle01Icon,
+  GitCommitIcon,
   Loading03Icon,
+  Message01Icon,
+  RocketIcon,
   Shield01Icon,
+  UserAdd01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -646,6 +650,97 @@ export const WithError: Story = {
         </TimelineHeader>
         <TimelineContent>Build must pass first.</TimelineContent>
       </TimelineItem>
+    </Timeline>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Showcase compositions                                               */
+/* ------------------------------------------------------------------ */
+
+const activitySteps = [
+  {
+    step: 1,
+    icon: GitCommitIcon,
+    date: "2 hours ago",
+    title: "Pushed 3 commits to main",
+    content: "feat: add date selector, fix: lint, docs: changelog.",
+  },
+  {
+    step: 2,
+    icon: Message01Icon,
+    date: "1 hour ago",
+    title: "Commented on PR #482",
+    content: "Left review feedback on the new filter API.",
+  },
+  {
+    step: 3,
+    icon: UserAdd01Icon,
+    date: "40 minutes ago",
+    title: "Added Dana to the team",
+    content: "Invited a new reviewer to the design-system repo.",
+  },
+  {
+    step: 4,
+    icon: RocketIcon,
+    date: "Just now",
+    title: "Deployed v0.2.0",
+    content: "Release rolled out to production.",
+  },
+];
+
+/**
+ * Activity feed — a real-world vertical composition that pairs per-step icons
+ * with timestamps and descriptive content, the most common Timeline use.
+ */
+export const ActivityFeed: Story = {
+  render: () => (
+    <Timeline defaultValue={4} intent="success" size="sm">
+      {activitySteps.map(({ step, icon, date, title, content }) => (
+        <TimelineItem key={step} step={step}>
+          <TimelineSeparator />
+          <TimelineIndicator icon={icon} />
+          <TimelineHeader>
+            <TimelineDate>{date}</TimelineDate>
+            <TimelineTitle>{title}</TimelineTitle>
+          </TimelineHeader>
+          <TimelineContent>{content}</TimelineContent>
+        </TimelineItem>
+      ))}
+    </Timeline>
+  ),
+};
+
+const roadmapSteps = [
+  {
+    step: 1,
+    date: "Q1",
+    title: "Foundations",
+    content: "Tokens & primitives.",
+  },
+  { step: 2, date: "Q2", title: "Components", content: "Full library parity." },
+  { step: 3, date: "Q3", title: "Theming", content: "Multi-brand support." },
+  { step: 4, date: "Q4", title: "1.0", content: "Stable public release." },
+];
+
+/**
+ * Roadmap — a horizontal, dotted milestone track. Demonstrates combining
+ * `orientation="horizontal"` with `variant="dotted"` for a planning view.
+ */
+export const Roadmap: Story = {
+  render: () => (
+    <Timeline defaultValue={2} orientation="horizontal" variant="dotted">
+      {roadmapSteps.map(({ step, date, title, content }) => (
+        <TimelineItem key={step} step={step}>
+          <TimelineSeparator />
+          <TimelineIndicator />
+          <TimelineHeader>
+            <TimelineDate>{date}</TimelineDate>
+            <TimelineTitle>{title}</TimelineTitle>
+          </TimelineHeader>
+          <TimelineContent>{content}</TimelineContent>
+        </TimelineItem>
+      ))}
     </Timeline>
   ),
 };
