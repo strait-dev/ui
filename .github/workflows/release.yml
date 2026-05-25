@@ -46,11 +46,19 @@ jobs:
         with:
           version: bun run version-packages
           publish: bun run release
+          # Conventional message + title so the action's auto-commit clears the
+          # commitlint commit-msg hook and the "Version Packages" PR clears the
+          # semantic-pull-request title gate.
+          commit: "chore(release): version packages"
+          title: "chore(release): version packages"
           # We craft richer, Conventional-Commit-categorized notes ourselves in
           # the next step; let the action publish + tag but not open releases.
           createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Belt-and-suspenders: skip local git hooks during the action's
+          # automated version commit (commitlint already satisfied above).
+          LEFTHOOK: "0"
       # When a publish happened, turn the new CHANGELOG.md section into a
       # categorized GitHub Release (Features / Bug Fixes / Performance / Other)
       # with an install snippet and a full-changelog compare link.
