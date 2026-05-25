@@ -79,9 +79,17 @@ describe("PhoneInput", () => {
     ).toBeDisabled();
   });
 
-  it("size='sm' reaches the underlying input field", () => {
-    render(<PhoneInput defaultCountry="US" placeholder="Phone" size="sm" />);
+  it("variant='sm' reaches the underlying input field", () => {
+    render(<PhoneInput defaultCountry="US" placeholder="Phone" variant="sm" />);
     const input = document.querySelector("[data-slot='input']");
     expect(input).toHaveClass("h-7");
+  });
+
+  it("variant='lg' sizes both the input and the country button", () => {
+    render(<PhoneInput defaultCountry="US" placeholder="Phone" variant="lg" />);
+    expect(document.querySelector("[data-slot='input']")).toHaveClass("h-9");
+    expect(screen.getByRole("button", { name: "Select country" })).toHaveClass(
+      "h-9"
+    );
   });
 });
