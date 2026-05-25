@@ -1,6 +1,15 @@
 {
   "name": "@strait/ui",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "description": "Strait's design system — 120+ accessible, tree-shakeable React components built on Tailwind CSS v4 and Base UI.",
+  "license": "MIT",
+  "homepage": "https://strait-dev.github.io/ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strait-dev/ui.git",
+    "directory": "packages/ui"
+  },
+  "bugs": "https://github.com/strait-dev/ui/issues",
   "type": "module",
   "private": false,
   "publishConfig": {
@@ -11,6 +20,7 @@
   ],
   "files": [
     "dist",
+    "README.md",
     "src/globals.css",
     "tailwind.config.ts",
     "postcss.config.mjs",
@@ -20,7 +30,7 @@
   ],
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",
-    "build": "NODE_OPTIONS=--max-old-space-size=8192 bunchee",
+    "build": "NODE_OPTIONS=--max-old-space-size=14336 bunchee",
     "dev": "bunchee --watch",
     "prepublishOnly": "bun run build",
     "biome:lint": "biome lint ./src",
@@ -45,7 +55,6 @@
     "@tanstack/react-table": "^8.21.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "^7.0.0-dev.20260423.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -64,11 +73,11 @@
     "react-day-picker": "^10.0.1",
     "react-hotkeys-hook": "^5.2.4",
     "react-phone-number-input": "^3.4.16",
-    "react-resizable-panels": "^4.10.0",
+    "react-resizable-panels": "^4.11.2",
     "react-virtuoso": "^4.18.6",
     "recharts": "^3.8.1",
     "shadcn": "^4.4.0",
-    "shiki": "^3.13.0",
+    "shiki": "^4.1.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.3.0",
@@ -702,6 +711,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260524.1",
     "@vitejs/plugin-react": "^6.0.2",
     "bunchee": "^6.10.0",
     "expect-type": "^1.2.1",

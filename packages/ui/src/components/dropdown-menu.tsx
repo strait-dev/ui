@@ -4,6 +4,7 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type * as React from "react";
+import { createContext, useContext } from "react";
 import { cn } from "../utils/index";
 
 // ---------------------------------------------------------------------------
@@ -148,12 +149,18 @@ function DropdownMenuContent({
   );
 }
 
+const DropdownMenuGroupContext = createContext(false);
+
 /**
  * Semantic grouping wrapper for related {@link DropdownMenuItem}s.
  * Pair with {@link DropdownMenuLabel} to add a visible group heading.
  */
 function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
-  return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />;
+  return (
+    <DropdownMenuGroupContext.Provider value={true}>
+      <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
+    </DropdownMenuGroupContext.Provider>
+  );
 }
 
 /**
@@ -172,7 +179,8 @@ function DropdownMenuLabel({
 }: MenuPrimitive.GroupLabel.Props & {
   inset?: boolean;
 }) {
-  return (
+  const inGroup = useContext(DropdownMenuGroupContext);
+  const label = (
     <MenuPrimitive.GroupLabel
       className={cn(
         // default
@@ -188,6 +196,10 @@ function DropdownMenuLabel({
       {...props}
     />
   );
+  // base-ui's GroupLabel must render inside a Menu.Group or it throws
+  // "MenuGroupContext is missing". When the label is used as a standalone
+  // heading (not wrapped in DropdownMenuGroup), provide a Group ourselves.
+  return inGroup ? label : <MenuPrimitive.Group>{label}</MenuPrimitive.Group>;
 }
 
 /**

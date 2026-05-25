@@ -1,28 +1,65 @@
 name: Release
 on:
-  release:
-    types: [published]
-  workflow_dispatch:
+  push:
+    branches: [main]
+# Never cancel an in-flight publish.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
-  publish:
+  release:
+    # Stays dormant until the npm package + trusted publisher are bootstrapped
+    # (see RELEASING.md). Set the repo variable RELEASE_ENABLED=true to activate.
+    if: vars.RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      id-token: write # required for npm provenance
+      contents: write # commit version bumps + create git tags
+      pull-requests: write # open/update the "Version Packages" PR
+      id-token: write # npm OIDC trusted publishing (mints token + provenance)
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: latest
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 22
+          node-version: 22 # OIDC requires Node >= 22.14.0
           registry-url: https://registry.npmjs.org
+      # OIDC trusted publishing needs npm >= 11.5.1, newer than the npm bundled
+      # with Node 22. The trusted publisher configured on npmjs.com mints a
+      # short-lived token at publish time, so there is deliberately no
+      # NODE_AUTH_TOKEN/NPM_TOKEN here, and provenance is attached automatically.
+      - name: Upgrade npm for OIDC trusted publishing
+        run: npm install -g npm@latest
       - run: bun install --frozen-lockfile
-      - name: Build package
-        run: bun run --filter @strait/ui build
-      - name: Publish to npm
-        working-directory: packages/ui
-        run: npm publish --access public --provenance
+      # On a push that contains changesets, this opens/updates the
+      # "Version Packages" PR. When that PR is merged (no changesets left), the
+      # publish command runs: `changeset publish` falls back to `npm publish`
+      # (it only special-cases pnpm), so OIDC applies. The package's
+      # prepublishOnly hook builds dist/ during publish.
+      - name: Create release PR or publish to npm
+        id: changesets
+        uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1.8.0
+        with:
+          version: bun run version-packages
+          publish: bun run release
+          # We craft richer, Conventional-Commit-categorized notes ourselves in
+          # the next step; let the action publish + tag but not open releases.
+          createGithubReleases: false
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # When a publish happened, turn the new CHANGELOG.md section into a
+      # categorized GitHub Release (Features / Bug Fixes / Performance / Other)
+      # with an install snippet and a full-changelog compare link.
+      - name: Publish categorized GitHub Release
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          bun scripts/build-release-notes.mjs \
+            --published "$PUBLISHED" \
+            --repo "$GITHUB_REPOSITORY"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          # Pass through env rather than interpolating ${{ }} into the run block
+          # (zizmor template-injection).
+          PUBLISHED: ${{ steps.changesets.outputs.publishedPackages }}

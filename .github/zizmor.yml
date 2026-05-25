@@ -1,0 +1,9 @@
+# zizmor configuration — https://docs.zizmor.sh/configuration/
+rules:
+  artipacked:
+    # release.yml's checkout deliberately keeps credentials persisted:
+    # changesets/action needs them to push the version-bump commit and git tags.
+    # artipacked's risk is credentials leaking via an uploaded artifact, and the
+    # release job uploads no artifacts, so this is safe to ignore here.
+    ignore:
+      - release.yml

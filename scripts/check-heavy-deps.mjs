@@ -40,9 +40,7 @@ const OWNERS = {
 };
 
 const isSource = (f) =>
-  f.endsWith(".tsx") &&
-  !f.endsWith(".stories.tsx") &&
-  !f.endsWith(".test.tsx");
+  f.endsWith(".tsx") && !f.endsWith(".stories.tsx") && !f.endsWith(".test.tsx");
 
 /** Heavy deps directly imported by `src`. */
 function heavyImports(src) {
@@ -57,8 +55,9 @@ function heavyImports(src) {
 function localComponentImports(src) {
   const names = new Set();
   const re = /from\s+["'](?:\.\/|\.\.\/components\/)([\w-]+)["']/g;
-  let m;
-  while ((m = re.exec(src)) !== null) names.add(m[1]);
+  for (const m of src.matchAll(re)) {
+    names.add(m[1]);
+  }
   return names;
 }
 
@@ -89,9 +88,13 @@ for (const file of readdirSync(UTILS_DIR).filter(isSource)) {
 // Rule 2: widely-imported components must be heavy-dep-free (owners excepted).
 for (const file of componentFiles) {
   const name = file.replace(/\.tsx$/, "");
-  if ((inDegree.get(name) ?? 0) < THRESHOLD) continue;
+  if ((inDegree.get(name) ?? 0) < THRESHOLD) {
+    continue;
+  }
   for (const dep of heavyByFile.get(file)) {
-    if (OWNERS[dep]?.has(file)) continue;
+    if (OWNERS[dep]?.has(file)) {
+      continue;
+    }
     add(
       file,
       `is imported by ${inDegree.get(name)} components but imports heavy dep "${dep}"`
@@ -101,7 +104,9 @@ for (const file of componentFiles) {
 
 if (violations.length) {
   console.error(`\n✗ ${violations.length} heavy-dependency leaks:\n`);
-  for (const v of violations) console.error(`  ${v}`);
+  for (const v of violations) {
+    console.error(`  ${v}`);
+  }
   process.exit(1);
 }
 

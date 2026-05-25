@@ -71,6 +71,13 @@ export interface QRCodeProps
   size?: number;
   /** Inline style overrides for the wrapper `<div>`. */
   style?: React.CSSProperties;
+  /**
+   * Accessible name for the QR code `<svg>` (rendered as an SVG `<title>`).
+   * A QR code is meaningful content a screen reader cannot otherwise convey,
+   * so it always carries an accessible name.
+   * @defaultValue `` `QR code for ${value}` ``
+   */
+  title?: string;
   /** The data to encode into the QR code (e.g. a URL or plain text). */
   value: string;
 }
@@ -103,6 +110,7 @@ function QRCode({
   bgColor,
   fgColor,
   margin = 0,
+  title,
   className,
   style,
   children,
@@ -130,6 +138,7 @@ function QRCode({
           level={level}
           ref={svgRef}
           size={size}
+          title={title ?? `QR code for ${value}`}
           value={value}
           {...(bgColor === undefined ? {} : { bgColor })}
           {...(fgColor === undefined ? {} : { fgColor })}

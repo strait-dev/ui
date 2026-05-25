@@ -1,5 +1,12 @@
 # Strait UI
 
+[![npm version](https://img.shields.io/npm/v/@strait/ui?logo=npm&color=cb3837)](https://www.npmjs.com/package/@strait/ui)
+[![npm downloads](https://img.shields.io/npm/dm/@strait/ui?color=cb3837)](https://www.npmjs.com/package/@strait/ui)
+[![install size](https://packagephobia.com/badge?p=@strait/ui)](https://packagephobia.com/result?p=@strait/ui)
+[![license](https://img.shields.io/npm/l/@strait/ui?color=blue)](./LICENSE)
+[![CI](https://github.com/strait-dev/ui/actions/workflows/ci.yml/badge.svg)](https://github.com/strait-dev/ui/actions/workflows/ci.yml)
+[![published with provenance](https://img.shields.io/badge/provenance-npm-3b82f6?logo=npm)](https://docs.npmjs.com/generating-provenance-statements)
+
 **`@strait/ui`** is Strait's design system — a custom React component library built on
 [Tailwind CSS v4](https://tailwindcss.com), [Base UI](https://base-ui.com), and a set of
 semantic design tokens. It ships **120+ accessible, composable components** spanning forms,

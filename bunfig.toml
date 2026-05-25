@@ -4,3 +4,11 @@
 
 [install]
 exact = false
+
+# Supply-chain cooldown: refuse to resolve npm versions published less than
+# 3 days ago, so a freshly-compromised release can't be pulled in before it is
+# caught and yanked. Applies to `bun add`/`bun update` resolution; CI installs
+# with --frozen-lockfile are unaffected. Requires Bun >= 1.3.
+minimumReleaseAge = 259200 # seconds (3 days)
+# Add a package name here only to deliberately bypass the age gate for it.
+minimumReleaseAgeExcludes = []

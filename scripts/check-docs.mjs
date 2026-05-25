@@ -18,9 +18,7 @@ import { Node, Project } from "ts-morph";
 const COMPONENTS_DIR = "packages/ui/src/components";
 
 const isSource = (f) =>
-  f.endsWith(".tsx") &&
-  !f.endsWith(".stories.tsx") &&
-  !f.endsWith(".test.tsx");
+  f.endsWith(".tsx") && !f.endsWith(".stories.tsx") && !f.endsWith(".test.tsx");
 
 const isPascalCase = (name) => /^[A-Z]/.test(name);
 
