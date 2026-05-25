@@ -1,6 +1,15 @@
 {
   "name": "@strait/ui",
   "version": "0.1.0",
+  "description": "Strait's design system — 120+ accessible, tree-shakeable React components built on Tailwind CSS v4 and Base UI.",
+  "license": "MIT",
+  "homepage": "https://strait-dev.github.io/ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strait-dev/ui.git",
+    "directory": "packages/ui"
+  },
+  "bugs": "https://github.com/strait-dev/ui/issues",
   "type": "module",
   "private": false,
   "publishConfig": {
@@ -11,6 +20,7 @@
   ],
   "files": [
     "dist",
+    "README.md",
     "src/globals.css",
     "tailwind.config.ts",
     "postcss.config.mjs",
