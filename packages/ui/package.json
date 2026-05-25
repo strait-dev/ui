@@ -711,6 +711,11 @@
       "types": "./dist/components/sortable.d.ts",
       "import": "./dist/components/sortable.js",
       "default": "./dist/components/sortable.js"
+    },
+    "./components/scrollspy": {
+      "types": "./dist/components/scrollspy.d.ts",
+      "import": "./dist/components/scrollspy.js",
+      "default": "./dist/components/scrollspy.js"
     }
   },
   "devDependencies": {
