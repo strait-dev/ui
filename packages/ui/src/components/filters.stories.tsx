@@ -14,7 +14,7 @@ import {
   Filters,
   FiltersContent,
   type FiltersProps,
-} from "./filter";
+} from "./filters";
 
 // ---------------------------------------------------------------------------
 // Field definitions reused across stories
@@ -107,7 +107,7 @@ function FiltersDemo({ filters: seed = [], ...props }: Partial<FiltersProps>) {
 // ---------------------------------------------------------------------------
 
 const meta: Meta<typeof Filters> = {
-  title: "Data Display/Filter",
+  title: "Data Display/Filters",
   component: Filters,
   tags: ["autodocs"],
   parameters: {
@@ -316,6 +316,21 @@ export const KeyboardShortcut: Story = {
     enableShortcut: true,
     shortcutKey: "f",
     shortcutLabel: "F",
+  },
+};
+
+// ---------------------------------------------------------------------------
+// No search input
+// ---------------------------------------------------------------------------
+
+/**
+ * Set `showSearchInput={false}` to hide the search box at the top of the field
+ * picker — useful for short field lists where filtering adds no value.
+ */
+export const NoSearchInput: Story = {
+  args: {
+    fields: [statusField, priorityField],
+    showSearchInput: false,
   },
 };
 

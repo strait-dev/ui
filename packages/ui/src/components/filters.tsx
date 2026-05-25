@@ -950,6 +950,7 @@ function AddFilterMenu({
   enableShortcut,
   shortcutKey,
   shortcutLabel,
+  showSearchInput,
   onAdded,
 }: {
   fields: FilterFieldsConfig;
@@ -960,6 +961,7 @@ function AddFilterMenu({
   enableShortcut: boolean;
   shortcutKey: string;
   shortcutLabel: string;
+  showSearchInput: boolean;
   onAdded: (id: string) => void;
 }) {
   const { size, i18n } = useFilterContext();
@@ -1155,7 +1157,9 @@ function AddFilterMenu({
           </div>
         ) : (
           <Command className="bg-transparent">
-            <CommandInput placeholder={i18n.searchFields} />
+            {showSearchInput && (
+              <CommandInput placeholder={i18n.searchFields} />
+            )}
             <CommandList>
               <CommandEmpty>{i18n.noFieldsFound}</CommandEmpty>
               {groups.map((group, index) => (
@@ -1225,6 +1229,8 @@ export interface FiltersProps {
   shortcutKey?: string;
   /** Label shown in the trigger's `Kbd` hint. @default "F" */
   shortcutLabel?: string;
+  /** Show the search box at the top of the field picker. @default true */
+  showSearchInput?: boolean;
   /** Control density. @default "default" */
   size?: FilterSize;
   /** Replace the default "Add filter" trigger element. */
@@ -1292,6 +1298,7 @@ export function Filters({
   enableShortcut = false,
   shortcutKey = "f",
   shortcutLabel = "F",
+  showSearchInput = true,
 }: FiltersProps) {
   const [lastAddedId, setLastAddedId] = React.useState<string | null>(null);
 
@@ -1337,6 +1344,7 @@ export function Filters({
           onChange={onChange}
           shortcutKey={shortcutKey}
           shortcutLabel={shortcutLabel}
+          showSearchInput={showSearchInput}
           trigger={trigger}
         />
         {filters.map((filter) => {

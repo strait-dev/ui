@@ -282,10 +282,10 @@
       "import": "./dist/components/relative-time-card.js",
       "default": "./dist/components/relative-time-card.js"
     },
-    "./components/filter": {
-      "types": "./dist/components/filter.d.ts",
-      "import": "./dist/components/filter.js",
-      "default": "./dist/components/filter.js"
+    "./components/filters": {
+      "types": "./dist/components/filters.d.ts",
+      "import": "./dist/components/filters.js",
+      "default": "./dist/components/filters.js"
     },
     "./components/json-viewer": {
       "types": "./dist/components/json-viewer.d.ts",
