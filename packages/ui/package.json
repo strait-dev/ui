@@ -716,6 +716,11 @@
       "types": "./dist/components/scrollspy.d.ts",
       "import": "./dist/components/scrollspy.js",
       "default": "./dist/components/scrollspy.js"
+    },
+    "./components/date-selector": {
+      "types": "./dist/components/date-selector.d.ts",
+      "import": "./dist/components/date-selector.js",
+      "default": "./dist/components/date-selector.js"
     }
   },
   "devDependencies": {
