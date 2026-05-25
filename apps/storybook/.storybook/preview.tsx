@@ -1,7 +1,7 @@
 import { withThemeByClassName } from "@storybook/addon-themes";
 import type { Preview } from "@storybook/react-vite";
 
-// Fonts referenced by the Tailwind theme (GitBook-inspired: Inter + JetBrains Mono).
+// Fonts referenced by the Tailwind theme (Inter + JetBrains Mono).
 import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
 // The library's global stylesheet (Tailwind v4 + design tokens + keyframes).

@@ -20,7 +20,7 @@ Storybook site, published from `main` (see [Documentation site](#documentation-s
 
 ## Highlights
 
-- **Custom design language** — GitBook-inspired warm-stone neutrals with an orange accent,
+- **Custom design language** — warm-stone neutrals with an orange accent,
   an `oklch` color system, and a tuned radius/typography scale. Not a stock shadcn theme.
 - **Semantic tokens everywhere** — components style themselves with intent tokens
   (`bg-success/10`, `text-destructive-accent`, `var(--chart-1..5)`), so re-theming is a
@@ -73,7 +73,7 @@ tokens, and component keyframes:
 import "@strait/ui/css";
 ```
 
-The library is built with the GitBook-inspired Inter + JetBrains Mono pairing. Install the
+The library is built with an Inter + JetBrains Mono font pairing. Install the
 fonts your design calls for, e.g.:
 
 ```ts

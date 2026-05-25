@@ -9,9 +9,9 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* GitBook-inspired radius scale: 10px base → 8px medium, ~18px cards */
+  /* Radius scale: 10px base → 8px medium, ~18px cards */
   --radius: 0.625rem;
-  /* Warm-stone neutrals + orange accent (GitBook design language) */
+  /* Warm-stone neutrals + orange accent */
   --background: oklch(1 0 0);
   --foreground: oklch(0.216 0.006 56.043);
   --card: oklch(1 0 0);
