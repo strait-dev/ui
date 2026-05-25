@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",
-    "build": "NODE_OPTIONS=--max-old-space-size=8192 bunchee",
+    "build": "NODE_OPTIONS=--max-old-space-size=14336 bunchee",
     "dev": "bunchee --watch",
     "prepublishOnly": "bun run build",
     "biome:lint": "biome lint ./src",
