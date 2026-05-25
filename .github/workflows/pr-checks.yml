@@ -1,0 +1,40 @@
+name: PR Checks
+# Lightweight pull-request hygiene gates, kept out of ci.yml so that title and
+# label edits don't re-run the full build/test matrix.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+permissions:
+  contents: read
+  pull-requests: read
+concurrency:
+  group: pr-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  pr-title:
+    name: PR title is Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lint PR title
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  changeset:
+    name: Changeset present
+    # Escape hatch: add the `skip-changeset` label for releaseless PRs
+    # (docs-only, CI, repo chores).
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-changeset') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Require a changeset
+        run: |
+          git fetch origin "${{ github.base_ref }}"
+          bunx changeset status --since="origin/${{ github.base_ref }}"

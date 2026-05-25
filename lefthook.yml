@@ -1,0 +1,7 @@
+# Git hooks managed by lefthook. Installed automatically by the root `prepare`
+# script on `bun install`. Run `bunx lefthook install` to (re)install manually.
+commit-msg:
+  commands:
+    commitlint:
+      # {1} is the path to the commit message file git passes to the hook.
+      run: bunx commitlint --edit {1}
