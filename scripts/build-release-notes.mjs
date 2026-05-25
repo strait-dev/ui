@@ -58,12 +58,18 @@ const changelog = readFileSync(CHANGELOG_PATH, "utf8");
 function previousTag() {
   let tags = [];
   try {
-    tags = execFileSync("git", ["tag", "--list", `${PACKAGE}@*`], {
+    // CI checks out a shallow tree without tags, so read them from the remote
+    // rather than the local tag db. Lines look like:
+    //   <sha>\trefs/tags/@strait/ui@0.1.0
+    //   <sha>\trefs/tags/@strait/ui@0.1.0^{}   (annotated-tag peel; drop it)
+    tags = execFileSync("git", ["ls-remote", "--tags", "origin"], {
       encoding: "utf8",
     })
       .split("\n")
+      .map((line) => line.split("\t")[1] ?? "")
+      .map((ref) => ref.replace(/^refs\/tags\//, "").replace(/\^\{\}$/, ""))
       .map((t) => t.trim())
-      .filter(Boolean);
+      .filter((t) => t.startsWith(`${PACKAGE}@`));
   } catch {
     return;
   }
@@ -101,21 +107,26 @@ if (dryRun) {
   process.exit(0);
 }
 
-execFileSync(
-  "gh",
-  [
-    "release",
-    "create",
-    tag,
-    "--repo",
-    repo,
-    "--title",
-    `${PACKAGE} ${version}`,
-    "--notes",
-    notes,
-    "--verify-tag",
-  ],
-  { stdio: "inherit" }
-);
+// `changeset publish` creates the git tag locally but the changesets action
+// does not push it (we run with createGithubReleases: false). So we own tag
+// creation here: without --verify-tag, `gh release create` creates the tag
+// itself, anchored to the publish commit via --target so it points at the
+// exact tree that was published rather than whatever main's HEAD is now.
+const ghArgs = [
+  "release",
+  "create",
+  tag,
+  "--repo",
+  repo,
+  "--title",
+  `${PACKAGE} ${version}`,
+  "--notes",
+  notes,
+];
+const target = process.env.GITHUB_SHA;
+if (target) {
+  ghArgs.push("--target", target);
+}
+execFileSync("gh", ghArgs, { stdio: "inherit" });
 
 console.log(`Created GitHub Release ${tag}.`);
