@@ -515,6 +515,9 @@ export function DataGridContainer({
       className={cn(
         "w-full overflow-hidden",
         border && "rounded-lg border border-border",
+        // Draw a top border on a sibling pagination so the table and the
+        // pagination chrome share one bordered card.
+        "[&>[data-slot=data-grid-pagination]]:border-border [&>[data-slot=data-grid-pagination]]:border-t",
         className
       )}
       data-slot="data-grid"
@@ -1632,6 +1635,14 @@ export interface DataGridPaginationProps {
  *
  * Shows a page-size selector on the left and page-number buttons with
  * optional grouped ellipsis on the right. Reads table state from context.
+ *
+ * @remarks
+ * The pagination has no border of its own. When placed inside a
+ * {@link DataGridContainer} as a sibling of {@link DataGridTable} the
+ * container draws a `border-t` between the two so they share one bordered
+ * card. Render it outside the container — anywhere on the page — to get a
+ * standalone bar with just padding; layer it into your own surface as
+ * needed.
  */
 export function DataGridPagination(userProps: DataGridPaginationProps) {
   const { table, isLoading, recordCount } = useDataGrid();
@@ -1696,7 +1707,7 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
   return (
     <div
       className={cn(
-        "flex grow flex-col flex-wrap items-center justify-between gap-2.5 border-border border-t px-3 py-2.5 text-sm sm:flex-row",
+        "flex grow flex-col flex-wrap items-center justify-between gap-2.5 px-3 py-2.5 text-sm sm:flex-row",
         userProps.className
       )}
       data-slot="data-grid-pagination"

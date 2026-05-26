@@ -234,8 +234,8 @@ export const Playground: Story = {
       <DataGrid recordCount={baseProjects.length} table={table}>
         <DataGridContainer>
           <DataGridTable />
+          <DataGridPagination />
         </DataGridContainer>
-        <DataGridPagination />
       </DataGrid>
     );
   },
@@ -691,7 +691,7 @@ export const ColumnFilter: Story = {
   },
 };
 
-/** Standalone `DataGridPagination` with adjustable page size. */
+/** Standalone `DataGridPagination` rendered outside the {@link DataGridContainer}. */
 export const Pagination: Story = {
   render: () => {
     const [pagination, setPagination] = useState<PaginationState>({
