@@ -1199,16 +1199,32 @@ function SidebarMenu({
 }: SidebarMenuProps) {
   if (reorderable) {
     const list = items ?? [];
+    // Drop drag handlers from the spread — Sortable owns those — and forward
+    // the rest as plain div attrs so dnd-kit's wrappers stay well-typed.
+    const {
+      onDrag: _onDrag,
+      onDragStart: _onDragStart,
+      onDragEnd: _onDragEnd,
+      onDragEnter: _onDragEnter,
+      onDragExit: _onDragExit,
+      onDragLeave: _onDragLeave,
+      onDragOver: _onDragOver,
+      onDrop: _onDrop,
+      ...rest
+    } = props;
     return (
       <SidebarMenuReorderableContext.Provider value>
-        <Sortable
+        <Sortable<string>
           className={cn("flex w-full min-w-0 flex-col gap-0.5", className)}
-          getItemValue={(v: string) => v}
+          getItemValue={(v) => v}
           onValueChange={(next) => onReorder?.(next)}
           role="list"
           strategy="vertical"
           value={list}
-          {...(props as React.ComponentProps<"div">)}
+          {...(rest as Omit<
+            React.ComponentProps<"div">,
+            "onDragStart" | "onDragEnd"
+          >)}
         >
           {children}
         </Sortable>
@@ -1384,8 +1400,7 @@ function SidebarMenuItem({
         data-slot="sidebar-menu-item"
         onOpenChange={(next: boolean) => ctx.setSubmenuOpen(value, next)}
         open={ctx.isSubmenuOpen(value)}
-        render={<li />}
-        {...props}
+        render={<li {...(props as React.LiHTMLAttributes<HTMLLIElement>)} />}
       >
         {children}
       </CollapsiblePrimitive.Root>
@@ -2221,8 +2236,8 @@ function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
   }
 
   return (
-    <MenuPrimitive.Root openOnHover>
-      <MenuPrimitive.Trigger render={children} />
+    <MenuPrimitive.Root>
+      <MenuPrimitive.Trigger openOnHover render={children} />
       <MenuPrimitive.Portal>
         <MenuPrimitive.Positioner align="start" side="right" sideOffset={4}>
           <MenuPrimitive.Popup
