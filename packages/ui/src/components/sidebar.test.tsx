@@ -40,6 +40,8 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
   SidebarSearchButton,
+  SidebarSwitcher,
+  SidebarSwitcherItem,
   SidebarTrigger,
   SidebarUserButton,
   useSidebar,
@@ -295,6 +297,34 @@ describe("Sidebar", () => {
     expect(screen.queryByText("Sign out")).toBeNull();
     await userEvent.click(trigger);
     expect(await screen.findByText("Sign out")).toBeInTheDocument();
+  });
+
+  it("opens the SidebarSwitcher popover and reflects selected via data-selected", async () => {
+    render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarSwitcher current={{ name: "Acme", meta: "Pro" }}>
+            <SidebarSwitcherItem name="Acme" meta="Pro" selected />
+            <SidebarSwitcherItem name="Globex" meta="Free" />
+          </SidebarSwitcher>
+        </Sidebar>
+      </SidebarProvider>
+    );
+    expect(screen.queryByText("Globex")).toBeNull();
+    const trigger = screen.getAllByText("Acme")[0]?.closest("button");
+    expect(trigger).not.toBeNull();
+    if (!trigger) return;
+    await userEvent.click(trigger);
+    const globex = await screen.findByText("Globex");
+    expect(globex).toBeInTheDocument();
+    const acmeItem = screen
+      .getAllByRole("button")
+      .find(
+        (b) =>
+          b.getAttribute("data-slot") === "sidebar-switcher-item" &&
+          b.getAttribute("data-selected") === "true"
+      );
+    expect(acmeItem).toBeDefined();
   });
 
   it("renders SidebarUserButton as a static chip with no menu trigger", () => {

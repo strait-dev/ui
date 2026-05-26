@@ -3,11 +3,13 @@
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { mergeProps } from "@base-ui/react/merge-props";
+import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
 import {
   ArrowDown01Icon,
   Search01Icon,
   SidebarLeftIcon,
+  Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -1573,6 +1575,197 @@ function SidebarUserButton({
   );
 }
 
+/** Shape of the `current` selection shown by {@link SidebarSwitcher}. */
+export interface SidebarSwitcherCurrent {
+  /** Display name of the selected workspace / tenant. */
+  name: string;
+  /**
+   * Logo / avatar node rendered to the left of the name. Pass any React
+   * element (an `<img>`, an icon, a coloured square with an initial).
+   */
+  logo?: React.ReactNode;
+  /**
+   * Optional secondary line — usually the role or plan (e.g. "Pro",
+   * "Owner"). Hidden in icon-collapsed mode.
+   */
+  meta?: string;
+}
+
+/** Props for {@link SidebarSwitcher}. */
+export interface SidebarSwitcherProps
+  extends Omit<React.ComponentProps<"button">, "title"> {
+  /** The currently selected workspace; controls the trigger row. */
+  current: SidebarSwitcherCurrent;
+  /**
+   * Popover body — typically a list of {@link SidebarSwitcherItem}s plus
+   * any auxiliary actions (e.g. "Create workspace").
+   */
+  children?: React.ReactNode;
+}
+
+/**
+ * Workspace / tenant switcher row, usually pinned to the
+ * {@link SidebarHeader}.
+ *
+ * The trigger is a full-width sidebar row showing a logo + name + optional
+ * `meta` line and a trailing chevron. Clicking opens a Base UI `Popover`
+ * positioned to the right of the sidebar, into which consumers slot
+ * {@link SidebarSwitcherItem}s.
+ *
+ * @remarks
+ * - In icon-collapsed mode the row shrinks to a square showing only the
+ *   logo.
+ * - The popover stays positioned to the right so it never overlaps the
+ *   nav itself.
+ *
+ * @example
+ * ```tsx
+ * <SidebarSwitcher current={{ name: "Acme", meta: "Pro", logo: <AcmeLogo /> }}>
+ *   <SidebarSwitcherItem name="Acme" meta="Pro" selected />
+ *   <SidebarSwitcherItem name="Globex" meta="Free" />
+ * </SidebarSwitcher>
+ * ```
+ */
+function SidebarSwitcher({
+  className,
+  current,
+  children,
+  ...props
+}: SidebarSwitcherProps) {
+  const trigger = (
+    <button
+      className={cn(
+        "group/switcher flex w-full items-center gap-2 rounded-md p-2 text-left text-sidebar-foreground outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0",
+        className
+      )}
+      data-sidebar="switcher"
+      data-slot="sidebar-switcher"
+      type="button"
+      {...props}
+    >
+      {current.logo ? (
+        <span
+          aria-hidden
+          className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-md bg-sidebar-accent text-sidebar-accent-foreground"
+          data-slot="sidebar-switcher-logo"
+        >
+          {current.logo}
+        </span>
+      ) : null}
+      <span
+        className="flex min-w-0 flex-1 flex-col group-data-[collapsible=icon]:hidden"
+        data-slot="sidebar-switcher-body"
+      >
+        <span className="truncate font-medium text-sm">{current.name}</span>
+        {current.meta ? (
+          <span className="truncate text-muted-foreground text-xs">
+            {current.meta}
+          </span>
+        ) : null}
+      </span>
+      <HugeiconsIcon
+        className="ml-auto size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
+        data-slot="sidebar-switcher-chevron"
+        icon={ArrowDown01Icon}
+        strokeWidth={2}
+      />
+    </button>
+  );
+
+  return (
+    <PopoverPrimitive.Root>
+      <PopoverPrimitive.Trigger render={trigger} />
+      <PopoverPrimitive.Portal>
+        <PopoverPrimitive.Positioner align="start" side="right" sideOffset={8}>
+          <PopoverPrimitive.Popup
+            className="z-50 min-w-64 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 motion-reduce:transition-none"
+            data-slot="sidebar-switcher-popover"
+          >
+            {children}
+          </PopoverPrimitive.Popup>
+        </PopoverPrimitive.Positioner>
+      </PopoverPrimitive.Portal>
+    </PopoverPrimitive.Root>
+  );
+}
+
+/** Props for {@link SidebarSwitcherItem}. */
+export interface SidebarSwitcherItemProps
+  extends Omit<React.ComponentProps<"button">, "title"> {
+  /** Display name of the workspace. */
+  name: string;
+  /** Optional logo / avatar node rendered before the name. */
+  logo?: React.ReactNode;
+  /**
+   * Optional secondary metadata line (e.g. plan, role). Rendered
+   * underneath the name in muted text.
+   */
+  meta?: string;
+  /**
+   * When `true`, the item is rendered as the active selection and shows a
+   * trailing check glyph. Surfaces as `data-selected="true"` on the DOM
+   * node for styling hooks.
+   */
+  selected?: boolean;
+}
+
+/**
+ * A single workspace row rendered inside the {@link SidebarSwitcher}
+ * popover. Renders as a `<button>` so each row is independently focusable
+ * and keyboard-activatable.
+ *
+ * @remarks
+ * - Pass `selected` to mark the row as the current workspace; a trailing
+ *   tick glyph appears and `data-selected="true"` is exposed for custom
+ *   styling.
+ */
+function SidebarSwitcherItem({
+  className,
+  name,
+  logo,
+  meta,
+  selected,
+  ...props
+}: SidebarSwitcherItemProps) {
+  return (
+    <button
+      className={cn(
+        "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-popover-foreground text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground",
+        className
+      )}
+      data-selected={selected || undefined}
+      data-sidebar="switcher-item"
+      data-slot="sidebar-switcher-item"
+      type="button"
+      {...props}
+    >
+      {logo ? (
+        <span
+          aria-hidden
+          className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-muted text-muted-foreground"
+          data-slot="sidebar-switcher-item-logo"
+        >
+          {logo}
+        </span>
+      ) : null}
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="truncate font-medium">{name}</span>
+        {meta ? (
+          <span className="truncate text-muted-foreground text-xs">{meta}</span>
+        ) : null}
+      </span>
+      {selected ? (
+        <HugeiconsIcon
+          className="ml-auto size-4 shrink-0 text-muted-foreground"
+          data-slot="sidebar-switcher-item-check"
+          icon={Tick02Icon}
+          strokeWidth={2}
+        />
+      ) : null}
+    </button>
+  );
+}
+
 /** Props for {@link SidebarCard}. */
 export interface SidebarCardProps extends React.ComponentProps<"div"> {
   /**
@@ -1757,6 +1950,8 @@ export {
   SidebarProvider,
   SidebarSearchButton,
   SidebarSeparator,
+  SidebarSwitcher,
+  SidebarSwitcherItem,
   SidebarToggleRail,
   SidebarTrigger,
   SidebarUserButton,
