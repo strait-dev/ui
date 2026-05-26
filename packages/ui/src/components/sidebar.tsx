@@ -21,6 +21,36 @@ import {
 import { Skeleton } from "./skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
+/**
+ * Tracks whether an element's text content is being cut off by its container.
+ *
+ * Returns a ref to attach to the measured element and a boolean that flips to
+ * `true` whenever `scrollWidth` exceeds `clientWidth`. Re-measures on resize
+ * via `ResizeObserver`. Used by {@link SidebarMenuButton} to show its tooltip
+ * the moment a long label gets ellipsised, in addition to icon-collapse mode.
+ */
+function useTruncated<T extends HTMLElement>(): [
+  React.RefObject<T | null>,
+  boolean,
+] {
+  const ref = React.useRef<T>(null);
+  const [truncated, setTruncated] = React.useState(false);
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) {
+      return;
+    }
+    const measure = () => {
+      setTruncated(el.scrollWidth > el.clientWidth);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, truncated];
+}
+
 // Cookie name used to persist the open/collapsed state across page loads.
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 // One week TTL for the persistence cookie.
@@ -378,7 +408,7 @@ function Sidebar({
       {/* This is what handles the sidebar gap on desktop */}
       <div
         className={cn(
-          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear",
+          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-out motion-reduce:transition-none",
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-[side=right]:rotate-180",
           variant === "floating" || variant === "inset"
@@ -389,7 +419,7 @@ function Sidebar({
       />
       <div
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] md:flex",
+          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-out data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] motion-reduce:transition-none md:flex",
           // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
@@ -520,7 +550,10 @@ function SidebarInput({
 }: React.ComponentProps<typeof Input>) {
   return (
     <Input
-      className={cn("h-8 w-full bg-background shadow-none", className)}
+      className={cn(
+        "h-8 w-full border-sidebar-border bg-transparent shadow-none focus-visible:border-sidebar-ring",
+        className
+      )}
       data-sidebar="input"
       data-slot="sidebar-input"
       {...props}
@@ -760,12 +793,14 @@ function SidebarMenuButton({
     tooltip?: string | React.ComponentProps<typeof TooltipContent>;
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar();
+  const [labelRef, truncated] = useTruncated<HTMLElement>();
   const comp = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
       {
         className: cn(sidebarMenuButtonVariants({ variant, size }), className),
         "aria-current": isActive ? "page" : undefined,
+        ref: labelRef as React.Ref<HTMLButtonElement>,
       },
       props
     ),
@@ -795,7 +830,7 @@ function SidebarMenuButton({
       {comp}
       <TooltipContent
         align="center"
-        hidden={state !== "collapsed" || isMobile}
+        hidden={(!truncated && state !== "collapsed") || isMobile}
         side="right"
         {...tooltip}
       />
