@@ -630,7 +630,7 @@ function DateSelectorFilterToggle({
       }}
       value={value}
     >
-      <TabsList className="bg-muted/80">
+      <TabsList>
         <TabsTrigger
           aria-label={i18n.filterTypes.is}
           className="py-1 font-normal"
