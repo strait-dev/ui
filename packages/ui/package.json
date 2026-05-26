@@ -287,6 +287,11 @@
       "import": "./dist/components/filters.js",
       "default": "./dist/components/filters.js"
     },
+    "./components/frame": {
+      "types": "./dist/components/frame.d.ts",
+      "import": "./dist/components/frame.js",
+      "default": "./dist/components/frame.js"
+    },
     "./components/json-viewer": {
       "types": "./dist/components/json-viewer.d.ts",
       "import": "./dist/components/json-viewer.js",
