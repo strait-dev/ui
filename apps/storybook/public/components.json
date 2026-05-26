@@ -2390,6 +2390,8 @@
       "DataGridRequestParams",
       "DataGridScrollArea",
       "DataGridScrollAreaProps",
+      "DataGridSelectionBar",
+      "DataGridSelectionBarProps",
       "DataGridTable",
       "DataGridTableClassNames",
       "DataGridTableDnd",
@@ -2402,6 +2404,8 @@
       "DataGridTableHeadRowCellResize",
       "DataGridTableLayout",
       "DataGridTableLoader",
+      "DataGridTableRowActions",
+      "DataGridTableRowActionsProps",
       "DataGridTableRowPin",
       "DataGridTableRowSelect",
       "DataGridTableRowSelectAll",
@@ -2707,6 +2711,61 @@
         ]
       },
       {
+        "name": "DataGridSelectionBarProps",
+        "props": [
+          {
+            "name": "actions",
+            "type": "BulkAction[]",
+            "optional": false,
+            "description": "Bulk action buttons rendered inside the toolbar. Each action's `onClick` is responsible for resetting selection if desired — the clear (×) button handles selection reset automatically."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "optional": true,
+            "description": "Additional class names forwarded to BulkActionBar."
+          },
+          {
+            "name": "children",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Extra content rendered between the count label and the action buttons (forwarded to BulkActionBar's `children` slot)."
+          }
+        ],
+        "extends": []
+      },
+      {
+        "name": "DataGridTableRowActionsProps",
+        "props": [
+          {
+            "name": "row",
+            "type": "Row<TData>",
+            "optional": false,
+            "description": "The TanStack row whose actions are being exposed. Passed through to children via the `data-row-id` attribute for test selectors; the row itself is available to consumers via the surrounding closure."
+          },
+          {
+            "name": "children",
+            "type": "React.ReactNode",
+            "optional": false,
+            "description": "DropdownMenuItem children rendered inside the menu. Compose `DropdownMenuItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, etc."
+          },
+          {
+            "name": "label",
+            "type": "string",
+            "optional": true,
+            "default": "\"Row actions\"",
+            "description": "Accessible label for the trigger button. Defaults to `\"Row actions\"`."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "optional": true,
+            "description": "Additional class names merged onto the trigger button."
+          }
+        ],
+        "extends": []
+      },
+      {
         "name": "DataGridTableVirtualProps",
         "props": [
           {
@@ -2790,6 +2849,7 @@
       "data-grid",
       "data-grid-column-header",
       "data-grid-pagination",
+      "data-grid-row-actions",
       "data-grid-row-pin",
       "data-grid-row-select-all",
       "data-grid-row-select-checkbox",

@@ -863,7 +863,7 @@ Import: `import { ... } from "@strait/ui/components/data-grid";`
 
 Root component for the DataGrid system.
 
-Exports: `DataGrid`, `DataGridApiFetchParams`, `DataGridApiResponse`, `DataGridColumnFilter`, `DataGridColumnFilterProps`, `DataGridColumnHeader`, `DataGridColumnHeaderProps`, `DataGridColumnVisibility`, `DataGridContainer`, `DataGridContextProps`, `DataGridPagination`, `DataGridPaginationProps`, `DataGridProps`, `DataGridProvider`, `DataGridRequestParams`, `DataGridScrollArea`, `DataGridScrollAreaProps`, `DataGridTable`, `DataGridTableClassNames`, `DataGridTableDnd`, `DataGridTableDndRowHandle`, `DataGridTableDndRows`, `DataGridTableEmpty`, `DataGridTableFoot`, `DataGridTableFootRow`, `DataGridTableFootRowCell`, `DataGridTableHeadRowCellResize`, `DataGridTableLayout`, `DataGridTableLoader`, `DataGridTableRowPin`, `DataGridTableRowSelect`, `DataGridTableRowSelectAll`, `DataGridTableVirtual`, `DataGridTableVirtualProps`, `DataGridTableVirtualScrollElements`, `DataGridTableVirtualizerOptions`, `getColumnHeaderLabel`, `useDataGrid`
+Exports: `DataGrid`, `DataGridApiFetchParams`, `DataGridApiResponse`, `DataGridColumnFilter`, `DataGridColumnFilterProps`, `DataGridColumnHeader`, `DataGridColumnHeaderProps`, `DataGridColumnVisibility`, `DataGridContainer`, `DataGridContextProps`, `DataGridPagination`, `DataGridPaginationProps`, `DataGridProps`, `DataGridProvider`, `DataGridRequestParams`, `DataGridScrollArea`, `DataGridScrollAreaProps`, `DataGridSelectionBar`, `DataGridSelectionBarProps`, `DataGridTable`, `DataGridTableClassNames`, `DataGridTableDnd`, `DataGridTableDndRowHandle`, `DataGridTableDndRows`, `DataGridTableEmpty`, `DataGridTableFoot`, `DataGridTableFootRow`, `DataGridTableFootRowCell`, `DataGridTableHeadRowCellResize`, `DataGridTableLayout`, `DataGridTableLoader`, `DataGridTableRowActions`, `DataGridTableRowActionsProps`, `DataGridTableRowPin`, `DataGridTableRowSelect`, `DataGridTableRowSelectAll`, `DataGridTableVirtual`, `DataGridTableVirtualProps`, `DataGridTableVirtualScrollElements`, `DataGridTableVirtualizerOptions`, `getColumnHeaderLabel`, `useDataGrid`
 
 Props (`DataGridColumnFilterProps`):
 
@@ -939,6 +939,23 @@ Extends: `Omit< ScrollAreaPrimitive.Root.Props, "children" >`
 | `children` | `React.ReactNode` | yes |  | Content rendered inside the scroll area. |
 | `orientation` | `"horizontal" \| "vertical" \| "both"` |  | `"both"` | Which scroll axes to enable. Default `"both"`. |
 
+Props (`DataGridSelectionBarProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `actions` | `BulkAction[]` | yes |  | Bulk action buttons rendered inside the toolbar. Each action's `onClick` is responsible for resetting selection if desired — the clear (×) button handles selection reset automatically. |
+| `className` | `string` |  |  | Additional class names forwarded to BulkActionBar. |
+| `children` | `React.ReactNode` |  |  | Extra content rendered between the count label and the action buttons (forwarded to BulkActionBar's `children` slot). |
+
+Props (`DataGridTableRowActionsProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `row` | `Row<TData>` | yes |  | The TanStack row whose actions are being exposed. Passed through to children via the `data-row-id` attribute for test selectors; the row itself is available to consumers via the surrounding closure. |
+| `children` | `React.ReactNode` | yes |  | DropdownMenuItem children rendered inside the menu. Compose `DropdownMenuItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, etc. |
+| `label` | `string` |  | `"Row actions"` | Accessible label for the trigger button. Defaults to `"Row actions"`. |
+| `className` | `string` |  |  | Additional class names merged onto the trigger button. |
+
 Props (`DataGridTableVirtualProps`):
 
 | Prop | Type | Required | Default | Description |
@@ -957,7 +974,7 @@ Props (`DataGridTableVirtualProps`):
 Variants:
 - `dense`: `true`, `false` (default: `false`)
 
-Data slots: `data-grid`, `data-grid-column-header`, `data-grid-pagination`, `data-grid-row-pin`, `data-grid-row-select-all`, `data-grid-row-select-checkbox`, `data-grid-row-select-indicator`, `data-grid-row-spacer`, `data-grid-scroll-area`, `data-grid-scrollbar`, `data-grid-table`, `data-grid-table-body`, `data-grid-table-body-cell`, `data-grid-table-body-cell-skeleton`, `data-grid-table-body-row`, `data-grid-table-body-row-expanded`, `data-grid-table-body-row-skeleton`, `data-grid-table-empty`, `data-grid-table-foot`, `data-grid-table-foot-cell`, `data-grid-table-foot-row`, `data-grid-table-head`, `data-grid-table-head-cell`, `data-grid-table-head-cell-resize`, `data-grid-table-head-row`, `data-grid-table-loader`, `data-grid-table-viewport`, `data-grid-thumb`, `data-grid-virtual-spacer-bottom`, `data-grid-virtual-spacer-top`, `data-grid-virtual-status-complete`, `data-grid-virtual-status-loading`, `scroll-area-content`, `scroll-area-viewport`
+Data slots: `data-grid`, `data-grid-column-header`, `data-grid-pagination`, `data-grid-row-actions`, `data-grid-row-pin`, `data-grid-row-select-all`, `data-grid-row-select-checkbox`, `data-grid-row-select-indicator`, `data-grid-row-spacer`, `data-grid-scroll-area`, `data-grid-scrollbar`, `data-grid-table`, `data-grid-table-body`, `data-grid-table-body-cell`, `data-grid-table-body-cell-skeleton`, `data-grid-table-body-row`, `data-grid-table-body-row-expanded`, `data-grid-table-body-row-skeleton`, `data-grid-table-empty`, `data-grid-table-foot`, `data-grid-table-foot-cell`, `data-grid-table-foot-row`, `data-grid-table-head`, `data-grid-table-head-cell`, `data-grid-table-head-cell-resize`, `data-grid-table-head-row`, `data-grid-table-loader`, `data-grid-table-viewport`, `data-grid-thumb`, `data-grid-virtual-spacer-bottom`, `data-grid-virtual-spacer-top`, `data-grid-virtual-status-complete`, `data-grid-virtual-status-loading`, `scroll-area-content`, `scroll-area-viewport`
 
 Heavy dependencies: `@tanstack/react-table`
 

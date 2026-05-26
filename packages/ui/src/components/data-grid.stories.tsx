@@ -1,4 +1,9 @@
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
+import {
+  Archive02Icon,
+  ArrowDown01Icon,
+  Delete02Icon,
+  Edit02Icon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
@@ -29,17 +34,20 @@ import {
   DataGridColumnVisibility,
   DataGridContainer,
   DataGridPagination,
+  DataGridSelectionBar,
   DataGridTable,
   DataGridTableDnd,
   DataGridTableDndRowHandle,
   DataGridTableDndRows,
   DataGridTableFootRow,
   DataGridTableFootRowCell,
+  DataGridTableRowActions,
   DataGridTableRowPin,
   DataGridTableRowSelect,
   DataGridTableRowSelectAll,
   DataGridTableVirtual,
 } from "./data-grid";
+import { DropdownMenuItem, DropdownMenuSeparator } from "./dropdown-menu";
 
 /* ------------------------------------------------------------------ */
 /* Mock data                                                          */
@@ -915,6 +923,123 @@ export const VirtualScroll: Story = {
         <DataGridContainer>
           <DataGridTableVirtual estimateSize={44} height={400} />
         </DataGridContainer>
+      </DataGrid>
+    );
+  },
+};
+
+/**
+ * Per-row actions column powered by `DataGridTableRowActions`. The trailing
+ * column hosts an ellipsis trigger that opens a dropdown with consumer-defined
+ * Edit / Delete items.
+ */
+export const RowActions: Story = {
+  render: () => {
+    const [items, setItems] = useState(baseProjects);
+    const columns = useMemo<ColumnDef<Project>[]>(
+      () => [
+        ...baseColumns,
+        {
+          id: "actions",
+          header: () => null,
+          cell: ({ row }) => (
+            <DataGridTableRowActions row={row}>
+              <DropdownMenuItem>
+                <HugeiconsIcon icon={Edit02Icon} />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <HugeiconsIcon icon={Archive02Icon} />
+                Archive
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() =>
+                  setItems((prev) =>
+                    prev.filter((p) => p.id !== row.original.id)
+                  )
+                }
+                variant="destructive"
+              >
+                <HugeiconsIcon icon={Delete02Icon} />
+                Delete
+              </DropdownMenuItem>
+            </DataGridTableRowActions>
+          ),
+          meta: { cellClassName: "w-10 text-end" },
+        },
+      ],
+      []
+    );
+    const table = useReactTable({
+      data: items,
+      columns,
+      getCoreRowModel: getCoreRowModel(),
+    });
+    return (
+      <DataGrid recordCount={items.length} table={table}>
+        <DataGridContainer>
+          <DataGridTable />
+        </DataGridContainer>
+      </DataGrid>
+    );
+  },
+};
+
+/**
+ * Floating bulk-action bar driven by row selection. `DataGridSelectionBar`
+ * reads the selection from DataGrid context and renders a fixed-position
+ * toolbar whenever one or more rows are selected.
+ */
+export const SelectionBar: Story = {
+  render: () => {
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+    const [items, setItems] = useState(baseProjects);
+    const columns = useMemo<ColumnDef<Project>[]>(
+      () => [
+        {
+          id: "select",
+          header: () => <DataGridTableRowSelectAll />,
+          cell: ({ row }) => <DataGridTableRowSelect row={row} />,
+          meta: { cellClassName: "w-10" },
+        },
+        ...baseColumns,
+      ],
+      []
+    );
+    const table = useReactTable({
+      data: items,
+      columns,
+      state: { rowSelection },
+      onRowSelectionChange: setRowSelection,
+      enableRowSelection: true,
+      getRowId: (row) => row.id,
+      getCoreRowModel: getCoreRowModel(),
+    });
+    return (
+      <DataGrid recordCount={items.length} table={table}>
+        <DataGridContainer>
+          <DataGridTable />
+        </DataGridContainer>
+        <DataGridSelectionBar
+          actions={[
+            {
+              label: "Archive",
+              icon: Archive02Icon,
+              onClick: () => table.resetRowSelection(),
+            },
+            {
+              label: "Delete",
+              icon: Delete02Icon,
+              variant: "destructive",
+              onClick: () => {
+                const ids = new Set(Object.keys(rowSelection));
+                setItems((prev) => prev.filter((p) => !ids.has(p.id)));
+                table.resetRowSelection();
+              },
+            },
+          ]}
+        />
       </DataGrid>
     );
   },

@@ -32,6 +32,7 @@ import {
   ArrowUp02Icon,
   DragDropHorizontalIcon,
   DragDropVerticalIcon,
+  MoreHorizontalIcon,
   PinIcon,
   PinOffIcon,
   SlidersHorizontalIcon,
@@ -70,6 +71,7 @@ import {
 } from "react";
 import { cn } from "../utils/index";
 import { Badge } from "./badge";
+import { type BulkAction, BulkActionBar } from "./bulk-action-bar";
 import { Button } from "./button";
 import { Checkbox } from "./checkbox";
 import {
@@ -1441,6 +1443,167 @@ export function DataGridTableRowSelectAll() {
       indeterminate={someSelected}
       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
     />
+  );
+}
+
+/**
+ * Props for {@link DataGridTableRowActions}.
+ *
+ * @typeParam TData - Row record shape.
+ */
+export type DataGridTableRowActionsProps<TData> = {
+  /**
+   * The TanStack row whose actions are being exposed. Passed through to
+   * children via the `data-row-id` attribute for test selectors; the row
+   * itself is available to consumers via the surrounding closure.
+   */
+  row: Row<TData>;
+  /**
+   * {@link DropdownMenuItem} children rendered inside the menu. Compose
+   * `DropdownMenuItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, etc.
+   */
+  children: React.ReactNode;
+  /**
+   * Accessible label for the trigger button. Defaults to `"Row actions"`.
+   */
+  label?: string;
+  /** Additional class names merged onto the trigger button. */
+  className?: string;
+};
+
+/**
+ * Per-row actions menu — an ellipsis icon button that opens a
+ * {@link DropdownMenu} with consumer-provided items (Edit, Delete, …).
+ *
+ * Drop this into a column's `cell` renderer to expose row-scoped commands.
+ * The menu shell, trigger button, and ARIA labelling are handled here; only
+ * the menu items are supplied by the consumer.
+ *
+ * @example
+ * ```tsx
+ * const columns: ColumnDef<User>[] = [
+ *   // … other columns …
+ *   {
+ *     id: "actions",
+ *     header: "",
+ *     cell: ({ row }) => (
+ *       <DataGridTableRowActions row={row}>
+ *         <DropdownMenuItem onClick={() => edit(row.original)}>
+ *           Edit
+ *         </DropdownMenuItem>
+ *         <DropdownMenuSeparator />
+ *         <DropdownMenuItem
+ *           onClick={() => remove(row.original)}
+ *           variant="destructive"
+ *         >
+ *           Delete
+ *         </DropdownMenuItem>
+ *       </DataGridTableRowActions>
+ *     ),
+ *   },
+ * ];
+ * ```
+ */
+export function DataGridTableRowActions<TData>({
+  row,
+  children,
+  label = "Row actions",
+  className,
+}: DataGridTableRowActionsProps<TData>) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            aria-label={label}
+            className={className}
+            data-row-id={row.id}
+            data-slot="data-grid-row-actions"
+            size="icon-sm"
+            type="button"
+            variant="ghost"
+          />
+        }
+      >
+        <HugeiconsIcon icon={MoreHorizontalIcon} strokeWidth={2} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-40">
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+/**
+ * Props for {@link DataGridSelectionBar}.
+ */
+export type DataGridSelectionBarProps = {
+  /**
+   * Bulk action buttons rendered inside the toolbar. Each action's `onClick`
+   * is responsible for resetting selection if desired — the clear (×) button
+   * handles selection reset automatically.
+   */
+  actions: BulkAction[];
+  /** Additional class names forwarded to {@link BulkActionBar}. */
+  className?: string;
+  /**
+   * Extra content rendered between the count label and the action buttons
+   * (forwarded to {@link BulkActionBar}'s `children` slot).
+   */
+  children?: React.ReactNode;
+};
+
+/**
+ * Floating bulk-action toolbar wired to DataGrid selection state.
+ *
+ * Reads `table.getSelectedRowModel()` from the surrounding {@link DataGrid}
+ * context and renders a fixed-position {@link BulkActionBar} whenever one or
+ * more rows are selected. Returns `null` while nothing is selected.
+ *
+ * Place this anywhere inside a {@link DataGrid} (typically as a sibling of
+ * {@link DataGridContainer}); the bar portals itself to the bottom of the
+ * viewport via `position="fixed"`.
+ *
+ * @example
+ * ```tsx
+ * <DataGrid table={table} recordCount={data.length}>
+ *   <DataGridContainer>
+ *     <DataGridTable />
+ *   </DataGridContainer>
+ *   <DataGridSelectionBar
+ *     actions={[
+ *       { label: "Archive", onClick: archiveSelected },
+ *       {
+ *         label: "Delete",
+ *         icon: Delete01Icon,
+ *         variant: "destructive",
+ *         onClick: deleteSelected,
+ *       },
+ *     ]}
+ *   />
+ * </DataGrid>
+ * ```
+ */
+export function DataGridSelectionBar({
+  actions,
+  className,
+  children,
+}: DataGridSelectionBarProps) {
+  const { table } = useDataGrid();
+  const selectedCount = table.getSelectedRowModel().rows.length;
+  if (selectedCount === 0) {
+    return null;
+  }
+  return (
+    <BulkActionBar
+      actions={actions}
+      className={className}
+      onClearSelection={() => table.resetRowSelection()}
+      position="fixed"
+      selectedCount={selectedCount}
+    >
+      {children}
+    </BulkActionBar>
   );
 }
 

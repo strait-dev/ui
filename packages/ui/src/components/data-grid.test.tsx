@@ -13,9 +13,13 @@ import {
   DataGridColumnVisibility,
   DataGridContainer,
   DataGridPagination,
+  DataGridSelectionBar,
   DataGridTable,
+  DataGridTableRowActions,
+  DataGridTableRowSelect,
   getColumnHeaderLabel,
 } from "./data-grid";
+import { DropdownMenuItem } from "./dropdown-menu";
 
 type Row = { id: string; name: string; budget: number };
 
@@ -223,6 +227,112 @@ describe("DataGridPagination", () => {
     fireEvent.click(next);
     // After advancing, the third row should be visible.
     expect(screen.getByText("Gamma")).toBeInTheDocument();
+  });
+});
+
+describe("DataGridTableRowActions", () => {
+  function ActionsHarness() {
+    const table = useReactTable({
+      data: rows,
+      columns: [
+        ...columns,
+        {
+          id: "actions",
+          header: () => null,
+          cell: ({ row }) => (
+            <DataGridTableRowActions row={row}>
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>Delete</DropdownMenuItem>
+            </DataGridTableRowActions>
+          ),
+        },
+      ],
+      getCoreRowModel: getCoreRowModel(),
+    });
+    return (
+      <DataGrid recordCount={rows.length} table={table}>
+        <DataGridContainer>
+          <DataGridTable />
+        </DataGridContainer>
+      </DataGrid>
+    );
+  }
+
+  it("renders one trigger per row with the data-grid-row-actions slot", () => {
+    render(<ActionsHarness />);
+    const triggers = document.querySelectorAll(
+      '[data-slot="data-grid-row-actions"]'
+    );
+    expect(triggers.length).toBe(rows.length);
+    expect(triggers[0]).toHaveAttribute("aria-label", "Row actions");
+  });
+
+  it("opens the dropdown menu when its trigger is clicked", () => {
+    render(<ActionsHarness />);
+    const trigger = document.querySelector<HTMLButtonElement>(
+      '[data-slot="data-grid-row-actions"]'
+    );
+    expect(trigger).not.toBeNull();
+    fireEvent.click(trigger as HTMLButtonElement);
+    expect(screen.getByText("Edit")).toBeInTheDocument();
+    expect(screen.getByText("Delete")).toBeInTheDocument();
+  });
+});
+
+describe("DataGridSelectionBar", () => {
+  function SelectionHarness() {
+    const table = useReactTable({
+      data: rows,
+      columns: [
+        {
+          id: "select",
+          header: () => null,
+          cell: ({ row }) => <DataGridTableRowSelect row={row} />,
+        },
+        ...columns,
+      ],
+      enableRowSelection: true,
+      getRowId: (row) => row.id,
+      getCoreRowModel: getCoreRowModel(),
+    });
+    return (
+      <DataGrid recordCount={rows.length} table={table}>
+        <DataGridContainer>
+          <DataGridTable />
+        </DataGridContainer>
+        <DataGridSelectionBar
+          actions={[{ label: "Archive", onClick: () => {} }]}
+        />
+      </DataGrid>
+    );
+  }
+
+  it("does not render the toolbar while nothing is selected", () => {
+    render(<SelectionHarness />);
+    expect(
+      document.querySelector('[data-slot="bulk-action-bar"]')
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders the toolbar with a selected count once a row is selected", () => {
+    render(<SelectionHarness />);
+    const checkbox = screen.getAllByLabelText("Select row")[0];
+    fireEvent.click(checkbox as HTMLElement);
+    expect(
+      document.querySelector('[data-slot="bulk-action-bar"]')
+    ).toBeInTheDocument();
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+  });
+
+  it("clears the selection when the clear button is pressed", () => {
+    render(<SelectionHarness />);
+    const checkbox = screen.getAllByLabelText("Select row")[0];
+    fireEvent.click(checkbox as HTMLElement);
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Clear selection" }));
+    expect(
+      document.querySelector('[data-slot="bulk-action-bar"]')
+    ).not.toBeInTheDocument();
   });
 });
 
