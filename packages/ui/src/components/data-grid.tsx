@@ -85,6 +85,12 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 import { Input } from "./input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from "./pagination";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import {
   Select,
@@ -1687,18 +1693,14 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
     for (let i = currentGroupStart; i < currentGroupEnd; i++) {
       const isActive = i === pageIndex;
       buttons.push(
-        <Button
-          className={cn(
-            "min-w-7 tabular-nums",
-            isActive && "bg-muted text-foreground"
-          )}
-          key={i}
-          onClick={() => table.setPageIndex(i)}
-          size="sm"
-          variant="ghost"
-        >
-          {i + 1}
-        </Button>
+        <PaginationItem key={i}>
+          <PaginationLink
+            isActive={isActive}
+            onClick={() => table.setPageIndex(i)}
+          >
+            <span className="tabular-nums">{i + 1}</span>
+          </PaginationLink>
+        </PaginationItem>
       );
     }
     return buttons;
@@ -1748,53 +1750,61 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
               {paginationInfo}
             </div>
             {pageCount > 1 && (
-              <div className="order-1 flex items-center gap-1 sm:order-2">
-                <Button
-                  aria-label={p.previousPageLabel}
-                  className="rtl:rotate-180"
-                  disabled={!canPrev}
-                  onClick={() => table.previousPage()}
-                  size="icon-sm"
-                  variant="ghost"
-                >
-                  <HugeiconsIcon icon={ArrowLeft02Icon} />
-                </Button>
+              <Pagination className="order-1 mx-0 w-auto sm:order-2" size="sm">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationLink
+                      aria-disabled={!canPrev}
+                      aria-label={p.previousPageLabel}
+                      className={cn(
+                        "rtl:rotate-180",
+                        !canPrev && "pointer-events-none opacity-50"
+                      )}
+                      onClick={() => canPrev && table.previousPage()}
+                    >
+                      <HugeiconsIcon icon={ArrowLeft02Icon} />
+                    </PaginationLink>
+                  </PaginationItem>
 
-                {currentGroupStart > 0 && (
-                  <Button
-                    className="min-w-7"
-                    onClick={() => table.setPageIndex(currentGroupStart - 1)}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    {p.ellipsisText}
-                  </Button>
-                )}
+                  {currentGroupStart > 0 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() =>
+                          table.setPageIndex(currentGroupStart - 1)
+                        }
+                      >
+                        {p.ellipsisText}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
 
-                {renderPageButtons()}
+                  {renderPageButtons()}
 
-                {currentGroupEnd < pageCount && (
-                  <Button
-                    className="min-w-7"
-                    onClick={() => table.setPageIndex(currentGroupEnd)}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    {p.ellipsisText}
-                  </Button>
-                )}
+                  {currentGroupEnd < pageCount && (
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() => table.setPageIndex(currentGroupEnd)}
+                      >
+                        {p.ellipsisText}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )}
 
-                <Button
-                  aria-label={p.nextPageLabel}
-                  className="rtl:rotate-180"
-                  disabled={!canNext}
-                  onClick={() => table.nextPage()}
-                  size="icon-sm"
-                  variant="ghost"
-                >
-                  <HugeiconsIcon icon={ArrowRight02Icon} />
-                </Button>
-              </div>
+                  <PaginationItem>
+                    <PaginationLink
+                      aria-disabled={!canNext}
+                      aria-label={p.nextPageLabel}
+                      className={cn(
+                        "rtl:rotate-180",
+                        !canNext && "pointer-events-none opacity-50"
+                      )}
+                      onClick={() => canNext && table.nextPage()}
+                    >
+                      <HugeiconsIcon icon={ArrowRight02Icon} />
+                    </PaginationLink>
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             )}
           </>
         )}
