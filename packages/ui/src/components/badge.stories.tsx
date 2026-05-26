@@ -2,14 +2,20 @@ import {
   Alert01Icon,
   Cancel01Icon,
   CheckmarkCircle01Icon,
+  GlobeIcon,
   InformationCircleIcon,
+  Mail01Icon,
+  Notification01Icon,
+  StarIcon,
   Tag01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { type ComponentProps, Fragment, useState } from "react";
 
+import { Avatar, AvatarFallback } from "./avatar";
 import { Badge } from "./badge";
+import { Button } from "./button";
 
 type BadgeVariant = NonNullable<ComponentProps<typeof Badge>["variant"]>;
 type BadgeSize = NonNullable<ComponentProps<typeof Badge>["size"]>;
@@ -76,6 +82,12 @@ const meta: Meta<typeof Badge> = {
       options: sizeOptions,
       description: "Height/padding preset.",
       table: { defaultValue: { summary: "default" } },
+    },
+    radius: {
+      control: "select",
+      options: ["pill", "md", "sm"],
+      description: "Corner radius preset.",
+      table: { defaultValue: { summary: "pill" } },
     },
     children: { control: "text", description: "Badge label." },
     mono: {
@@ -378,6 +390,230 @@ export const AsButton: Story = {
         variant="destructive-light"
       >
         Remove tag
+      </Badge>
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Combined / kitchen-sink                                             */
+/* ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------ */
+/* Radius axis                                                         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The three `radius` presets side by side — `pill` (default), `md` for
+ * tag-style chips matching button corners, and `sm` for a subtle square.
+ */
+export const Radius: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-3">
+      {(["pill", "md", "sm"] as const).map((radius) => (
+        <div className="flex items-center gap-3" key={radius}>
+          <span className="w-12 text-muted-foreground text-xs">{radius}</span>
+          <Badge {...args} radius={radius} variant="secondary-light">
+            Default
+          </Badge>
+          <Badge {...args} radius={radius} variant="success-light">
+            Active
+          </Badge>
+          <Badge {...args} radius={radius} variant="info-outline">
+            Beta
+          </Badge>
+          <Badge {...args} mono radius={radius} variant="outline">
+            v1.2.3
+          </Badge>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/* ------------------------------------------------------------------ */
+/* Composition patterns                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Avatar chip — pair an `Avatar` with a tag inside a `radius="md"` badge to
+ * communicate ownership next to a label.
+ */
+export const AvatarChip: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Badge className="gap-1.5 pl-0.5" radius="pill" variant="secondary-light">
+        <Avatar size="xs">
+          <AvatarFallback>AJ</AvatarFallback>
+        </Avatar>
+        Alex Johnson
+      </Badge>
+      <Badge className="gap-1.5 pl-0.5" radius="pill" variant="success-light">
+        <Avatar size="xs">
+          <AvatarFallback>MC</AvatarFallback>
+        </Avatar>
+        Maria Cabrera
+      </Badge>
+      <Badge className="gap-1.5 pl-0.5" radius="pill" variant="info-light">
+        <Avatar size="xs">
+          <AvatarFallback>NP</AvatarFallback>
+        </Avatar>
+        Noah Park
+      </Badge>
+    </div>
+  ),
+};
+
+/**
+ * Flag chip — a leading emoji or icon prefixes a country/region tag.
+ */
+export const WithFlag: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Badge iconLeft={GlobeIcon} radius="md" variant="secondary-light">
+        Global
+      </Badge>
+      <Badge radius="md" variant="secondary-light">
+        🇺🇸 US
+      </Badge>
+      <Badge radius="md" variant="secondary-light">
+        🇧🇷 Brazil
+      </Badge>
+      <Badge radius="md" variant="secondary-light">
+        🇪🇺 EU
+      </Badge>
+    </div>
+  ),
+};
+
+/**
+ * Rendered as an `<a>` via the `render` prop — turns the badge into a
+ * navigable tag with the same focus ring as buttons.
+ */
+export const AsLink: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Badge
+        // biome-ignore lint/a11y/useAnchorContent: content is provided by Badge children
+        // biome-ignore lint/a11y/useValidAnchor: placeholder href for story demo
+        render={<a href="#" />}
+        variant="primary-light"
+      >
+        #design-system
+      </Badge>
+      <Badge
+        // biome-ignore lint/a11y/useAnchorContent: content is provided by Badge children
+        // biome-ignore lint/a11y/useValidAnchor: placeholder href for story demo
+        render={<a href="#" />}
+        variant="info-light"
+      >
+        #components
+      </Badge>
+      <Badge
+        // biome-ignore lint/a11y/useAnchorContent: content is provided by Badge children
+        // biome-ignore lint/a11y/useValidAnchor: placeholder href for story demo
+        render={<a href="#" />}
+        variant="secondary-light"
+      >
+        #accessibility
+      </Badge>
+    </div>
+  ),
+};
+
+/**
+ * Notification overlay — anchor a `Badge` to the top-right corner of an
+ * icon button using absolute positioning for unread counters.
+ */
+export const NotificationOverlay: Story = {
+  render: () => (
+    <div className="flex items-center gap-6">
+      <div className="relative">
+        <Button aria-label="Inbox" size="icon" variant="outline">
+          <HugeiconsIcon icon={Mail01Icon} strokeWidth={2} />
+        </Button>
+        <Badge
+          className="absolute -top-1.5 -right-1.5"
+          size="xs"
+          variant="destructive"
+        >
+          3
+        </Badge>
+      </div>
+      <div className="relative">
+        <Button aria-label="Notifications" size="icon" variant="outline">
+          <HugeiconsIcon icon={Notification01Icon} strokeWidth={2} />
+        </Button>
+        <Badge
+          className="absolute -top-1.5 -right-1.5"
+          size="xs"
+          variant="info"
+        >
+          12
+        </Badge>
+      </div>
+      <div className="relative">
+        <Button aria-label="Inbox" size="icon" variant="outline">
+          <HugeiconsIcon icon={Mail01Icon} strokeWidth={2} />
+        </Button>
+        <Badge
+          className="absolute -top-1.5 -right-1.5"
+          dot
+          dotClassName="bg-success size-2"
+          variant="success"
+        >
+          <span className="sr-only">3 unread</span>
+        </Badge>
+      </div>
+    </div>
+  ),
+};
+
+/**
+ * Rating chip — combine a leading star icon with a numeric label.
+ */
+export const RatingChip: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Badge iconLeft={StarIcon} radius="md" variant="warning-light">
+        4.9
+      </Badge>
+      <Badge iconLeft={StarIcon} radius="md" variant="success-light">
+        4.7
+      </Badge>
+      <Badge iconLeft={StarIcon} radius="md" variant="info-light">
+        4.3
+      </Badge>
+      <Badge iconLeft={StarIcon} radius="md" variant="destructive-light">
+        2.1
+      </Badge>
+    </div>
+  ),
+};
+
+/**
+ * Plan tier — pair a dot with `radius="md"` for plan or environment chips
+ * that match data-table chrome.
+ */
+export const PlanTier: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-2">
+      <Badge
+        dot
+        dotClassName="bg-muted-foreground"
+        radius="md"
+        variant="outline"
+      >
+        Free
+      </Badge>
+      <Badge dot dotClassName="bg-info" radius="md" variant="info-light">
+        Pro
+      </Badge>
+      <Badge dot dotClassName="bg-success" radius="md" variant="success-light">
+        Team
+      </Badge>
+      <Badge dot dotClassName="bg-warning" radius="md" variant="warning-light">
+        Enterprise
       </Badge>
     </div>
   ),

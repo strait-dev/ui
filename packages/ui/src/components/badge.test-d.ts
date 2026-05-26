@@ -26,6 +26,12 @@ expectTypeOf<"xs">().toExtend<NonNullable<BadgeProps["size"]>>();
 expectTypeOf<"xl">().toExtend<NonNullable<BadgeProps["size"]>>();
 expectTypeOf<"not-a-size">().not.toExtend<NonNullable<BadgeProps["size"]>>();
 
+// --- cva `radius` union ----------------------------------------------------
+expectTypeOf<"pill">().toExtend<NonNullable<BadgeProps["radius"]>>();
+expectTypeOf<"md">().toExtend<NonNullable<BadgeProps["radius"]>>();
+expectTypeOf<"sm">().toExtend<NonNullable<BadgeProps["radius"]>>();
+expectTypeOf<"square">().not.toExtend<NonNullable<BadgeProps["radius"]>>();
+
 // --- bespoke props from the interface --------------------------------------
 expectTypeOf<BadgeProps>().toHaveProperty("dismissible");
 expectTypeOf<BadgeProps>().toHaveProperty("onDismiss");

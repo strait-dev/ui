@@ -497,6 +497,12 @@
             "description": "Called when the dismiss button is clicked."
           },
           {
+            "name": "radius",
+            "type": "VariantProps<typeof badgeVariants>[\"radius\"]",
+            "optional": true,
+            "description": "Corner radius preset applied via badgeVariants. `\"pill\"` (default, full-pill) · `\"md\"` (rounded square, matches buttons) · `\"sm\"` (subtle 4 px). Use `\"md\"` for tag-style chips inside data tables."
+          },
+          {
             "name": "size",
             "type": "VariantProps<typeof badgeVariants>[\"size\"]",
             "optional": true,
@@ -515,6 +521,11 @@
       }
     ],
     "variants": {
+      "radius": [
+        "pill",
+        "md",
+        "sm"
+      ],
       "variant": [
         "default",
         "outline",
@@ -551,7 +562,8 @@
     },
     "defaultVariants": {
       "variant": "default",
-      "size": "default"
+      "size": "default",
+      "radius": "pill"
     },
     "slots": [
       "badge",
