@@ -1,21 +1,33 @@
 import {
+  AppleIcon,
   ArrowDown01Icon,
+  ArrowLeft01Icon,
   ArrowRightIcon,
+  CheckmarkCircle01Icon,
   Copy01Icon,
   Delete02Icon,
   Download04Icon,
+  FavouriteIcon,
+  GithubIcon,
+  GoogleIcon,
+  Moon01Icon,
+  NewTwitterIcon,
   PlusSignIcon,
   Search01Icon,
   Settings01Icon,
+  StarIcon,
+  Sun01Icon,
   TextAlignCenterIcon,
   TextAlignLeftIcon,
   TextAlignRightIcon,
+  Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { type ComponentProps, Fragment } from "react";
+import { type ComponentProps, Fragment, useState } from "react";
 import { expect, fn, userEvent, within } from "storybook/test";
 
+import { Badge } from "./badge";
 import { Button } from "./button";
 import { ButtonGroup, ButtonGroupSeparator } from "./button-group";
 import { Kbd } from "./kbd";
@@ -548,4 +560,343 @@ export const FullWidth: Story = {
       </Button>
     </div>
   ),
+};
+
+/**
+ * Copy-with-feedback — swap label and icon for ~1.5 s after click so the
+ * action confirms itself without a toast.
+ */
+export const CopyWithFeedback: Story = {
+  render: () => {
+    function CopyButton() {
+      const [copied, setCopied] = useState(false);
+      return (
+        <Button
+          onClick={() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+          }}
+          variant="outline"
+        >
+          <HugeiconsIcon
+            data-icon="inline-start"
+            icon={copied ? CheckmarkCircle01Icon : Copy01Icon}
+            strokeWidth={2}
+          />
+          {copied ? "Copied" : "Copy link"}
+        </Button>
+      );
+    }
+    return <CopyButton />;
+  },
+};
+
+/**
+ * Async action — disable the button and swap in a `Spinner` while the
+ * underlying promise is in flight.
+ */
+export const AsyncAction: Story = {
+  render: () => {
+    function SaveButton() {
+      const [pending, setPending] = useState(false);
+      return (
+        <Button
+          disabled={pending}
+          onClick={() => {
+            setPending(true);
+            setTimeout(() => setPending(false), 1400);
+          }}
+        >
+          {pending ? (
+            <>
+              <Spinner className="size-3.5" data-icon="inline-start" />
+              Saving…
+            </>
+          ) : (
+            "Save changes"
+          )}
+        </Button>
+      );
+    }
+    return <SaveButton />;
+  },
+};
+
+/**
+ * Like-with-count — toggle a filled heart and a numeric counter; the
+ * fill colour swaps from `muted-foreground` to `destructive`.
+ */
+export const LikeWithCount: Story = {
+  render: () => {
+    function LikeButton() {
+      const [liked, setLiked] = useState(false);
+      return (
+        <Button
+          aria-pressed={liked}
+          onClick={() => setLiked((p) => !p)}
+          variant="outline"
+        >
+          <HugeiconsIcon
+            className={liked ? "text-destructive" : "text-muted-foreground"}
+            data-icon="inline-start"
+            icon={FavouriteIcon}
+            strokeWidth={2}
+          />
+          {liked ? "Liked" : "Like"}
+          <span className="ml-1 text-muted-foreground text-xs">
+            {liked ? "1,238" : "1,237"}
+          </span>
+        </Button>
+      );
+    }
+    return <LikeButton />;
+  },
+};
+
+/** Star-with-count — same pattern as Like but for repository starring. */
+export const StarWithCount: Story = {
+  render: () => {
+    function StarButton() {
+      const [starred, setStarred] = useState(false);
+      return (
+        <ButtonGroup>
+          <Button
+            aria-pressed={starred}
+            onClick={() => setStarred((p) => !p)}
+            variant="outline"
+          >
+            <HugeiconsIcon
+              className={starred ? "text-warning" : "text-muted-foreground"}
+              data-icon="inline-start"
+              icon={StarIcon}
+              strokeWidth={2}
+            />
+            {starred ? "Starred" : "Star"}
+          </Button>
+          <Button variant="outline">{starred ? "4.2k" : "4.1k"}</Button>
+        </ButtonGroup>
+      );
+    }
+    return <StarButton />;
+  },
+};
+
+/**
+ * Notification badge — overlay a count `Badge` over an icon button by
+ * positioning it absolutely at the corner.
+ */
+export const WithNotificationBadge: Story = {
+  render: () => (
+    <div className="flex items-center gap-6">
+      <div className="relative">
+        <Button aria-label="Inbox" size="icon" variant="outline">
+          <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} />
+        </Button>
+        <Badge
+          className="absolute -top-1.5 -right-1.5"
+          size="xs"
+          variant="destructive"
+        >
+          3
+        </Badge>
+      </div>
+      <div className="relative">
+        <Button variant="outline">
+          <HugeiconsIcon
+            data-icon="inline-start"
+            icon={ArrowDown01Icon}
+            strokeWidth={2}
+          />
+          Drafts
+        </Button>
+        <Badge
+          className="absolute -top-1.5 -right-1.5"
+          size="xs"
+          variant="info"
+        >
+          12
+        </Badge>
+      </div>
+    </div>
+  ),
+};
+
+/**
+ * Status dot prefix — pair a small dot with a `ghost` button to surface
+ * environment, agent online state, or session status inline.
+ */
+export const WithStatusDot: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-3">
+      <Button variant="ghost">
+        <span
+          aria-hidden
+          className="size-1.5 rounded-full bg-success"
+          data-icon="inline-start"
+        />
+        Production
+      </Button>
+      <Button variant="ghost">
+        <span
+          aria-hidden
+          className="size-1.5 rounded-full bg-warning"
+          data-icon="inline-start"
+        />
+        Staging
+      </Button>
+      <Button variant="ghost">
+        <span
+          aria-hidden
+          className="size-1.5 rounded-full bg-muted-foreground"
+          data-icon="inline-start"
+        />
+        Local
+      </Button>
+    </div>
+  ),
+};
+
+/**
+ * Go-back link — `variant="ghost"` paired with a leading arrow gives a
+ * lightweight breadcrumb-style back affordance.
+ */
+export const GoBackLink: Story = {
+  render: () => (
+    <Button variant="ghost">
+      <HugeiconsIcon
+        data-icon="inline-start"
+        icon={ArrowLeft01Icon}
+        strokeWidth={2}
+      />
+      Back to projects
+    </Button>
+  ),
+};
+
+/**
+ * Sliding-icon hover — the trailing arrow slides right on hover via a
+ * transform transition.
+ */
+export const SlidingIconHover: Story = {
+  render: () => (
+    <Button className="group" variant="default">
+      Continue
+      <HugeiconsIcon
+        className="transition-transform duration-200 group-hover:translate-x-0.5"
+        data-icon="inline-end"
+        icon={ArrowRightIcon}
+        strokeWidth={2}
+      />
+    </Button>
+  ),
+};
+
+/**
+ * Theme toggle — single icon button swaps between sun and moon based on
+ * local state. Wire it to your actual theme provider in production.
+ */
+export const ThemeToggle: Story = {
+  render: () => {
+    function Toggle() {
+      const [dark, setDark] = useState(false);
+      return (
+        <Button
+          aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+          onClick={() => setDark((p) => !p)}
+          size="icon"
+          variant="outline"
+        >
+          <HugeiconsIcon icon={dark ? Moon01Icon : Sun01Icon} strokeWidth={2} />
+        </Button>
+      );
+    }
+    return <Toggle />;
+  },
+};
+
+/**
+ * Social login — a column of `outline` buttons with vendor icons; common
+ * top-of-form pattern on auth screens.
+ */
+export const SocialLogin: Story = {
+  render: () => (
+    <div className="flex w-72 flex-col gap-2">
+      <Button className="w-full" variant="outline">
+        <HugeiconsIcon
+          data-icon="inline-start"
+          icon={GoogleIcon}
+          strokeWidth={2}
+        />
+        Continue with Google
+      </Button>
+      <Button className="w-full" variant="outline">
+        <HugeiconsIcon
+          data-icon="inline-start"
+          icon={GithubIcon}
+          strokeWidth={2}
+        />
+        Continue with GitHub
+      </Button>
+      <Button className="w-full" variant="outline">
+        <HugeiconsIcon
+          data-icon="inline-start"
+          icon={AppleIcon}
+          strokeWidth={2}
+        />
+        Continue with Apple
+      </Button>
+    </div>
+  ),
+};
+
+/**
+ * Social icons — icon-only buttons sized `icon-sm` arranged in a row for
+ * sharing surfaces.
+ */
+export const SocialIconOnly: Story = {
+  render: () => (
+    <div className="flex items-center gap-1">
+      <Button aria-label="Share on Twitter" size="icon-sm" variant="ghost">
+        <HugeiconsIcon icon={NewTwitterIcon} strokeWidth={2} />
+      </Button>
+      <Button aria-label="Share on GitHub" size="icon-sm" variant="ghost">
+        <HugeiconsIcon icon={GithubIcon} strokeWidth={2} />
+      </Button>
+      <Button aria-label="Share on Google" size="icon-sm" variant="ghost">
+        <HugeiconsIcon icon={GoogleIcon} strokeWidth={2} />
+      </Button>
+      <Button aria-label="Mark as favourite" size="icon-sm" variant="ghost">
+        <HugeiconsIcon icon={FavouriteIcon} strokeWidth={2} />
+      </Button>
+    </div>
+  ),
+};
+
+/**
+ * Confirmation feedback — like {@link CopyWithFeedback}, but for a destructive
+ * action. Holds a brief "Confirmed" state before reverting.
+ */
+export const ConfirmFeedback: Story = {
+  render: () => {
+    function ConfirmButton() {
+      const [done, setDone] = useState(false);
+      return (
+        <Button
+          onClick={() => {
+            setDone(true);
+            setTimeout(() => setDone(false), 1500);
+          }}
+          variant={done ? "success" : "destructive-outline"}
+        >
+          <HugeiconsIcon
+            data-icon="inline-start"
+            icon={done ? Tick02Icon : Delete02Icon}
+            strokeWidth={2}
+          />
+          {done ? "Removed" : "Remove"}
+        </Button>
+      );
+    }
+    return <ConfirmButton />;
+  },
 };
