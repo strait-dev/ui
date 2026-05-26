@@ -97,8 +97,11 @@ import {
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "./pagination";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import {
@@ -1087,15 +1090,16 @@ function DataGridTableBodyRowExpanded<TData extends object>({
 }: {
   row: Row<TData>;
 }) {
-  const { props } = useDataGrid();
+  const { props, table } = useDataGrid<TData>();
   const visibleCells = row.getVisibleCells();
-  const expandCol = props.table
-    ?.getAllColumns()
+  const expandCol = table
+    .getAllColumns()
     .find((col) => col.columnDef.meta?.expandedContent);
 
   return (
     <tr data-slot="data-grid-table-body-row-expanded">
       <td
+        className="border-border border-b bg-muted/50"
         colSpan={
           visibleCells.length + (props.tableLayout?.columnsResizable ? 1 : 0)
         }
@@ -1692,13 +1696,13 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
   return (
     <div
       className={cn(
-        "flex grow flex-col flex-wrap items-center justify-between gap-2.5 py-2.5 text-sm sm:flex-row sm:py-0",
+        "flex grow flex-col flex-wrap items-center justify-between gap-2.5 border-border border-t px-3 py-2.5 text-sm sm:flex-row",
         userProps.className
       )}
       data-slot="data-grid-pagination"
     >
       {/* Left: rows per page */}
-      <div className="order-2 flex flex-wrap items-center gap-2 pb-2.5 sm:order-1 sm:pb-0">
+      <div className="order-2 flex flex-wrap items-center gap-2 sm:order-1">
         {isLoading ? (
           p.sizesSkeleton
         ) : (
@@ -1724,7 +1728,7 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
       </div>
 
       {/* Right: info + page buttons */}
-      <div className="order-1 flex flex-col items-center justify-center gap-2.5 pt-2.5 sm:order-2 sm:flex-row sm:justify-end sm:pt-0">
+      <div className="order-1 flex flex-col items-center justify-center gap-2.5 sm:order-2 sm:flex-row sm:justify-end">
         {isLoading ? (
           p.infoSkeleton
         ) : (
@@ -1736,27 +1740,25 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
               <Pagination className="order-1 mx-0 w-auto sm:order-2" size="sm">
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationLink
+                    <PaginationPrevious
                       aria-disabled={!canPrev}
                       aria-label={p.previousPageLabel}
                       className={cn(
-                        "rtl:rotate-180",
                         !canPrev && "pointer-events-none opacity-50"
                       )}
                       onClick={() => canPrev && table.previousPage()}
-                    >
-                      <HugeiconsIcon icon={ArrowLeft02Icon} />
-                    </PaginationLink>
+                    />
                   </PaginationItem>
 
                   {currentGroupStart > 0 && (
                     <PaginationItem>
                       <PaginationLink
+                        aria-label="Previous page group"
                         onClick={() =>
                           table.setPageIndex(currentGroupStart - 1)
                         }
                       >
-                        {p.ellipsisText}
+                        <PaginationEllipsis />
                       </PaginationLink>
                     </PaginationItem>
                   )}
@@ -1766,25 +1768,23 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
                   {currentGroupEnd < pageCount && (
                     <PaginationItem>
                       <PaginationLink
+                        aria-label="Next page group"
                         onClick={() => table.setPageIndex(currentGroupEnd)}
                       >
-                        {p.ellipsisText}
+                        <PaginationEllipsis />
                       </PaginationLink>
                     </PaginationItem>
                   )}
 
                   <PaginationItem>
-                    <PaginationLink
+                    <PaginationNext
                       aria-disabled={!canNext}
                       aria-label={p.nextPageLabel}
                       className={cn(
-                        "rtl:rotate-180",
                         !canNext && "pointer-events-none opacity-50"
                       )}
                       onClick={() => canNext && table.nextPage()}
-                    >
-                      <HugeiconsIcon icon={ArrowRight02Icon} />
-                    </PaginationLink>
+                    />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>

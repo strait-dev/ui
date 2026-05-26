@@ -33,7 +33,6 @@ import {
   DataGridTableDnd,
   DataGridTableDndRowHandle,
   DataGridTableDndRows,
-  DataGridTableFoot,
   DataGridTableFootRow,
   DataGridTableFootRowCell,
   DataGridTableRowPin,
@@ -732,20 +731,18 @@ export const FooterTotals: Story = {
         <DataGridContainer>
           <DataGridTable
             footerContent={
-              <DataGridTableFoot>
-                <DataGridTableFootRow>
-                  <DataGridTableFootRowCell colSpan={3}>
-                    Total budget
-                  </DataGridTableFootRowCell>
-                  <DataGridTableFootRowCell colSpan={2}>
-                    {new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                      maximumFractionDigits: 0,
-                    }).format(total)}
-                  </DataGridTableFootRowCell>
-                </DataGridTableFootRow>
-              </DataGridTableFoot>
+              <DataGridTableFootRow>
+                <DataGridTableFootRowCell colSpan={3}>
+                  Total budget
+                </DataGridTableFootRowCell>
+                <DataGridTableFootRowCell colSpan={2}>
+                  {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                    maximumFractionDigits: 0,
+                  }).format(total)}
+                </DataGridTableFootRowCell>
+              </DataGridTableFootRow>
             }
           />
         </DataGridContainer>
