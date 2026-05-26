@@ -2051,7 +2051,7 @@ Import: `import { ... } from "@strait/ui/components/accordion";`
 
 A vertically stacked set of collapsible sections, each with a trigger and an animated content panel.
 
-Exports: `Accordion`, `AccordionContent`, `AccordionItem`, `AccordionItemProps`, `AccordionProps`, `AccordionTrigger`, `AccordionVariant`, `accordionItemVariants`
+Exports: `Accordion`, `AccordionContent`, `AccordionItem`, `AccordionItemProps`, `AccordionProps`, `AccordionTrigger`, `AccordionTriggerIndicator`, `AccordionTriggerProps`, `AccordionVariant`, `accordionItemVariants`
 
 Props (`AccordionItemProps`):
 Extends: `AccordionPrimitive.Item.Props`
@@ -2066,6 +2066,13 @@ Extends: `AccordionPrimitive.Root.Props`
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `variant` | `AccordionVariant` |  | `"default"` | Visual style applied to every item. Each AccordionItem can override it locally with its own `variant`. Defaults to `"default"`. |
+
+Props (`AccordionTriggerProps`):
+Extends: `AccordionPrimitive.Trigger.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `indicator` | `AccordionTriggerIndicator` |  | `"chevron"` | Built-in collapse/expand indicator placement. - `"chevron"` (default) — down arrow when collapsed, up arrow when open. - `"plus-minus"` — plus glyph when collapsed, minus when open. - `"none"` — suppress the built-in indicator; supply your own as the last child of the trigger (tag it `data-slot="accordion-trigger-icon"` to inherit sizing). |
 
 Variants:
 - `variant`: `default`, `outline`, `solid` (default: `default`)
@@ -2084,6 +2091,28 @@ Props (`CollapsibleProps`):
 Extends: `CollapsiblePrimitive.Root.Props`
 
 Data slots: `collapsible`, `collapsible-content`, `collapsible-trigger`
+
+### Frame
+
+Import: `import { ... } from "@strait/ui/components/frame";`
+
+A bordered surface that hosts one or more FramePanel children.
+
+Exports: `Frame`, `FrameDescription`, `FrameFooter`, `FrameHeader`, `FramePanel`, `FrameProps`, `FrameTitle`, `frameVariants`
+
+Props (`FrameProps`):
+Extends: `React.ComponentProps<"div">`, `FrameVariantProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dense` | `boolean` |  | `false` | When `true`, FramePanels drop their inner padding. Useful when the panel's content owns its own padding (e.g. a `<DataGrid>`). Default `false`. |
+| `stacked` | `boolean` |  | `false` | When `true`, sibling FramePanels are joined edge-to-edge with shared borders (no gap, no inner radius between them). Only the first and last panels keep rounded corners. Default `false`. |
+
+Variants:
+- `variant`: `default`, `ghost` (default: `default`)
+- `spacing`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `frame`, `frame-description`, `frame-footer`, `frame-header`, `frame-panel`, `frame-title`
 
 ### Resizable
 

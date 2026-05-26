@@ -1,7 +1,12 @@
 "use client";
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
-import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
+import {
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+  MinusSignIcon,
+  PlusSignIcon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cva } from "class-variance-authority";
 import { createContext, useContext } from "react";
@@ -133,17 +138,36 @@ function AccordionItem({ className, variant, ...props }: AccordionItemProps) {
   );
 }
 
+/** Indicator style for {@link AccordionTrigger}. */
+export type AccordionTriggerIndicator = "chevron" | "plus-minus" | "none";
+
+/** Props for {@link AccordionTrigger}. */
+export interface AccordionTriggerProps
+  extends AccordionPrimitive.Trigger.Props {
+  /**
+   * Built-in collapse/expand indicator placement.
+   * - `"chevron"` (default) — down arrow when collapsed, up arrow when open.
+   * - `"plus-minus"` — plus glyph when collapsed, minus when open.
+   * - `"none"` — suppress the built-in indicator; supply your own as the
+   *   last child of the trigger (tag it `data-slot="accordion-trigger-icon"`
+   *   to inherit sizing).
+   */
+  indicator?: AccordionTriggerIndicator;
+}
+
 /**
  * Clickable header button that expands or collapses an
  * {@link AccordionItem}. Renders inside an implicit `<h3>` via
- * `AccordionPrimitive.Header`, and toggles between a down and up arrow
- * icon to reflect the open state.
+ * `AccordionPrimitive.Header`. Toggles a built-in chevron or plus/minus
+ * glyph to reflect the open state, or hides the built-in indicator entirely
+ * via `indicator="none"`.
  */
 function AccordionTrigger({
   className,
   children,
+  indicator = "chevron",
   ...props
-}: AccordionPrimitive.Trigger.Props) {
+}: AccordionTriggerProps) {
   return (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
@@ -155,18 +179,38 @@ function AccordionTrigger({
         {...props}
       >
         {children}
-        <HugeiconsIcon
-          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
-          data-slot="accordion-trigger-icon"
-          icon={ArrowDown01Icon}
-          strokeWidth={2}
-        />
-        <HugeiconsIcon
-          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
-          data-slot="accordion-trigger-icon"
-          icon={ArrowUp01Icon}
-          strokeWidth={2}
-        />
+        {indicator === "chevron" && (
+          <>
+            <HugeiconsIcon
+              className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+              data-slot="accordion-trigger-icon"
+              icon={ArrowDown01Icon}
+              strokeWidth={2}
+            />
+            <HugeiconsIcon
+              className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+              data-slot="accordion-trigger-icon"
+              icon={ArrowUp01Icon}
+              strokeWidth={2}
+            />
+          </>
+        )}
+        {indicator === "plus-minus" && (
+          <>
+            <HugeiconsIcon
+              className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+              data-slot="accordion-trigger-icon"
+              icon={PlusSignIcon}
+              strokeWidth={2}
+            />
+            <HugeiconsIcon
+              className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+              data-slot="accordion-trigger-icon"
+              icon={MinusSignIcon}
+              strokeWidth={2}
+            />
+          </>
+        )}
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   );

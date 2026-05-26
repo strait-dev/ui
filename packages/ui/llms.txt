@@ -110,6 +110,7 @@
 
 - [Accordion](@strait/ui/components/accordion): A vertically stacked set of collapsible sections, each with a trigger and an animated content panel.
 - [Collapsible](@strait/ui/components/collapsible): A lightweight single-panel show/hide container driven by a trigger.
+- [Frame](@strait/ui/components/frame): A bordered surface that hosts one or more FramePanel children.
 - [Resizable](@strait/ui/components/resizable): Drag handle separator between two ResizablePanel elements.
 - [Scroll Area](@strait/ui/components/scroll-area): A cross-browser custom scroll container with styled overlaid scrollbars.
 - [Separator](@strait/ui/components/separator): A thin dividing line between sections of content.

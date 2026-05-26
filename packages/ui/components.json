@@ -11,6 +11,8 @@
       "AccordionItemProps",
       "AccordionProps",
       "AccordionTrigger",
+      "AccordionTriggerIndicator",
+      "AccordionTriggerProps",
       "AccordionVariant",
       "accordionItemVariants"
     ],
@@ -42,6 +44,21 @@
         ],
         "extends": [
           "AccordionPrimitive.Root.Props"
+        ]
+      },
+      {
+        "name": "AccordionTriggerProps",
+        "props": [
+          {
+            "name": "indicator",
+            "type": "AccordionTriggerIndicator",
+            "optional": true,
+            "default": "\"chevron\"",
+            "description": "Built-in collapse/expand indicator placement. - `\"chevron\"` (default) — down arrow when collapsed, up arrow when open. - `\"plus-minus\"` — plus glyph when collapsed, minus when open. - `\"none\"` — suppress the built-in indicator; supply your own as the last child of the trigger (tag it `data-slot=\"accordion-trigger-icon\"` to inherit sizing)."
+          }
+        ],
+        "extends": [
+          "AccordionPrimitive.Trigger.Props"
         ]
       }
     ],
@@ -4533,6 +4550,71 @@
       "form-item",
       "form-label",
       "form-message"
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "Frame",
+    "importPath": "@strait/ui/components/frame",
+    "category": "Layout",
+    "description": "A bordered surface that hosts one or more FramePanel children.",
+    "exports": [
+      "Frame",
+      "FrameDescription",
+      "FrameFooter",
+      "FrameHeader",
+      "FramePanel",
+      "FrameProps",
+      "FrameTitle",
+      "frameVariants"
+    ],
+    "types": [
+      {
+        "name": "FrameProps",
+        "props": [
+          {
+            "name": "dense",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "When `true`, FramePanels drop their inner padding. Useful when the panel's content owns its own padding (e.g. a `<DataGrid>`). Default `false`."
+          },
+          {
+            "name": "stacked",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "When `true`, sibling FramePanels are joined edge-to-edge with shared borders (no gap, no inner radius between them). Only the first and last panels keep rounded corners. Default `false`."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"div\">",
+          "FrameVariantProps"
+        ]
+      }
+    ],
+    "variants": {
+      "variant": [
+        "default",
+        "ghost"
+      ],
+      "spacing": [
+        "sm",
+        "default",
+        "lg"
+      ]
+    },
+    "defaultVariants": {
+      "variant": "default",
+      "spacing": "default"
+    },
+    "slots": [
+      "frame",
+      "frame-description",
+      "frame-footer",
+      "frame-header",
+      "frame-panel",
+      "frame-title"
     ],
     "dependencies": []
   },
