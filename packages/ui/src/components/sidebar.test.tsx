@@ -23,6 +23,7 @@ beforeAll(() => {
 // Deferred imports so polyfills apply before module evaluation
 // We use dynamic import-like workaround with top-level await pattern; instead
 // just import at the top since beforeAll runs before tests.
+import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import {
   Sidebar,
   SidebarContent,
@@ -40,6 +41,7 @@ import {
   SidebarProvider,
   SidebarSearchButton,
   SidebarTrigger,
+  SidebarUserButton,
   useSidebar,
 } from "./sidebar";
 
@@ -273,5 +275,38 @@ describe("Sidebar", () => {
     // After click, sidebar state should have changed (desktop: collapsed)
     const wrapper = container.querySelector("[data-slot='sidebar-wrapper']");
     expect(wrapper).toBeInTheDocument();
+  });
+
+  it("opens the SidebarUserButton menu on click", async () => {
+    render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarUserButton
+            email="ada@example.com"
+            menu={<MenuPrimitive.Item>Sign out</MenuPrimitive.Item>}
+            name="Ada Lovelace"
+          />
+        </Sidebar>
+      </SidebarProvider>
+    );
+    const trigger = screen.getByText("Ada Lovelace").closest("button");
+    expect(trigger).not.toBeNull();
+    if (!trigger) return;
+    expect(screen.queryByText("Sign out")).toBeNull();
+    await userEvent.click(trigger);
+    expect(await screen.findByText("Sign out")).toBeInTheDocument();
+  });
+
+  it("renders SidebarUserButton as a static chip with no menu trigger", () => {
+    render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarUserButton name="Ada Lovelace" static />
+        </Sidebar>
+      </SidebarProvider>
+    );
+    const trigger = screen.getByText("Ada Lovelace").closest("button");
+    expect(trigger).not.toBeNull();
+    expect(trigger?.getAttribute("aria-expanded")).toBeNull();
   });
 });

@@ -1469,6 +1469,110 @@ function SidebarMenuSubButton({
  * Built on Base UI's `Menu` primitive with `openOnHover` so users can
  * peek at sub-items by moving the cursor over the parent icon.
  */
+/** Props for {@link SidebarUserButton}. */
+export interface SidebarUserButtonProps
+  extends Omit<React.ComponentProps<"button">, "title"> {
+  /** Primary display name. */
+  name: string;
+  /** Optional secondary line — often the user's email. */
+  email?: string;
+  /**
+   * Avatar element rendered to the leading edge (typically an `<Avatar>`
+   * or `<img>`). Sized down to fit the row at `size-7`.
+   */
+  avatar?: React.ReactNode;
+  /**
+   * Menu body — Base UI `MenuPrimitive.Item` and friends. When omitted,
+   * the button still renders the chevron unless {@link SidebarUserButtonProps.static}
+   * is set; clicks fall through to the consumer's `onClick`.
+   */
+  menu?: React.ReactNode;
+  /**
+   * When `true`, the row is a plain account chip with no menu wrapper
+   * and no chevron — handy when the surrounding shell already provides
+   * the account dropdown elsewhere.
+   */
+  static?: boolean;
+}
+
+/**
+ * Account row pinned to the bottom of a sidebar — avatar + name + email
+ * + an account menu opened via Base UI `Menu`.
+ *
+ * Compact in icon-collapse mode: only the avatar shows; the menu still
+ * opens with the same items.
+ */
+function SidebarUserButton({
+  className,
+  name,
+  email,
+  avatar,
+  menu,
+  static: isStatic,
+  ...props
+}: SidebarUserButtonProps) {
+  const chip = (
+    <button
+      className={cn(
+        "group/user-button flex w-full items-center gap-2 rounded-md p-2 text-left text-sidebar-foreground outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0",
+        className
+      )}
+      data-sidebar="user-button"
+      data-slot="sidebar-user-button"
+      type="button"
+      {...props}
+    >
+      {avatar ? (
+        <span
+          className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-sidebar-accent"
+          data-slot="sidebar-user-button-avatar"
+        >
+          {avatar}
+        </span>
+      ) : null}
+      <span
+        className="flex min-w-0 flex-1 flex-col group-data-[collapsible=icon]:hidden"
+        data-slot="sidebar-user-button-body"
+      >
+        <span className="truncate font-medium text-sm">{name}</span>
+        {email ? (
+          <span className="truncate text-muted-foreground text-xs">
+            {email}
+          </span>
+        ) : null}
+      </span>
+      {isStatic ? null : (
+        <HugeiconsIcon
+          className="ml-auto size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
+          data-slot="sidebar-user-button-chevron"
+          icon={ArrowDown01Icon}
+          strokeWidth={2}
+        />
+      )}
+    </button>
+  );
+
+  if (isStatic || !menu) {
+    return chip;
+  }
+
+  return (
+    <MenuPrimitive.Root>
+      <MenuPrimitive.Trigger render={chip} />
+      <MenuPrimitive.Portal>
+        <MenuPrimitive.Positioner align="end" side="right" sideOffset={4}>
+          <MenuPrimitive.Popup
+            className="z-50 min-w-48 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 transition-[transform,opacity] duration-150 ease-out motion-reduce:transition-none"
+            data-slot="sidebar-user-button-menu"
+          >
+            {menu}
+          </MenuPrimitive.Popup>
+        </MenuPrimitive.Positioner>
+      </MenuPrimitive.Portal>
+    </MenuPrimitive.Root>
+  );
+}
+
 /** Props for {@link SidebarCard}. */
 export interface SidebarCardProps extends React.ComponentProps<"div"> {
   /**
@@ -1655,5 +1759,6 @@ export {
   SidebarSeparator,
   SidebarToggleRail,
   SidebarTrigger,
+  SidebarUserButton,
   useSidebar,
 };
