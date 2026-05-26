@@ -148,6 +148,28 @@ describe("Sidebar", () => {
     expect(typeof api.setActiveRailItem).toBe("function");
   });
 
+  it("renders the active-state visual (left rail + soft bg + aria-current)", () => {
+    render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton isActive>Active row</SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </Sidebar>
+      </SidebarProvider>
+    );
+    const button = screen.getByText("Active row").closest("button");
+    expect(button).not.toBeNull();
+    if (!button) return;
+    const className = button.className;
+    expect(className).toContain("data-active:bg-sidebar-active");
+    expect(className).toContain("data-active:text-sidebar-active-foreground");
+    expect(className).toContain("data-active:before:bg-sidebar-active-rail");
+    expect(button.getAttribute("aria-current")).toBe("page");
+  });
+
   it("toggles sidebar via trigger button", async () => {
     const { container } = render(
       <SidebarProvider defaultOpen={true}>
