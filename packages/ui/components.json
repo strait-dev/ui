@@ -8,20 +8,53 @@
       "Accordion",
       "AccordionContent",
       "AccordionItem",
+      "AccordionItemProps",
       "AccordionProps",
-      "AccordionTrigger"
+      "AccordionTrigger",
+      "AccordionVariant",
+      "accordionItemVariants"
     ],
     "types": [
       {
+        "name": "AccordionItemProps",
+        "props": [
+          {
+            "name": "variant",
+            "type": "AccordionVariant",
+            "optional": true,
+            "description": "Visual style for this item. Overrides the variant inherited from the parent Accordion when set."
+          }
+        ],
+        "extends": [
+          "AccordionPrimitive.Item.Props"
+        ]
+      },
+      {
         "name": "AccordionProps",
-        "props": [],
+        "props": [
+          {
+            "name": "variant",
+            "type": "AccordionVariant",
+            "optional": true,
+            "default": "\"default\"",
+            "description": "Visual style applied to every item. Each AccordionItem can override it locally with its own `variant`. Defaults to `\"default\"`."
+          }
+        ],
         "extends": [
           "AccordionPrimitive.Root.Props"
         ]
       }
     ],
-    "variants": {},
-    "defaultVariants": {},
+    "variants": {
+      "variant": [
+        "default",
+        "outline",
+        "solid"
+      ]
+    },
+    "defaultVariants": {
+      "variant": "default"
+    },
     "slots": [
       "accordion",
       "accordion-content",
@@ -174,7 +207,8 @@
         "info",
         "success",
         "warning",
-        "destructive"
+        "destructive",
+        "invert"
       ]
     },
     "defaultVariants": {
@@ -217,6 +251,124 @@
     "defaultVariants": {},
     "slots": [
       "aspect-ratio"
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "Autocomplete",
+    "importPath": "@strait/ui/components/autocomplete",
+    "category": "Forms",
+    "description": "Optional arrow that visually connects the popup to its anchor.",
+    "exports": [
+      "Autocomplete",
+      "AutocompleteArrow",
+      "AutocompleteBackdrop",
+      "AutocompleteClear",
+      "AutocompleteCollection",
+      "AutocompleteContent",
+      "AutocompleteContentProps",
+      "AutocompleteEmpty",
+      "AutocompleteGroup",
+      "AutocompleteGroupLabel",
+      "AutocompleteInput",
+      "AutocompleteItem",
+      "AutocompleteList",
+      "AutocompletePortal",
+      "AutocompletePositioner",
+      "AutocompleteProps",
+      "AutocompleteRow",
+      "AutocompleteSeparator",
+      "AutocompleteStatus",
+      "AutocompleteTrigger",
+      "AutocompleteValue"
+    ],
+    "types": [
+      {
+        "name": "AutocompleteContentProps",
+        "props": [
+          {
+            "name": "align",
+            "type": "AutocompletePrimitive.Positioner.Props[\"align\"]",
+            "optional": true,
+            "default": "\"start\"",
+            "description": "Alignment of the popup against its anchor (default `\"start\"`)."
+          },
+          {
+            "name": "alignOffset",
+            "type": "AutocompletePrimitive.Positioner.Props[\"alignOffset\"]",
+            "optional": true,
+            "default": "0",
+            "description": "Offset in pixels along the alignment axis (default `0`)."
+          },
+          {
+            "name": "anchor",
+            "type": "AutocompletePrimitive.Positioner.Props[\"anchor\"]",
+            "optional": true,
+            "description": "Custom anchor element to position against instead of the input."
+          },
+          {
+            "name": "showBackdrop",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Render an AutocompleteBackdrop behind the popup."
+          },
+          {
+            "name": "side",
+            "type": "AutocompletePrimitive.Positioner.Props[\"side\"]",
+            "optional": true,
+            "default": "\"bottom\"",
+            "description": "Preferred side to place the popup (default `\"bottom\"`)."
+          },
+          {
+            "name": "sideOffset",
+            "type": "AutocompletePrimitive.Positioner.Props[\"sideOffset\"]",
+            "optional": true,
+            "default": "4",
+            "description": "Gap in pixels between the popup and its anchor (default `4`)."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<typeof AutocompletePrimitive.Popup>"
+        ]
+      },
+      {
+        "name": "AutocompleteProps",
+        "props": [],
+        "extends": [
+          "React.ComponentProps< typeof AutocompletePrimitive.Root >"
+        ]
+      }
+    ],
+    "variants": {
+      "size": [
+        "sm",
+        "default",
+        "lg"
+      ]
+    },
+    "defaultVariants": {
+      "size": "default"
+    },
+    "slots": [
+      "autocomplete-arrow",
+      "autocomplete-backdrop",
+      "autocomplete-clear",
+      "autocomplete-collection",
+      "autocomplete-empty",
+      "autocomplete-group",
+      "autocomplete-group-label",
+      "autocomplete-input",
+      "autocomplete-item",
+      "autocomplete-list",
+      "autocomplete-popup",
+      "autocomplete-portal",
+      "autocomplete-positioner",
+      "autocomplete-row",
+      "autocomplete-separator",
+      "autocomplete-status",
+      "autocomplete-trigger",
+      "autocomplete-value"
     ],
     "dependencies": []
   },
@@ -1884,61 +2036,6 @@
     "dependencies": []
   },
   {
-    "name": "Combobox",
-    "importPath": "@strait/ui/components/combobox",
-    "category": "Forms",
-    "description": "A badge representing one selected value inside ComboboxChips.",
-    "exports": [
-      "Combobox",
-      "ComboboxChip",
-      "ComboboxChips",
-      "ComboboxChipsInput",
-      "ComboboxCollection",
-      "ComboboxContent",
-      "ComboboxEmpty",
-      "ComboboxGroup",
-      "ComboboxInput",
-      "ComboboxItem",
-      "ComboboxLabel",
-      "ComboboxList",
-      "ComboboxProps",
-      "ComboboxSeparator",
-      "ComboboxTrigger",
-      "ComboboxValue",
-      "useComboboxAnchor"
-    ],
-    "types": [
-      {
-        "name": "ComboboxProps",
-        "props": [],
-        "extends": [
-          "React.ComponentProps<typeof ComboboxPrimitive.Root>"
-        ]
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "combobox-chip",
-      "combobox-chip-input",
-      "combobox-chip-remove",
-      "combobox-chips",
-      "combobox-clear",
-      "combobox-collection",
-      "combobox-content",
-      "combobox-empty",
-      "combobox-group",
-      "combobox-item",
-      "combobox-label",
-      "combobox-list",
-      "combobox-separator",
-      "combobox-trigger",
-      "combobox-value",
-      "input-group-button"
-    ],
-    "dependencies": []
-  },
-  {
     "name": "Command Menu",
     "importPath": "@strait/ui/components/command-menu",
     "category": "Navigation",
@@ -2271,101 +2368,459 @@
     "dependencies": []
   },
   {
-    "name": "DataTable",
-    "importPath": "@strait/ui/components/data-table",
+    "name": "DataGrid",
+    "importPath": "@strait/ui/components/data-grid",
     "category": "Data Display",
-    "description": "A fully-featured data table built on TanStack Table v8.",
+    "description": "Root component for the DataGrid system.",
     "exports": [
-      "DataTable",
-      "DataTableProps",
-      "DataTableRowActions",
-      "DataTableRowActionsProps",
-      "createSelectColumn"
+      "DataGrid",
+      "DataGridApiFetchParams",
+      "DataGridApiResponse",
+      "DataGridColumnFilter",
+      "DataGridColumnFilterProps",
+      "DataGridColumnHeader",
+      "DataGridColumnHeaderProps",
+      "DataGridColumnVisibility",
+      "DataGridContainer",
+      "DataGridContextProps",
+      "DataGridPagination",
+      "DataGridPaginationProps",
+      "DataGridProps",
+      "DataGridProvider",
+      "DataGridRequestParams",
+      "DataGridScrollArea",
+      "DataGridScrollAreaProps",
+      "DataGridTable",
+      "DataGridTableClassNames",
+      "DataGridTableDnd",
+      "DataGridTableDndRowHandle",
+      "DataGridTableDndRows",
+      "DataGridTableEmpty",
+      "DataGridTableFoot",
+      "DataGridTableFootRow",
+      "DataGridTableFootRowCell",
+      "DataGridTableHeadRowCellResize",
+      "DataGridTableLayout",
+      "DataGridTableLoader",
+      "DataGridTableRowPin",
+      "DataGridTableRowSelect",
+      "DataGridTableRowSelectAll",
+      "DataGridTableVirtual",
+      "DataGridTableVirtualProps",
+      "DataGridTableVirtualScrollElements",
+      "DataGridTableVirtualizerOptions",
+      "getColumnHeaderLabel",
+      "useDataGrid"
     ],
     "types": [
       {
-        "name": "DataTableProps",
+        "name": "DataGridColumnFilterProps",
         "props": [
           {
-            "name": "columns",
-            "type": "ColumnDef<TData, TValue>[]",
+            "name": "column",
+            "type": "Column<TData, TValue>",
+            "optional": true,
+            "description": "The TanStack Table column to filter."
+          },
+          {
+            "name": "options",
+            "type": "{ /** Display label. */ label: string; /** Filter value matched against `getFacetedUniqueValues`. */ value: string; /** Optional icon component. */ icon?: React.ComponentType<{ className?: string }>; }[]",
             "optional": false,
-            "description": "TanStack Table column definitions for the table."
+            "description": "List of filterable option values."
           },
           {
-            "name": "data",
-            "type": "TData[]",
-            "optional": false,
-            "description": "Array of row records to display."
-          },
-          {
-            "name": "searchKey",
+            "name": "title",
             "type": "string",
             "optional": true,
-            "description": "Column `id` to use for the global search input. When omitted the search bar is hidden."
-          },
-          {
-            "name": "searchPlaceholder",
-            "type": "string",
-            "optional": true,
-            "default": "\"Search...\"",
-            "description": "Placeholder text shown inside the search input."
-          },
-          {
-            "name": "showColumnVisibility",
-            "type": "boolean",
-            "optional": true,
-            "default": "true",
-            "description": "Whether to render the column-visibility dropdown."
-          },
-          {
-            "name": "showPagination",
-            "type": "boolean",
-            "optional": true,
-            "default": "true",
-            "description": "Whether to render the Previous / Next pagination controls."
-          },
-          {
-            "name": "pageSize",
-            "type": "number",
-            "optional": true,
-            "default": "10",
-            "description": "Number of rows per page when pagination is enabled."
-          },
-          {
-            "name": "className",
-            "type": "string",
-            "optional": true,
-            "description": "Additional class names merged onto the outermost table wrapper div."
+            "description": "Display title for the trigger button and search input placeholder."
           }
         ],
         "extends": []
       },
       {
-        "name": "DataTableRowActionsProps",
+        "name": "DataGridColumnHeaderProps",
         "props": [
           {
-            "name": "row",
-            "type": "TData",
+            "name": "column",
+            "type": "Column<TData, TValue>",
             "optional": false,
-            "description": "The typed row record passed to each action's `onClick` callback."
+            "description": "The TanStack Table column instance."
           },
           {
-            "name": "actions",
-            "type": "{ label: string; onClick: (row: TData) => void; icon?: React.ReactNode; }[]",
+            "name": "filter",
+            "type": "React.ReactNode",
             "optional": true,
-            "default": "[]",
-            "description": "List of menu items to render in the row-actions dropdown."
+            "description": "Optional filter node rendered as the first item in the column dropdown."
+          },
+          {
+            "name": "icon",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Optional icon rendered before the title."
+          },
+          {
+            "name": "pinnable",
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether pinning is supported (passed through; read from tableLayout)."
+          },
+          {
+            "name": "title",
+            "type": "string",
+            "optional": true,
+            "description": "Display title; falls back to `meta.headerTitle`, string header, or `column.id`."
+          },
+          {
+            "name": "visibility",
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to include a Columns visibility submenu. Default `false`."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"div\">"
+        ]
+      },
+      {
+        "name": "DataGridContextProps",
+        "props": [
+          {
+            "name": "isLoading",
+            "type": "boolean",
+            "optional": false,
+            "description": "Whether the grid is in a loading state."
+          },
+          {
+            "name": "props",
+            "type": "DataGridProps<TData>",
+            "optional": false,
+            "description": "The resolved merged props passed to DataGrid."
+          },
+          {
+            "name": "recordCount",
+            "type": "number",
+            "optional": false,
+            "description": "Total record count (drives pagination info and empty-state checks)."
+          },
+          {
+            "name": "table",
+            "type": "Table<TData>",
+            "optional": false,
+            "description": "The TanStack Table instance."
+          }
+        ],
+        "extends": []
+      },
+      {
+        "name": "DataGridPaginationProps",
+        "props": [
+          {
+            "name": "className",
+            "type": "string",
+            "optional": true,
+            "description": "Extra class names on the root element."
+          },
+          {
+            "name": "ellipsisText",
+            "type": "string",
+            "optional": true,
+            "description": "Ellipsis text. Default `\"...\"`."
+          },
+          {
+            "name": "info",
+            "type": "string",
+            "optional": true,
+            "description": "Pagination info template string. Default `\"{from} - {to} of {count}\"`."
+          },
+          {
+            "name": "infoSkeleton",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Skeleton shown for the info section while loading."
+          },
+          {
+            "name": "more",
+            "type": "boolean",
+            "optional": true,
+            "description": "Whether to render grouped ellipsis page buttons. Default `false`."
+          },
+          {
+            "name": "moreLimit",
+            "type": "number",
+            "optional": true,
+            "description": "Number of page buttons per group. Default `5`."
+          },
+          {
+            "name": "nextPageLabel",
+            "type": "string",
+            "optional": true,
+            "description": "Aria-label for the next-page button. Default `\"Go to next page\"`."
+          },
+          {
+            "name": "previousPageLabel",
+            "type": "string",
+            "optional": true,
+            "description": "Aria-label for the previous-page button. Default `\"Go to previous page\"`."
+          },
+          {
+            "name": "rowsPerPageLabel",
+            "type": "string",
+            "optional": true,
+            "description": "Label for the rows-per-page control. Default `\"Rows per page\"`."
+          },
+          {
+            "name": "sizes",
+            "type": "number[]",
+            "optional": true,
+            "description": "Available page-size options. Default `[5, 10, 25, 50, 100]`."
+          },
+          {
+            "name": "sizesDescription",
+            "type": "string",
+            "optional": true,
+            "description": "Label after the page-size select. Default `\"per page\"`."
+          },
+          {
+            "name": "sizesInfo",
+            "type": "string",
+            "optional": true,
+            "description": "Extra info shown next to the sizes select."
+          },
+          {
+            "name": "sizesLabel",
+            "type": "string",
+            "optional": true,
+            "description": "Label before the page-size select. Default `\"Show\"`."
+          },
+          {
+            "name": "sizesSkeleton",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Skeleton shown for the sizes section while loading."
+          }
+        ],
+        "extends": []
+      },
+      {
+        "name": "DataGridProps",
+        "props": [
+          {
+            "name": "allRowsLoadedMessage",
+            "type": "React.ReactNode | string",
+            "optional": true,
+            "description": "Message shown in the virtual infinite-scroll footer once all rows are loaded."
+          },
+          {
+            "name": "children",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Content rendered inside the provider (all sub-components)."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "optional": true,
+            "description": "Extra class names on the outermost container (when using DataGridContainer)."
+          },
+          {
+            "name": "emptyMessage",
+            "type": "React.ReactNode | string",
+            "optional": true,
+            "description": "Message shown in the empty-state row when there is no data."
+          },
+          {
+            "name": "fetchingMoreMessage",
+            "type": "React.ReactNode | string",
+            "optional": true,
+            "description": "Message shown in the virtual infinite-scroll footer while fetching more rows."
+          },
+          {
+            "name": "isLoading",
+            "type": "boolean",
+            "optional": true,
+            "description": "When `true`, the grid is in a loading state."
+          },
+          {
+            "name": "loadingMessage",
+            "type": "React.ReactNode | string",
+            "optional": true,
+            "description": "Custom content shown in the spinner overlay."
+          },
+          {
+            "name": "loadingMode",
+            "type": "\"skeleton\" | \"spinner\"",
+            "optional": true,
+            "description": "Controls whether loading renders skeleton rows (`\"skeleton\"`) or a centred spinner (`\"spinner\"`)."
+          },
+          {
+            "name": "onRowClick",
+            "type": "(row: TData) => void",
+            "optional": true,
+            "description": "Called when a body row is clicked."
+          },
+          {
+            "name": "recordCount",
+            "type": "number",
+            "optional": false,
+            "description": "Total number of records — used by pagination and empty-state checks."
+          },
+          {
+            "name": "table",
+            "type": "Table<TData>",
+            "optional": true,
+            "description": "The TanStack Table instance created by `useReactTable`."
+          },
+          {
+            "name": "tableClassNames",
+            "type": "DataGridTableClassNames",
+            "optional": true,
+            "description": "Class-name overrides for individual structural elements."
+          },
+          {
+            "name": "tableLayout",
+            "type": "DataGridTableLayout",
+            "optional": true,
+            "description": "Feature-flag bag that controls layout and interactive column/row features."
+          }
+        ],
+        "extends": []
+      },
+      {
+        "name": "DataGridScrollAreaProps",
+        "props": [
+          {
+            "name": "children",
+            "type": "React.ReactNode",
+            "optional": false,
+            "description": "Content rendered inside the scroll area."
+          },
+          {
+            "name": "orientation",
+            "type": "\"horizontal\" | \"vertical\" | \"both\"",
+            "optional": true,
+            "default": "\"both\"",
+            "description": "Which scroll axes to enable. Default `\"both\"`."
+          }
+        ],
+        "extends": [
+          "Omit< ScrollAreaPrimitive.Root.Props, \"children\" >"
+        ]
+      },
+      {
+        "name": "DataGridTableVirtualProps",
+        "props": [
+          {
+            "name": "estimateSize",
+            "type": "number",
+            "optional": true,
+            "description": "Estimated row height in px. Default `48`."
+          },
+          {
+            "name": "fetchMoreOffset",
+            "type": "number",
+            "optional": true,
+            "default": "0",
+            "description": "Number of items from the end to trigger `onFetchMore`. Default `0`."
+          },
+          {
+            "name": "footerContent",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Footer content."
+          },
+          {
+            "name": "hasMore",
+            "type": "boolean",
+            "optional": true,
+            "description": "`false` = all loaded; `true` / `undefined` = more available."
+          },
+          {
+            "name": "height",
+            "type": "number | string",
+            "optional": true,
+            "description": "Fixed height for a self-contained scroll container."
+          },
+          {
+            "name": "isFetchingMore",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether a fetch is in progress (disables duplicate fetches). Default `false`."
+          },
+          {
+            "name": "onFetchMore",
+            "type": "() => void",
+            "optional": true,
+            "description": "If provided, enables infinite scroll mode."
+          },
+          {
+            "name": "overscan",
+            "type": "number",
+            "optional": true,
+            "default": "10",
+            "description": "Number of rows to render outside the visible area. Default `10`."
+          },
+          {
+            "name": "renderHeader",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to render the header. Default `true`."
+          },
+          {
+            "name": "virtualizerOptions",
+            "type": "DataGridTableVirtualizerOptions<TData>",
+            "optional": true,
+            "description": "Advanced virtualizer options."
           }
         ],
         "extends": []
       }
     ],
-    "variants": {},
-    "defaultVariants": {},
+    "variants": {
+      "dense": [
+        "true",
+        "false"
+      ]
+    },
+    "defaultVariants": {
+      "dense": "false"
+    },
     "slots": [
-      "data-table",
-      "data-table-row-actions"
+      "data-grid",
+      "data-grid-column-header",
+      "data-grid-pagination",
+      "data-grid-row-pin",
+      "data-grid-row-select-all",
+      "data-grid-row-select-checkbox",
+      "data-grid-row-select-indicator",
+      "data-grid-row-spacer",
+      "data-grid-scroll-area",
+      "data-grid-scrollbar",
+      "data-grid-table",
+      "data-grid-table-body",
+      "data-grid-table-body-cell",
+      "data-grid-table-body-cell-skeleton",
+      "data-grid-table-body-row",
+      "data-grid-table-body-row-expanded",
+      "data-grid-table-body-row-skeleton",
+      "data-grid-table-empty",
+      "data-grid-table-foot",
+      "data-grid-table-foot-cell",
+      "data-grid-table-foot-row",
+      "data-grid-table-head",
+      "data-grid-table-head-cell",
+      "data-grid-table-head-cell-resize",
+      "data-grid-table-head-row",
+      "data-grid-table-loader",
+      "data-grid-table-viewport",
+      "data-grid-thumb",
+      "data-grid-virtual-spacer-bottom",
+      "data-grid-virtual-spacer-top",
+      "data-grid-virtual-status-complete",
+      "data-grid-virtual-status-loading",
+      "scroll-area-content",
+      "scroll-area-viewport"
     ],
     "dependencies": [
       "@tanstack/react-table"
@@ -2687,6 +3142,175 @@
     "defaultVariants": {},
     "slots": [
       "date-range-picker"
+    ],
+    "dependencies": [
+      "react-day-picker"
+    ]
+  },
+  {
+    "name": "Date Selector",
+    "importPath": "@strait/ui/components/date-selector",
+    "category": "Forms",
+    "description": "A compact date filter that selects by day, month, quarter, half-year, or year with `is` / `before` / `after` / `between` operators. Reorders into a popover or dialog by wrapping it; the day view reuses Calendar and the coarser periods render their own grids.",
+    "exports": [
+      "DEFAULT_DATE_SELECTOR_I18N",
+      "DateSelector",
+      "DateSelectorFilterType",
+      "DateSelectorI18nConfig",
+      "DateSelectorPeriodType",
+      "DateSelectorProps",
+      "DateSelectorRangePoint",
+      "DateSelectorValue",
+      "formatDateValue",
+      "useDateSelector",
+      "useDateSelectorContext"
+    ],
+    "types": [
+      {
+        "name": "DateSelectorProps",
+        "props": [
+          {
+            "name": "allowRange",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "When `true` (default), enables the `between` range operator."
+          },
+          {
+            "name": "baseYear",
+            "type": "number",
+            "optional": true,
+            "description": "Centre year for the generated year list. Defaults to the current year."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "optional": true,
+            "description": "Additional classes for the root element."
+          },
+          {
+            "name": "dayDateFormat",
+            "type": "string",
+            "optional": true,
+            "default": "\"MM/dd/yyyy\"",
+            "description": "`date-fns` format used to render and parse day values."
+          },
+          {
+            "name": "dayDateFormats",
+            "type": "string[]",
+            "optional": true,
+            "description": "Extra `date-fns` formats accepted when parsing typed input."
+          },
+          {
+            "name": "defaultFilterType",
+            "type": "DateSelectorFilterType",
+            "optional": true,
+            "default": "\"is\"",
+            "description": "The operator selected on first render. Defaults to `\"is\"`."
+          },
+          {
+            "name": "defaultPeriodType",
+            "type": "DateSelectorPeriodType",
+            "optional": true,
+            "default": "\"day\"",
+            "description": "The period selected on first render. Defaults to `\"day\"`."
+          },
+          {
+            "name": "i18n",
+            "type": "Partial<DateSelectorI18nConfig>",
+            "optional": true,
+            "description": "Partial i18n overrides merged over the English defaults."
+          },
+          {
+            "name": "inputHint",
+            "type": "string",
+            "optional": true,
+            "description": "When set, the input becomes editable and shows this hint while focused."
+          },
+          {
+            "name": "label",
+            "type": "string",
+            "optional": true,
+            "description": "Optional heading rendered beside the operator tabs."
+          },
+          {
+            "name": "maxYear",
+            "type": "number",
+            "optional": true,
+            "default": "2026",
+            "description": "Upper bound (inclusive) of the year list."
+          },
+          {
+            "name": "minYear",
+            "type": "number",
+            "optional": true,
+            "default": "2015",
+            "description": "Lower bound (inclusive) of the year list."
+          },
+          {
+            "name": "onChange",
+            "type": "(value: DateSelectorValue) => void",
+            "optional": true,
+            "description": "Called whenever the selection changes."
+          },
+          {
+            "name": "periodTypes",
+            "type": "DateSelectorPeriodType[]",
+            "optional": true,
+            "description": "Restricts which period tabs are shown, in order."
+          },
+          {
+            "name": "presetMode",
+            "type": "DateSelectorFilterType",
+            "optional": true,
+            "description": "Locks the operator to a fixed value and disables the operator tabs."
+          },
+          {
+            "name": "showInput",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "When `true` (default), renders the text input above the picker."
+          },
+          {
+            "name": "showTwoMonths",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "When `true` (default), the day view shows two months on desktop."
+          },
+          {
+            "name": "value",
+            "type": "DateSelectorValue",
+            "optional": true,
+            "description": "The controlled selection."
+          },
+          {
+            "name": "weekStartsOn",
+            "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
+            "optional": true,
+            "description": "First day of the week (0 = Sunday … 6 = Saturday)."
+          },
+          {
+            "name": "yearRange",
+            "type": "number",
+            "optional": true,
+            "default": "10",
+            "description": "Number of years listed when `minYear`/`maxYear` are not set."
+          }
+        ],
+        "extends": []
+      }
+    ],
+    "variants": {},
+    "defaultVariants": {},
+    "slots": [
+      "date-selector",
+      "date-selector-days",
+      "date-selector-input",
+      "date-selector-label",
+      "date-selector-operators",
+      "date-selector-periods"
     ],
     "dependencies": [
       "react-day-picker"
@@ -3401,19 +4025,52 @@
     "dependencies": []
   },
   {
-    "name": "File Upload",
+    "name": "FileUpload",
     "importPath": "@strait/ui/components/file-upload",
     "category": "Forms",
-    "description": "A drag-and-drop file upload zone with an optional file browser trigger.",
+    "description": "A drag-and-drop file upload zone with a browse button and a file list, built on the headless useFileUpload hook and native File APIs.",
     "exports": [
+      "FileMetadata",
       "FileUpload",
+      "FileUploadActions",
+      "FileUploadDropzone",
+      "FileUploadDropzoneProps",
       "FileUploadItem",
       "FileUploadItemProps",
+      "FileUploadList",
+      "FileUploadListProps",
+      "FileUploadOptions",
       "FileUploadProps",
+      "FileUploadSize",
+      "FileUploadState",
+      "FileWithPreview",
       "fileUploadVariants",
-      "formatBytes"
+      "formatBytes",
+      "useFileUpload"
     ],
     "types": [
+      {
+        "name": "FileUploadDropzoneProps",
+        "props": [
+          {
+            "name": "isDragging",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether a drag is currently hovering — toggles the active styling."
+          },
+          {
+            "name": "size",
+            "type": "FileUploadSize",
+            "optional": true,
+            "default": "\"default\"",
+            "description": "Density of the dropzone."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"div\">"
+        ]
+      },
       {
         "name": "FileUploadItemProps",
         "props": [
@@ -3425,9 +4082,9 @@
           },
           {
             "name": "file",
-            "type": "File",
+            "type": "FileWithPreview",
             "optional": false,
-            "description": "The `File` object to display."
+            "description": "The tracked file to display."
           },
           {
             "name": "onRemove",
@@ -3439,78 +4096,87 @@
         "extends": []
       },
       {
+        "name": "FileUploadListProps",
+        "props": [],
+        "extends": [
+          "React.ComponentProps<\"ul\">"
+        ]
+      },
+      {
         "name": "FileUploadProps",
         "props": [
           {
             "name": "accept",
-            "type": "string[]",
+            "type": "string",
             "optional": true,
-            "default": "[]",
-            "description": "Accepted MIME types and/or file extensions (e.g. `[\"image/png\", \".pdf\"]`). Passed to the OS file picker via `FileTrigger` and used for client-side validation. When omitted every file type is accepted."
+            "description": "Accepted MIME types and/or extensions as a comma-separated string (e.g. `\"image/*,.pdf\"`). When omitted every type is accepted."
           },
           {
             "name": "className",
             "type": "string",
             "optional": true,
-            "description": "Additional class names applied to the outer wrapper `<div>`."
+            "description": "Additional class names applied to the outer wrapper."
           },
           {
-            "name": "defaultValue",
-            "type": "File[]",
+            "name": "defaultFiles",
+            "type": "FileMetadata[]",
             "optional": true,
-            "default": "[]",
-            "description": "Initial file list for uncontrolled usage."
+            "description": "Files to seed the list with on mount."
           },
           {
             "name": "disabled",
             "type": "boolean",
             "optional": true,
             "default": "false",
-            "description": "Disables the entire widget (dropzone + browse button)."
+            "description": "Disables the dropzone and browse button."
           },
           {
             "name": "label",
             "type": "React.ReactNode",
             "optional": true,
             "default": "\"Drag & drop files here, or\"",
-            "description": "Prompt shown inside the dropzone above the \"Browse files\" button."
+            "description": "Prompt shown inside the dropzone above the browse button."
+          },
+          {
+            "name": "maxFiles",
+            "type": "number",
+            "optional": true,
+            "description": "Maximum number of files (only enforced when `multiple`)."
           },
           {
             "name": "maxSize",
             "type": "number",
             "optional": true,
-            "description": "Maximum file size in bytes. Files exceeding this limit are rejected and `onError` is called with a descriptive message."
+            "description": "Maximum size per file in bytes."
           },
           {
             "name": "multiple",
             "type": "boolean",
             "optional": true,
             "default": "false",
-            "description": "Allow selecting and dropping multiple files at once."
+            "description": "Allow selecting and dropping multiple files."
           },
           {
             "name": "onError",
-            "type": "(message: string) => void",
+            "type": "(errors: string[]) => void",
             "optional": true,
-            "description": "Called with a human-readable message when one or more files are rejected due to type or size constraints. Only the **first** rejection per drop / browse interaction is reported."
+            "description": "Called with human-readable messages when files are rejected."
           },
           {
             "name": "onValueChange",
-            "type": "(files: File[]) => void",
+            "type": "(files: FileWithPreview[]) => void",
             "optional": true,
-            "description": "Called whenever the accepted file list changes — both in controlled and uncontrolled mode."
+            "description": "Called with the full list whenever it changes."
           },
           {
-            "name": "value",
-            "type": "File[]",
+            "name": "size",
+            "type": "FileUploadSize",
             "optional": true,
-            "description": "Controlled file list. When provided the component is in controlled mode and `onValueChange` must update this value externally."
+            "default": "\"default\"",
+            "description": "Density of the dropzone."
           }
         ],
-        "extends": [
-          "Omit<DropZoneProps, \"onDrop\" | \"children\" | \"className\">",
-          "VariantProps<typeof fileUploadVariants>"
-        ]
+        "extends": []
       }
     ],
     "variants": {
@@ -3526,16 +4192,17 @@
     "slots": [
       "file-upload",
       "file-upload-dropzone",
+      "file-upload-error",
       "file-upload-item",
       "file-upload-list"
     ],
     "dependencies": []
   },
   {
-    "name": "Filter",
-    "importPath": "@strait/ui/components/filter",
+    "name": "Filters",
+    "importPath": "@strait/ui/components/filters",
     "category": "Data Display",
-    "description": "Renders just the active filter chips (no \"Add filter\" trigger).",
+    "description": "A faceted filter builder modelled on corr.sh's Filters.",
     "exports": [
       "CustomRendererProps",
       "DEFAULT_I18N",
@@ -3679,6 +4346,13 @@
             "optional": true,
             "default": "\"F\"",
             "description": "Label shown in the trigger's `Kbd` hint."
+          },
+          {
+            "name": "showSearchInput",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Show the search box at the top of the field picker."
           },
           {
             "name": "size",
@@ -5667,7 +6341,8 @@
     "description": "An international phone number field composed of a flag/country-code selector and a number text input that formats as the user types.",
     "exports": [
       "PhoneInput",
-      "PhoneInputProps"
+      "PhoneInputProps",
+      "PhoneInputVariant"
     ],
     "types": [
       {
@@ -5684,12 +6359,24 @@
             "type": "(country: Country) => void",
             "optional": true,
             "description": "Called whenever the user selects a different country in the CountrySelect popover."
+          },
+          {
+            "name": "variant",
+            "type": "PhoneInputVariant",
+            "optional": true,
+            "default": "\"default\"",
+            "description": "Height of the field and country button — `\"sm\"` | `\"default\"` | `\"lg\"` (default `\"default\"`)."
+          },
+          {
+            "name": "popupClassName",
+            "type": "string",
+            "optional": true,
+            "description": "Extra classes merged onto the country-selector popover content."
           }
         ],
         "extends": [
           "Omit< React.ComponentProps<\"input\">, \"onChange\" | \"value\" | \"ref\" | \"size\" >",
-          "Omit<React.ComponentProps<typeof RPNInput>, \"onChange\" | \"size\">",
-          "Pick<InputProps, \"size\">"
+          "Omit<React.ComponentProps<typeof RPNInput>, \"onChange\" | \"size\">"
         ]
       }
     ],
@@ -6377,6 +7064,79 @@
       "scroll-area-scrollbar",
       "scroll-area-thumb",
       "scroll-area-viewport"
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "Scrollspy",
+    "importPath": "@strait/ui/components/scrollspy",
+    "category": "Navigation",
+    "description": "Tracks the section currently in view and marks its corresponding navigation anchor with `data-active=\"true\"`. Anchors opt in via `data-{dataAttribute}-anchor=\"<section-id>\"`; clicking one smooth-scrolls to its section and (optionally) updates the URL hash.",
+    "exports": [
+      "Scrollspy",
+      "ScrollspyProps"
+    ],
+    "types": [
+      {
+        "name": "ScrollspyProps",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "optional": false,
+            "description": "The navigation links to track; anchors carry `data-{dataAttribute}-anchor`."
+          },
+          {
+            "name": "dataAttribute",
+            "type": "string",
+            "optional": true,
+            "default": "\"scrollspy\"",
+            "description": "The data-attribute namespace used to find anchors and apply offsets, e.g. `\"scrollspy\"` looks for `data-scrollspy-anchor`. Defaults to `\"scrollspy\"`."
+          },
+          {
+            "name": "history",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "When `true` (default), the active section id is synced to the URL hash."
+          },
+          {
+            "name": "offset",
+            "type": "number",
+            "optional": true,
+            "default": "0",
+            "description": "Pixels subtracted from each section's offset before comparing against the scroll position. Override per anchor with `data-{dataAttribute}-offset`."
+          },
+          {
+            "name": "onUpdate",
+            "type": "(id: string) => void",
+            "optional": true,
+            "description": "Called with the active section id whenever the active anchor changes."
+          },
+          {
+            "name": "smooth",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "When `true` (default), click-to-scroll uses smooth scrolling."
+          },
+          {
+            "name": "targetRef",
+            "type": "RefObject<HTMLElement | Document | null | undefined>",
+            "optional": true,
+            "description": "The scroll container to observe. Defaults to the document/window when omitted. Pass a ref to a scrollable element (or one wrapping a `data-slot=\"scroll-area-viewport\"`) to spy inside it."
+          }
+        ],
+        "extends": [
+          "Omit<ComponentProps<\"div\">, \"children\">"
+        ]
+      }
+    ],
+    "variants": {},
+    "defaultVariants": {},
+    "slots": [
+      "scroll-area-viewport",
+      "scrollspy"
     ],
     "dependencies": []
   },
@@ -7110,6 +7870,123 @@
       "slider-range",
       "slider-thumb",
       "slider-track"
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "Sortable",
+    "importPath": "@strait/ui/components/sortable",
+    "category": "Data Display",
+    "description": "Drag-to-reorder container built on dnd-kit. Wraps its children in a `DndContext` + `SortableContext` and renders a floating overlay that mirrors the actively dragged SortableItem.",
+    "exports": [
+      "Sortable",
+      "SortableItem",
+      "SortableItemHandle",
+      "SortableItemHandleProps",
+      "SortableItemProps",
+      "SortableProps"
+    ],
+    "types": [
+      {
+        "name": "SortableItemHandleProps",
+        "props": [
+          {
+            "name": "cursor",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "When `true` (default), applies `cursor-grab` / `cursor-grabbing` to signal draggability. Set `false` to manage the cursor yourself."
+          }
+        ],
+        "extends": [
+          "ComponentProps<\"div\">"
+        ]
+      },
+      {
+        "name": "SortableItemProps",
+        "props": [
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "When `true`, the item cannot be dragged and is dimmed."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "optional": false,
+            "description": "Stable id for this item; must equal `getItemValue(item)` on the parent Sortable."
+          }
+        ],
+        "extends": [
+          "ComponentProps<\"div\">"
+        ]
+      },
+      {
+        "name": "SortableProps",
+        "props": [
+          {
+            "name": "getItemValue",
+            "type": "(item: T) => string",
+            "optional": false,
+            "description": "Derives the stable string id for an item. Must match the `value` passed to the corresponding SortableItem."
+          },
+          {
+            "name": "modifiers",
+            "type": "Modifiers",
+            "optional": true,
+            "description": "dnd-kit modifiers applied to both the drag and the overlay."
+          },
+          {
+            "name": "onDragEnd",
+            "type": "(event: DragEndEvent) => void",
+            "optional": true,
+            "description": "Forwarded to dnd-kit's `DndContext` `onDragEnd` (fires before reorder)."
+          },
+          {
+            "name": "onDragStart",
+            "type": "(event: DragStartEvent) => void",
+            "optional": true,
+            "description": "Forwarded to dnd-kit's `DndContext` `onDragStart`."
+          },
+          {
+            "name": "onMove",
+            "type": "(event: { event: DragEndEvent; activeIndex: number; overIndex: number; }) => void",
+            "optional": true,
+            "description": "Escape hatch invoked instead of the built-in `arrayMove`. Receives the raw drag event plus the resolved source/target indices, letting you run a custom reorder (e.g. server-synced). When provided, `onValueChange` is **not** called automatically."
+          },
+          {
+            "name": "onValueChange",
+            "type": "(value: T[]) => void",
+            "optional": false,
+            "description": "Called with the reordered list after a successful drag."
+          },
+          {
+            "name": "strategy",
+            "type": "SortableStrategy",
+            "optional": true,
+            "default": "\"vertical\"",
+            "description": "Layout strategy used for measuring/reflowing during a drag. `\"vertical\"` (default) for stacked lists, `\"horizontal\"` for rows, and `\"grid\"` for wrapped two-dimensional grids."
+          },
+          {
+            "name": "value",
+            "type": "T[]",
+            "optional": false,
+            "description": "The ordered list of items rendered as SortableItems."
+          }
+        ],
+        "extends": [
+          "Omit<ComponentProps<\"div\">, \"onDragStart\" | \"onDragEnd\">"
+        ]
+      }
+    ],
+    "variants": {},
+    "defaultVariants": {},
+    "slots": [
+      "sortable",
+      "sortable-item",
+      "sortable-item-handle"
     ],
     "dependencies": []
   },
