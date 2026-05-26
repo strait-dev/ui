@@ -448,7 +448,7 @@ export function DataGrid<TData extends object>({
     base: "",
     header: "",
     headerRow: "",
-    headerSticky: "sticky top-0 z-15 bg-background/90 backdrop-blur-xs",
+    headerSticky: "sticky top-0 z-15 bg-muted/95",
     body: "",
     bodyRow: "",
     footer: "",
@@ -510,23 +510,23 @@ export function DataGridContainer({
 // Internal CVA spacing variants
 // ---------------------------------------------------------------------------
 
-const headerCellSpacingVariants = cva("h-10 px-4", {
+const headerCellSpacingVariants = cva("h-9 px-3", {
   variants: {
-    dense: { true: "h-8 px-3", false: "h-10 px-4" },
+    dense: { true: "h-7 px-2", false: "h-9 px-3" },
   },
   defaultVariants: { dense: false },
 });
 
-const bodyCellSpacingVariants = cva("px-4 py-2.5", {
+const bodyCellSpacingVariants = cva("px-3 py-2", {
   variants: {
-    dense: { true: "px-3 py-1.5", false: "px-4 py-2.5" },
+    dense: { true: "px-2 py-1", false: "px-3 py-2" },
   },
   defaultVariants: { dense: false },
 });
 
-const footerCellSpacingVariants = cva("px-4 py-2.5", {
+const footerCellSpacingVariants = cva("px-3 py-2", {
   variants: {
-    dense: { true: "px-3 py-1.5", false: "px-4 py-2.5" },
+    dense: { true: "px-2 py-1", false: "px-3 py-2" },
   },
   defaultVariants: { dense: false },
 });
@@ -759,7 +759,7 @@ function DataGridTableBase({ children }: { children: React.ReactNode }) {
   return (
     <table
       className={cn(
-        "caption-bottom text-left align-middle font-normal rtl:text-right",
+        "caption-bottom text-left align-middle font-normal text-foreground text-sm rtl:text-right",
         columnsResizable ? "min-w-0" : getTableWidthClass(widthMode),
         !tableLayout?.columnsDraggable && "border-separate border-spacing-0",
         tableClassNames?.base
@@ -820,8 +820,8 @@ function DataGridTableHeadRow<TData>({
   return (
     <tr
       className={cn(
-        "bg-muted/40",
-        tableLayout?.headerBorder && "[&>th]:border-b",
+        "bg-muted/50",
+        tableLayout?.headerBorder && "[&>th]:border-border [&>th]:border-b",
         tableLayout?.cellBorder && "*:last:border-e-0",
         (isStripped || !headerBg) && "bg-transparent",
         tableClassNames?.headerRow
@@ -868,13 +868,13 @@ function DataGridTableHeadRowCell<TData>({
   return (
     <th
       className={cn(
-        "relative text-left align-middle font-normal text-secondary-foreground/80 rtl:text-right [&:has([role=checkbox])]:pe-0",
+        "relative whitespace-nowrap text-left align-middle font-medium text-foreground rtl:text-right [&:has([role=checkbox])]:pe-0",
         headerCellSpacingVariants({ dense: dense ?? false }),
-        tableLayout?.cellBorder && "border-e",
+        tableLayout?.cellBorder && "border-border border-e",
         isResizable && "overflow-visible",
         isResizable && lastVisibleColumn && "pe-8",
         isPinned &&
-          "data-pinned:bg-muted/90 data-pinned:backdrop-blur-xs [&[data-pinned][data-last-col]]:border-border",
+          "data-pinned:bg-muted [&[data-pinned][data-last-col]]:border-border",
         isPinned === "left" &&
           "[&[data-pinned=left][data-last-col=left]]:border-e!",
         isPinned === "right" &&
@@ -984,17 +984,17 @@ function DataGridTableBodyRow<TData extends object>({
   return (
     <tr
       className={cn(
-        "hover:bg-muted/40 data-[state=selected]:bg-muted/50",
+        "transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
         props.onRowClick && "cursor-pointer",
         tableLayout?.rowBorder &&
           !tableLayout.stripped &&
           "border-border border-b [&:not(:last-child)>td]:border-b",
         tableLayout?.cellBorder && "*:last:border-e-0",
         tableLayout?.stripped &&
-          "odd:bg-muted/90 hover:bg-transparent odd:hover:bg-muted",
+          "odd:bg-muted/30 hover:bg-muted/50 odd:hover:bg-muted/50",
         row.getCanSelect() && "*:first:relative",
-        isPinned && "bg-muted/30 hover:bg-muted/50",
-        pinnedBoundary && "[&>td]:shadow-[0_2px_0_rgba(0,0,0,0.03)]",
+        isPinned && "bg-muted/50 hover:bg-muted",
+        pinnedBoundary && "[&>td]:shadow-[0_2px_0_var(--border)]",
         tableClassNames?.bodyRow
       )}
       data-row-pinned={isPinned || undefined}
@@ -1047,10 +1047,10 @@ function DataGridTableBodyRowCell<TData>({
       className={cn(
         "align-middle",
         bodyCellSpacingVariants({ dense: dense ?? false }),
-        tableLayout?.cellBorder && "border-e",
+        tableLayout?.cellBorder && "border-border border-e",
         isResizable && "truncate",
         isPinned &&
-          "data-pinned:bg-background/90 data-pinned:backdrop-blur-xs [&[data-pinned][data-last-col]]:border-border",
+          "data-pinned:bg-background [&[data-pinned][data-last-col]]:border-border",
         isPinned === "left" &&
           "[&[data-pinned=left][data-last-col=left]]:border-e!",
         isPinned === "right" &&
@@ -1101,7 +1101,7 @@ function DataGridTableBodyRowSkeleton({
   return (
     <tr
       className={cn(
-        "hover:bg-muted/40",
+        "hover:bg-muted/50",
         tableLayout?.rowBorder &&
           !tableLayout.stripped &&
           "border-border border-b [&:not(:last-child)>td]:border-b",
@@ -1134,9 +1134,9 @@ function DataGridTableBodyRowSkeletonCell<TData>({
       className={cn(
         "align-middle",
         bodyCellSpacingVariants({ dense: dense ?? false }),
-        tableLayout?.cellBorder && "border-e",
+        tableLayout?.cellBorder && "border-border border-e",
         isPinned &&
-          "data-pinned:bg-background/90 data-pinned:backdrop-blur-xs [&[data-pinned][data-last-col]]:border-border"
+          "data-pinned:bg-background [&[data-pinned][data-last-col]]:border-border"
       )}
       data-slot="data-grid-table-body-cell-skeleton"
       style={pinStyle}
@@ -1188,7 +1188,7 @@ export function DataGridTableEmpty() {
   return (
     <tr data-slot="data-grid-table-empty">
       <td
-        className="py-6 text-center text-muted-foreground"
+        className="py-6 text-center text-muted-foreground text-sm"
         colSpan={visibleCount + (props.tableLayout?.columnsResizable ? 1 : 0)}
       >
         {props.emptyMessage ?? "No data available"}
@@ -1205,8 +1205,8 @@ export function DataGridTableLoader() {
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       data-slot="data-grid-table-loader"
     >
-      <div className="flex items-center gap-2 border bg-card px-4 py-2 font-medium text-muted-foreground leading-none">
-        <Spinner className="size-5 opacity-60" />
+      <div className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-muted-foreground text-sm shadow-sm">
+        <Spinner className="size-4 opacity-60" />
         {props.loadingMessage}
       </div>
     </div>
@@ -1309,7 +1309,7 @@ export function DataGridTableFootRow({
   return (
     <tr
       className={cn(
-        "bg-muted/40 dark:bg-background",
+        "bg-muted/50",
         props.tableLayout?.cellBorder && "*:last:border-e-0"
       )}
       data-slot="data-grid-table-foot-row"
@@ -1337,9 +1337,9 @@ export function DataGridTableFootRowCell({
   return (
     <td
       className={cn(
-        "border-t align-middle font-medium text-secondary-foreground/80",
+        "border-border border-t align-middle font-medium text-foreground",
         footerCellSpacingVariants({ dense: dense ?? false }),
-        props.tableLayout?.cellBorder && "border-e",
+        props.tableLayout?.cellBorder && "border-border border-e",
         className
       )}
       colSpan={colSpan}
@@ -1682,8 +1682,6 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
     pageCount
   );
 
-  const btnBaseClasses = "size-7 p-0 text-sm";
-
   function renderPageButtons() {
     const buttons: React.ReactNode[] = [];
     for (let i = currentGroupStart; i < currentGroupEnd; i++) {
@@ -1691,13 +1689,12 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
       buttons.push(
         <Button
           className={cn(
-            btnBaseClasses,
-            isActive
-              ? "bg-accent text-accent-foreground"
-              : "text-muted-foreground"
+            "min-w-7 tabular-nums",
+            isActive && "bg-muted text-foreground"
           )}
           key={i}
           onClick={() => table.setPageIndex(i)}
+          size="sm"
           variant="ghost"
         >
           {i + 1}
@@ -1710,13 +1707,13 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
   return (
     <div
       className={cn(
-        "flex grow flex-col flex-wrap items-center justify-between gap-2.5 py-2.5 sm:flex-row sm:py-0",
+        "flex grow flex-col flex-wrap items-center justify-between gap-2.5 py-2.5 text-sm sm:flex-row sm:py-0",
         userProps.className
       )}
       data-slot="data-grid-pagination"
     >
       {/* Left: rows per page */}
-      <div className="order-2 flex flex-wrap items-center space-x-2.5 pb-2.5 sm:order-1 sm:pb-0">
+      <div className="order-2 flex flex-wrap items-center gap-2 pb-2.5 sm:order-1 sm:pb-0">
         {isLoading ? (
           p.sizesSkeleton
         ) : (
@@ -1726,10 +1723,10 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
               onValueChange={(val) => table.setPageSize(Number(val))}
               value={String(pageSize)}
             >
-              <SelectTrigger className="w-14" size="sm">
+              <SelectTrigger className="w-16" size="sm">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="min-w-18" side="top">
+              <SelectContent className="min-w-20" side="top">
                 {(p.sizes ?? [5, 10, 25, 50, 100]).map((size) => (
                   <SelectItem key={size} value={String(size)}>
                     {size}
@@ -1747,25 +1744,27 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
           p.infoSkeleton
         ) : (
           <>
-            <div className="order-2 text-nowrap text-muted-foreground sm:order-1">
+            <div className="order-2 text-nowrap text-muted-foreground tabular-nums sm:order-1">
               {paginationInfo}
             </div>
             {pageCount > 1 && (
-              <div className="order-1 flex items-center space-x-1 sm:order-2">
+              <div className="order-1 flex items-center gap-1 sm:order-2">
                 <Button
                   aria-label={p.previousPageLabel}
-                  className={cn(btnBaseClasses, "rtl:rotate-180")}
+                  className="rtl:rotate-180"
                   disabled={!canPrev}
                   onClick={() => table.previousPage()}
+                  size="icon-sm"
                   variant="ghost"
                 >
-                  <HugeiconsIcon className="size-4" icon={ArrowLeft02Icon} />
+                  <HugeiconsIcon icon={ArrowLeft02Icon} />
                 </Button>
 
                 {currentGroupStart > 0 && (
                   <Button
-                    className={cn(btnBaseClasses, "text-muted-foreground")}
+                    className="min-w-7"
                     onClick={() => table.setPageIndex(currentGroupStart - 1)}
+                    size="sm"
                     variant="ghost"
                   >
                     {p.ellipsisText}
@@ -1776,8 +1775,9 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
 
                 {currentGroupEnd < pageCount && (
                   <Button
-                    className={cn(btnBaseClasses, "text-muted-foreground")}
+                    className="min-w-7"
                     onClick={() => table.setPageIndex(currentGroupEnd)}
+                    size="sm"
                     variant="ghost"
                   >
                     {p.ellipsisText}
@@ -1786,12 +1786,13 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
 
                 <Button
                   aria-label={p.nextPageLabel}
-                  className={cn(btnBaseClasses, "rtl:rotate-180")}
+                  className="rtl:rotate-180"
                   disabled={!canNext}
                   onClick={() => table.nextPage()}
+                  size="icon-sm"
                   variant="ghost"
                 >
-                  <HugeiconsIcon className="size-4" icon={ArrowRight02Icon} />
+                  <HugeiconsIcon icon={ArrowRight02Icon} />
                 </Button>
               </div>
             )}
@@ -2089,15 +2090,15 @@ function DataGridColumnHeaderInner<TData extends object, TValue>({
 
   const sortIcon = (() => {
     if (isSorted === "asc") {
-      return <HugeiconsIcon className="size-3.25" icon={ArrowUp02Icon} />;
+      return <HugeiconsIcon className="size-3.5" icon={ArrowUp02Icon} />;
     }
     if (isSorted === "desc") {
-      return <HugeiconsIcon className="size-3.25" icon={ArrowDown02Icon} />;
+      return <HugeiconsIcon className="size-3.5" icon={ArrowDown02Icon} />;
     }
     if (canSort) {
       return (
         <HugeiconsIcon
-          className="size-3.25"
+          className="size-3.5"
           icon={ArrowDataTransferVerticalIcon}
         />
       );
@@ -2106,11 +2107,11 @@ function DataGridColumnHeaderInner<TData extends object, TValue>({
   })();
 
   const headerButtonClassName = cn(
-    "-ms-2 px-2 font-normal text-secondary-foreground/80 hover:bg-secondary hover:text-foreground data-[state=open]:bg-secondary data-[state=open]:text-foreground"
+    "-ms-2 h-7 gap-1.5 px-2 font-medium text-foreground hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground [&_svg]:opacity-60 [&_svg]:hover:opacity-100"
   );
 
   const headerLabelClassName = cn(
-    "inline-flex h-full items-center gap-1.5 font-normal text-secondary-foreground/80 [&_svg]:opacity-60",
+    "inline-flex h-full items-center gap-1.5 font-medium text-foreground [&_svg]:opacity-60",
     className
   );
 
@@ -2335,8 +2336,8 @@ export function DataGridColumnFilter<TData, TValue>({
           </>
         )}
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[200px] p-0">
-        <div className="p-2">
+      <PopoverContent align="start" className="w-56 p-0">
+        <div className="border-border border-b p-2">
           <Input
             className="h-8"
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -2356,27 +2357,27 @@ export function DataGridColumnFilter<TData, TValue>({
                 return (
                   <button
                     aria-pressed={isSelected}
-                    className="relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                    className="relative flex w-full cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-foreground text-sm outline-hidden hover:bg-muted focus-visible:bg-muted focus-visible:outline-hidden"
                     key={option.value}
                     onClick={() => toggleOption(option.value)}
                     type="button"
                   >
                     <div
                       className={cn(
-                        "me-2 flex h-4 w-4 items-center justify-center rounded-sm border",
+                        "flex size-4 shrink-0 items-center justify-center rounded-sm border border-input",
                         isSelected
                           ? "border-primary bg-primary text-primary-foreground"
-                          : "border-primary opacity-50 [&_svg]:invisible"
+                          : "[&_svg]:invisible"
                       )}
                     >
-                      <HugeiconsIcon className="h-4 w-4" icon={Tick02Icon} />
+                      <HugeiconsIcon className="size-3" icon={Tick02Icon} />
                     </div>
                     {option.icon && (
-                      <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <option.icon className="size-4 text-muted-foreground" />
                     )}
-                    <span>{option.label}</span>
+                    <span className="truncate">{option.label}</span>
                     {facets?.get(option.value) != null && (
-                      <span className="ms-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
+                      <span className="ms-auto font-mono text-muted-foreground text-xs tabular-nums">
                         {facets.get(option.value)}
                       </span>
                     )}
@@ -2387,10 +2388,10 @@ export function DataGridColumnFilter<TData, TValue>({
           )}
           {selectedValues.size > 0 && (
             <>
-              <div className="-mx-1 my-1 h-px bg-border" />
+              <div className="h-px bg-border" />
               <div className="p-1">
                 <button
-                  className="relative flex w-full cursor-default select-none items-center justify-center rounded-sm px-2 py-1.5 text-sm outline-hidden hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  className="relative flex w-full cursor-default select-none items-center justify-center rounded-md px-2 py-1.5 text-foreground text-sm outline-hidden hover:bg-muted focus-visible:bg-muted focus-visible:outline-hidden"
                   onClick={clearFilters}
                   type="button"
                 >
