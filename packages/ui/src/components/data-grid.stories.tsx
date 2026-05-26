@@ -201,8 +201,10 @@ const baseColumns: ColumnDef<Project>[] = [
 ];
 
 /**
- * Leading "select" column. Pinned to the start; opts out of sorting/hiding
- * and shrinks to a 40px box that matches the checkbox + indicator stripe.
+ * Leading "select" column. Anchored to the leftmost slot: opts out of
+ * sorting, hiding, pinning, and the column-DnD handle so users can't
+ * reorder it past the data columns. Shrinks to a 40px box that matches
+ * the checkbox + indicator stripe.
  */
 const selectColumn: ColumnDef<Project> = {
   id: "select",
@@ -210,12 +212,15 @@ const selectColumn: ColumnDef<Project> = {
   cell: ({ row }) => <DataGridTableRowSelect row={row} />,
   enableSorting: false,
   enableHiding: false,
+  enablePinning: false,
+  meta: { enableColumnOrdering: false },
   size: 40,
 };
 
 /**
- * Trailing "actions" column. Hosts the per-row ⋯ menu with demo handlers
- * that no-op in stories (real apps wire them to mutations).
+ * Trailing "actions" column. Anchored to the rightmost slot (mirror of
+ * {@link selectColumn}). Hosts the per-row ⋯ menu with demo handlers that
+ * no-op in stories (real apps wire them to mutations).
  */
 const actionsColumn: ColumnDef<Project> = {
   id: "actions",
@@ -239,6 +244,8 @@ const actionsColumn: ColumnDef<Project> = {
   ),
   enableSorting: false,
   enableHiding: false,
+  enablePinning: false,
+  meta: { enableColumnOrdering: false },
   size: 40,
 };
 
@@ -481,6 +488,7 @@ export const ExpandableRows: Story = {
           },
           size: 40,
         },
+        selectColumn,
         ...baseColumns,
         actionsColumn,
       ],
@@ -537,11 +545,13 @@ export const Sorting: Story = {
 export const ColumnMove: Story = {
   render: () => {
     const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([
+      "select",
       "name",
       "status",
       "owner",
       "budget",
       "updatedAt",
+      "actions",
     ]);
     const table = useReactTable({
       data: baseProjects,
@@ -570,11 +580,13 @@ export const ColumnMove: Story = {
 export const ColumnDragging: Story = {
   render: () => {
     const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([
+      "select",
       "name",
       "status",
       "owner",
       "budget",
       "updatedAt",
+      "actions",
     ]);
     const table = useReactTable({
       data: baseProjects,
@@ -648,7 +660,9 @@ export const ColumnPinning: Story = {
       data: baseProjects,
       columns: defaultColumns,
       enableRowSelection: true,
-      initialState: { columnPinning: { left: ["name"] } },
+      initialState: {
+        columnPinning: { left: ["select", "name"], right: ["actions"] },
+      },
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -835,10 +849,10 @@ export const FooterTotals: Story = {
           <DataGridTable
             footerContent={
               <DataGridTableFootRow>
-                <DataGridTableFootRowCell colSpan={3}>
+                <DataGridTableFootRowCell colSpan={4}>
                   Total budget
                 </DataGridTableFootRowCell>
-                <DataGridTableFootRowCell colSpan={2}>
+                <DataGridTableFootRowCell colSpan={3}>
                   {new Intl.NumberFormat("en-US", {
                     style: "currency",
                     currency: "USD",
@@ -868,6 +882,7 @@ export const RowPinning: Story = {
           enableHiding: false,
           size: 40,
         },
+        selectColumn,
         ...baseColumns,
         actionsColumn,
       ],
@@ -916,6 +931,7 @@ export const RowDragging: Story = {
           enableHiding: false,
           size: 40,
         },
+        selectColumn,
         ...baseColumns,
         actionsColumn,
       ],

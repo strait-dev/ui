@@ -127,6 +127,13 @@ declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
     /** Extra class names merged onto body `<td>` elements. */
     cellClassName?: string;
+    /**
+     * When `false`, hides the column-reorder drag handle inside
+     * {@link DataGridTableDnd} and the "Move left / right" menu items inside
+     * {@link DataGridColumnHeader}. Use for anchored columns (selection,
+     * row actions) that should never leave their slot.
+     */
+    enableColumnOrdering?: boolean;
     /** Renders an expanded row beneath this row when the row is expanded. */
     expandedContent?: (row: TData) => React.ReactNode;
     /** Extra class names merged onto the header `<th>` element. */
@@ -2213,6 +2220,7 @@ function DataGridColumnHeaderInner<TData extends object, TValue>({
   const canSort = column.getCanSort();
   const canPin = column.getCanPin();
   const canResize = column.getCanResize();
+  const canOrder = column.columnDef.meta?.enableColumnOrdering !== false;
   const isPinned = column.getIsPinned();
   const isSorted = column.getIsSorted();
   const isDisabled = isLoading || recordCount === 0;
@@ -2220,7 +2228,7 @@ function DataGridColumnHeaderInner<TData extends object, TValue>({
   const resolvedTitle = title ?? getColumnHeaderLabel(column);
 
   const hasControls =
-    columnsMovable ||
+    (columnsMovable && canOrder) ||
     (columnsVisibility && visibility) ||
     (columnsPinnable && canPin) ||
     !!filter;
@@ -2292,7 +2300,7 @@ function DataGridColumnHeaderInner<TData extends object, TValue>({
         columnsPinnable,
         canPin,
         isPinned,
-        columnsMovable,
+        columnsMovable: columnsMovable && canOrder,
         moveColumn,
         columnsVisibility,
         visibility,
@@ -2307,6 +2315,7 @@ function DataGridColumnHeaderInner<TData extends object, TValue>({
       canPin,
       isPinned,
       columnsMovable,
+      canOrder,
       columnsVisibility,
       visibility,
       column,
@@ -2995,9 +3004,7 @@ function DataGridTableDndHeader<TData extends object>({
   const { tableLayout } = props;
   const column = header.column;
 
-  const canOrder =
-    (column.columnDef as { enableColumnOrdering?: boolean })
-      .enableColumnOrdering !== false;
+  const canOrder = column.columnDef.meta?.enableColumnOrdering !== false;
 
   const {
     setNodeRef,
@@ -3087,14 +3094,14 @@ function renderDndColumnBodyRows<TData extends object>({
   pageSize,
   visibleColumns,
   rows,
-  columnOrder,
+  orderableIds,
 }: {
   isLoading: boolean;
   loadingMode: "skeleton" | "spinner" | undefined;
   pageSize: number;
   visibleColumns: Column<TData>[];
   rows: Row<TData>[];
-  columnOrder: string[];
+  orderableIds: string[];
 }) {
   if (isLoading && loadingMode === "skeleton") {
     return Array.from({ length: pageSize }).map((_, i) => (
@@ -3117,7 +3124,7 @@ function renderDndColumnBodyRows<TData extends object>({
     <React.Fragment key={row.id}>
       <DataGridTableBodyRow row={row}>
         <SortableContext
-          items={columnOrder}
+          items={orderableIds}
           strategy={horizontalListSortingStrategy}
         >
           {row.getVisibleCells().map((cell) => (
@@ -3186,10 +3193,14 @@ export function DataGridTableDnd<TData extends object>({
     };
   };
 
-  const columnOrder = table.getState().columnOrder;
   const rows = table.getRowModel().rows;
   const pageSize = table.getState().pagination.pageSize;
   const visibleColumns = table.getVisibleLeafColumns();
+  // Only orderable columns participate in dnd-kit's SortableContext so
+  // anchored columns (selection, row actions) can never become drop targets.
+  const orderableIds = visibleColumns
+    .filter((col) => col.columnDef.meta?.enableColumnOrdering !== false)
+    .map((col) => col.id);
 
   return (
     <DndContext
@@ -3216,7 +3227,7 @@ export function DataGridTableDnd<TData extends object>({
             {table.getHeaderGroups().map((hg) => (
               <DataGridTableHeadRow headerGroup={hg} key={hg.id}>
                 <SortableContext
-                  items={columnOrder}
+                  items={orderableIds}
                   strategy={horizontalListSortingStrategy}
                 >
                   {hg.headers.map((header) => (
@@ -3236,7 +3247,7 @@ export function DataGridTableDnd<TData extends object>({
               pageSize,
               visibleColumns,
               rows,
-              columnOrder,
+              orderableIds,
             })}
           </DataGridTableBody>
           {footerContent && (
