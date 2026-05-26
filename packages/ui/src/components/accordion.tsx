@@ -218,9 +218,9 @@ function AccordionTrigger({
 
 /**
  * Animated panel that reveals the body content of an {@link AccordionItem}.
- * Slides open/closed via `animate-accordion-down` / `animate-accordion-up`
- * keyframes driven by `data-open` and `data-closed` attributes from the
- * Base UI primitive.
+ * Slides open/closed by transitioning `height` between `0` and Base UI's
+ * `--accordion-panel-height` variable, driven by `data-starting-style` and
+ * `data-ending-style` attributes the primitive sets during enter/exit.
  */
 function AccordionContent({
   className,
@@ -229,13 +229,13 @@ function AccordionContent({
 }: AccordionPrimitive.Panel.Props) {
   return (
     <AccordionPrimitive.Panel
-      className="overflow-hidden text-sm data-closed:animate-accordion-up data-open:animate-accordion-down"
+      className="h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none"
       data-slot="accordion-content"
       {...props}
     >
       <div
         className={cn(
-          "h-(--accordion-panel-height) pt-0 pb-2.5 data-ending-style:h-0 data-starting-style:h-0 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+          "pt-0 pb-2.5 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
           className
         )}
       >
