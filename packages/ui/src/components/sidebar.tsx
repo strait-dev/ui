@@ -1,8 +1,12 @@
 "use client";
 
+import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { SidebarLeftIcon } from "@hugeicons/core-free-icons";
+import {
+  ArrowDown01Icon,
+  SidebarLeftIcon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -619,18 +623,110 @@ function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 /**
+ * Local context for {@link SidebarGroup} that tells its children whether
+ * they live inside a collapsible group. Drives the trigger swap on
+ * {@link SidebarGroupLabel} and the panel swap on {@link SidebarGroupContent}.
+ */
+type SidebarGroupContextValue = { collapsible: boolean };
+const SidebarGroupContext = React.createContext<SidebarGroupContextValue>({
+  collapsible: false,
+});
+
+/** Props for {@link SidebarGroup}. */
+export interface SidebarGroupProps extends React.ComponentProps<"div"> {
+  /**
+   * Persistence key for the group's open/closed state. When set, the group
+   * becomes a Base UI `Collapsible` and its {@link SidebarGroupLabel}
+   * promotes itself to a disclosure trigger with a rotating chevron.
+   */
+  collapsible?: string;
+  /** Controlled openness; pair with {@link SidebarGroupProps.onOpenChange}. */
+  open?: boolean;
+  /** Called when the group's open state changes in controlled mode. */
+  onOpenChange?: (open: boolean) => void;
+  /** Initial open state when uncontrolled. Defaults to `true`. */
+  defaultOpen?: boolean;
+  /**
+   * When `true`, the group floats to the bottom of {@link SidebarContent}
+   * via `margin-top: auto` — handy for "Settings" / "Help" rows that
+   * should always sit at the foot of the nav list.
+   */
+  pinned?: boolean;
+}
+
+/**
  * A labelled section inside {@link SidebarContent}; pairs with
  * {@link SidebarGroupLabel}, {@link SidebarGroupAction}, and
  * {@link SidebarGroupContent}.
+ *
+ * @remarks
+ * Pass {@link SidebarGroupProps.collapsible} to make the group fold:
+ * the group renders as a Base UI `Collapsible.Root`, its label becomes
+ * a trigger with a chevron, and its content animates between heights.
+ * The `value` string is the persistence key shared with the provider's
+ * `openSubmenus` set so the open/closed state survives unmount.
  */
-function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
+function SidebarGroup({
+  className,
+  collapsible,
+  open,
+  onOpenChange,
+  defaultOpen = true,
+  pinned,
+  ...props
+}: SidebarGroupProps) {
+  const ctx = useSidebar();
+  const isCollapsible = typeof collapsible === "string";
+
+  const groupClassName = cn(
+    "relative flex w-full min-w-0 flex-col p-2",
+    pinned && "mt-auto",
+    className
+  );
+
+  if (!isCollapsible) {
+    return (
+      <SidebarGroupContext.Provider value={{ collapsible: false }}>
+        <div
+          className={groupClassName}
+          data-sidebar="group"
+          data-slot="sidebar-group"
+          {...props}
+        />
+      </SidebarGroupContext.Provider>
+    );
+  }
+
+  // Mirror initial defaultOpen into the provider's disclosure registry
+  // once on mount, so a freshly-mounted uncollapsed group still shows its
+  // content (the registry starts with all keys absent / closed).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only sync
+  React.useEffect(() => {
+    if (open === undefined && defaultOpen && !ctx.isSubmenuOpen(collapsible)) {
+      ctx.setSubmenuOpen(collapsible, true);
+    }
+  }, []);
+
+  const providerOpen = ctx.isSubmenuOpen(collapsible);
+  const handleOpenChange = (next: boolean) => {
+    if (open === undefined) {
+      ctx.setSubmenuOpen(collapsible, next);
+    }
+    onOpenChange?.(next);
+  };
+
   return (
-    <div
-      className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
-      data-sidebar="group"
-      data-slot="sidebar-group"
-      {...props}
-    />
+    <SidebarGroupContext.Provider value={{ collapsible: true }}>
+      <CollapsiblePrimitive.Root
+        className={groupClassName}
+        data-sidebar="group"
+        data-slot="sidebar-group"
+        onOpenChange={handleOpenChange}
+        open={open ?? providerOpen}
+        render={<div />}
+        {...props}
+      />
+    </SidebarGroupContext.Provider>
   );
 }
 
@@ -639,24 +735,49 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
  * margin when the sidebar is in icon mode.
  *
  * Accepts a `render` prop to swap the underlying element (e.g. to an `<a>`).
+ *
+ * @remarks
+ * When the enclosing {@link SidebarGroup} has a `collapsible` key, this
+ * label is promoted to a `Collapsible.Trigger` so clicking toggles the
+ * group; a small chevron is appended automatically and rotates with the
+ * open state.
  */
 function SidebarGroupLabel({
   className,
   render,
+  children,
   ...props
 }: useRender.ComponentProps<"div"> & React.ComponentProps<"div">) {
+  const { collapsible } = React.useContext(SidebarGroupContext);
+
+  const composedChildren = (
+    <>
+      {children}
+      {collapsible ? (
+        <HugeiconsIcon
+          className="ml-auto size-3 transition-transform duration-200 ease-out group-aria-[expanded=false]/group-label:-rotate-90 motion-reduce:transition-none"
+          data-slot="sidebar-group-label-chevron"
+          icon={ArrowDown01Icon}
+          strokeWidth={2}
+        />
+      ) : null}
+    </>
+  );
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
         className: cn(
-          "flex h-8 shrink-0 items-center rounded-md px-2 font-medium text-sidebar-foreground/70 text-xs outline-hidden ring-sidebar-ring transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-3 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 [&>svg]:size-4 [&>svg]:shrink-0",
+          "group/group-label flex h-8 shrink-0 items-center rounded-md px-2 font-medium text-sidebar-foreground/70 text-xs outline-hidden ring-sidebar-ring transition-[margin,opacity] duration-200 ease-out focus-visible:ring-3 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 motion-reduce:transition-none [&>svg]:size-4 [&>svg]:shrink-0",
+          collapsible &&
+            "w-full cursor-pointer text-left hover:text-sidebar-foreground",
           className
         ),
       },
-      props
+      { ...props, children: composedChildren }
     ),
-    render,
+    render: collapsible ? <CollapsiblePrimitive.Trigger render={render} /> : render,
     state: {
       slot: "sidebar-group-label",
       sidebar: "group-label",
@@ -694,18 +815,45 @@ function SidebarGroupAction({
   });
 }
 
-/** Content wrapper inside a {@link SidebarGroup}; usually holds a {@link SidebarMenu}. */
+/**
+ * Content wrapper inside a {@link SidebarGroup}; usually holds a
+ * {@link SidebarMenu}.
+ *
+ * @remarks
+ * When the enclosing {@link SidebarGroup} has a `collapsible` key, this
+ * wrapper becomes a `Collapsible.Panel` and animates its height between
+ * 0 and the measured intrinsic value.
+ */
 function SidebarGroupContent({
   className,
+  children,
   ...props
 }: React.ComponentProps<"div">) {
+  const { collapsible } = React.useContext(SidebarGroupContext);
+
+  if (!collapsible) {
+    return (
+      <div
+        className={cn("w-full text-sm", className)}
+        data-sidebar="group-content"
+        data-slot="sidebar-group-content"
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+
   return (
-    <div
-      className={cn("w-full text-sm", className)}
+    <CollapsiblePrimitive.Panel
+      className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none"
       data-sidebar="group-content"
       data-slot="sidebar-group-content"
-      {...props}
-    />
+    >
+      <div className={cn("w-full text-sm", className)} {...props}>
+        {children}
+      </div>
+    </CollapsiblePrimitive.Panel>
   );
 }
 

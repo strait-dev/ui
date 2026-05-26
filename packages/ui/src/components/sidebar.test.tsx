@@ -148,6 +148,39 @@ describe("Sidebar", () => {
     expect(typeof api.setActiveRailItem).toBe("function");
   });
 
+  it("pins a SidebarGroup to the bottom via mt-auto", () => {
+    const { container } = render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarGroup pinned data-testid="pinned-group">
+            <SidebarGroupLabel>Pinned</SidebarGroupLabel>
+          </SidebarGroup>
+        </Sidebar>
+      </SidebarProvider>
+    );
+    const pinned = container.querySelector('[data-testid="pinned-group"]');
+    expect(pinned).not.toBeNull();
+    expect(pinned?.className).toContain("mt-auto");
+  });
+
+  it("makes a SidebarGroup collapsible via the collapsible key", async () => {
+    const { container } = render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarGroup collapsible="favs">
+            <SidebarGroupLabel>Favourites</SidebarGroupLabel>
+          </SidebarGroup>
+        </Sidebar>
+      </SidebarProvider>
+    );
+    const trigger = screen.getByText("Favourites");
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    await userEvent.click(trigger);
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    const root = container.querySelector("[data-slot='sidebar-group']");
+    expect(root?.getAttribute("data-open")).toBeNull();
+  });
+
   it("renders the active-state visual (left rail + soft bg + aria-current)", () => {
     render(
       <SidebarProvider>
