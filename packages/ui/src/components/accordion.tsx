@@ -37,7 +37,7 @@ const accordionItemVariants = cva("", {
     variant: {
       default: "not-last:border-b",
       outline: "rounded-lg border px-4",
-      solid: "rounded-lg bg-muted/50 px-4",
+      solid: "rounded-lg bg-muted px-4",
     },
   },
   defaultVariants: { variant: "default" },

@@ -76,7 +76,7 @@ describe("Accordion", () => {
       </Accordion>
     );
     const item = container.querySelector('[data-slot="accordion-item"]');
-    expect(item).toHaveClass("rounded-lg", "bg-muted/50", "px-4");
+    expect(item).toHaveClass("rounded-lg", "bg-muted", "px-4");
   });
 
   it("lets an item override the inherited variant", () => {

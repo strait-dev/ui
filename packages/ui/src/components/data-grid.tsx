@@ -32,6 +32,7 @@ import {
   ArrowUp02Icon,
   DragDropHorizontalIcon,
   DragDropVerticalIcon,
+  PinIcon,
   PinOffIcon,
   SlidersHorizontalIcon,
   Tick02Icon,
@@ -72,6 +73,15 @@ import { Badge } from "./badge";
 import { Button } from "./button";
 import { Checkbox } from "./checkbox";
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "./command";
+import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -84,7 +94,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { Input } from "./input";
 import {
   Pagination,
   PaginationContent,
@@ -454,7 +463,7 @@ export function DataGrid<TData extends object>({
     base: "",
     header: "",
     headerRow: "",
-    headerSticky: "sticky top-0 z-15 bg-muted/95",
+    headerSticky: "sticky top-0 z-15 bg-muted",
     body: "",
     bodyRow: "",
     footer: "",
@@ -997,7 +1006,7 @@ function DataGridTableBodyRow<TData extends object>({
           "border-border border-b [&:not(:last-child)>td]:border-b",
         tableLayout?.cellBorder && "*:last:border-e-0",
         tableLayout?.stripped &&
-          "odd:bg-muted/30 hover:bg-muted/50 odd:hover:bg-muted/50",
+          "odd:bg-muted/50 hover:bg-muted odd:hover:bg-muted",
         row.getCanSelect() && "*:first:relative",
         isPinned && "bg-muted/50 hover:bg-muted",
         pinnedBoundary && "[&>td]:shadow-[0_2px_0_var(--border)]",
@@ -1366,43 +1375,17 @@ export function DataGridTableFootRowCell({
 export function DataGridTableRowPin<TData>({ row }: { row: Row<TData> }) {
   const isPinned = row.getIsPinned();
   return (
-    <button
-      className={cn(
-        "inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground",
-        isPinned && "text-primary hover:text-primary/80"
-      )}
+    <Button
+      aria-label={isPinned ? "Unpin row" : "Pin row"}
+      aria-pressed={isPinned ? true : undefined}
       data-slot="data-grid-row-pin"
       onClick={() => row.pin(isPinned ? false : "top")}
+      size="icon-sm"
       type="button"
+      variant="ghost"
     >
-      {isPinned ? (
-        <svg
-          aria-hidden="true"
-          fill="currentColor"
-          height="16"
-          viewBox="0 0 24 24"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M16 3a1 1 0 0 1 1 1v1h-2V4a1 1 0 0 1 1-1zM5 12l7-7 7 7-5 1v5l-2 2-2-2v-5L5 12z" />
-        </svg>
-      ) : (
-        <svg
-          aria-hidden="true"
-          fill="none"
-          height="16"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M12 17v5M5 12l7-7 7 7-5 1v5l-2 2-2-2v-5L5 12z" />
-        </svg>
-      )}
-    </button>
+      <HugeiconsIcon icon={isPinned ? PinOffIcon : PinIcon} strokeWidth={2} />
+    </Button>
   );
 }
 
@@ -2347,41 +2330,28 @@ export function DataGridColumnFilter<TData, TValue>({
         )}
       </PopoverTrigger>
       <PopoverContent align="start" className="w-56 p-0">
-        <div className="border-border border-b p-2">
-          <Input
-            className="h-8"
-            onChange={(e) => setSearchQuery(e.target.value)}
+        <Command shouldFilter={false}>
+          <CommandInput
+            onValueChange={setSearchQuery}
             placeholder={title}
             value={searchQuery}
           />
-        </div>
-        <div className="max-h-[300px] overflow-y-auto">
-          {filteredOptions.length === 0 ? (
-            <div className="py-6 text-center text-muted-foreground text-sm">
-              No results found.
-            </div>
-          ) : (
-            <div className="p-1">
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup>
               {filteredOptions.map((option) => {
                 const isSelected = selectedValues.has(option.value);
                 return (
-                  <button
-                    aria-pressed={isSelected}
-                    className="relative flex w-full cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-foreground text-sm outline-hidden hover:bg-muted focus-visible:bg-muted focus-visible:outline-hidden"
+                  <CommandItem
                     key={option.value}
-                    onClick={() => toggleOption(option.value)}
-                    type="button"
+                    onSelect={() => toggleOption(option.value)}
                   >
-                    <div
-                      className={cn(
-                        "flex size-4 shrink-0 items-center justify-center rounded-sm border border-input",
-                        isSelected
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "[&_svg]:invisible"
-                      )}
-                    >
-                      <HugeiconsIcon className="size-3" icon={Tick02Icon} />
-                    </div>
+                    <Checkbox
+                      aria-hidden="true"
+                      checked={isSelected}
+                      className="pointer-events-none"
+                      tabIndex={-1}
+                    />
                     {option.icon && (
                       <option.icon className="size-4 text-muted-foreground" />
                     )}
@@ -2391,26 +2361,25 @@ export function DataGridColumnFilter<TData, TValue>({
                         {facets.get(option.value)}
                       </span>
                     )}
-                  </button>
+                  </CommandItem>
                 );
               })}
-            </div>
-          )}
-          {selectedValues.size > 0 && (
-            <>
-              <div className="h-px bg-border" />
-              <div className="p-1">
-                <button
-                  className="relative flex w-full cursor-default select-none items-center justify-center rounded-md px-2 py-1.5 text-foreground text-sm outline-hidden hover:bg-muted focus-visible:bg-muted focus-visible:outline-hidden"
-                  onClick={clearFilters}
-                  type="button"
-                >
-                  Clear filters
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+            </CommandGroup>
+            {selectedValues.size > 0 && (
+              <>
+                <CommandSeparator />
+                <CommandGroup>
+                  <CommandItem
+                    className="justify-center"
+                    onSelect={clearFilters}
+                  >
+                    Clear filters
+                  </CommandItem>
+                </CommandGroup>
+              </>
+            )}
+          </CommandList>
+        </Command>
       </PopoverContent>
     </Popover>
   );

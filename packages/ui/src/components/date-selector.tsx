@@ -980,7 +980,7 @@ function DateSelectorPeriodGrid({
               return (
                 <Button
                   className={cn(
-                    inRange && !isEdge && "bg-accent dark:bg-accent/60"
+                    inRange && !isEdge && "bg-accent"
                   )}
                   key={item}
                   onClick={() => onSelect(year, index)}
@@ -1026,7 +1026,7 @@ function DateSelectorYearList({
 
         return (
           <Button
-            className={cn(inRange && !isEdge && "bg-accent dark:bg-accent/60")}
+            className={cn(inRange && !isEdge && "bg-accent")}
             key={year}
             onClick={() => onSelect(year)}
             size="sm"
@@ -1320,22 +1320,20 @@ export function DateSelector({
               value={inputDisplay}
             />
             {inputDisplay && (
-              <button
+              <Button
                 aria-label={mergedI18n.clear}
-                className={cn(
-                  "absolute end-2.5 top-1/2 size-4 -translate-y-1/2 cursor-pointer rounded-xs",
-                  "opacity-70 transition-opacity hover:opacity-100",
-                  "outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-                )}
+                className="-translate-y-1/2 absolute end-1 top-1/2"
                 onClick={clearSelection}
+                size="icon-xs"
                 type="button"
+                variant="ghost"
               >
                 <HugeiconsIcon
-                  className="size-4"
+                  aria-hidden="true"
                   icon={Cancel01Icon}
                   strokeWidth={2}
                 />
-              </button>
+              </Button>
             )}
           </div>
         )}

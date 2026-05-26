@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  ArrowDown01Icon,
-  Search01Icon,
-  Tick01Icon,
-} from "@hugeicons/core-free-icons";
+import { ArrowDown01Icon, Tick01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import React from "react";
 import { CircleFlag } from "react-circle-flags";
@@ -19,6 +15,7 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
 } from "./command";
@@ -109,7 +106,7 @@ const CountrySelect = ({
         />
         <HugeiconsIcon
           className={cn(
-            "-mr-2 size-4 text-muted-foreground/80",
+            "-mr-2 size-4 text-muted-foreground",
             disabled ? "hidden" : ""
           )}
           icon={ArrowDown01Icon}
@@ -117,22 +114,12 @@ const CountrySelect = ({
       </PopoverTrigger>
       <PopoverContent className={cn("w-[300px] p-0", popupClassName)}>
         <Command>
-          <div className="flex items-center border-input border-b px-3 py-2">
-            <div className="inline-flex h-4 w-4 shrink-0 items-center justify-center">
-              <HugeiconsIcon
-                className="size-4 text-muted-foreground/80"
-                icon={Search01Icon}
-              />
-            </div>
-            <input
-              aria-label="Search country"
-              className="ml-3 flex h-6 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
-              cmdk-input=""
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Search country..."
-              value={searchValue}
-            />
-          </div>
+          <CommandInput
+            aria-label="Search country"
+            onValueChange={setSearchValue}
+            placeholder="Search country..."
+            value={searchValue}
+          />
           <CommandList className="max-h-72">
             <CommandEmpty>No country found.</CommandEmpty>
             <CommandGroup className="p-1">
@@ -191,7 +178,7 @@ const CountrySelectOption = ({
     <CommandItem className="gap-2" onSelect={handleSelect}>
       <FlagComponent country={country} countryName={countryName} />
       <span className="flex-1 text-sm">{countryName}</span>
-      <span className="text-foreground/50 text-sm">{`+${getCountryCallingCode(country)}`}</span>
+      <span className="text-muted-foreground text-sm">{`+${getCountryCallingCode(country)}`}</span>
       <HugeiconsIcon
         className={cn(
           "ml-auto size-4",

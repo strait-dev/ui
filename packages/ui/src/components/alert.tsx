@@ -22,15 +22,15 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-card text-card-foreground",
-        info: "border-info/30 bg-info/5 text-info-accent *:data-[slot=alert-description]:text-info-accent/90",
+        info: "border-info/30 bg-info/5 text-info-accent *:data-[slot=alert-description]:text-info-accent",
         success:
-          "border-success/30 bg-success/5 text-success-accent *:data-[slot=alert-description]:text-success-accent/90",
+          "border-success/30 bg-success/5 text-success-accent *:data-[slot=alert-description]:text-success-accent",
         warning:
-          "border-warning/30 bg-warning/5 text-warning-accent *:data-[slot=alert-description]:text-warning-accent/90",
+          "border-warning/30 bg-warning/5 text-warning-accent *:data-[slot=alert-description]:text-warning-accent",
         destructive:
-          "border-destructive/30 bg-destructive/5 text-destructive-accent *:data-[slot=alert-description]:text-destructive-accent/90",
+          "border-destructive/30 bg-destructive/5 text-destructive-accent *:data-[slot=alert-description]:text-destructive-accent",
         invert:
-          "border-invert bg-invert text-invert-foreground *:data-[slot=alert-description]:text-invert-foreground/80",
+          "border-invert bg-invert text-invert-foreground *:data-[slot=alert-description]:text-invert-foreground",
       },
     },
     defaultVariants: {
