@@ -451,15 +451,25 @@ function SidebarTrigger({
  * sidebar is expanded or collapsed, giving a clear affordance for the
  * resulting action. `tabIndex={-1}` keeps it out of the tab order — the
  * keyboard shortcut and {@link SidebarTrigger} are the accessible paths.
+ * A faint chevron glyph fades in on hover so the affordance is
+ * discoverable at rest instead of relying solely on cursor change.
+ *
+ * @remarks
+ * In versions before the Sidebar rework this part was named `SidebarRail`.
+ * The new {@link SidebarRail} now refers to the always-visible icon column
+ * used by `collapsible="rail"`.
  */
-function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
+function SidebarToggleRail({
+  className,
+  ...props
+}: React.ComponentProps<"button">) {
   const { toggleSidebar } = useSidebar();
 
   return (
     <button
       aria-label="Toggle Sidebar"
       className={cn(
-        "absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
+        "group/toggle-rail absolute inset-y-0 z-20 hidden w-4 transition-all ease-out after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 motion-reduce:transition-none sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
         "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
         "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
         "group-data-[collapsible=offcanvas]:translate-x-0 hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:after:left-full",
@@ -467,13 +477,20 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
         "[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",
         className
       )}
-      data-sidebar="rail"
-      data-slot="sidebar-rail"
+      data-sidebar="toggle-rail"
+      data-slot="sidebar-toggle-rail"
       onClick={toggleSidebar}
       tabIndex={-1}
       title="Toggle Sidebar"
       {...props}
-    />
+    >
+      <HugeiconsIcon
+        className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 size-3 shrink-0 text-sidebar-foreground opacity-0 transition-opacity duration-150 ease-out group-hover/toggle-rail:opacity-60 motion-reduce:transition-none"
+        data-slot="sidebar-toggle-rail-glyph"
+        icon={SidebarLeftIcon}
+        strokeWidth={2}
+      />
+    </button>
   );
 }
 
@@ -986,8 +1003,8 @@ export {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarProvider,
-  SidebarRail,
   SidebarSeparator,
+  SidebarToggleRail,
   SidebarTrigger,
   useSidebar,
 };
