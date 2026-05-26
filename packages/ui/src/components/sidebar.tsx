@@ -1469,6 +1469,119 @@ function SidebarMenuSubButton({
  * Built on Base UI's `Menu` primitive with `openOnHover` so users can
  * peek at sub-items by moving the cursor over the parent icon.
  */
+/** Props for {@link SidebarCard}. */
+export interface SidebarCardProps extends React.ComponentProps<"div"> {
+  /**
+   * Hide the card entirely when the sidebar is collapsed to icon width.
+   * Defaults to `true` — most upgrade / onboarding prompts only make
+   * sense when there's room for the headline copy.
+   */
+  hideOnCollapse?: boolean;
+}
+
+/**
+ * Surface for promotional, onboarding, or upgrade content tucked inside
+ * a {@link SidebarFooter} or pinned {@link SidebarGroup}.
+ *
+ * Compose with {@link SidebarCardHeader}, {@link SidebarCardTitle},
+ * {@link SidebarCardDescription}, {@link SidebarCardContent}, and
+ * {@link SidebarCardFooter} for a consistent layout.
+ */
+function SidebarCard({
+  className,
+  hideOnCollapse = true,
+  ...props
+}: SidebarCardProps) {
+  return (
+    <div
+      className={cn(
+        "rounded-lg border border-sidebar-border bg-sidebar-accent/40 p-3 text-sm",
+        hideOnCollapse && "group-data-[collapsible=icon]:hidden",
+        className
+      )}
+      data-sidebar="card"
+      data-slot="sidebar-card"
+      {...props}
+    />
+  );
+}
+
+/** Header row inside a {@link SidebarCard}; gap + space-between layout. */
+function SidebarCardHeader({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "mb-1 flex items-center justify-between gap-2",
+        className
+      )}
+      data-slot="sidebar-card-header"
+      {...props}
+    />
+  );
+}
+
+/** Title text for a {@link SidebarCard}; medium weight at sidebar text size. */
+function SidebarCardTitle({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "font-medium text-sidebar-foreground text-sm",
+        className
+      )}
+      data-slot="sidebar-card-title"
+      {...props}
+    />
+  );
+}
+
+/** Muted supporting copy for a {@link SidebarCard}; renders as a `<p>`. */
+function SidebarCardDescription({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
+  return (
+    <p
+      className={cn("text-muted-foreground text-xs", className)}
+      data-slot="sidebar-card-description"
+      {...props}
+    />
+  );
+}
+
+/** Body slot inside a {@link SidebarCard}; carries the bulk of the copy. */
+function SidebarCardContent({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("text-muted-foreground text-xs", className)}
+      data-slot="sidebar-card-content"
+      {...props}
+    />
+  );
+}
+
+/** Footer row inside a {@link SidebarCard}; usually holds action buttons. */
+function SidebarCardFooter({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("mt-3 flex items-center gap-2", className)}
+      data-slot="sidebar-card-footer"
+      {...props}
+    />
+  );
+}
+
 function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
   const { state, isMobile } = useSidebar();
   const { subItems } = React.useContext(SidebarMenuItemContext);
@@ -1512,6 +1625,12 @@ function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
 
 export {
   Sidebar,
+  SidebarCard,
+  SidebarCardContent,
+  SidebarCardDescription,
+  SidebarCardFooter,
+  SidebarCardHeader,
+  SidebarCardTitle,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
