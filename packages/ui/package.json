@@ -692,10 +692,10 @@
       "import": "./dist/components/timeline.js",
       "default": "./dist/components/timeline.js"
     },
-    "./components/data-table": {
-      "types": "./dist/components/data-table.d.ts",
-      "import": "./dist/components/data-table.js",
-      "default": "./dist/components/data-table.js"
+    "./components/data-grid": {
+      "types": "./dist/components/data-grid.d.ts",
+      "import": "./dist/components/data-grid.js",
+      "default": "./dist/components/data-grid.js"
     },
     "./components/charts": {
       "types": "./dist/components/charts.d.ts",
