@@ -2245,19 +2245,44 @@ function DataGridColumnHeaderInner<TData extends object, TValue>({
 
   const moveColumn = useCallback(
     (direction: "left" | "right") => {
-      const order = table.getState().columnOrder;
+      const stateOrder = table.getState().columnOrder;
+      // Empty `columnOrder` means TanStack falls back to leaf order — seed
+      // the move from that so callers don't have to pre-populate the state.
+      const order =
+        stateOrder.length > 0
+          ? stateOrder
+          : table.getAllLeafColumns().map((c) => c.id);
       const idx = order.indexOf(column.id);
       if (idx === -1) {
         return;
       }
-      const newOrder = [...order];
-      const targetIdx = direction === "left" ? idx - 1 : idx + 1;
-      if (targetIdx < 0 || targetIdx >= newOrder.length) {
+      // Walk past any anchored columns (meta.enableColumnOrdering === false)
+      // so a "Move left/right" on a data column never swaps the select or
+      // actions slot out of its edge position.
+      const step = direction === "left" ? -1 : 1;
+      let targetIdx = idx + step;
+      while (targetIdx >= 0 && targetIdx < order.length) {
+        const targetId = order[targetIdx];
+        if (!targetId) {
+          return;
+        }
+        const targetCol = table.getColumn(targetId);
+        const targetCanOrder =
+          targetCol?.columnDef.meta?.enableColumnOrdering !== false;
+        if (targetCanOrder) {
+          break;
+        }
+        targetIdx += step;
+      }
+      if (targetIdx < 0 || targetIdx >= order.length) {
         return;
       }
-      const temp = newOrder[idx];
-      newOrder[idx] = newOrder[targetIdx] ?? newOrder[idx] ?? "";
-      newOrder[targetIdx] = temp ?? "";
+      const newOrder = [...order];
+      const [moved] = newOrder.splice(idx, 1);
+      if (moved === undefined) {
+        return;
+      }
+      newOrder.splice(targetIdx, 0, moved);
       table.setColumnOrder(newOrder);
     },
     [column.id, table]
