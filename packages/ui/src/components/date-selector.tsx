@@ -979,9 +979,7 @@ function DateSelectorPeriodGrid({
 
               return (
                 <Button
-                  className={cn(
-                    inRange && !isEdge && "bg-accent"
-                  )}
+                  className={cn(inRange && !isEdge && "bg-accent")}
                   key={item}
                   onClick={() => onSelect(year, index)}
                   size="sm"
@@ -1322,7 +1320,7 @@ export function DateSelector({
             {inputDisplay && (
               <Button
                 aria-label={mergedI18n.clear}
-                className="-translate-y-1/2 absolute end-1 top-1/2"
+                className="absolute end-1 top-1/2 -translate-y-1/2"
                 onClick={clearSelection}
                 size="icon-xs"
                 type="button"
