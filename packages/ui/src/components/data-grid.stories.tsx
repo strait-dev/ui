@@ -200,6 +200,70 @@ const baseColumns: ColumnDef<Project>[] = [
   },
 ];
 
+/**
+ * Leading "select" column. Pinned to the start; opts out of sorting/hiding
+ * and shrinks to a 40px box that matches the checkbox + indicator stripe.
+ */
+const selectColumn: ColumnDef<Project> = {
+  id: "select",
+  header: () => <DataGridTableRowSelectAll />,
+  cell: ({ row }) => <DataGridTableRowSelect row={row} />,
+  enableSorting: false,
+  enableHiding: false,
+  size: 40,
+};
+
+/**
+ * Trailing "actions" column. Hosts the per-row ⋯ menu with demo handlers
+ * that no-op in stories (real apps wire them to mutations).
+ */
+const actionsColumn: ColumnDef<Project> = {
+  id: "actions",
+  header: () => null,
+  cell: ({ row }) => (
+    <DataGridTableRowActions row={row}>
+      <DropdownMenuItem>
+        <HugeiconsIcon icon={Edit02Icon} />
+        Edit
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <HugeiconsIcon icon={Archive02Icon} />
+        Archive
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem variant="destructive">
+        <HugeiconsIcon icon={Delete02Icon} />
+        Delete
+      </DropdownMenuItem>
+    </DataGridTableRowActions>
+  ),
+  enableSorting: false,
+  enableHiding: false,
+  size: 40,
+};
+
+/**
+ * Default column composition used by every general-purpose story:
+ * `[select, …project fields, actions]`. Feature-specific stories (DnD,
+ * pinning, expansion) compose their own columns from `baseColumns`.
+ */
+const defaultColumns: ColumnDef<Project>[] = [
+  selectColumn,
+  ...baseColumns,
+  actionsColumn,
+];
+
+/** Demo bulk actions wired into the default selection bar. */
+const defaultBulkActions = [
+  { label: "Archive", icon: Archive02Icon, onClick: () => {} },
+  {
+    label: "Delete",
+    icon: Delete02Icon,
+    variant: "destructive" as const,
+    onClick: () => {},
+  },
+];
+
 /* ------------------------------------------------------------------ */
 /* Storybook meta                                                     */
 /* ------------------------------------------------------------------ */
@@ -232,7 +296,8 @@ export const Playground: Story = {
   render: () => {
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
@@ -244,6 +309,7 @@ export const Playground: Story = {
           <DataGridTable />
           <DataGridPagination />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -254,7 +320,8 @@ export const CellBorder: Story = {
   render: () => {
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -266,6 +333,7 @@ export const CellBorder: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -276,7 +344,8 @@ export const Dense: Story = {
   render: () => {
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -288,6 +357,7 @@ export const Dense: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -298,7 +368,8 @@ export const Striped: Story = {
   render: () => {
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -310,6 +381,7 @@ export const Striped: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -320,7 +392,8 @@ export const AutoWidth: Story = {
   render: () => {
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -332,6 +405,7 @@ export const AutoWidth: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -408,6 +482,7 @@ export const ExpandableRows: Story = {
           size: 40,
         },
         ...baseColumns,
+        actionsColumn,
       ],
       []
     );
@@ -416,6 +491,7 @@ export const ExpandableRows: Story = {
       columns,
       state: { expanded },
       onExpandedChange: setExpanded,
+      enableRowSelection: true,
       getRowCanExpand: () => true,
       getCoreRowModel: getCoreRowModel(),
       getExpandedRowModel: getExpandedRowModel(),
@@ -425,6 +501,7 @@ export const ExpandableRows: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -438,7 +515,8 @@ export const Sorting: Story = {
     ]);
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       state: { sorting },
       onSortingChange: setSorting,
       getCoreRowModel: getCoreRowModel(),
@@ -449,6 +527,7 @@ export const Sorting: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -466,7 +545,8 @@ export const ColumnMove: Story = {
     ]);
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       state: { columnOrder },
       onColumnOrderChange: setColumnOrder,
       getCoreRowModel: getCoreRowModel(),
@@ -480,6 +560,7 @@ export const ColumnMove: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -497,7 +578,8 @@ export const ColumnDragging: Story = {
     ]);
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       state: { columnOrder },
       onColumnOrderChange: setColumnOrder,
       getCoreRowModel: getCoreRowModel(),
@@ -528,6 +610,7 @@ export const ColumnDragging: Story = {
             }}
           />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -538,7 +621,8 @@ export const ColumnResizing: Story = {
   render: () => {
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       columnResizeMode: "onChange",
       getCoreRowModel: getCoreRowModel(),
     });
@@ -551,6 +635,7 @@ export const ColumnResizing: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -561,7 +646,8 @@ export const ColumnPinning: Story = {
   render: () => {
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       initialState: { columnPinning: { left: ["name"] } },
       getCoreRowModel: getCoreRowModel(),
     });
@@ -574,6 +660,7 @@ export const ColumnPinning: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -585,7 +672,8 @@ export const ColumnVisibility: Story = {
     const [visibility, setVisibility] = useState<VisibilityState>({});
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       state: { columnVisibility: visibility },
       onColumnVisibilityChange: setVisibility,
       getCoreRowModel: getCoreRowModel(),
@@ -606,6 +694,7 @@ export const ColumnVisibility: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -624,7 +713,8 @@ export const StickyHeader: Story = {
     );
     const table = useReactTable({
       data,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -638,6 +728,7 @@ export const StickyHeader: Story = {
             <DataGridTable />
           </div>
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -648,8 +739,8 @@ export const ColumnFilter: Story = {
   render: () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const columns = useMemo<ColumnDef<Project>[]>(() => {
-      const next: ColumnDef<Project>[] = [...baseColumns];
-      next[1] = {
+      const next: ColumnDef<Project>[] = [...defaultColumns];
+      next[2] = {
         accessorKey: "status",
         meta: { headerTitle: "Status" },
         cell: (info) => {
@@ -694,6 +785,7 @@ export const ColumnFilter: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -708,7 +800,8 @@ export const Pagination: Story = {
     });
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       state: { pagination },
       onPaginationChange: setPagination,
       getCoreRowModel: getCoreRowModel(),
@@ -720,6 +813,7 @@ export const Pagination: Story = {
           <DataGridTable />
         </DataGridContainer>
         <DataGridPagination sizes={[5, 10, 25]} />
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -731,7 +825,8 @@ export const FooterTotals: Story = {
     const total = baseProjects.reduce((sum, p) => sum + p.budget, 0);
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -754,6 +849,7 @@ export const FooterTotals: Story = {
             }
           />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -773,6 +869,7 @@ export const RowPinning: Story = {
           size: 40,
         },
         ...baseColumns,
+        actionsColumn,
       ],
       []
     );
@@ -786,6 +883,7 @@ export const RowPinning: Story = {
       state: { rowPinning },
       onRowPinningChange: setRowPinning,
       enableRowPinning: true,
+      enableRowSelection: true,
       keepPinnedRows: true,
       getCoreRowModel: getCoreRowModel(),
     });
@@ -798,6 +896,7 @@ export const RowPinning: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -818,12 +917,14 @@ export const RowDragging: Story = {
           size: 40,
         },
         ...baseColumns,
+        actionsColumn,
       ],
       []
     );
     const table = useReactTable({
       data,
       columns,
+      enableRowSelection: true,
       getRowId: (row) => row.id,
       getCoreRowModel: getCoreRowModel(),
     });
@@ -854,6 +955,7 @@ export const RowDragging: Story = {
             }}
           />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -864,7 +966,8 @@ export const LoadingSkeleton: Story = {
   render: () => {
     const table = useReactTable({
       data: [],
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
       initialState: { pagination: { pageSize: 6, pageIndex: 0 } },
     });
@@ -873,6 +976,7 @@ export const LoadingSkeleton: Story = {
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -883,7 +987,8 @@ export const CardContainer: Story = {
   render: () => {
     const table = useReactTable({
       data: baseProjects,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -897,6 +1002,7 @@ export const CardContainer: Story = {
           </div>
           <DataGridTable />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -915,7 +1021,8 @@ export const VirtualScroll: Story = {
     );
     const table = useReactTable({
       data,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -923,6 +1030,7 @@ export const VirtualScroll: Story = {
         <DataGridContainer>
           <DataGridTableVirtual estimateSize={44} height={400} />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
@@ -1001,7 +1109,9 @@ export const SelectionBar: Story = {
           id: "select",
           header: () => <DataGridTableRowSelectAll />,
           cell: ({ row }) => <DataGridTableRowSelect row={row} />,
-          meta: { cellClassName: "w-10" },
+          enableSorting: false,
+          enableHiding: false,
+          size: 40,
         },
         ...baseColumns,
       ],
@@ -1058,7 +1168,8 @@ export const InfiniteScroll: Story = {
     const [hasMore, setHasMore] = useState(true);
     const table = useReactTable({
       data: items,
-      columns: baseColumns,
+      columns: defaultColumns,
+      enableRowSelection: true,
       getCoreRowModel: getCoreRowModel(),
     });
     return (
@@ -1094,6 +1205,7 @@ export const InfiniteScroll: Story = {
             }}
           />
         </DataGridContainer>
+        <DataGridSelectionBar actions={defaultBulkActions} />
       </DataGrid>
     );
   },
