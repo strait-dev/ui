@@ -164,7 +164,7 @@ describe("Sidebar", () => {
     const { container } = render(
       <SidebarProvider>
         <Sidebar collapsible="none">
-          <SidebarGroup pinned data-testid="pinned-group">
+          <SidebarGroup data-testid="pinned-group" pinned>
             <SidebarGroupLabel>Pinned</SidebarGroupLabel>
           </SidebarGroup>
         </Sidebar>
@@ -207,7 +207,9 @@ describe("Sidebar", () => {
     );
     const button = screen.getByText("Active row").closest("button");
     expect(button).not.toBeNull();
-    if (!button) return;
+    if (!button) {
+      return;
+    }
     const className = button.className;
     expect(className).toContain("data-active:bg-sidebar-active");
     expect(className).toContain("data-active:text-sidebar-active-foreground");
@@ -250,7 +252,9 @@ describe("Sidebar", () => {
     );
     const trigger = screen.getByText("Settings").closest("button");
     expect(trigger).not.toBeNull();
-    if (!trigger) return;
+    if (!trigger) {
+      return;
+    }
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
     await userEvent.click(trigger);
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
@@ -297,7 +301,9 @@ describe("Sidebar", () => {
     );
     const trigger = screen.getByText("Ada Lovelace").closest("button");
     expect(trigger).not.toBeNull();
-    if (!trigger) return;
+    if (!trigger) {
+      return;
+    }
     expect(screen.queryByText("Sign out")).toBeNull();
     await userEvent.click(trigger);
     expect(await screen.findByText("Sign out")).toBeInTheDocument();
@@ -308,8 +314,8 @@ describe("Sidebar", () => {
       <SidebarProvider>
         <Sidebar collapsible="none">
           <SidebarSwitcher current={{ name: "Acme", meta: "Pro" }}>
-            <SidebarSwitcherItem name="Acme" meta="Pro" selected />
-            <SidebarSwitcherItem name="Globex" meta="Free" />
+            <SidebarSwitcherItem meta="Pro" name="Acme" selected />
+            <SidebarSwitcherItem meta="Free" name="Globex" />
           </SidebarSwitcher>
         </Sidebar>
       </SidebarProvider>
@@ -317,7 +323,9 @@ describe("Sidebar", () => {
     expect(screen.queryByText("Globex")).toBeNull();
     const trigger = screen.getAllByText("Acme")[0]?.closest("button");
     expect(trigger).not.toBeNull();
-    if (!trigger) return;
+    if (!trigger) {
+      return;
+    }
     await userEvent.click(trigger);
     const globex = await screen.findByText("Globex");
     expect(globex).toBeInTheDocument();
@@ -353,14 +361,18 @@ describe("Sidebar", () => {
       "[data-slot='sidebar-rail-button'][data-value='home']"
     );
     expect(homeButton).not.toBeNull();
-    if (!homeButton) return;
+    if (!homeButton) {
+      return;
+    }
     await userEvent.click(homeButton as HTMLElement);
     expect(screen.getByText("Home panel")).toBeInTheDocument();
     expect(screen.queryByText("Settings panel")).toBeNull();
     const settingsButton = container.querySelector(
       "[data-slot='sidebar-rail-button'][data-value='settings']"
     );
-    if (!settingsButton) return;
+    if (!settingsButton) {
+      return;
+    }
     await userEvent.click(settingsButton as HTMLElement);
     expect(screen.getByText("Settings panel")).toBeInTheDocument();
     expect(screen.queryByText("Home panel")).toBeNull();

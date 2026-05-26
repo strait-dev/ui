@@ -7830,12 +7830,20 @@
     "description": "The sidebar panel itself — a collapsible column rendered inside a SidebarProvider.",
     "exports": [
       "Sidebar",
+      "SidebarCard",
+      "SidebarCardContent",
+      "SidebarCardDescription",
+      "SidebarCardFooter",
+      "SidebarCardHeader",
+      "SidebarCardProps",
+      "SidebarCardTitle",
       "SidebarContent",
       "SidebarFooter",
       "SidebarGroup",
       "SidebarGroupAction",
       "SidebarGroupContent",
       "SidebarGroupLabel",
+      "SidebarGroupProps",
       "SidebarHeader",
       "SidebarInput",
       "SidebarInset",
@@ -7843,20 +7851,191 @@
       "SidebarMenuAction",
       "SidebarMenuBadge",
       "SidebarMenuButton",
+      "SidebarMenuButtonProps",
+      "SidebarMenuDragHandle",
+      "SidebarMenuFlyout",
       "SidebarMenuItem",
+      "SidebarMenuItemProps",
+      "SidebarMenuProps",
       "SidebarMenuSkeleton",
       "SidebarMenuSub",
       "SidebarMenuSubButton",
       "SidebarMenuSubItem",
+      "SidebarMenuSubProps",
+      "SidebarPanel",
+      "SidebarPanelProps",
       "SidebarProps",
       "SidebarProvider",
       "SidebarProviderProps",
       "SidebarRail",
+      "SidebarRailButton",
+      "SidebarRailButtonProps",
+      "SidebarSearchButton",
+      "SidebarSearchButtonProps",
       "SidebarSeparator",
+      "SidebarSwitcher",
+      "SidebarSwitcherCurrent",
+      "SidebarSwitcherItem",
+      "SidebarSwitcherItemProps",
+      "SidebarSwitcherProps",
+      "SidebarToggleRail",
       "SidebarTrigger",
+      "SidebarUserButton",
+      "SidebarUserButtonProps",
       "useSidebar"
     ],
     "types": [
+      {
+        "name": "SidebarCardProps",
+        "props": [
+          {
+            "name": "hideOnCollapse",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Hide the card entirely when the sidebar is collapsed to icon width. Defaults to `true` — most upgrade / onboarding prompts only make sense when there's room for the headline copy."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"div\">"
+        ]
+      },
+      {
+        "name": "SidebarGroupProps",
+        "props": [
+          {
+            "name": "collapsible",
+            "type": "string",
+            "optional": true,
+            "description": "Persistence key for the group's open/closed state. When set, the group becomes a Base UI `Collapsible` and its SidebarGroupLabel promotes itself to a disclosure trigger with a rotating chevron."
+          },
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Initial open state when uncontrolled. Defaults to `true`."
+          },
+          {
+            "name": "onOpenChange",
+            "type": "(open: boolean) => void",
+            "optional": true,
+            "description": "Called when the group's open state changes in controlled mode."
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "optional": true,
+            "description": "Controlled openness; pair with onOpenChange."
+          },
+          {
+            "name": "pinned",
+            "type": "boolean",
+            "optional": true,
+            "description": "When `true`, the group floats to the bottom of SidebarContent via `margin-top: auto` — handy for \"Settings\" / \"Help\" rows that should always sit at the foot of the nav list."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"div\">"
+        ]
+      },
+      {
+        "name": "SidebarMenuButtonProps",
+        "props": [
+          {
+            "name": "isActive",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether this row represents the current page. Sets `data-active` and `aria-current=\"page\"`."
+          },
+          {
+            "name": "tooltip",
+            "type": "string | React.ComponentProps<typeof TooltipContent>",
+            "optional": true,
+            "description": "Tooltip shown when the sidebar is collapsed to icon or when the label is truncated."
+          },
+          {
+            "name": "hasSubMenu",
+            "type": "boolean",
+            "optional": true,
+            "description": "When `true`, promotes this button into a Base UI `Collapsible.Trigger` for the enclosing SidebarMenuItem's sub-menu and appends a rotating chevron at the trailing edge."
+          }
+        ],
+        "extends": [
+          "useRender.ComponentProps<\"button\">",
+          "React.ComponentProps<\"button\">",
+          "VariantProps<typeof sidebarMenuButtonVariants>"
+        ]
+      },
+      {
+        "name": "SidebarMenuItemProps",
+        "props": [
+          {
+            "name": "value",
+            "type": "string",
+            "optional": true,
+            "description": "Persistence key shared by this item's hasSubMenu button and its SidebarMenuSub. Required when the item contains a sub-menu; otherwise leave unset and the item behaves like a plain `<li>`."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"li\">"
+        ]
+      },
+      {
+        "name": "SidebarMenuProps",
+        "props": [
+          {
+            "name": "items",
+            "type": "string[]",
+            "optional": true,
+            "description": "Ordered list of stable item ids. Required when `reorderable`."
+          },
+          {
+            "name": "onReorder",
+            "type": "(items: string[]) => void",
+            "optional": true,
+            "description": "Fired with the reshuffled list after a successful drag."
+          },
+          {
+            "name": "reorderable",
+            "type": "boolean",
+            "optional": true,
+            "description": "Opt into drag-to-reorder. When `true`, pair with `items` + `onReorder` and give each child SidebarMenuItem a `value` matching one of the `items` entries. The menu renders as a `role=\"list\"` div so the dnd-kit wrappers can sit inside without breaking HTML semantics."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"ul\">"
+        ]
+      },
+      {
+        "name": "SidebarMenuSubProps",
+        "props": [
+          {
+            "name": "value",
+            "type": "string",
+            "optional": false,
+            "description": "Persistence key — must match the enclosing SidebarMenuItem's `value`. Required: the sub-menu cannot animate open/closed without it."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"ul\">"
+        ]
+      },
+      {
+        "name": "SidebarPanelProps",
+        "props": [
+          {
+            "name": "value",
+            "type": "string",
+            "optional": false,
+            "description": "Stable id matched against `activeRailItem` to decide visibility."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"div\">"
+        ]
+      },
       {
         "name": "SidebarProps",
         "props": [
@@ -7876,10 +8055,10 @@
           },
           {
             "name": "collapsible",
-            "type": "\"offcanvas\" | \"icon\" | \"none\"",
+            "type": "\"offcanvas\" | \"icon\" | \"rail\" | \"none\"",
             "optional": true,
             "default": "\"offcanvas\"",
-            "description": "Collapse mode when the sidebar is toggled closed. - `\"offcanvas\"` — slides the panel fully off-screen (default). - `\"icon\"` — shrinks to icon width, hiding labels. - `\"none\"` — disables collapsing; the panel is always visible."
+            "description": "Collapse mode when the sidebar is toggled closed. - `\"offcanvas\"` — slides the panel fully off-screen (default). - `\"icon\"` — shrinks to icon width, hiding labels. - `\"rail\"` — dual-panel mode: a narrow icon column (SidebarRail) stays fixed while a wider secondary panel (SidebarPanel) slides in / out based on which SidebarRailButton is active. - `\"none\"` — disables collapsing; the panel is always visible."
           }
         ],
         "extends": [
@@ -7912,6 +8091,157 @@
         "extends": [
           "React.ComponentProps<\"div\">"
         ]
+      },
+      {
+        "name": "SidebarRailButtonProps",
+        "props": [
+          {
+            "name": "icon",
+            "type": "React.ReactNode",
+            "optional": false,
+            "description": "Icon node rendered as the button's content."
+          },
+          {
+            "name": "tooltip",
+            "type": "string",
+            "optional": true,
+            "description": "Optional accessible name / hover tooltip."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "optional": false,
+            "description": "Stable id selecting which SidebarPanel this button opens."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"button\">, \"title\" | \"value\">"
+        ]
+      },
+      {
+        "name": "SidebarSearchButtonProps",
+        "props": [
+          {
+            "name": "onTrigger",
+            "type": "() => void",
+            "optional": true,
+            "description": "Fires on click and on the registered keyboard shortcut."
+          },
+          {
+            "name": "placeholder",
+            "type": "string",
+            "optional": true,
+            "default": "\"Search…\"",
+            "description": "Placeholder text shown in the row. Defaults to `\"Search…\"`."
+          },
+          {
+            "name": "shortcut",
+            "type": "string | null",
+            "optional": true,
+            "default": "\"⌘K\"",
+            "description": "Keyboard hint glyph displayed at the trailing edge (e.g. `\"⌘K\"`). Pass `null` to hide the hint while still wiring the shortcut handler."
+          },
+          {
+            "name": "shortcutKey",
+            "type": "string",
+            "optional": true,
+            "default": "\"k\"",
+            "description": "Character key that triggers the shortcut combo with Cmd/Ctrl. Defaults to `\"k\"`."
+          }
+        ],
+        "extends": [
+          "React.ComponentProps<\"button\">"
+        ]
+      },
+      {
+        "name": "SidebarSwitcherItemProps",
+        "props": [
+          {
+            "name": "logo",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Optional logo / avatar node rendered before the name."
+          },
+          {
+            "name": "meta",
+            "type": "string",
+            "optional": true,
+            "description": "Optional secondary metadata line (e.g. plan, role). Rendered underneath the name in muted text."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "description": "Display name of the workspace."
+          },
+          {
+            "name": "selected",
+            "type": "boolean",
+            "optional": true,
+            "description": "When `true`, the item is rendered as the active selection and shows a trailing check glyph. Surfaces as `data-selected=\"true\"` on the DOM node for styling hooks."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"button\">, \"title\">"
+        ]
+      },
+      {
+        "name": "SidebarSwitcherProps",
+        "props": [
+          {
+            "name": "children",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Popover body — typically a list of SidebarSwitcherItems plus any auxiliary actions (e.g. \"Create workspace\")."
+          },
+          {
+            "name": "current",
+            "type": "SidebarSwitcherCurrent",
+            "optional": false,
+            "description": "The currently selected workspace; controls the trigger row."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"button\">, \"title\">"
+        ]
+      },
+      {
+        "name": "SidebarUserButtonProps",
+        "props": [
+          {
+            "name": "avatar",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Avatar element rendered to the leading edge (typically an `<Avatar>` or `<img>`). Sized down to fit the row at `size-7`."
+          },
+          {
+            "name": "email",
+            "type": "string",
+            "optional": true,
+            "description": "Optional secondary line — often the user's email."
+          },
+          {
+            "name": "menu",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Menu body — Base UI `MenuPrimitive.Item` and friends. When omitted, the button still renders the chevron unless static is set; clicks fall through to the consumer's `onClick`."
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "optional": false,
+            "description": "Primary display name."
+          },
+          {
+            "name": "static",
+            "type": "boolean",
+            "optional": true,
+            "description": "When `true`, the row is a plain account chip with no menu wrapper and no chevron — handy when the surrounding shell already provides the account dropdown elsewhere."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"button\">, \"title\">"
+        ]
       }
     ],
     "variants": {
@@ -7931,25 +8261,56 @@
     },
     "slots": [
       "sidebar",
+      "sidebar-card",
+      "sidebar-card-content",
+      "sidebar-card-description",
+      "sidebar-card-footer",
+      "sidebar-card-header",
+      "sidebar-card-title",
       "sidebar-container",
       "sidebar-content",
       "sidebar-footer",
       "sidebar-gap",
       "sidebar-group",
       "sidebar-group-content",
+      "sidebar-group-label-chevron",
       "sidebar-header",
       "sidebar-inner",
       "sidebar-input",
       "sidebar-inset",
       "sidebar-menu",
       "sidebar-menu-badge",
+      "sidebar-menu-button-chevron",
+      "sidebar-menu-drag-handle",
+      "sidebar-menu-flyout",
       "sidebar-menu-item",
       "sidebar-menu-skeleton",
       "sidebar-menu-sub",
       "sidebar-menu-sub-item",
+      "sidebar-menu-sub-panel",
+      "sidebar-panel",
       "sidebar-rail",
+      "sidebar-rail-button",
+      "sidebar-rail-column",
+      "sidebar-rail-panel-wrap",
+      "sidebar-search-button",
       "sidebar-separator",
+      "sidebar-switcher",
+      "sidebar-switcher-body",
+      "sidebar-switcher-chevron",
+      "sidebar-switcher-item",
+      "sidebar-switcher-item-check",
+      "sidebar-switcher-item-logo",
+      "sidebar-switcher-logo",
+      "sidebar-switcher-popover",
+      "sidebar-toggle-rail",
+      "sidebar-toggle-rail-glyph",
       "sidebar-trigger",
+      "sidebar-user-button",
+      "sidebar-user-button-avatar",
+      "sidebar-user-button-body",
+      "sidebar-user-button-chevron",
+      "sidebar-user-button-menu",
       "sidebar-wrapper"
     ],
     "dependencies": []

@@ -36,7 +36,9 @@ expectTypeOf<"made-up">().not.toExtend<
 expectTypeOf<SidebarGroupProps>().toHaveProperty("collapsible");
 expectTypeOf<SidebarGroupProps>().toHaveProperty("pinned");
 expectTypeOf<SidebarGroupProps>().toHaveProperty("defaultOpen");
-expectTypeOf<NonNullable<SidebarGroupProps["pinned"]>>().toEqualTypeOf<boolean>();
+expectTypeOf<
+  NonNullable<SidebarGroupProps["pinned"]>
+>().toEqualTypeOf<boolean>();
 
 // --- SidebarMenuButton gains hasSubMenu ------------------------------------
 expectTypeOf<SidebarMenuButtonProps>().toHaveProperty("hasSubMenu");
@@ -57,9 +59,9 @@ expectTypeOf<NonNullable<SidebarMenuProps["onReorder"]>>().toEqualTypeOf<
 >();
 
 // --- SidebarSearchButton.onTrigger -----------------------------------------
-expectTypeOf<NonNullable<SidebarSearchButtonProps["onTrigger"]>>().toEqualTypeOf<
-  () => void
->();
+expectTypeOf<
+  NonNullable<SidebarSearchButtonProps["onTrigger"]>
+>().toEqualTypeOf<() => void>();
 
 // --- Rail-mode parts -------------------------------------------------------
 expectTypeOf<SidebarRailButtonProps>().toHaveProperty("value");

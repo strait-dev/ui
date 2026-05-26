@@ -585,7 +585,9 @@ export const DisclosureSubMenu: Story = {
                     </SidebarMenuButton>
                     <SidebarMenuSub value="docs">
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton>Getting started</SidebarMenuSubButton>
+                        <SidebarMenuSubButton>
+                          Getting started
+                        </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton>Components</SidebarMenuSubButton>
@@ -773,9 +775,7 @@ export const WithCard: Story = {
               <SidebarCardDescription>
                 Unlock unlimited workspaces and advanced reporting.
               </SidebarCardDescription>
-              <SidebarCardContent>
-                Pay yearly and save 20%.
-              </SidebarCardContent>
+              <SidebarCardContent>Pay yearly and save 20%.</SidebarCardContent>
               <SidebarCardFooter>
                 <Button size="sm">Upgrade</Button>
               </SidebarCardFooter>
@@ -792,7 +792,12 @@ export const WithCard: Story = {
 export const Reorderable: Story = {
   render: () => {
     function ReorderDemo() {
-      const [items, setItems] = useState(["alpha", "bravo", "charlie", "delta"]);
+      const [items, setItems] = useState([
+        "alpha",
+        "bravo",
+        "charlie",
+        "delta",
+      ]);
       return (
         <SidebarMenu items={items} onReorder={setItems} reorderable>
           {items.map((id) => (

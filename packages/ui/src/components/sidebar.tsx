@@ -435,7 +435,10 @@ function Sidebar({
 
     return (
       <div
-        className={cn("group peer hidden text-sidebar-foreground md:flex", className)}
+        className={cn(
+          "group peer hidden text-sidebar-foreground md:flex",
+          className
+        )}
         data-collapsible="rail"
         data-side={side}
         data-slot="sidebar"
@@ -564,12 +567,12 @@ function SidebarRail({
 /** Props for {@link SidebarRailButton}. */
 export interface SidebarRailButtonProps
   extends Omit<React.ComponentProps<"button">, "title" | "value"> {
-  /** Stable id selecting which {@link SidebarPanel} this button opens. */
-  value: string;
   /** Icon node rendered as the button's content. */
   icon: React.ReactNode;
   /** Optional accessible name / hover tooltip. */
   tooltip?: string;
+  /** Stable id selecting which {@link SidebarPanel} this button opens. */
+  value: string;
 }
 
 /**
@@ -639,11 +642,7 @@ export interface SidebarPanelProps extends React.ComponentProps<"div"> {
  * surrounding wrapper animates its width to `0` so the layout reflows
  * smoothly.
  */
-function SidebarPanel({
-  value,
-  className,
-  ...props
-}: SidebarPanelProps) {
+function SidebarPanel({ value, className, ...props }: SidebarPanelProps) {
   const { activeRailItem } = useSidebar();
   if (activeRailItem !== value) {
     return null;
@@ -732,7 +731,7 @@ function SidebarToggleRail({
       {...props}
     >
       <HugeiconsIcon
-        className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-1/2 left-1/2 size-3 shrink-0 text-sidebar-foreground opacity-0 transition-opacity duration-150 ease-out group-hover/toggle-rail:opacity-60 motion-reduce:transition-none"
+        className="pointer-events-none absolute top-1/2 left-1/2 size-3 shrink-0 -translate-x-1/2 -translate-y-1/2 text-sidebar-foreground opacity-0 transition-opacity duration-150 ease-out group-hover/toggle-rail:opacity-60 motion-reduce:transition-none"
         data-slot="sidebar-toggle-rail-glyph"
         icon={SidebarLeftIcon}
         strokeWidth={2}
@@ -763,6 +762,8 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
 /** Props for {@link SidebarSearchButton}. */
 export interface SidebarSearchButtonProps
   extends React.ComponentProps<"button"> {
+  /** Fires on click and on the registered keyboard shortcut. */
+  onTrigger?: () => void;
   /** Placeholder text shown in the row. Defaults to `"Search…"`. */
   placeholder?: string;
   /**
@@ -772,8 +773,6 @@ export interface SidebarSearchButtonProps
   shortcut?: string | null;
   /** Character key that triggers the shortcut combo with Cmd/Ctrl. Defaults to `"k"`. */
   shortcutKey?: string;
-  /** Fires on click and on the registered keyboard shortcut. */
-  onTrigger?: () => void;
 }
 
 /**
@@ -939,12 +938,12 @@ export interface SidebarGroupProps extends React.ComponentProps<"div"> {
    * promotes itself to a disclosure trigger with a rotating chevron.
    */
   collapsible?: string;
-  /** Controlled openness; pair with {@link SidebarGroupProps.onOpenChange}. */
-  open?: boolean;
-  /** Called when the group's open state changes in controlled mode. */
-  onOpenChange?: (open: boolean) => void;
   /** Initial open state when uncontrolled. Defaults to `true`. */
   defaultOpen?: boolean;
+  /** Called when the group's open state changes in controlled mode. */
+  onOpenChange?: (open: boolean) => void;
+  /** Controlled openness; pair with {@link SidebarGroupProps.onOpenChange}. */
+  open?: boolean;
   /**
    * When `true`, the group floats to the bottom of {@link SidebarContent}
    * via `margin-top: auto` — handy for "Settings" / "Help" rows that
@@ -983,6 +982,21 @@ function SidebarGroup({
     className
   );
 
+  // Mirror initial defaultOpen into the provider's disclosure registry
+  // once on mount, so a freshly-mounted uncollapsed group still shows its
+  // content (the registry starts with all keys absent / closed).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only sync
+  React.useEffect(() => {
+    if (
+      isCollapsible &&
+      open === undefined &&
+      defaultOpen &&
+      !ctx.isSubmenuOpen(collapsible)
+    ) {
+      ctx.setSubmenuOpen(collapsible, true);
+    }
+  }, []);
+
   if (!isCollapsible) {
     return (
       <SidebarGroupContext.Provider value={{ collapsible: false }}>
@@ -995,16 +1009,6 @@ function SidebarGroup({
       </SidebarGroupContext.Provider>
     );
   }
-
-  // Mirror initial defaultOpen into the provider's disclosure registry
-  // once on mount, so a freshly-mounted uncollapsed group still shows its
-  // content (the registry starts with all keys absent / closed).
-  // biome-ignore lint/correctness/useExhaustiveDependencies: mount-only sync
-  React.useEffect(() => {
-    if (open === undefined && defaultOpen && !ctx.isSubmenuOpen(collapsible)) {
-      ctx.setSubmenuOpen(collapsible, true);
-    }
-  }, []);
 
   const providerOpen = ctx.isSubmenuOpen(collapsible);
   const handleOpenChange = (next: boolean) => {
@@ -1076,7 +1080,11 @@ function SidebarGroupLabel({
       },
       { ...props, children: composedChildren }
     ),
-    render: collapsible ? <CollapsiblePrimitive.Trigger render={render} /> : render,
+    render: collapsible ? (
+      <CollapsiblePrimitive.Trigger render={render} />
+    ) : (
+      render
+    ),
     state: {
       slot: "sidebar-group-label",
       sidebar: "group-label",
@@ -1165,6 +1173,10 @@ const SidebarMenuReorderableContext = React.createContext<boolean>(false);
 
 /** Props for {@link SidebarMenu}. */
 export interface SidebarMenuProps extends React.ComponentProps<"ul"> {
+  /** Ordered list of stable item ids. Required when `reorderable`. */
+  items?: string[];
+  /** Fired with the reshuffled list after a successful drag. */
+  onReorder?: (items: string[]) => void;
   /**
    * Opt into drag-to-reorder. When `true`, pair with `items` + `onReorder`
    * and give each child {@link SidebarMenuItem} a `value` matching one of
@@ -1172,10 +1184,6 @@ export interface SidebarMenuProps extends React.ComponentProps<"ul"> {
    * dnd-kit wrappers can sit inside without breaking HTML semantics.
    */
   reorderable?: boolean;
-  /** Ordered list of stable item ids. Required when `reorderable`. */
-  items?: string[];
-  /** Fired with the reshuffled list after a successful drag. */
-  onReorder?: (items: string[]) => void;
 }
 
 /**
@@ -1265,11 +1273,12 @@ type SidebarMenuItemContextValue = {
   value: string | null;
   subItems: SidebarMenuItemSubItem[];
 };
-const SidebarMenuItemContext =
-  React.createContext<SidebarMenuItemContextValue>({
+const SidebarMenuItemContext = React.createContext<SidebarMenuItemContextValue>(
+  {
     value: null,
     subItems: [],
-  });
+  }
+);
 
 /** Props for {@link SidebarMenuItem}. */
 export interface SidebarMenuItemProps extends React.ComponentProps<"li"> {
@@ -1349,6 +1358,7 @@ function SidebarMenuItem({
       // menu does not crash; the dragger has nothing to key off without one.
       return (
         <SidebarMenuItemContext.Provider value={itemContextValue}>
+          {/* biome-ignore lint/a11y/useSemanticElements: reorderable menus use a div container (SortableItem renders as div); listitem role keeps the AT contract */}
           <div
             className={itemClassName}
             data-sidebar="menu-item"
@@ -1447,7 +1457,7 @@ function SidebarMenuDragHandle({
  *   and text size; `"lg"` removes padding when the sidebar is icon-collapsed.
  */
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button group/menu-button relative flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:bg-sidebar-active data-active:font-medium data-active:text-sidebar-active-foreground data-active:before:absolute data-active:before:inset-y-1 data-active:before:start-0 data-active:before:w-0.5 data-active:before:rounded-full data-active:before:bg-sidebar-active-rail group-data-[collapsible=icon]:data-active:before:inset-x-1 group-data-[collapsible=icon]:data-active:before:inset-y-auto group-data-[collapsible=icon]:data-active:before:bottom-1 group-data-[collapsible=icon]:data-active:before:h-0.5 data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0",
+  "peer/menu-button group/menu-button relative flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-active:bg-sidebar-active data-active:font-medium data-active:text-sidebar-active-foreground data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-accent-foreground data-active:before:absolute data-active:before:inset-y-1 data-active:before:start-0 data-active:before:w-0.5 data-active:before:rounded-full data-active:before:bg-sidebar-active-rail group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! group-data-[collapsible=icon]:data-active:before:inset-x-1 group-data-[collapsible=icon]:data-active:before:inset-y-auto group-data-[collapsible=icon]:data-active:before:bottom-1 group-data-[collapsible=icon]:data-active:before:h-0.5 [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -1498,6 +1508,14 @@ export type SidebarMenuButtonProps = useRender.ComponentProps<"button"> &
     hasSubMenu?: boolean;
   } & VariantProps<typeof sidebarMenuButtonVariants>;
 
+/**
+ * Primary clickable row inside a `SidebarMenuItem`. Renders a polymorphic
+ * trigger (via `useRender`), forwards `aria-current="page"` when active, wires
+ * the rail-aware active-state recipe, and — when paired with `hasSubMenu` —
+ * becomes the disclosure trigger for the enclosing item's `SidebarMenuSub`
+ * (animated when expanded, mirrored as a hover-popover flyout when the sidebar
+ * is collapsed to icon width).
+ */
 function SidebarMenuButton({
   render,
   isActive = false,
@@ -1525,7 +1543,7 @@ function SidebarMenuButton({
       {children}
       {hasSubMenu ? (
         <HugeiconsIcon
-          className="ml-auto size-4 transition-transform duration-200 ease-out group-aria-expanded/menu-button:rotate-180 motion-reduce:transition-none group-data-[collapsible=icon]:hidden"
+          className="ml-auto size-4 transition-transform duration-200 ease-out group-aria-expanded/menu-button:rotate-180 group-data-[collapsible=icon]:hidden motion-reduce:transition-none"
           data-slot="sidebar-menu-button-chevron"
           icon={ArrowDown01Icon}
           strokeWidth={2}
@@ -1536,7 +1554,9 @@ function SidebarMenuButton({
 
   const baseRender = tooltip ? <TooltipTrigger render={render} /> : render;
   const finalRender = hasSubMenu ? (
-    <CollapsiblePrimitive.Trigger render={baseRender ?? <button type="button" />} />
+    <CollapsiblePrimitive.Trigger
+      render={baseRender ?? <button type="button" />}
+    />
   ) : (
     baseRender
   );
@@ -1567,7 +1587,11 @@ function SidebarMenuButton({
     hasSubMenu && state === "collapsed" && itemCtx.subItems.length > 0;
 
   if (!tooltip) {
-    return flyoutCandidate ? <SidebarMenuFlyout>{comp}</SidebarMenuFlyout> : comp;
+    return flyoutCandidate ? (
+      <SidebarMenuFlyout>{comp}</SidebarMenuFlyout>
+    ) : (
+      comp
+    );
   }
 
   // Normalise string tooltip to TooltipContent props object.
@@ -1732,7 +1756,7 @@ function SidebarMenuSub({
 }: SidebarMenuSubProps) {
   return (
     <CollapsiblePrimitive.Panel
-      className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none group-data-[collapsible=icon]:hidden"
+      className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 group-data-[collapsible=icon]:hidden motion-reduce:transition-none"
       data-sidebar="menu-sub-panel"
       data-slot="sidebar-menu-sub-panel"
     >
@@ -1822,21 +1846,21 @@ function SidebarMenuSubButton({
 /** Props for {@link SidebarUserButton}. */
 export interface SidebarUserButtonProps
   extends Omit<React.ComponentProps<"button">, "title"> {
-  /** Primary display name. */
-  name: string;
-  /** Optional secondary line — often the user's email. */
-  email?: string;
   /**
    * Avatar element rendered to the leading edge (typically an `<Avatar>`
    * or `<img>`). Sized down to fit the row at `size-7`.
    */
   avatar?: React.ReactNode;
+  /** Optional secondary line — often the user's email. */
+  email?: string;
   /**
    * Menu body — Base UI `MenuPrimitive.Item` and friends. When omitted,
    * the button still renders the chevron unless {@link SidebarUserButtonProps.static}
    * is set; clicks fall through to the consumer's `onClick`.
    */
   menu?: React.ReactNode;
+  /** Primary display name. */
+  name: string;
   /**
    * When `true`, the row is a plain account chip with no menu wrapper
    * and no chevron — handy when the surrounding shell already provides
@@ -1912,7 +1936,7 @@ function SidebarUserButton({
       <MenuPrimitive.Portal>
         <MenuPrimitive.Positioner align="end" side="right" sideOffset={4}>
           <MenuPrimitive.Popup
-            className="z-50 min-w-48 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 transition-[transform,opacity] duration-150 ease-out motion-reduce:transition-none"
+            className="z-50 min-w-48 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
             data-slot="sidebar-user-button-menu"
           >
             {menu}
@@ -1925,8 +1949,6 @@ function SidebarUserButton({
 
 /** Shape of the `current` selection shown by {@link SidebarSwitcher}. */
 export interface SidebarSwitcherCurrent {
-  /** Display name of the selected workspace / tenant. */
-  name: string;
   /**
    * Logo / avatar node rendered to the left of the name. Pass any React
    * element (an `<img>`, an icon, a coloured square with an initial).
@@ -1937,18 +1959,20 @@ export interface SidebarSwitcherCurrent {
    * "Owner"). Hidden in icon-collapsed mode.
    */
   meta?: string;
+  /** Display name of the selected workspace / tenant. */
+  name: string;
 }
 
 /** Props for {@link SidebarSwitcher}. */
 export interface SidebarSwitcherProps
   extends Omit<React.ComponentProps<"button">, "title"> {
-  /** The currently selected workspace; controls the trigger row. */
-  current: SidebarSwitcherCurrent;
   /**
    * Popover body — typically a list of {@link SidebarSwitcherItem}s plus
    * any auxiliary actions (e.g. "Create workspace").
    */
   children?: React.ReactNode;
+  /** The currently selected workspace; controls the trigger row. */
+  current: SidebarSwitcherCurrent;
 }
 
 /**
@@ -2026,7 +2050,7 @@ function SidebarSwitcher({
       <PopoverPrimitive.Portal>
         <PopoverPrimitive.Positioner align="start" side="right" sideOffset={8}>
           <PopoverPrimitive.Popup
-            className="z-50 min-w-64 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 motion-reduce:transition-none"
+            className="z-50 min-w-64 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
             data-slot="sidebar-switcher-popover"
           >
             {children}
@@ -2040,8 +2064,6 @@ function SidebarSwitcher({
 /** Props for {@link SidebarSwitcherItem}. */
 export interface SidebarSwitcherItemProps
   extends Omit<React.ComponentProps<"button">, "title"> {
-  /** Display name of the workspace. */
-  name: string;
   /** Optional logo / avatar node rendered before the name. */
   logo?: React.ReactNode;
   /**
@@ -2049,6 +2071,8 @@ export interface SidebarSwitcherItemProps
    * underneath the name in muted text.
    */
   meta?: string;
+  /** Display name of the workspace. */
+  name: string;
   /**
    * When `true`, the item is rendered as the active selection and shows a
    * trailing check glyph. Surfaces as `data-selected="true"` on the DOM
@@ -2158,10 +2182,7 @@ function SidebarCardHeader({
 }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "mb-1 flex items-center justify-between gap-2",
-        className
-      )}
+      className={cn("mb-1 flex items-center justify-between gap-2", className)}
       data-slot="sidebar-card-header"
       {...props}
     />
@@ -2175,10 +2196,7 @@ function SidebarCardTitle({
 }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "font-medium text-sidebar-foreground text-sm",
-        className
-      )}
+      className={cn("font-medium text-sidebar-foreground text-sm", className)}
       data-slot="sidebar-card-title"
       {...props}
     />
@@ -2227,6 +2245,12 @@ function SidebarCardFooter({
   );
 }
 
+/**
+ * Wraps a `SidebarMenuButton` so that when the sidebar is collapsed to icon
+ * width, hovering the icon opens a Base UI `Menu` popover mirroring the
+ * sub-items snapshotted from the sibling `SidebarMenuSub`. Renders the trigger
+ * untouched when the sidebar is expanded or there are no sub-items.
+ */
 function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
   const { state, isMobile } = useSidebar();
   const { subItems } = React.useContext(SidebarMenuItemContext);
@@ -2241,16 +2265,16 @@ function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
       <MenuPrimitive.Portal>
         <MenuPrimitive.Positioner align="start" side="right" sideOffset={4}>
           <MenuPrimitive.Popup
-            className="z-50 min-w-40 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 transition-[transform,opacity] duration-150 ease-out motion-reduce:transition-none"
+            className="z-50 min-w-40 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
             data-slot="sidebar-menu-flyout"
           >
-            {subItems.map((item, index) => (
+            {subItems.map((item) => (
               <MenuPrimitive.Item
                 className={cn(
                   "flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
                   item.isActive && "font-medium text-foreground"
                 )}
-                key={index}
+                key={`${item.label}:${item.href ?? ""}`}
                 onClick={(event) => {
                   item.onClick?.(event as unknown as React.MouseEvent);
                   if (item.href) {

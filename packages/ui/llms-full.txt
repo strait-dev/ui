@@ -1639,7 +1639,64 @@ Import: `import { ... } from "@strait/ui/components/sidebar";`
 
 The sidebar panel itself — a collapsible column rendered inside a SidebarProvider.
 
-Exports: `Sidebar`, `SidebarContent`, `SidebarFooter`, `SidebarGroup`, `SidebarGroupAction`, `SidebarGroupContent`, `SidebarGroupLabel`, `SidebarHeader`, `SidebarInput`, `SidebarInset`, `SidebarMenu`, `SidebarMenuAction`, `SidebarMenuBadge`, `SidebarMenuButton`, `SidebarMenuItem`, `SidebarMenuSkeleton`, `SidebarMenuSub`, `SidebarMenuSubButton`, `SidebarMenuSubItem`, `SidebarProps`, `SidebarProvider`, `SidebarProviderProps`, `SidebarRail`, `SidebarSeparator`, `SidebarTrigger`, `useSidebar`
+Exports: `Sidebar`, `SidebarCard`, `SidebarCardContent`, `SidebarCardDescription`, `SidebarCardFooter`, `SidebarCardHeader`, `SidebarCardProps`, `SidebarCardTitle`, `SidebarContent`, `SidebarFooter`, `SidebarGroup`, `SidebarGroupAction`, `SidebarGroupContent`, `SidebarGroupLabel`, `SidebarGroupProps`, `SidebarHeader`, `SidebarInput`, `SidebarInset`, `SidebarMenu`, `SidebarMenuAction`, `SidebarMenuBadge`, `SidebarMenuButton`, `SidebarMenuButtonProps`, `SidebarMenuDragHandle`, `SidebarMenuFlyout`, `SidebarMenuItem`, `SidebarMenuItemProps`, `SidebarMenuProps`, `SidebarMenuSkeleton`, `SidebarMenuSub`, `SidebarMenuSubButton`, `SidebarMenuSubItem`, `SidebarMenuSubProps`, `SidebarPanel`, `SidebarPanelProps`, `SidebarProps`, `SidebarProvider`, `SidebarProviderProps`, `SidebarRail`, `SidebarRailButton`, `SidebarRailButtonProps`, `SidebarSearchButton`, `SidebarSearchButtonProps`, `SidebarSeparator`, `SidebarSwitcher`, `SidebarSwitcherCurrent`, `SidebarSwitcherItem`, `SidebarSwitcherItemProps`, `SidebarSwitcherProps`, `SidebarToggleRail`, `SidebarTrigger`, `SidebarUserButton`, `SidebarUserButtonProps`, `useSidebar`
+
+Props (`SidebarCardProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `hideOnCollapse` | `boolean` |  | `true` | Hide the card entirely when the sidebar is collapsed to icon width. Defaults to `true` — most upgrade / onboarding prompts only make sense when there's room for the headline copy. |
+
+Props (`SidebarGroupProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collapsible` | `string` |  |  | Persistence key for the group's open/closed state. When set, the group becomes a Base UI `Collapsible` and its SidebarGroupLabel promotes itself to a disclosure trigger with a rotating chevron. |
+| `defaultOpen` | `boolean` |  | `true` | Initial open state when uncontrolled. Defaults to `true`. |
+| `onOpenChange` | `(open: boolean) => void` |  |  | Called when the group's open state changes in controlled mode. |
+| `open` | `boolean` |  |  | Controlled openness; pair with onOpenChange. |
+| `pinned` | `boolean` |  |  | When `true`, the group floats to the bottom of SidebarContent via `margin-top: auto` — handy for "Settings" / "Help" rows that should always sit at the foot of the nav list. |
+
+Props (`SidebarMenuButtonProps`):
+Extends: `useRender.ComponentProps<"button">`, `React.ComponentProps<"button">`, `VariantProps<typeof sidebarMenuButtonVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `isActive` | `boolean` |  | `false` | Whether this row represents the current page. Sets `data-active` and `aria-current="page"`. |
+| `tooltip` | `string \| React.ComponentProps<typeof TooltipContent>` |  |  | Tooltip shown when the sidebar is collapsed to icon or when the label is truncated. |
+| `hasSubMenu` | `boolean` |  |  | When `true`, promotes this button into a Base UI `Collapsible.Trigger` for the enclosing SidebarMenuItem's sub-menu and appends a rotating chevron at the trailing edge. |
+
+Props (`SidebarMenuItemProps`):
+Extends: `React.ComponentProps<"li">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` |  |  | Persistence key shared by this item's hasSubMenu button and its SidebarMenuSub. Required when the item contains a sub-menu; otherwise leave unset and the item behaves like a plain `<li>`. |
+
+Props (`SidebarMenuProps`):
+Extends: `React.ComponentProps<"ul">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `items` | `string[]` |  |  | Ordered list of stable item ids. Required when `reorderable`. |
+| `onReorder` | `(items: string[]) => void` |  |  | Fired with the reshuffled list after a successful drag. |
+| `reorderable` | `boolean` |  |  | Opt into drag-to-reorder. When `true`, pair with `items` + `onReorder` and give each child SidebarMenuItem a `value` matching one of the `items` entries. The menu renders as a `role="list"` div so the dnd-kit wrappers can sit inside without breaking HTML semantics. |
+
+Props (`SidebarMenuSubProps`):
+Extends: `React.ComponentProps<"ul">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | Persistence key — must match the enclosing SidebarMenuItem's `value`. Required: the sub-menu cannot animate open/closed without it. |
+
+Props (`SidebarPanelProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | Stable id matched against `activeRailItem` to decide visibility. |
 
 Props (`SidebarProps`):
 Extends: `React.ComponentProps<"div">`
@@ -1648,7 +1705,7 @@ Extends: `React.ComponentProps<"div">`
 | --- | --- | --- | --- | --- |
 | `side` | `"left" \| "right"` |  | `"left"` | Viewport edge the panel anchors to; `"left"` (default) or `"right"`. |
 | `variant` | `"sidebar" \| "floating" \| "inset"` |  | `"sidebar"` | Visual treatment of the sidebar surface. - `"sidebar"` — flat panel flush with the viewport edge (default). - `"floating"` — rounded corners and a shadow ring. - `"inset"` — makes the content area (SidebarInset) appear nested inside the sidebar colour. |
-| `collapsible` | `"offcanvas" \| "icon" \| "none"` |  | `"offcanvas"` | Collapse mode when the sidebar is toggled closed. - `"offcanvas"` — slides the panel fully off-screen (default). - `"icon"` — shrinks to icon width, hiding labels. - `"none"` — disables collapsing; the panel is always visible. |
+| `collapsible` | `"offcanvas" \| "icon" \| "rail" \| "none"` |  | `"offcanvas"` | Collapse mode when the sidebar is toggled closed. - `"offcanvas"` — slides the panel fully off-screen (default). - `"icon"` — shrinks to icon width, hiding labels. - `"rail"` — dual-panel mode: a narrow icon column (SidebarRail) stays fixed while a wider secondary panel (SidebarPanel) slides in / out based on which SidebarRailButton is active. - `"none"` — disables collapsing; the panel is always visible. |
 
 Props (`SidebarProviderProps`):
 Extends: `React.ComponentProps<"div">`
@@ -1659,11 +1716,59 @@ Extends: `React.ComponentProps<"div">`
 | `open` | `boolean` |  |  | Controlled open state; pair with onOpenChange. |
 | `onOpenChange` | `(open: boolean) => void` |  |  | Called when the sidebar's open state changes in controlled mode. |
 
+Props (`SidebarRailButtonProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title" | "value">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `React.ReactNode` | yes |  | Icon node rendered as the button's content. |
+| `tooltip` | `string` |  |  | Optional accessible name / hover tooltip. |
+| `value` | `string` | yes |  | Stable id selecting which SidebarPanel this button opens. |
+
+Props (`SidebarSearchButtonProps`):
+Extends: `React.ComponentProps<"button">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `onTrigger` | `() => void` |  |  | Fires on click and on the registered keyboard shortcut. |
+| `placeholder` | `string` |  | `"Search…"` | Placeholder text shown in the row. Defaults to `"Search…"`. |
+| `shortcut` | `string \| null` |  | `"⌘K"` | Keyboard hint glyph displayed at the trailing edge (e.g. `"⌘K"`). Pass `null` to hide the hint while still wiring the shortcut handler. |
+| `shortcutKey` | `string` |  | `"k"` | Character key that triggers the shortcut combo with Cmd/Ctrl. Defaults to `"k"`. |
+
+Props (`SidebarSwitcherItemProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `logo` | `React.ReactNode` |  |  | Optional logo / avatar node rendered before the name. |
+| `meta` | `string` |  |  | Optional secondary metadata line (e.g. plan, role). Rendered underneath the name in muted text. |
+| `name` | `string` | yes |  | Display name of the workspace. |
+| `selected` | `boolean` |  |  | When `true`, the item is rendered as the active selection and shows a trailing check glyph. Surfaces as `data-selected="true"` on the DOM node for styling hooks. |
+
+Props (`SidebarSwitcherProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` |  |  | Popover body — typically a list of SidebarSwitcherItems plus any auxiliary actions (e.g. "Create workspace"). |
+| `current` | `SidebarSwitcherCurrent` | yes |  | The currently selected workspace; controls the trigger row. |
+
+Props (`SidebarUserButtonProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `avatar` | `React.ReactNode` |  |  | Avatar element rendered to the leading edge (typically an `<Avatar>` or `<img>`). Sized down to fit the row at `size-7`. |
+| `email` | `string` |  |  | Optional secondary line — often the user's email. |
+| `menu` | `React.ReactNode` |  |  | Menu body — Base UI `MenuPrimitive.Item` and friends. When omitted, the button still renders the chevron unless static is set; clicks fall through to the consumer's `onClick`. |
+| `name` | `string` | yes |  | Primary display name. |
+| `static` | `boolean` |  |  | When `true`, the row is a plain account chip with no menu wrapper and no chevron — handy when the surrounding shell already provides the account dropdown elsewhere. |
+
 Variants:
 - `variant`: `default`, `outline` (default: `default`)
 - `size`: `default`, `sm`, `lg` (default: `default`)
 
-Data slots: `sidebar`, `sidebar-container`, `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-content`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-item`, `sidebar-menu-skeleton`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-rail`, `sidebar-separator`, `sidebar-trigger`, `sidebar-wrapper`
+Data slots: `sidebar`, `sidebar-card`, `sidebar-card-content`, `sidebar-card-description`, `sidebar-card-footer`, `sidebar-card-header`, `sidebar-card-title`, `sidebar-container`, `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-content`, `sidebar-group-label-chevron`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-button-chevron`, `sidebar-menu-drag-handle`, `sidebar-menu-flyout`, `sidebar-menu-item`, `sidebar-menu-skeleton`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-menu-sub-panel`, `sidebar-panel`, `sidebar-rail`, `sidebar-rail-button`, `sidebar-rail-column`, `sidebar-rail-panel-wrap`, `sidebar-search-button`, `sidebar-separator`, `sidebar-switcher`, `sidebar-switcher-body`, `sidebar-switcher-chevron`, `sidebar-switcher-item`, `sidebar-switcher-item-check`, `sidebar-switcher-item-logo`, `sidebar-switcher-logo`, `sidebar-switcher-popover`, `sidebar-toggle-rail`, `sidebar-toggle-rail-glyph`, `sidebar-trigger`, `sidebar-user-button`, `sidebar-user-button-avatar`, `sidebar-user-button-body`, `sidebar-user-button-chevron`, `sidebar-user-button-menu`, `sidebar-wrapper`
 
 ### Stepper
 
