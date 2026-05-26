@@ -34,6 +34,7 @@ import {
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
+  SidebarMenuDragHandle,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
@@ -365,6 +366,39 @@ describe("Sidebar", () => {
     expect(screen.queryByText("Home panel")).toBeNull();
     await userEvent.click(settingsButton as HTMLElement);
     expect(screen.queryByText("Settings panel")).toBeNull();
+  });
+
+  it("renders SidebarMenu in reorderable mode as a list with drag handles per item", () => {
+    const { container } = render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarMenu items={["a", "b", "c"]} onReorder={() => {}} reorderable>
+            <SidebarMenuItem value="a">
+              <SidebarMenuDragHandle />
+              <SidebarMenuButton>Alpha</SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem value="b">
+              <SidebarMenuDragHandle />
+              <SidebarMenuButton>Bravo</SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem value="c">
+              <SidebarMenuDragHandle />
+              <SidebarMenuButton>Charlie</SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </Sidebar>
+      </SidebarProvider>
+    );
+    const list = container.querySelector("[role='list']");
+    expect(list).not.toBeNull();
+    const items = container.querySelectorAll(
+      "[data-slot='sidebar-menu-item'][role='listitem']"
+    );
+    expect(items.length).toBe(3);
+    const handles = container.querySelectorAll(
+      "[data-slot='sidebar-menu-drag-handle']"
+    );
+    expect(handles.length).toBe(3);
   });
 
   it("renders SidebarUserButton as a static chip with no menu trigger", () => {

@@ -7,6 +7,7 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
 import {
   ArrowDown01Icon,
+  DragDropHorizontalIcon,
   Search01Icon,
   SidebarLeftIcon,
   Tick02Icon,
@@ -27,6 +28,7 @@ import {
   SheetTitle,
 } from "./sheet";
 import { Skeleton } from "./skeleton";
+import { Sortable, SortableItem, SortableItemHandle } from "./sortable";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 /**
@@ -1154,15 +1156,74 @@ function SidebarGroupContent({
   );
 }
 
-/** An unstyled `<ul>` container for {@link SidebarMenuItem}s. */
-function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
+/**
+ * Local flag telling descendant {@link SidebarMenuItem}s they live inside
+ * a reorderable {@link SidebarMenu} so they should self-register with the
+ * surrounding {@link Sortable}.
+ */
+const SidebarMenuReorderableContext = React.createContext<boolean>(false);
+
+/** Props for {@link SidebarMenu}. */
+export interface SidebarMenuProps extends React.ComponentProps<"ul"> {
+  /**
+   * Opt into drag-to-reorder. When `true`, pair with `items` + `onReorder`
+   * and give each child {@link SidebarMenuItem} a `value` matching one of
+   * the `items` entries. The menu renders as a `role="list"` div so the
+   * dnd-kit wrappers can sit inside without breaking HTML semantics.
+   */
+  reorderable?: boolean;
+  /** Ordered list of stable item ids. Required when `reorderable`. */
+  items?: string[];
+  /** Fired with the reshuffled list after a successful drag. */
+  onReorder?: (items: string[]) => void;
+}
+
+/**
+ * Unstyled container for {@link SidebarMenuItem}s.
+ *
+ * @remarks
+ * Defaults to a plain `<ul>`. Opt into drag-to-reorder by passing
+ * `reorderable` along with the matching `items` + `onReorder` controls.
+ * In reorderable mode the menu renders as a `role="list"` `<div>` so the
+ * dnd-kit wrappers can sit inside without invalidating HTML structure;
+ * each {@link SidebarMenuItem} self-registers via the
+ * {@link SortableItem} primitive.
+ */
+function SidebarMenu({
+  className,
+  reorderable,
+  items,
+  onReorder,
+  children,
+  ...props
+}: SidebarMenuProps) {
+  if (reorderable) {
+    const list = items ?? [];
+    return (
+      <SidebarMenuReorderableContext.Provider value>
+        <Sortable
+          className={cn("flex w-full min-w-0 flex-col gap-0.5", className)}
+          getItemValue={(v: string) => v}
+          onValueChange={(next) => onReorder?.(next)}
+          role="list"
+          strategy="vertical"
+          value={list}
+          {...(props as React.ComponentProps<"div">)}
+        >
+          {children}
+        </Sortable>
+      </SidebarMenuReorderableContext.Provider>
+    );
+  }
   return (
     <ul
       className={cn("flex w-full min-w-0 flex-col gap-0.5", className)}
       data-sidebar="menu"
       data-slot="sidebar-menu"
       {...props}
-    />
+    >
+      {children}
+    </ul>
   );
 }
 
@@ -1264,7 +1325,26 @@ function SidebarMenuItem({
     [value, subItems]
   );
 
+  const reorderable = React.useContext(SidebarMenuReorderableContext);
+
   if (!value) {
+    if (reorderable) {
+      // Reorderable items must have a value — fall back to a plain row so the
+      // menu does not crash; the dragger has nothing to key off without one.
+      return (
+        <SidebarMenuItemContext.Provider value={itemContextValue}>
+          <div
+            className={itemClassName}
+            data-sidebar="menu-item"
+            data-slot="sidebar-menu-item"
+            role="listitem"
+            {...(props as React.ComponentProps<"div">)}
+          >
+            {children}
+          </div>
+        </SidebarMenuItemContext.Provider>
+      );
+    }
     return (
       <SidebarMenuItemContext.Provider value={itemContextValue}>
         <li
@@ -1275,6 +1355,23 @@ function SidebarMenuItem({
         >
           {children}
         </li>
+      </SidebarMenuItemContext.Provider>
+    );
+  }
+
+  if (reorderable) {
+    return (
+      <SidebarMenuItemContext.Provider value={itemContextValue}>
+        <SortableItem
+          className={itemClassName}
+          data-sidebar="menu-item"
+          data-slot="sidebar-menu-item"
+          role="listitem"
+          value={value}
+          {...(props as React.ComponentProps<"div">)}
+        >
+          {children}
+        </SortableItem>
       </SidebarMenuItemContext.Provider>
     );
   }
@@ -1293,6 +1390,35 @@ function SidebarMenuItem({
         {children}
       </CollapsiblePrimitive.Root>
     </SidebarMenuItemContext.Provider>
+  );
+}
+
+/**
+ * Grab handle exposed inside a reorderable {@link SidebarMenuItem}. Pointer
+ * dragging is initiated from this element; the handle fades in only when
+ * the parent menu item is hovered to avoid visual noise at rest.
+ *
+ * @remarks
+ * - Hidden in icon-collapsed mode.
+ * - Render once per item, typically as the first child of a
+ *   {@link SidebarMenuItem}, before the {@link SidebarMenuButton}.
+ */
+function SidebarMenuDragHandle({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <SortableItemHandle
+      className={cn(
+        "absolute top-1.5 left-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground/60 opacity-0 transition-opacity duration-150 ease-out hover:text-sidebar-foreground group-hover/menu-item:opacity-100 group-data-[collapsible=icon]:hidden motion-reduce:transition-none [&>svg]:size-3",
+        className
+      )}
+      data-sidebar="menu-drag-handle"
+      data-slot="sidebar-menu-drag-handle"
+      {...props}
+    >
+      <HugeiconsIcon icon={DragDropHorizontalIcon} strokeWidth={2} />
+    </SortableItemHandle>
   );
 }
 
@@ -2148,6 +2274,7 @@ export {
   SidebarMenuAction,
   SidebarMenuBadge,
   SidebarMenuButton,
+  SidebarMenuDragHandle,
   SidebarMenuFlyout,
   SidebarMenuItem,
   SidebarMenuSkeleton,
