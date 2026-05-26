@@ -36,6 +36,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from "./sidebar";
 
 function SidebarFixture({ defaultOpen = true }: { defaultOpen?: boolean }) {
@@ -116,6 +117,35 @@ describe("Sidebar", () => {
   it("renders group label text", () => {
     render(<SidebarFixture />);
     expect(screen.getByText("Navigation")).toBeInTheDocument();
+  });
+
+  it("exposes submenu helpers and active-rail setter on context", async () => {
+    let api: ReturnType<typeof useSidebar> | undefined;
+    function Probe() {
+      api = useSidebar();
+      return null;
+    }
+    render(
+      <SidebarProvider>
+        <Probe />
+      </SidebarProvider>
+    );
+    expect(api).toBeDefined();
+    if (!api) {
+      return;
+    }
+    expect(api.isSubmenuOpen("foo")).toBe(false);
+    await Promise.resolve();
+    api.toggleSubmenu("foo");
+    // Re-render captured api on next paint; trigger an event loop flush
+    await Promise.resolve();
+    expect(api.activeRailItem).toBeNull();
+    api.setActiveRailItem("home");
+    await Promise.resolve();
+    // The probe re-renders on state change; api closure now points at fresh ctx.
+    expect(typeof api.toggleSubmenu).toBe("function");
+    expect(typeof api.setSubmenuOpen).toBe("function");
+    expect(typeof api.setActiveRailItem).toBe("function");
   });
 
   it("toggles sidebar via trigger button", async () => {

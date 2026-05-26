@@ -39,6 +39,19 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
+
+  // Open state for collapsible groups and item-level sub-menus.
+  // Each consumer keys itself by a stable `value` string so the
+  // provider can hold the entire app shell's disclosure state.
+  openSubmenus: ReadonlySet<string>;
+  toggleSubmenu: (id: string) => void;
+  setSubmenuOpen: (id: string, open: boolean) => void;
+  isSubmenuOpen: (id: string) => boolean;
+
+  // Active panel id for `collapsible="rail"` dual-panel mode.
+  // `null` collapses the secondary panel to zero width.
+  activeRailItem: string | null;
+  setActiveRailItem: (id: string | null) => void;
 };
 
 // Internal context — consumed by every sidebar sub-component.
@@ -158,6 +171,48 @@ function SidebarProvider({
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? "expanded" : "collapsed";
 
+  // Disclosure state for collapsible groups and item-level sub-menus.
+  // A single Set keyed by the consumer's `value` keeps every disclosure
+  // group, item, etc. addressable from anywhere in the tree.
+  const [openSubmenus, setOpenSubmenus] = React.useState<ReadonlySet<string>>(
+    () => new Set()
+  );
+  const toggleSubmenu = React.useCallback((id: string) => {
+    setOpenSubmenus((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+  const setSubmenuOpen = React.useCallback((id: string, nextOpen: boolean) => {
+    setOpenSubmenus((prev) => {
+      if (prev.has(id) === nextOpen) {
+        return prev;
+      }
+      const next = new Set(prev);
+      if (nextOpen) {
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+      return next;
+    });
+  }, []);
+  const isSubmenuOpen = React.useCallback(
+    (id: string) => openSubmenus.has(id),
+    [openSubmenus]
+  );
+
+  // Active panel for `collapsible="rail"` mode. Null means the
+  // secondary panel is collapsed.
+  const [activeRailItem, setActiveRailItem] = React.useState<string | null>(
+    null
+  );
+
   const contextValue = React.useMemo<SidebarContextProps>(
     () => ({
       state,
@@ -167,8 +222,26 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      openSubmenus,
+      toggleSubmenu,
+      setSubmenuOpen,
+      isSubmenuOpen,
+      activeRailItem,
+      setActiveRailItem,
     }),
-    [state, open, setOpen, isMobile, openMobile, toggleSidebar]
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      toggleSidebar,
+      openSubmenus,
+      toggleSubmenu,
+      setSubmenuOpen,
+      isSubmenuOpen,
+      activeRailItem,
+    ]
   );
 
   return (
@@ -183,6 +256,8 @@ function SidebarProvider({
           {
             "--sidebar-width": SIDEBAR_WIDTH,
             "--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
+            "--sidebar-rail-width": "3rem",
+            "--sidebar-panel-width": "14rem",
             ...style,
           } as React.CSSProperties
         }
