@@ -213,7 +213,10 @@ const selectColumn: ColumnDef<Project> = {
   enableSorting: false,
   enableHiding: false,
   enablePinning: false,
-  meta: { enableColumnOrdering: false },
+  // `text-center` keeps the checkbox visually centred in the 40px slot so
+  // it lines up with the rows-per-page control on the left edge of the
+  // pagination bar below.
+  meta: { cellClassName: "text-center", enableColumnOrdering: false },
   size: 40,
 };
 
@@ -245,7 +248,10 @@ const actionsColumn: ColumnDef<Project> = {
   enableSorting: false,
   enableHiding: false,
   enablePinning: false,
-  meta: { enableColumnOrdering: false },
+  // `text-end` right-aligns the icon button against the cell's `px-3`
+  // padding so its right edge lines up with the next-page button on the
+  // pagination bar (which also stops one `px-3` inside the container).
+  meta: { cellClassName: "text-end", enableColumnOrdering: false },
   size: 40,
 };
 
