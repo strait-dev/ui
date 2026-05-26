@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 beforeAll(() => {
   window.matchMedia ||= (q: string) => ({
@@ -38,6 +38,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarProvider,
+  SidebarSearchButton,
   SidebarTrigger,
   useSidebar,
 } from "./sidebar";
@@ -204,6 +205,22 @@ describe("Sidebar", () => {
     expect(className).toContain("data-active:text-sidebar-active-foreground");
     expect(className).toContain("data-active:before:bg-sidebar-active-rail");
     expect(button.getAttribute("aria-current")).toBe("page");
+  });
+
+  it("fires SidebarSearchButton onTrigger on click and on ⌘K", async () => {
+    const onTrigger = vi.fn();
+    render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarSearchButton onTrigger={onTrigger} />
+        </Sidebar>
+      </SidebarProvider>
+    );
+    const button = screen.getByRole("button");
+    await userEvent.click(button);
+    expect(onTrigger).toHaveBeenCalledTimes(1);
+    await userEvent.keyboard("{Meta>}k{/Meta}");
+    expect(onTrigger).toHaveBeenCalledTimes(2);
   });
 
   it("toggles a SidebarMenuItem sub-menu via the hasSubMenu trigger", async () => {

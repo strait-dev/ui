@@ -6,6 +6,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import {
   ArrowDown01Icon,
+  Search01Icon,
   SidebarLeftIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -545,6 +546,92 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
       data-slot="sidebar-inset"
       {...props}
     />
+  );
+}
+
+/** Props for {@link SidebarSearchButton}. */
+export interface SidebarSearchButtonProps
+  extends React.ComponentProps<"button"> {
+  /** Placeholder text shown in the row. Defaults to `"Search…"`. */
+  placeholder?: string;
+  /**
+   * Keyboard hint glyph displayed at the trailing edge (e.g. `"⌘K"`).
+   * Pass `null` to hide the hint while still wiring the shortcut handler.
+   */
+  shortcut?: string | null;
+  /** Character key that triggers the shortcut combo with Cmd/Ctrl. Defaults to `"k"`. */
+  shortcutKey?: string;
+  /** Fires on click and on the registered keyboard shortcut. */
+  onTrigger?: () => void;
+}
+
+/**
+ * A pre-styled row that opens a global command palette / search dialog.
+ *
+ * Behaves like a button so it can sit inside a {@link SidebarHeader} or
+ * {@link SidebarContent} without conflicting with native form controls.
+ * Registers a Cmd/Ctrl + `shortcutKey` listener when an `onTrigger`
+ * callback is supplied, so users can summon the palette without
+ * grabbing the mouse.
+ *
+ * In icon-collapse mode the row shrinks to a square icon and hides its
+ * placeholder + shortcut hint.
+ */
+function SidebarSearchButton({
+  className,
+  placeholder = "Search…",
+  shortcut = "⌘K",
+  shortcutKey = "k",
+  onTrigger,
+  onClick,
+  ...props
+}: SidebarSearchButtonProps) {
+  React.useEffect(() => {
+    if (!onTrigger) {
+      return;
+    }
+    const handler = (event: KeyboardEvent) => {
+      if (
+        event.key.toLowerCase() === shortcutKey &&
+        (event.metaKey || event.ctrlKey)
+      ) {
+        event.preventDefault();
+        onTrigger();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onTrigger, shortcutKey]);
+
+  return (
+    <button
+      className={cn(
+        "group/search flex h-8 w-full items-center gap-2 rounded-md border border-sidebar-border bg-transparent px-2 text-left text-muted-foreground text-sm outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground focus-visible:ring-3 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0",
+        className
+      )}
+      data-sidebar="search-button"
+      data-slot="sidebar-search-button"
+      onClick={(event) => {
+        onClick?.(event);
+        onTrigger?.();
+      }}
+      type="button"
+      {...props}
+    >
+      <HugeiconsIcon
+        className="size-4 shrink-0"
+        icon={Search01Icon}
+        strokeWidth={2}
+      />
+      <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">
+        {placeholder}
+      </span>
+      {shortcut ? (
+        <kbd className="rounded border border-sidebar-border px-1.5 font-mono text-[10px] group-data-[collapsible=icon]:hidden">
+          {shortcut}
+        </kbd>
+      ) : null}
+    </button>
   );
 }
 
@@ -1445,6 +1532,7 @@ export {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarProvider,
+  SidebarSearchButton,
   SidebarSeparator,
   SidebarToggleRail,
   SidebarTrigger,
