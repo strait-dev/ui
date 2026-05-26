@@ -869,15 +869,133 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
   );
 }
 
-/** A list item wrapper for a single row in a {@link SidebarMenu}. */
-function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
+/**
+ * Snapshot of a {@link SidebarMenuSubButton} collected by its parent
+ * {@link SidebarMenuItem}; the flyout in icon mode reuses the snapshot
+ * to render a popover with the same items.
+ */
+type SidebarMenuItemSubItem = {
+  label: React.ReactNode;
+  href?: string;
+  isActive?: boolean;
+  onClick?: (event: React.MouseEvent) => void;
+};
+
+/**
+ * Local context for {@link SidebarMenuItem} that tells nested parts
+ * (a hasSubMenu button, a SidebarMenuSub, a SidebarMenuFlyout) which
+ * disclosure key they're keyed by and which sub-items the flyout should
+ * mirror when the sidebar collapses to icon width.
+ */
+type SidebarMenuItemContextValue = {
+  value: string | null;
+  subItems: SidebarMenuItemSubItem[];
+};
+const SidebarMenuItemContext =
+  React.createContext<SidebarMenuItemContextValue>({
+    value: null,
+    subItems: [],
+  });
+
+/** Props for {@link SidebarMenuItem}. */
+export interface SidebarMenuItemProps extends React.ComponentProps<"li"> {
+  /**
+   * Persistence key shared by this item's hasSubMenu button and its
+   * {@link SidebarMenuSub}. Required when the item contains a sub-menu;
+   * otherwise leave unset and the item behaves like a plain `<li>`.
+   */
+  value?: string;
+}
+
+/**
+ * A list item wrapper for a single row in a {@link SidebarMenu}.
+ *
+ * @remarks
+ * When `value` is set the item promotes itself to a Base UI
+ * `Collapsible.Root` so its child `hasSubMenu` button and
+ * {@link SidebarMenuSub} stay in sync through the provider's disclosure
+ * registry.
+ */
+function SidebarMenuItem({
+  className,
+  value,
+  children,
+  ...props
+}: SidebarMenuItemProps) {
+  const ctx = useSidebar();
+
+  // Walk children once to collect a flyout-friendly snapshot of any
+  // SidebarMenuSubButton elements nested under a SidebarMenuSub.
+  const subItems = React.useMemo<SidebarMenuItemSubItem[]>(() => {
+    if (!value) {
+      return [];
+    }
+    const collected: SidebarMenuItemSubItem[] = [];
+    const visitSubButton = (node: React.ReactNode) => {
+      if (!React.isValidElement(node)) {
+        return;
+      }
+      // biome-ignore lint/suspicious/noExplicitAny: structural element walk
+      const el = node as React.ReactElement<any>;
+      if (el.type === SidebarMenuSubButton) {
+        collected.push({
+          label: el.props.children,
+          href: el.props.href,
+          isActive: el.props.isActive,
+          onClick: el.props.onClick,
+        });
+        return;
+      }
+      React.Children.forEach(el.props?.children, visitSubButton);
+    };
+    React.Children.forEach(children, (child) => {
+      if (!React.isValidElement(child)) {
+        return;
+      }
+      // biome-ignore lint/suspicious/noExplicitAny: structural element walk
+      const el = child as React.ReactElement<any>;
+      if (el.type === SidebarMenuSub) {
+        React.Children.forEach(el.props.children, visitSubButton);
+      }
+    });
+    return collected;
+  }, [children, value]);
+
+  const itemClassName = cn("group/menu-item relative", className);
+  const itemContextValue = React.useMemo(
+    () => ({ value: value ?? null, subItems }),
+    [value, subItems]
+  );
+
+  if (!value) {
+    return (
+      <SidebarMenuItemContext.Provider value={itemContextValue}>
+        <li
+          className={itemClassName}
+          data-sidebar="menu-item"
+          data-slot="sidebar-menu-item"
+          {...props}
+        >
+          {children}
+        </li>
+      </SidebarMenuItemContext.Provider>
+    );
+  }
+
   return (
-    <li
-      className={cn("group/menu-item relative", className)}
-      data-sidebar="menu-item"
-      data-slot="sidebar-menu-item"
-      {...props}
-    />
+    <SidebarMenuItemContext.Provider value={itemContextValue}>
+      <CollapsiblePrimitive.Root
+        className={itemClassName}
+        data-sidebar="menu-item"
+        data-slot="sidebar-menu-item"
+        onOpenChange={(next: boolean) => ctx.setSubmenuOpen(value, next)}
+        open={ctx.isSubmenuOpen(value)}
+        render={<li />}
+        {...props}
+      >
+        {children}
+      </CollapsiblePrimitive.Root>
+    </SidebarMenuItemContext.Provider>
   );
 }
 
@@ -927,21 +1045,64 @@ const sidebarMenuButtonVariants = cva(
  *   {@link TooltipContent} props object; the tooltip is automatically hidden
  *   when the sidebar is expanded or on mobile.
  */
+/** Props for {@link SidebarMenuButton}. */
+export type SidebarMenuButtonProps = useRender.ComponentProps<"button"> &
+  React.ComponentProps<"button"> & {
+    /** Whether this row represents the current page. Sets `data-active` and `aria-current="page"`. */
+    isActive?: boolean;
+    /** Tooltip shown when the sidebar is collapsed to icon or when the label is truncated. */
+    tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+    /**
+     * When `true`, promotes this button into a Base UI `Collapsible.Trigger`
+     * for the enclosing {@link SidebarMenuItem}'s sub-menu and appends a
+     * rotating chevron at the trailing edge.
+     */
+    hasSubMenu?: boolean;
+  } & VariantProps<typeof sidebarMenuButtonVariants>;
+
 function SidebarMenuButton({
   render,
   isActive = false,
   variant = "default",
   size = "default",
   tooltip,
+  hasSubMenu,
   className,
+  children,
   ...props
-}: useRender.ComponentProps<"button"> &
-  React.ComponentProps<"button"> & {
-    isActive?: boolean;
-    tooltip?: string | React.ComponentProps<typeof TooltipContent>;
-  } & VariantProps<typeof sidebarMenuButtonVariants>) {
+}: SidebarMenuButtonProps) {
   const { isMobile, state } = useSidebar();
+  const itemCtx = React.useContext(SidebarMenuItemContext);
   const [labelRef, truncated] = useTruncated<HTMLElement>();
+
+  if (hasSubMenu && !itemCtx.value && process.env.NODE_ENV !== "production") {
+    // eslint-disable-next-line no-console
+    console.error(
+      "SidebarMenuButton: `hasSubMenu` requires the parent SidebarMenuItem to declare a `value` prop."
+    );
+  }
+
+  const composedChildren = (
+    <>
+      {children}
+      {hasSubMenu ? (
+        <HugeiconsIcon
+          className="ml-auto size-4 transition-transform duration-200 ease-out group-aria-expanded/menu-button:rotate-180 motion-reduce:transition-none group-data-[collapsible=icon]:hidden"
+          data-slot="sidebar-menu-button-chevron"
+          icon={ArrowDown01Icon}
+          strokeWidth={2}
+        />
+      ) : null}
+    </>
+  );
+
+  const baseRender = tooltip ? <TooltipTrigger render={render} /> : render;
+  const finalRender = hasSubMenu ? (
+    <CollapsiblePrimitive.Trigger render={baseRender ?? <button type="button" />} />
+  ) : (
+    baseRender
+  );
+
   const comp = useRender({
     defaultTagName: "button",
     props: mergeProps<"button">(
@@ -950,10 +1111,9 @@ function SidebarMenuButton({
         "aria-current": isActive ? "page" : undefined,
         ref: labelRef as React.Ref<HTMLButtonElement>,
       },
-      props
+      { ...props, children: composedChildren }
     ),
-    // When a tooltip is present, promote the trigger to a TooltipTrigger.
-    render: tooltip ? <TooltipTrigger render={render} /> : render,
+    render: finalRender,
     state: {
       slot: "sidebar-menu-button",
       sidebar: "menu-button",
@@ -1094,22 +1254,50 @@ function SidebarMenuSkeleton({
   );
 }
 
+/** Props for {@link SidebarMenuSub}. */
+export interface SidebarMenuSubProps extends React.ComponentProps<"ul"> {
+  /**
+   * Persistence key — must match the enclosing {@link SidebarMenuItem}'s
+   * `value`. Required: the sub-menu cannot animate open/closed without it.
+   */
+  value: string;
+}
+
 /**
  * A nested `<ul>` for second-level menu items inside a
  * {@link SidebarMenuItem}; visually indented with a left border rule.
- * Hidden in icon-collapse mode.
+ * Hidden in icon-collapse mode (the parent's
+ * {@link SidebarMenuFlyout} shows the items in a popover instead).
+ *
+ * @remarks
+ * Wraps the list in a Base UI `Collapsible.Panel` so opening and closing
+ * animate the panel height between 0 and its intrinsic value, in sync
+ * with the disclosure state stored on the provider.
  */
-function SidebarMenuSub({ className, ...props }: React.ComponentProps<"ul">) {
+function SidebarMenuSub({
+  className,
+  children,
+  value: _value,
+  ...props
+}: SidebarMenuSubProps) {
   return (
-    <ul
-      className={cn(
-        "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-sidebar-border border-l px-2.5 py-0.5 group-data-[collapsible=icon]:hidden",
-        className
-      )}
-      data-sidebar="menu-sub"
-      data-slot="sidebar-menu-sub"
-      {...props}
-    />
+    <CollapsiblePrimitive.Panel
+      className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none group-data-[collapsible=icon]:hidden"
+      data-sidebar="menu-sub-panel"
+      data-slot="sidebar-menu-sub-panel"
+    >
+      <ul
+        className={cn(
+          "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-sidebar-border border-l px-2.5 py-0.5",
+          className
+        )}
+        data-sidebar="menu-sub"
+        data-slot="sidebar-menu-sub"
+        {...props}
+      >
+        {children}
+      </ul>
+    </CollapsiblePrimitive.Panel>
   );
 }
 

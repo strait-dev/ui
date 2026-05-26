@@ -34,6 +34,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarTrigger,
   useSidebar,
@@ -201,6 +204,31 @@ describe("Sidebar", () => {
     expect(className).toContain("data-active:text-sidebar-active-foreground");
     expect(className).toContain("data-active:before:bg-sidebar-active-rail");
     expect(button.getAttribute("aria-current")).toBe("page");
+  });
+
+  it("toggles a SidebarMenuItem sub-menu via the hasSubMenu trigger", async () => {
+    render(
+      <SidebarProvider>
+        <Sidebar collapsible="none">
+          <SidebarMenu>
+            <SidebarMenuItem value="settings">
+              <SidebarMenuButton hasSubMenu>Settings</SidebarMenuButton>
+              <SidebarMenuSub value="settings">
+                <SidebarMenuSubItem>
+                  <SidebarMenuSubButton>Profile</SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              </SidebarMenuSub>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </Sidebar>
+      </SidebarProvider>
+    );
+    const trigger = screen.getByText("Settings").closest("button");
+    expect(trigger).not.toBeNull();
+    if (!trigger) return;
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    await userEvent.click(trigger);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
   });
 
   it("toggles sidebar via trigger button", async () => {
