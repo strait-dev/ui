@@ -1,6 +1,7 @@
 "use client";
 
 import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible";
+import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import {
@@ -1122,8 +1123,14 @@ function SidebarMenuButton({
     },
   });
 
+  // Auto-flyout: when the button represents a sub-menu and the sidebar
+  // is collapsed, surface the sub-items in a hover-popover so users can
+  // still reach them without expanding the sidebar.
+  const flyoutCandidate =
+    hasSubMenu && state === "collapsed" && itemCtx.subItems.length > 0;
+
   if (!tooltip) {
-    return comp;
+    return flyoutCandidate ? <SidebarMenuFlyout>{comp}</SidebarMenuFlyout> : comp;
   }
 
   // Normalise string tooltip to TooltipContent props object.
@@ -1133,7 +1140,7 @@ function SidebarMenuButton({
     };
   }
 
-  return (
+  const tooltipWrapped = (
     <Tooltip>
       {comp}
       <TooltipContent
@@ -1143,6 +1150,12 @@ function SidebarMenuButton({
         {...tooltip}
       />
     </Tooltip>
+  );
+
+  return flyoutCandidate ? (
+    <SidebarMenuFlyout>{tooltipWrapped}</SidebarMenuFlyout>
+  ) : (
+    tooltipWrapped
   );
 }
 
@@ -1354,6 +1367,62 @@ function SidebarMenuSubButton({
   });
 }
 
+/**
+ * Wraps a {@link SidebarMenuButton} so its sub-items appear in a
+ * hover-popover when the sidebar is collapsed to icon width.
+ *
+ * @remarks
+ * Reads {@link SidebarMenuItemContext} to know which sub-items to mirror,
+ * so a value-bound {@link SidebarMenuItem} with a {@link SidebarMenuSub}
+ * needs no extra wiring — {@link SidebarMenuButton} auto-injects this
+ * flyout when `hasSubMenu` is set and the sidebar is collapsed. Pass
+ * `<SidebarMenuFlyout>` manually when you want fine-grained control
+ * (e.g. a custom trigger that isn't a {@link SidebarMenuButton}).
+ *
+ * Built on Base UI's `Menu` primitive with `openOnHover` so users can
+ * peek at sub-items by moving the cursor over the parent icon.
+ */
+function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
+  const { state, isMobile } = useSidebar();
+  const { subItems } = React.useContext(SidebarMenuItemContext);
+
+  if (state !== "collapsed" || isMobile || subItems.length === 0) {
+    return children;
+  }
+
+  return (
+    <MenuPrimitive.Root openOnHover>
+      <MenuPrimitive.Trigger render={children} />
+      <MenuPrimitive.Portal>
+        <MenuPrimitive.Positioner align="start" side="right" sideOffset={4}>
+          <MenuPrimitive.Popup
+            className="z-50 min-w-40 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 transition-[transform,opacity] duration-150 ease-out motion-reduce:transition-none"
+            data-slot="sidebar-menu-flyout"
+          >
+            {subItems.map((item, index) => (
+              <MenuPrimitive.Item
+                className={cn(
+                  "flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
+                  item.isActive && "font-medium text-foreground"
+                )}
+                key={index}
+                onClick={(event) => {
+                  item.onClick?.(event as unknown as React.MouseEvent);
+                  if (item.href) {
+                    window.location.href = item.href;
+                  }
+                }}
+              >
+                {item.label}
+              </MenuPrimitive.Item>
+            ))}
+          </MenuPrimitive.Popup>
+        </MenuPrimitive.Positioner>
+      </MenuPrimitive.Portal>
+    </MenuPrimitive.Root>
+  );
+}
+
 export {
   Sidebar,
   SidebarContent,
@@ -1369,6 +1438,7 @@ export {
   SidebarMenuAction,
   SidebarMenuBadge,
   SidebarMenuButton,
+  SidebarMenuFlyout,
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarMenuSub,
