@@ -38,7 +38,10 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarPanel,
   SidebarProvider,
+  SidebarRail,
+  SidebarRailButton,
   SidebarSearchButton,
   SidebarSwitcher,
   SidebarSwitcherItem,
@@ -325,6 +328,43 @@ describe("Sidebar", () => {
           b.getAttribute("data-selected") === "true"
       );
     expect(acmeItem).toBeDefined();
+  });
+
+  it("toggles SidebarPanel visibility via SidebarRailButton in rail mode", async () => {
+    const { container } = render(
+      <SidebarProvider>
+        <Sidebar collapsible="rail">
+          <SidebarRail>
+            <SidebarRailButton icon={<span>H</span>} value="home" />
+            <SidebarRailButton icon={<span>S</span>} value="settings" />
+          </SidebarRail>
+          <SidebarPanel value="home">
+            <div>Home panel</div>
+          </SidebarPanel>
+          <SidebarPanel value="settings">
+            <div>Settings panel</div>
+          </SidebarPanel>
+        </Sidebar>
+      </SidebarProvider>
+    );
+    expect(screen.queryByText("Home panel")).toBeNull();
+    const homeButton = container.querySelector(
+      "[data-slot='sidebar-rail-button'][data-value='home']"
+    );
+    expect(homeButton).not.toBeNull();
+    if (!homeButton) return;
+    await userEvent.click(homeButton as HTMLElement);
+    expect(screen.getByText("Home panel")).toBeInTheDocument();
+    expect(screen.queryByText("Settings panel")).toBeNull();
+    const settingsButton = container.querySelector(
+      "[data-slot='sidebar-rail-button'][data-value='settings']"
+    );
+    if (!settingsButton) return;
+    await userEvent.click(settingsButton as HTMLElement);
+    expect(screen.getByText("Settings panel")).toBeInTheDocument();
+    expect(screen.queryByText("Home panel")).toBeNull();
+    await userEvent.click(settingsButton as HTMLElement);
+    expect(screen.queryByText("Settings panel")).toBeNull();
   });
 
   it("renders SidebarUserButton as a static chip with no menu trigger", () => {

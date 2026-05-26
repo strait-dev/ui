@@ -323,9 +323,12 @@ export type SidebarProps = React.ComponentProps<"div"> & {
    * Collapse mode when the sidebar is toggled closed.
    * - `"offcanvas"` — slides the panel fully off-screen (default).
    * - `"icon"` — shrinks to icon width, hiding labels.
+   * - `"rail"` — dual-panel mode: a narrow icon column ({@link SidebarRail})
+   *   stays fixed while a wider secondary panel ({@link SidebarPanel})
+   *   slides in / out based on which {@link SidebarRailButton} is active.
    * - `"none"` — disables collapsing; the panel is always visible.
    */
-  collapsible?: "offcanvas" | "icon" | "none";
+  collapsible?: "offcanvas" | "icon" | "rail" | "none";
 };
 
 /**
@@ -361,7 +364,88 @@ function Sidebar({
   dir,
   ...props
 }: SidebarProps) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { isMobile, state, openMobile, setOpenMobile, activeRailItem } =
+    useSidebar();
+
+  if (collapsible === "rail") {
+    const childrenArr = React.Children.toArray(children);
+    const railChild = childrenArr.find(
+      (c) => React.isValidElement(c) && c.type === SidebarRail
+    );
+    const panels = childrenArr.filter(
+      (c) => React.isValidElement(c) && c.type === SidebarPanel
+    );
+    const rest = childrenArr.filter(
+      (c) =>
+        !(
+          React.isValidElement(c) &&
+          (c.type === SidebarRail || c.type === SidebarPanel)
+        )
+    );
+
+    const railColumn = (
+      <div
+        className="flex h-svh w-(--sidebar-rail-width) shrink-0 flex-col items-center gap-1 border-sidebar-border border-r bg-sidebar py-2"
+        data-slot="sidebar-rail-column"
+      >
+        {railChild}
+        {rest}
+      </div>
+    );
+    const panelWrap = (
+      <div
+        className="h-svh w-(--sidebar-panel-width) overflow-hidden border-sidebar-border border-r bg-sidebar transition-[width] duration-200 ease-out data-[active=none]:w-0 motion-reduce:transition-none"
+        data-active={activeRailItem ?? "none"}
+        data-slot="sidebar-rail-panel-wrap"
+      >
+        {panels}
+      </div>
+    );
+
+    if (isMobile) {
+      return (
+        <Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
+          <SheetContent
+            className="bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            data-mobile="true"
+            data-sidebar="sidebar"
+            data-slot="sidebar"
+            dir={dir}
+            side={side}
+            style={
+              {
+                "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
+              } as React.CSSProperties
+            }
+          >
+            <SheetHeader className="sr-only">
+              <SheetTitle>Sidebar</SheetTitle>
+              <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            </SheetHeader>
+            <div className="flex h-full w-full">
+              {railColumn}
+              {panelWrap}
+            </div>
+          </SheetContent>
+        </Sheet>
+      );
+    }
+
+    return (
+      <div
+        className={cn("group peer hidden text-sidebar-foreground md:flex", className)}
+        data-collapsible="rail"
+        data-side={side}
+        data-slot="sidebar"
+        data-state={state}
+        data-variant={variant}
+        {...props}
+      >
+        {railColumn}
+        {panelWrap}
+      </div>
+    );
+  }
 
   if (collapsible === "none") {
     return (
@@ -447,6 +531,129 @@ function Sidebar({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Marker / container for the narrow icon column rendered in
+ * `collapsible="rail"` mode.
+ *
+ * Used as a structural marker so the {@link Sidebar} root can find and
+ * place the rail children inside its own column container. Children are
+ * typically {@link SidebarRailButton}s.
+ */
+function SidebarRail({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("contents", className)}
+      data-sidebar="rail"
+      data-slot="sidebar-rail"
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
+
+/** Props for {@link SidebarRailButton}. */
+export interface SidebarRailButtonProps
+  extends Omit<React.ComponentProps<"button">, "title" | "value"> {
+  /** Stable id selecting which {@link SidebarPanel} this button opens. */
+  value: string;
+  /** Icon node rendered as the button's content. */
+  icon: React.ReactNode;
+  /** Optional accessible name / hover tooltip. */
+  tooltip?: string;
+}
+
+/**
+ * One icon button in the rail column. Clicking sets / clears
+ * `activeRailItem` so the matching {@link SidebarPanel} renders.
+ *
+ * @remarks
+ * - When `tooltip` is provided the button is wrapped with `Tooltip` so the
+ *   label appears on hover (positioned to the right of the rail).
+ * - Active state uses the under-icon dot variant of the standard active
+ *   visual recipe.
+ */
+function SidebarRailButton({
+  className,
+  value,
+  icon,
+  tooltip,
+  onClick,
+  ...props
+}: SidebarRailButtonProps) {
+  const { activeRailItem, setActiveRailItem } = useSidebar();
+  const isActive = activeRailItem === value;
+  const button = (
+    <button
+      aria-label={tooltip}
+      aria-pressed={isActive}
+      className={cn(
+        "relative flex size-8 shrink-0 items-center justify-center rounded-md text-sidebar-foreground outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3",
+        "data-active:bg-sidebar-active data-active:text-sidebar-active-foreground data-active:before:absolute data-active:before:inset-x-1 data-active:before:bottom-1 data-active:before:h-0.5 data-active:before:rounded-full data-active:before:bg-sidebar-active-rail",
+        className
+      )}
+      data-active={isActive ? "true" : undefined}
+      data-sidebar="rail-button"
+      data-slot="sidebar-rail-button"
+      data-value={value}
+      onClick={(e) => {
+        onClick?.(e);
+        setActiveRailItem(isActive ? null : value);
+      }}
+      type="button"
+      {...props}
+    >
+      {icon}
+    </button>
+  );
+
+  if (!tooltip) {
+    return button;
+  }
+  return (
+    <Tooltip>
+      <TooltipTrigger render={button} />
+      <TooltipContent side="right">{tooltip}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+/** Props for {@link SidebarPanel}. */
+export interface SidebarPanelProps extends React.ComponentProps<"div"> {
+  /** Stable id matched against `activeRailItem` to decide visibility. */
+  value: string;
+}
+
+/**
+ * The wider secondary panel shown to the right of {@link SidebarRail} when
+ * `activeRailItem` matches its `value`. Renders nothing otherwise — the
+ * surrounding wrapper animates its width to `0` so the layout reflows
+ * smoothly.
+ */
+function SidebarPanel({
+  value,
+  className,
+  ...props
+}: SidebarPanelProps) {
+  const { activeRailItem } = useSidebar();
+  if (activeRailItem !== value) {
+    return null;
+  }
+  return (
+    <div
+      className={cn("flex h-full w-full flex-col", className)}
+      data-sidebar="panel"
+      data-slot="sidebar-panel"
+      data-value={value}
+      {...props}
+    />
   );
 }
 
@@ -1947,7 +2154,10 @@ export {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarPanel,
   SidebarProvider,
+  SidebarRail,
+  SidebarRailButton,
   SidebarSearchButton,
   SidebarSeparator,
   SidebarSwitcher,
