@@ -140,10 +140,12 @@ function Frame({
 }) {
   // `transform-gpu` (translateZ(0)) establishes a containing block for the
   // sidebar's `position: fixed` shell so it sits flush against the Frame's
-  // left edge instead of escaping to the viewport.
+  // left edge instead of escaping to the viewport. The `[&_[data-slot=
+  // sidebar-container]]:!h-full` override clamps the sidebar's built-in
+  // `h-svh` down to the Frame's own height so the footer stays in view.
   return (
     <div
-      className="flex w-full transform-gpu overflow-hidden rounded-lg border"
+      className="[&_[data-slot=sidebar-container]]:!h-full flex w-full transform-gpu overflow-hidden rounded-lg border"
       style={{ height }}
     >
       {children}
