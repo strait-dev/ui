@@ -1934,9 +1934,15 @@ function SidebarUserButton({
     <MenuPrimitive.Root>
       <MenuPrimitive.Trigger render={chip} />
       <MenuPrimitive.Portal>
-        <MenuPrimitive.Positioner align="end" side="right" sideOffset={4}>
+        {/* isolate prevents z-index bleed from ancestor stacking contexts */}
+        <MenuPrimitive.Positioner
+          align="end"
+          className="isolate z-50 outline-none"
+          side="right"
+          sideOffset={4}
+        >
           <MenuPrimitive.Popup
-            className="data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-48 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none duration-100 data-closed:animate-out data-open:animate-in motion-reduce:animate-none motion-reduce:transition-none"
+            className="data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 max-h-(--available-height) min-w-48 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md outline-none ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in data-closed:overflow-hidden motion-reduce:animate-none motion-reduce:transition-none"
             data-slot="sidebar-user-button-menu"
           >
             {menu}
@@ -2048,9 +2054,15 @@ function SidebarSwitcher({
     <PopoverPrimitive.Root>
       <PopoverPrimitive.Trigger render={trigger} />
       <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Positioner align="start" side="right" sideOffset={8}>
+        {/* isolate prevents z-index bleed from ancestor stacking contexts */}
+        <PopoverPrimitive.Positioner
+          align="start"
+          className="isolate z-50"
+          side="right"
+          sideOffset={8}
+        >
           <PopoverPrimitive.Popup
-            className="data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-64 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none duration-100 data-closed:animate-out data-open:animate-in motion-reduce:animate-none motion-reduce:transition-none"
+            className="data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 max-h-(--available-height) min-w-64 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md outline-hidden ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in data-closed:overflow-hidden motion-reduce:animate-none motion-reduce:transition-none"
             data-slot="sidebar-switcher-popover"
           >
             {children}
