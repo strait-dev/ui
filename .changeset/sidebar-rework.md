@@ -27,9 +27,12 @@ surface their full text via the existing tooltip path. The provider
 context gains `openSubmenus` / `toggleSubmenu` / `setSubmenuOpen` /
 `isSubmenuOpen` plus `activeRailItem` / `setActiveRailItem`.
 
-Storybook ships 21 showcase stories, including `Collapse_Rail`,
+Storybook ships 22 showcase stories, including `Collapse_Rail`,
 `DisclosureSubMenu`, `SubMenuFlyout`, `Reorderable`, `WithSwitcher`,
-`WithUserButton`, `WithCard`, and the flagship `RealWorldDashboard`.
+`WithUserButton`, `WithCard`, the flagship `RealWorldDashboard` (now
+wired to a real `CommandMenu` via the search button), and a sibling
+`RealWorldWithSupport` mirroring shadcn's `sidebar-08` support + feedback
+footer pattern.
 
 **Breaking changes**
 

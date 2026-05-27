@@ -1,19 +1,36 @@
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import {
+  Bookmark02Icon,
+  BookOpen01Icon,
+  BotIcon,
   Briefcase01Icon,
+  Calendar01Icon,
   ChartLineData02Icon,
+  Comment01Icon,
   CreditCardIcon,
+  CubeIcon,
   File01Icon,
   Folder01Icon,
+  GitBranchIcon,
   HelpCircleIcon,
   Home01Icon,
   InboxIcon,
+  Layers02Icon,
   Logout01Icon,
+  MagicWand02Icon,
+  Mail01Icon,
+  MessageQuestionIcon,
+  MoonIcon,
   MoreHorizontalIcon,
   Notification01Icon,
+  PencilEdit02Icon,
+  Rocket01Icon,
   Search01Icon,
   Settings01Icon,
   StarIcon,
+  SunIcon,
+  Tag01Icon,
+  UserCircleIcon,
   UserGroup02Icon,
   UserIcon,
 } from "@hugeicons/core-free-icons";
@@ -22,6 +39,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 
 import { Button } from "./button";
+import { CommandMenu } from "./command-menu";
 import {
   Sidebar,
   SidebarCard,
@@ -148,16 +166,28 @@ function BasicMenu({ active = "dashboard" }: { active?: string }) {
   );
 }
 
-function BrandHeader() {
+function BrandHeader({ subtitle }: { subtitle?: string } = {}) {
   return (
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg">
-            <div className="flex size-8 items-center justify-center rounded-md bg-primary font-bold text-primary-foreground text-sm">
-              A
+            <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <HugeiconsIcon
+                className="size-4"
+                icon={Briefcase01Icon}
+                strokeWidth={2}
+              />
             </div>
-            <span className="font-semibold">Acme Inc.</span>
+            {/* Label hides in icon mode so only the brand glyph stays. */}
+            <div className="flex flex-1 flex-col gap-0.5 leading-tight group-data-[collapsible=icon]:hidden">
+              <span className="font-semibold">Acme Inc.</span>
+              {subtitle && (
+                <span className="text-muted-foreground text-xs">
+                  {subtitle}
+                </span>
+              )}
+            </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -862,16 +892,158 @@ export const LoadingSkeleton: Story = {
   ),
 };
 
-/** Flagship "everything wired" story for a real app shell. */
-export const RealWorldDashboard: Story = {
-  render: () => (
-    <Frame height={680}>
+// --- Real-world helpers ------------------------------------------------------
+
+/** Shared menu-item recipe used inside the {@link SidebarUserButton} dropdown. */
+const userMenuItemClass =
+  "flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+
+/**
+ * Realistic {@link CommandMenu} payload — three groups with shortcuts and
+ * keyword aliases so the palette can be opened from `SidebarSearchButton`
+ * (`⌘K`) and still surface results under common synonyms.
+ */
+const commandGroups = [
+  {
+    heading: "Navigate",
+    items: [
+      {
+        label: "Dashboard",
+        icon: Home01Icon,
+        shortcut: "⌘D",
+        keywords: ["home", "overview"],
+        onSelect: () => {},
+      },
+      {
+        label: "Inbox",
+        icon: InboxIcon,
+        shortcut: "⌘I",
+        keywords: ["mail", "messages"],
+        onSelect: () => {},
+      },
+      {
+        label: "Projects",
+        icon: CubeIcon,
+        keywords: ["workspaces"],
+        onSelect: () => {},
+      },
+      {
+        label: "Calendar",
+        icon: Calendar01Icon,
+        keywords: ["events", "schedule"],
+        onSelect: () => {},
+      },
+      {
+        label: "Reports",
+        icon: ChartLineData02Icon,
+        keywords: ["analytics", "metrics"],
+        onSelect: () => {},
+      },
+    ],
+  },
+  {
+    heading: "Create",
+    items: [
+      {
+        label: "New project",
+        icon: CubeIcon,
+        shortcut: "⌘N",
+        onSelect: () => {},
+      },
+      { label: "New document", icon: PencilEdit02Icon, onSelect: () => {} },
+      { label: "Invite teammate", icon: UserGroup02Icon, onSelect: () => {} },
+    ],
+  },
+  {
+    heading: "Settings",
+    items: [
+      { label: "Account", icon: UserCircleIcon, onSelect: () => {} },
+      { label: "Billing", icon: CreditCardIcon, onSelect: () => {} },
+      {
+        label: "Toggle theme",
+        icon: MoonIcon,
+        shortcut: "⌘T",
+        keywords: ["dark mode", "light"],
+        onSelect: () => {},
+      },
+      { label: "Sign out", icon: Logout01Icon, onSelect: () => {} },
+    ],
+  },
+];
+
+/**
+ * Rich user-button dropdown that mirrors the shadcn `sidebar-07` block — the
+ * canonical "account / billing / notifications / log out" footer menu.
+ */
+function FooterUserButton() {
+  return (
+    <SidebarUserButton
+      avatar={<HugeiconsIcon icon={UserCircleIcon} />}
+      email="ada@example.com"
+      menu={
+        <div className="flex w-56 flex-col gap-0.5 p-1">
+          <div className="flex items-center gap-2 px-2 py-1.5">
+            <div className="flex size-7 items-center justify-center rounded-full bg-muted">
+              <HugeiconsIcon className="size-4" icon={UserIcon} />
+            </div>
+            <div className="flex min-w-0 flex-1 flex-col leading-tight">
+              <span className="truncate font-medium text-sm">Ada Lovelace</span>
+              <span className="truncate text-muted-foreground text-xs">
+                ada@example.com
+              </span>
+            </div>
+          </div>
+          <div aria-hidden="true" className="my-1 h-px bg-border" />
+          <MenuPrimitive.Item className={userMenuItemClass}>
+            <HugeiconsIcon className="size-4" icon={Rocket01Icon} />
+            <span>Upgrade to Pro</span>
+          </MenuPrimitive.Item>
+          <div aria-hidden="true" className="my-1 h-px bg-border" />
+          <MenuPrimitive.Item className={userMenuItemClass}>
+            <HugeiconsIcon className="size-4" icon={UserCircleIcon} />
+            <span>Account</span>
+          </MenuPrimitive.Item>
+          <MenuPrimitive.Item className={userMenuItemClass}>
+            <HugeiconsIcon className="size-4" icon={CreditCardIcon} />
+            <span>Billing</span>
+          </MenuPrimitive.Item>
+          <MenuPrimitive.Item className={userMenuItemClass}>
+            <HugeiconsIcon className="size-4" icon={Notification01Icon} />
+            <span>Notifications</span>
+          </MenuPrimitive.Item>
+          <div aria-hidden="true" className="my-1 h-px bg-border" />
+          <MenuPrimitive.Item className={userMenuItemClass}>
+            <HugeiconsIcon className="size-4" icon={Logout01Icon} />
+            <span>Log out</span>
+          </MenuPrimitive.Item>
+        </div>
+      }
+      name="Ada Lovelace"
+    />
+  );
+}
+
+/**
+ * Flagship "everything wired" story mirroring shadcn's `sidebar-07` block —
+ * team switcher, ⌘K search opening a real `CommandMenu`, multi-group navigation
+ * with animated sub-menus, drag-to-reorder favourites, upgrade card, and a
+ * rich user-button dropdown in the footer.
+ */
+function RealWorldDashboardRender() {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [favourites, setFavourites] = useState([
+    "design-system",
+    "q4-roadmap",
+    "onboarding-flow",
+  ]);
+  return (
+    <Frame height={760}>
       <SidebarProvider defaultOpen>
         <Sidebar collapsible="icon">
           <SidebarHeader>
             <SidebarSwitcher
               current={{
-                name: "Acme",
+                name: "Acme Inc.",
                 meta: "Pro plan",
                 logo: <HugeiconsIcon icon={Briefcase01Icon} />,
               }}
@@ -879,7 +1051,7 @@ export const RealWorldDashboard: Story = {
               <SidebarSwitcherItem
                 logo={<HugeiconsIcon icon={Briefcase01Icon} />}
                 meta="Pro"
-                name="Acme"
+                name="Acme Inc."
                 selected
               />
               <SidebarSwitcherItem
@@ -887,12 +1059,17 @@ export const RealWorldDashboard: Story = {
                 meta="Free"
                 name="Globex"
               />
+              <SidebarSwitcherItem
+                logo={<HugeiconsIcon icon={Layers02Icon} />}
+                meta="Team"
+                name="Stark Industries"
+              />
             </SidebarSwitcher>
-            <SidebarSearchButton onTrigger={() => {}} />
+            <SidebarSearchButton onTrigger={() => setPaletteOpen(true)} />
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+              <SidebarGroupLabel>Platform</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
@@ -906,7 +1083,71 @@ export const RealWorldDashboard: Story = {
                       <HugeiconsIcon icon={InboxIcon} />
                       <span>Inbox</span>
                     </SidebarMenuButton>
-                    <SidebarMenuBadge>12</SidebarMenuBadge>
+                    <SidebarMenuBadge>24</SidebarMenuBadge>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem value="playground">
+                    <SidebarMenuButton hasSubMenu tooltip="Playground">
+                      <HugeiconsIcon icon={MagicWand02Icon} />
+                      <span>Playground</span>
+                    </SidebarMenuButton>
+                    <SidebarMenuSub value="playground">
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton isActive>
+                          History
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>Starred</SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>Settings</SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem value="models">
+                    <SidebarMenuButton hasSubMenu tooltip="Models">
+                      <HugeiconsIcon icon={BotIcon} />
+                      <span>Models</span>
+                    </SidebarMenuButton>
+                    <SidebarMenuSub value="models">
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>Genesis</SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>Explorer</SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>Quantum</SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem value="documentation">
+                    <SidebarMenuButton hasSubMenu tooltip="Documentation">
+                      <HugeiconsIcon icon={BookOpen01Icon} />
+                      <span>Documentation</span>
+                    </SidebarMenuButton>
+                    <SidebarMenuSub value="documentation">
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>
+                          Introduction
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>Get started</SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>Tutorials</SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton>Changelog</SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Calendar">
+                      <HugeiconsIcon icon={Calendar01Icon} />
+                      <span>Calendar</span>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton tooltip="Reports">
@@ -917,17 +1158,57 @@ export const RealWorldDashboard: Story = {
                       <HugeiconsIcon icon={MoreHorizontalIcon} />
                     </SidebarMenuAction>
                   </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Team">
+                      <HugeiconsIcon icon={UserGroup02Icon} />
+                      <span>Team</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-            <SidebarGroup collapsible="favs">
+            <SidebarGroup collapsible="favourites">
               <SidebarGroupLabel>Favourites</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu
+                  items={favourites}
+                  onReorder={setFavourites}
+                  reorderable
+                >
+                  {favourites.map((slug) => (
+                    <SidebarMenuItem key={slug} value={slug}>
+                      <SidebarMenuButton tooltip={slug}>
+                        <HugeiconsIcon icon={StarIcon} />
+                        <span>{titleCase(slug)}</span>
+                      </SidebarMenuButton>
+                      <SidebarMenuDragHandle />
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+            <SidebarGroup collapsible="tags">
+              <SidebarGroupLabel>Tags</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Starred">
-                      <HugeiconsIcon icon={StarIcon} />
-                      <span>Starred docs</span>
+                    <SidebarMenuButton tooltip="Design">
+                      <HugeiconsIcon icon={Tag01Icon} />
+                      <span>Design</span>
+                    </SidebarMenuButton>
+                    <SidebarMenuBadge>8</SidebarMenuBadge>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Engineering">
+                      <HugeiconsIcon icon={GitBranchIcon} />
+                      <span>Engineering</span>
+                    </SidebarMenuButton>
+                    <SidebarMenuBadge>14</SidebarMenuBadge>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Marketing">
+                      <HugeiconsIcon icon={Bookmark02Icon} />
+                      <span>Marketing</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -940,7 +1221,7 @@ export const RealWorldDashboard: Story = {
                     <SidebarCardTitle>Upgrade to Pro</SidebarCardTitle>
                   </SidebarCardHeader>
                   <SidebarCardDescription>
-                    Unlock unlimited workspaces.
+                    Unlock unlimited workspaces and advanced reporting.
                   </SidebarCardDescription>
                   <SidebarCardFooter>
                     <Button size="sm">
@@ -953,21 +1234,163 @@ export const RealWorldDashboard: Story = {
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
-            <SidebarUserButton
-              avatar={<HugeiconsIcon icon={UserIcon} />}
-              email="ada@example.com"
-              menu={
-                <MenuPrimitive.Item className="flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent">
-                  <HugeiconsIcon className="size-4" icon={Logout01Icon} />
-                  <span>Sign out</span>
-                </MenuPrimitive.Item>
-              }
-              name="Ada Lovelace"
-            />
+            <FooterUserButton />
           </SidebarFooter>
         </Sidebar>
         <InsetBody label="Real-world dashboard shell" />
+        <CommandMenu
+          groups={commandGroups}
+          onOpenChange={setPaletteOpen}
+          open={paletteOpen}
+        />
       </SidebarProvider>
     </Frame>
-  ),
+  );
+}
+
+export const RealWorldDashboard: Story = {
+  render: () => <RealWorldDashboardRender />,
 };
+
+/**
+ * Variant of the flagship shell mirroring shadcn's `sidebar-08` block — the
+ * footer keeps the user dropdown but pairs it with a pinned secondary group
+ * containing dedicated "Support" and "Send feedback" rows above the upgrade
+ * card.
+ */
+function RealWorldWithSupportRender() {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  return (
+    <Frame height={760}>
+      <SidebarProvider defaultOpen>
+        <Sidebar collapsible="icon">
+          <BrandHeader subtitle="Pro plan" />
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton isActive tooltip="Dashboard">
+                      <HugeiconsIcon icon={Home01Icon} />
+                      <span>Dashboard</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Mail">
+                      <HugeiconsIcon icon={Mail01Icon} />
+                      <span>Mail</span>
+                    </SidebarMenuButton>
+                    <SidebarMenuBadge>3</SidebarMenuBadge>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Projects">
+                      <HugeiconsIcon icon={CubeIcon} />
+                      <span>Projects</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Calendar">
+                      <HugeiconsIcon icon={Calendar01Icon} />
+                      <span>Calendar</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Documents">
+                      <HugeiconsIcon icon={File01Icon} />
+                      <span>Documents</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Settings">
+                      <HugeiconsIcon icon={Settings01Icon} />
+                      <span>Settings</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+            <SidebarGroup>
+              <SidebarGroupLabel>Recent</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Design System">
+                      <HugeiconsIcon icon={Layers02Icon} />
+                      <span>Design system</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Marketing Site">
+                      <HugeiconsIcon icon={Bookmark02Icon} />
+                      <span>Marketing site</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Mobile App">
+                      <HugeiconsIcon icon={Rocket01Icon} />
+                      <span>Mobile app</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+            {/* Pinned bottom group: support + feedback above the user row. */}
+            <SidebarGroup pinned>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Support">
+                      <HugeiconsIcon icon={MessageQuestionIcon} />
+                      <span>Support</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Send feedback">
+                      <HugeiconsIcon icon={Comment01Icon} />
+                      <span>Send feedback</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Toggle theme">
+                      <HugeiconsIcon icon={SunIcon} />
+                      <span>Toggle theme</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Help">
+                      <HugeiconsIcon icon={HelpCircleIcon} />
+                      <span>Help</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter>
+            <SidebarSearchButton onTrigger={() => setPaletteOpen(true)} />
+            <FooterUserButton />
+          </SidebarFooter>
+        </Sidebar>
+        <InsetBody label="Real-world shell with support + feedback footer" />
+        <CommandMenu
+          groups={commandGroups}
+          onOpenChange={setPaletteOpen}
+          open={paletteOpen}
+        />
+      </SidebarProvider>
+    </Frame>
+  );
+}
+
+export const RealWorldWithSupport: Story = {
+  render: () => <RealWorldWithSupportRender />,
+};
+
+/** Cheap title-case helper for the favourites demo. */
+function titleCase(slug: string) {
+  return slug
+    .split(/[-_]/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
