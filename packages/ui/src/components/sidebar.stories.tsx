@@ -759,18 +759,19 @@ export const WithSwitcher: Story = {
   ),
 };
 
-/** Header search row with a ⌘K shortcut hint. */
-export const WithSearchButton: Story = {
-  render: () => (
+/**
+ * Header search row with a ⌘K shortcut hint, wired to a real
+ * {@link CommandMenu} so clicking the field (or hitting ⌘K) opens the
+ * palette.
+ */
+function WithSearchButtonRender() {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  return (
     <Frame height={480}>
       <SidebarProvider defaultOpen>
         <Sidebar collapsible="icon">
           <SidebarHeader>
-            <SidebarSearchButton
-              onTrigger={() => {
-                // open command palette here
-              }}
-            />
+            <SidebarSearchButton onTrigger={() => setPaletteOpen(true)} />
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
@@ -780,10 +781,19 @@ export const WithSearchButton: Story = {
             </SidebarGroup>
           </SidebarContent>
         </Sidebar>
-        <InsetBody label="⌘K opens the search dialog" />
+        <InsetBody label="Click the search field or press ⌘K" />
+        <CommandMenu
+          groups={commandGroups}
+          onOpenChange={setPaletteOpen}
+          open={paletteOpen}
+        />
       </SidebarProvider>
     </Frame>
-  ),
+  );
+}
+
+export const WithSearchButton: Story = {
+  render: () => <WithSearchButtonRender />,
 };
 
 /** Upgrade-to-Pro prompt in the footer via `SidebarCard`. */
@@ -896,7 +906,7 @@ export const LoadingSkeleton: Story = {
 
 /** Shared menu-item recipe used inside the {@link SidebarUserButton} dropdown. */
 const userMenuItemClass =
-  "flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+  "flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden transition-colors focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground";
 
 /**
  * Realistic {@link CommandMenu} payload — three groups with shortcuts and
@@ -981,7 +991,7 @@ function FooterUserButton() {
       avatar={<HugeiconsIcon icon={UserCircleIcon} />}
       email="ada@example.com"
       menu={
-        <div className="flex w-56 flex-col gap-0.5 p-1">
+        <>
           <div className="flex items-center gap-2 px-2 py-1.5">
             <div className="flex size-7 items-center justify-center rounded-full bg-muted">
               <HugeiconsIcon className="size-4" icon={UserIcon} />
@@ -993,12 +1003,12 @@ function FooterUserButton() {
               </span>
             </div>
           </div>
-          <div aria-hidden="true" className="my-1 h-px bg-border" />
+          <MenuPrimitive.Separator className="-mx-1 my-1 h-px bg-border" />
           <MenuPrimitive.Item className={userMenuItemClass}>
             <HugeiconsIcon className="size-4" icon={Rocket01Icon} />
             <span>Upgrade to Pro</span>
           </MenuPrimitive.Item>
-          <div aria-hidden="true" className="my-1 h-px bg-border" />
+          <MenuPrimitive.Separator className="-mx-1 my-1 h-px bg-border" />
           <MenuPrimitive.Item className={userMenuItemClass}>
             <HugeiconsIcon className="size-4" icon={UserCircleIcon} />
             <span>Account</span>
@@ -1011,12 +1021,12 @@ function FooterUserButton() {
             <HugeiconsIcon className="size-4" icon={Notification01Icon} />
             <span>Notifications</span>
           </MenuPrimitive.Item>
-          <div aria-hidden="true" className="my-1 h-px bg-border" />
+          <MenuPrimitive.Separator className="-mx-1 my-1 h-px bg-border" />
           <MenuPrimitive.Item className={userMenuItemClass}>
             <HugeiconsIcon className="size-4" icon={Logout01Icon} />
             <span>Log out</span>
           </MenuPrimitive.Item>
-        </div>
+        </>
       }
       name="Ada Lovelace"
     />
