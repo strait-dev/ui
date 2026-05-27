@@ -227,14 +227,7 @@ export const Playground: Story = {
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Profile">
-                  <HugeiconsIcon icon={UserIcon} />
-                  <span>John Doe</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+            <FooterUserButton />
           </SidebarFooter>
         </Sidebar>
         <InsetBody label="Dashboard" />
@@ -675,7 +668,11 @@ export const SubMenuFlyout: Story = {
   ),
 };
 
-/** Account row in the footer driven by `SidebarUserButton`. */
+/**
+ * Account row pinned in the footer driven by `SidebarUserButton`, with the
+ * full shadcn `sidebar-07` dropdown (Upgrade · Account · Billing ·
+ * Notifications · Log out) hanging off the chevron.
+ */
 export const WithUserButton: Story = {
   render: () => (
     <Frame height={520}>
@@ -690,26 +687,10 @@ export const WithUserButton: Story = {
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
-            <SidebarUserButton
-              avatar={<HugeiconsIcon icon={UserIcon} />}
-              email="ada@example.com"
-              menu={
-                <>
-                  <MenuPrimitive.Item className="flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent">
-                    <HugeiconsIcon className="size-4" icon={UserIcon} />
-                    <span>Profile</span>
-                  </MenuPrimitive.Item>
-                  <MenuPrimitive.Item className="flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent">
-                    <HugeiconsIcon className="size-4" icon={Logout01Icon} />
-                    <span>Sign out</span>
-                  </MenuPrimitive.Item>
-                </>
-              }
-              name="Ada Lovelace"
-            />
+            <FooterUserButton />
           </SidebarFooter>
         </Sidebar>
-        <InsetBody label="User account chip with menu" />
+        <InsetBody label="Click the chevron to open the account menu" />
       </SidebarProvider>
     </Frame>
   ),
