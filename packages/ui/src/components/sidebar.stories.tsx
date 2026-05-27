@@ -120,9 +120,12 @@ function Frame({
   children: React.ReactNode;
   height?: number;
 }) {
+  // `transform-gpu` (translateZ(0)) establishes a containing block for the
+  // sidebar's `position: fixed` shell so it sits flush against the Frame's
+  // left edge instead of escaping to the viewport.
   return (
     <div
-      className="flex w-full overflow-hidden rounded-lg border"
+      className="flex w-full transform-gpu overflow-hidden rounded-lg border"
       style={{ height }}
     >
       {children}

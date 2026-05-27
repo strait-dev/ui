@@ -63,9 +63,11 @@
   --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
   --sidebar-border: oklch(0.923 0.003 48.717);
   --sidebar-ring: oklch(0.553 0.013 58.071);
-  --sidebar-active: oklch(0.97 0.013 220);
-  --sidebar-active-foreground: oklch(0.21 0.034 220);
-  --sidebar-active-rail: oklch(0.55 0.18 250);
+  /* Active row: soft peach fill on warm stone + brand-orange left rail.
+     Foreground stays neutral ink so contrast stays AA-comfortable. */
+  --sidebar-active: oklch(0.96 0.04 50);
+  --sidebar-active-foreground: oklch(0.216 0.006 56.043);
+  --sidebar-active-rail: oklch(0.6696 0.222 37.42);
 }
 
 .dark {
@@ -116,9 +118,10 @@
   --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.709 0.01 56.259);
-  --sidebar-active: oklch(0.27 0.04 250);
-  --sidebar-active-foreground: oklch(0.97 0.01 220);
-  --sidebar-active-rail: oklch(0.71 0.16 250);
+  /* Mirror the light recipe: warm dark fill + bright brand-orange rail. */
+  --sidebar-active: oklch(0.32 0.06 40);
+  --sidebar-active-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-active-rail: oklch(0.6696 0.222 37.42);
 }
 
 @theme inline {
