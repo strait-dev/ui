@@ -97,9 +97,12 @@ function VerticalDemo() {
           ))}
         </nav>
       </Scrollspy>
-      <div
+      <section
+        aria-label="Documentation sections"
         className="h-72 flex-1 overflow-y-auto rounded-lg border p-4"
         ref={containerRef}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region — keyboard users focus it to scroll with arrow keys.
+        tabIndex={0}
       >
         <div className="space-y-8">
           {SECTIONS.map((section) => (
@@ -110,7 +113,7 @@ function VerticalDemo() {
             </section>
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
@@ -140,9 +143,12 @@ export const Horizontal: Story = {
               ))}
             </nav>
           </Scrollspy>
-          <div
+          <section
+            aria-label="Documentation sections"
             className="h-72 overflow-y-auto rounded-lg border p-4"
             ref={containerRef}
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region — keyboard users focus it to scroll with arrow keys.
+            tabIndex={0}
           >
             <div className="space-y-8">
               {SECTIONS.map((section) => (
@@ -159,7 +165,7 @@ export const Horizontal: Story = {
                 </section>
               ))}
             </div>
-          </div>
+          </section>
         </div>
       );
     }

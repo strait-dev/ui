@@ -770,6 +770,13 @@ export function FileUpload({
       )}
       data-slot="file-upload"
     >
+      {/*
+       * The dropzone is a presentational target for mouse drag-and-drop —
+       * keyboard users reach the file picker via the inner Browse button, so
+       * the wrapper is intentionally non-focusable. Adding `role="button"` +
+       * `tabIndex` here would nest a focusable button inside another focusable
+       * button (axe `nested-interactive`).
+       */}
       <FileUploadDropzone
         isDragging={isDragging}
         onClick={actions.openFileDialog}
@@ -777,11 +784,13 @@ export function FileUpload({
         onDragLeave={actions.handleDragLeave}
         onDragOver={actions.handleDragOver}
         onDrop={actions.handleDrop}
-        role="button"
         size={size}
-        tabIndex={0}
       >
-        <input {...actions.getInputProps({ disabled })} className="sr-only" />
+        <input
+          aria-label="File upload"
+          {...actions.getInputProps({ disabled })}
+          className="sr-only"
+        />
         <span className="text-muted-foreground">
           <HugeiconsIcon icon={CloudUploadIcon} size={dropzoneIconSize(size)} />
         </span>

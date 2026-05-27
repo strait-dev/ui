@@ -1893,7 +1893,11 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
               onValueChange={(val) => table.setPageSize(Number(val))}
               value={String(pageSize)}
             >
-              <SelectTrigger className="w-16" size="sm">
+              <SelectTrigger
+                aria-label={p.rowsPerPageLabel}
+                className="w-16"
+                size="sm"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="min-w-20" side="top">
