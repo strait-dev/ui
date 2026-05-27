@@ -1936,7 +1936,7 @@ function SidebarUserButton({
       <MenuPrimitive.Portal>
         <MenuPrimitive.Positioner align="end" side="right" sideOffset={4}>
           <MenuPrimitive.Popup
-            className="z-50 min-w-48 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
+            className="data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-48 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none duration-100 data-closed:animate-out data-open:animate-in motion-reduce:animate-none motion-reduce:transition-none"
             data-slot="sidebar-user-button-menu"
           >
             {menu}
@@ -2050,7 +2050,7 @@ function SidebarSwitcher({
       <PopoverPrimitive.Portal>
         <PopoverPrimitive.Positioner align="start" side="right" sideOffset={8}>
           <PopoverPrimitive.Popup
-            className="z-50 min-w-64 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
+            className="data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-64 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none duration-100 data-closed:animate-out data-open:animate-in motion-reduce:animate-none motion-reduce:transition-none"
             data-slot="sidebar-switcher-popover"
           >
             {children}
