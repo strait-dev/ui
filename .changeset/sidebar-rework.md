@@ -1,5 +1,5 @@
 ---
-"@strait/ui": major
+"@strait/ui": patch
 ---
 
 feat(ui)!: rework Sidebar into a full app-shell primitive

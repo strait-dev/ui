@@ -1,5 +1,5 @@
 ---
-"@strait/ui": minor
+"@strait/ui": patch
 ---
 
 feat(ui): add DataGridTableRowActions and DataGridSelectionBar

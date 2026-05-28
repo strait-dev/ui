@@ -1,5 +1,5 @@
 ---
-"@strait/ui": major
+"@strait/ui": patch
 ---
 
 feat!: rename Filter to Filters, align with ReUI

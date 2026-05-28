@@ -1,5 +1,5 @@
 ---
-"@strait/ui": minor
+"@strait/ui": patch
 ---
 
 feat: add Sortable drag-to-reorder component

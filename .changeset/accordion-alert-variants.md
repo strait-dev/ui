@@ -1,5 +1,5 @@
 ---
-"@strait/ui": minor
+"@strait/ui": patch
 ---
 
 feat: add accordion variants and alert invert variant

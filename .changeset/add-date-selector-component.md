@@ -1,5 +1,5 @@
 ---
-"@strait/ui": minor
+"@strait/ui": patch
 ---
 
 feat: add DateSelector date-filter component

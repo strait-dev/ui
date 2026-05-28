@@ -1,5 +1,5 @@
 ---
-"@strait/ui": major
+"@strait/ui": patch
 ---
 
 feat!: replace DataTable with DataGrid (TanStack + virtual + DnD)

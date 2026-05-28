@@ -1,5 +1,5 @@
 ---
-"@strait/ui": major
+"@strait/ui": patch
 ---
 
 feat!: add Autocomplete component, remove Combobox

@@ -1,5 +1,5 @@
 ---
-"@strait/ui": minor
+"@strait/ui": patch
 ---
 
 feat(ui): add `indicator` prop on `AccordionTrigger` and broaden showcase stories

@@ -1,5 +1,5 @@
 ---
-"@strait/ui": major
+"@strait/ui": patch
 ---
 
 feat!: align PhoneInput API with ReUI (`size` → `variant`)
