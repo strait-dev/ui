@@ -10,7 +10,7 @@ import {
   type FilterFieldConfig,
   Filters,
   FiltersContent,
-} from "./filter";
+} from "./filters";
 
 // ---------------------------------------------------------------------------
 // Polyfills required by cmdk / popover in jsdom

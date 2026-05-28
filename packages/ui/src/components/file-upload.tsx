@@ -7,30 +7,503 @@ import {
   Image01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import * as React from "react";
-import {
-  DropZone,
-  type DropZoneProps,
-  FileTrigger,
-} from "react-aria-components";
 import { cn } from "../utils/index";
 import { Button } from "./button";
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+/**
+ * Metadata describing a file that already exists on the server, used to seed
+ * the upload list (via `initialFiles`) without a local `File` object.
+ */
+export type FileMetadata = {
+  /** Stable identifier for the file. */
+  id: string;
+  /** Display name. */
+  name: string;
+  /** Size in bytes. */
+  size: number;
+  /** MIME type (e.g. `"image/png"`). */
+  type: string;
+  /** Remote URL used as the preview source. */
+  url: string;
+};
+
+/**
+ * A file tracked by {@link useFileUpload} — either a freshly selected local
+ * `File` or a pre-existing {@link FileMetadata} record, paired with a stable
+ * id and an optional preview URL.
+ */
+export type FileWithPreview = {
+  /** The underlying local `File` or remote {@link FileMetadata}. */
+  file: File | FileMetadata;
+  /** Stable identifier, used as the React key and for removal. */
+  id: string;
+  /** Object URL (local images) or remote URL used to render a thumbnail. */
+  preview?: string;
+};
+
+/** Configuration options for {@link useFileUpload}. */
+export type FileUploadOptions = {
+  /**
+   * Accepted MIME types and/or extensions as a comma-separated string
+   * (e.g. `"image/*,.pdf"`). `"*"` accepts everything.
+   *
+   * @defaultValue "*"
+   */
+  accept?: string;
+  /** Files to seed the list with on mount. */
+  initialFiles?: FileMetadata[];
+  /**
+   * Maximum number of files, only enforced when `multiple` is `true`.
+   *
+   * @defaultValue Infinity
+   */
+  maxFiles?: number;
+  /**
+   * Maximum size per file in bytes.
+   *
+   * @defaultValue Infinity
+   */
+  maxSize?: number;
+  /**
+   * Allow selecting and dropping more than one file.
+   *
+   * @defaultValue false
+   */
+  multiple?: boolean;
+  /** Called with the newly added files whenever files are added. */
+  onFilesAdded?: (addedFiles: FileWithPreview[]) => void;
+  /** Called with the full list whenever it changes (add or remove). */
+  onFilesChange?: (files: FileWithPreview[]) => void;
+  /** Called with human-readable messages when files are rejected. */
+  onError?: (errors: string[]) => void;
+};
+
+/** Reactive state returned by {@link useFileUpload}. */
+export type FileUploadState = {
+  /** Validation messages from the most recent interaction. */
+  errors: string[];
+  /** The current list of tracked files. */
+  files: FileWithPreview[];
+  /** Whether a drag is currently hovering the drop target. */
+  isDragging: boolean;
+};
+
+/** Imperative actions returned by {@link useFileUpload}. */
+export type FileUploadActions = {
+  /** Validate and add files from a `FileList` or array. */
+  addFiles: (files: FileList | File[]) => void;
+  /** Clear the current validation errors. */
+  clearErrors: () => void;
+  /** Remove every file and revoke any object URLs. */
+  clearFiles: () => void;
+  /** Build props for a hidden `<input type="file">`, including a `ref`. */
+  getInputProps: (
+    props?: React.ComponentProps<"input">
+  ) => React.ComponentProps<"input"> & {
+    ref: React.Ref<HTMLInputElement>;
+  };
+  /** `dragenter` handler that marks the drop target active. */
+  handleDragEnter: (e: React.DragEvent<HTMLElement>) => void;
+  /** `dragleave` handler that clears the active state when leaving. */
+  handleDragLeave: (e: React.DragEvent<HTMLElement>) => void;
+  /** `dragover` handler that allows the drop. */
+  handleDragOver: (e: React.DragEvent<HTMLElement>) => void;
+  /** `drop` handler that adds the dropped files. */
+  handleDrop: (e: React.DragEvent<HTMLElement>) => void;
+  /** Open the OS file picker. */
+  openFileDialog: () => void;
+  /** Remove a single file by its id, revoking its object URL. */
+  removeFile: (id: string) => void;
+};
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Format a byte count as a human-readable string.
+ *
+ * @remarks
+ * Chooses the most readable unit among B, KB, MB, and GB and formats the
+ * value to one decimal place. Values below 1 KB are shown as whole bytes.
+ *
+ * @example
+ * ```ts
+ * formatBytes(0);       // "0 B"
+ * formatBytes(1536);    // "1.5 KB"
+ * formatBytes(1048576); // "1.0 MB"
+ * ```
+ */
+function formatBytes(bytes: number): string {
+  if (bytes === 0) {
+    return "0 B";
+  }
+  if (!Number.isFinite(bytes)) {
+    return "∞";
+  }
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+  if (bytes < 1024 * 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+}
+
+/** Stable dedupe key for a file, combining its name and size. */
+function dedupeKey(file: File | FileMetadata): string {
+  return `${file.name}-${file.size}`;
+}
+
+/** Derive the leading icon for a file based on its MIME type. */
+function iconFor(file: File | FileMetadata): typeof Image01Icon {
+  if (file.type.startsWith("image/")) {
+    return Image01Icon;
+  }
+  return File01Icon;
+}
+
+/** Generate a unique id for a freshly selected `File`. */
+function uniqueId(file: File | FileMetadata): string {
+  if (file instanceof File) {
+    return `${file.name}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+  return file.id;
+}
+
+/** Create an object-URL preview for local image files only. */
+function previewFor(file: File | FileMetadata): string | undefined {
+  if (file instanceof File) {
+    return file.type.startsWith("image/")
+      ? URL.createObjectURL(file)
+      : undefined;
+  }
+  return file.url;
+}
+
+/** Revoke object URLs for any local image previews in the list. */
+function revokePreviews(files: FileWithPreview[]): void {
+  for (const item of files) {
+    if (
+      item.preview &&
+      item.file instanceof File &&
+      item.file.type.startsWith("image/")
+    ) {
+      URL.revokeObjectURL(item.preview);
+    }
+  }
+}
+
+/** Check whether a file matches a comma-separated `accept` string. */
+function fileMatchesAccept(file: File | FileMetadata, accept: string): boolean {
+  const types = accept
+    .split(",")
+    .map((type) => type.trim())
+    .filter(Boolean);
+  if (types.length === 0) {
+    return true;
+  }
+  const fileType = file.type || "";
+  const extension = `.${file.name.split(".").pop() ?? ""}`;
+
+  return types.some((type) => {
+    if (type.startsWith(".")) {
+      return extension.toLowerCase() === type.toLowerCase();
+    }
+    if (type.endsWith("/*")) {
+      return fileType.startsWith(type.slice(0, -1));
+    }
+    return fileType === type;
+  });
+}
+
+/** Validate a single file, returning an error message or `null`. */
+function validateFile(
+  file: File | FileMetadata,
+  accept: string,
+  maxSize: number
+): string | null {
+  if (file.size > maxSize) {
+    return `File "${file.name}" exceeds the maximum size of ${formatBytes(maxSize)}.`;
+  }
+  if (accept !== "*" && !fileMatchesAccept(file, accept)) {
+    return `File "${file.name}" is not an accepted file type.`;
+  }
+  return null;
+}
+
+interface ProcessOptions {
+  accept: string;
+  existing: FileWithPreview[];
+  maxFiles: number;
+  maxSize: number;
+  multiple: boolean;
+}
+
+/** Validate incoming files against the current list and constraints. */
+function processIncoming(
+  incoming: File[],
+  { accept, existing, maxFiles, maxSize, multiple }: ProcessOptions
+): { errors: string[]; valid: FileWithPreview[] } {
+  if (
+    multiple &&
+    maxFiles !== Number.POSITIVE_INFINITY &&
+    existing.length + incoming.length > maxFiles
+  ) {
+    return {
+      errors: [`You can only upload a maximum of ${maxFiles} files.`],
+      valid: [],
+    };
+  }
+
+  const errors: string[] = [];
+  const valid: FileWithPreview[] = [];
+  const seen = new Set(existing.map((item) => dedupeKey(item.file)));
+
+  for (const file of incoming) {
+    if (multiple && seen.has(dedupeKey(file))) {
+      continue;
+    }
+    const error = validateFile(file, accept, maxSize);
+    if (error) {
+      errors.push(error);
+      continue;
+    }
+    seen.add(dedupeKey(file));
+    valid.push({ file, id: uniqueId(file), preview: previewFor(file) });
+  }
+
+  return { errors, valid };
+}
+
+// ---------------------------------------------------------------------------
+// useFileUpload
+// ---------------------------------------------------------------------------
+
+/**
+ * Headless file-upload hook built on native File / drag-and-drop APIs.
+ *
+ * @remarks
+ * Returns a `[state, actions]` tuple. Wire `actions` up to your own markup —
+ * the {@link FileUpload} component is a styled default, but custom layouts
+ * (avatars, galleries, tables) compose the hook directly.
+ *
+ * @example
+ * ```tsx
+ * const [{ files, isDragging }, actions] = useFileUpload({ accept: "image/*" });
+ * return (
+ *   <div onDragOver={actions.handleDragOver} onDrop={actions.handleDrop}>
+ *     <input {...actions.getInputProps()} className="sr-only" />
+ *     <button onClick={actions.openFileDialog}>Browse</button>
+ *   </div>
+ * );
+ * ```
+ */
+export function useFileUpload(
+  options: FileUploadOptions = {}
+): [FileUploadState, FileUploadActions] {
+  const {
+    accept = "*",
+    initialFiles = [],
+    maxFiles = Number.POSITIVE_INFINITY,
+    maxSize = Number.POSITIVE_INFINITY,
+    multiple = false,
+    onFilesAdded,
+    onFilesChange,
+    onError,
+  } = options;
+
+  const [state, setState] = React.useState<FileUploadState>(() => ({
+    errors: [],
+    files: initialFiles.map((file) => ({
+      file,
+      id: file.id,
+      preview: file.url,
+    })),
+    isDragging: false,
+  }));
+
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const addFiles = React.useCallback(
+    (incoming: FileList | File[]) => {
+      if (!incoming || incoming.length === 0) {
+        return;
+      }
+      const list = Array.from(incoming);
+      const candidates = multiple ? list : list.slice(0, 1);
+
+      setState((prev) => {
+        const existing = multiple ? prev.files : [];
+        if (!multiple) {
+          revokePreviews(prev.files);
+        }
+        const { valid, errors } = processIncoming(candidates, {
+          accept,
+          existing,
+          maxFiles,
+          maxSize,
+          multiple,
+        });
+        const files = multiple ? [...prev.files, ...valid] : valid;
+
+        if (valid.length > 0) {
+          onFilesAdded?.(valid);
+        }
+        if (valid.length > 0 || errors.length > 0) {
+          onFilesChange?.(files);
+        }
+        if (errors.length > 0) {
+          onError?.(errors);
+        }
+        return { ...prev, errors, files };
+      });
+
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+    },
+    [accept, maxFiles, maxSize, multiple, onError, onFilesAdded, onFilesChange]
+  );
+
+  const removeFile = React.useCallback(
+    (id: string) => {
+      setState((prev) => {
+        const target = prev.files.find((item) => item.id === id);
+        if (target) {
+          revokePreviews([target]);
+        }
+        const files = prev.files.filter((item) => item.id !== id);
+        onFilesChange?.(files);
+        return { ...prev, errors: [], files };
+      });
+    },
+    [onFilesChange]
+  );
+
+  const clearFiles = React.useCallback(() => {
+    setState((prev) => {
+      revokePreviews(prev.files);
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+      onFilesChange?.([]);
+      return { ...prev, errors: [], files: [] };
+    });
+  }, [onFilesChange]);
+
+  const clearErrors = React.useCallback(() => {
+    setState((prev) => ({ ...prev, errors: [] }));
+  }, []);
+
+  const handleDragEnter = React.useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setState((prev) => ({ ...prev, isDragging: true }));
+    },
+    []
+  );
+
+  const handleDragLeave = React.useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.currentTarget.contains(e.relatedTarget as Node)) {
+        return;
+      }
+      setState((prev) => ({ ...prev, isDragging: false }));
+    },
+    []
+  );
+
+  const handleDragOver = React.useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    []
+  );
+
+  const handleDrop = React.useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setState((prev) => ({ ...prev, isDragging: false }));
+      if (inputRef.current?.disabled) {
+        return;
+      }
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        addFiles(e.dataTransfer.files);
+      }
+    },
+    [addFiles]
+  );
+
+  const handleFileChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files.length > 0) {
+        addFiles(e.target.files);
+      }
+    },
+    [addFiles]
+  );
+
+  const openFileDialog = React.useCallback(() => {
+    inputRef.current?.click();
+  }, []);
+
+  const getInputProps = React.useCallback(
+    (props: React.ComponentProps<"input"> = {}) => ({
+      ...props,
+      accept: props.accept || accept,
+      multiple: props.multiple === undefined ? multiple : props.multiple,
+      onChange: handleFileChange,
+      ref: inputRef,
+      type: "file" as const,
+    }),
+    [accept, handleFileChange, multiple]
+  );
+
+  return [
+    state,
+    {
+      addFiles,
+      clearErrors,
+      clearFiles,
+      getInputProps,
+      handleDragEnter,
+      handleDragLeave,
+      handleDragOver,
+      handleDrop,
+      openFileDialog,
+      removeFile,
+    },
+  ];
+}
 
 // ---------------------------------------------------------------------------
 // Variants
 // ---------------------------------------------------------------------------
 
 /**
- * CVA recipe that controls the size of the `FileUpload` dropzone area.
+ * CVA recipe controlling the size of the {@link FileUploadDropzone} area.
  *
  * @remarks
- * Three sizes are offered — `sm`, `default`, and `lg` — which scale the
- * vertical padding of the dropzone and the cloud icon. Pair with the
- * `size` prop on `FileUpload`.
+ * Three sizes — `sm`, `default`, and `lg` — scale the dropzone padding. Pair
+ * with the `size` prop on `FileUploadDropzone` or `FileUpload`.
  */
 const fileUploadVariants = cva(
-  "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-input border-dashed bg-background text-center transition-colors",
+  "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-input border-dashed bg-background text-center outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 data-[dragging=true]:border-ring data-[dragging=true]:bg-accent",
   {
     variants: {
       size: {
@@ -45,73 +518,14 @@ const fileUploadVariants = cva(
   }
 );
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Format a byte count as a human-readable string.
- *
- * @remarks
- * Chooses the most readable unit among B, KB, MB, and GB and formats the
- * value to one decimal place. Values below 1 KB are shown as whole bytes
- * (no decimal).
- *
- * @example
- * ```ts
- * formatBytes(0);       // "0 B"
- * formatBytes(1024);    // "1.0 KB"
- * formatBytes(1536);    // "1.5 KB"
- * formatBytes(1048576); // "1.0 MB"
- * ```
- */
-function formatBytes(bytes: number): string {
-  if (bytes === 0) {
-    return "0 B";
-  }
-  if (bytes < 1024) {
-    return `${bytes} B`;
-  }
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
-  }
-  if (bytes < 1024 * 1024 * 1024) {
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  }
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
-}
-
-/**
- * Derive the leading icon to show for a file based on its MIME type.
- *
- * @remarks
- * Returns `Image01Icon` for image files (`image/*`) and `File01Icon` for
- * everything else.
- */
-function iconFor(file: File): typeof Image01Icon {
-  if (file.type.startsWith("image/")) {
-    return Image01Icon;
-  }
-  return File01Icon;
-}
-
-/**
- * Build a stable React key for a `File` object.
- *
- * Combines name, size, and last-modified timestamp so that two files with
- * the same name but different content produce distinct keys.
- */
-function fileKey(file: File, index: number): string {
-  return `${file.name}-${file.size}-${file.lastModified}-${index}`;
-}
+/** Density of the dropzone area. */
+export type FileUploadSize = "sm" | "default" | "lg";
 
 /**
  * Return an appropriate cloud-upload icon size (in pixels) for the given
- * dropzone size variant. Extracted to avoid nested ternary expressions.
+ * dropzone size variant.
  */
-function dropzoneIconSize(
-  size: "sm" | "default" | "lg" | null | undefined
-): number {
+function dropzoneIconSize(size: FileUploadSize | null | undefined): number {
   if (size === "lg") {
     return 40;
   }
@@ -122,83 +536,77 @@ function dropzoneIconSize(
 }
 
 // ---------------------------------------------------------------------------
-// Validation
+// FileUploadDropzone
 // ---------------------------------------------------------------------------
 
-interface ValidationResult {
-  accepted: File[];
-  rejectedMessage?: string;
+/** Props for the {@link FileUploadDropzone} component. */
+export interface FileUploadDropzoneProps extends React.ComponentProps<"div"> {
+  /** Whether a drag is currently hovering — toggles the active styling. */
+  isDragging?: boolean;
+  /** Density of the dropzone. */
+  size?: FileUploadSize;
 }
 
 /**
- * Check whether a single file's MIME type matches the `accept` list.
+ * The dashed drop target. A presentational `<div>` — wire drag handlers and
+ * `onClick` from {@link useFileUpload} via props.
  *
- * @remarks
- * The matching strategy (in priority order):
- * 1. Exact MIME match — `"image/png"` matches `"image/png"`.
- * 2. Wildcard MIME match — `"image/*"` matches any `"image/…"` type.
- * 3. Extension match — `".png"` matches a file whose name ends with `.png`
- *    (case-insensitive). This covers cases where the browser cannot
- *    determine the MIME type from the file itself.
- *
- * If `accept` is empty or undefined every file is considered acceptable.
+ * @example
+ * ```tsx
+ * <FileUploadDropzone
+ *   isDragging={isDragging}
+ *   onDragEnter={handleDragEnter}
+ *   onDrop={handleDrop}
+ *   onClick={openFileDialog}
+ * >
+ *   <input {...getInputProps()} className="sr-only" />
+ *   Drop files here
+ * </FileUploadDropzone>
+ * ```
  */
-function matchesAccept(file: File, accept: string[]): boolean {
-  if (accept.length === 0) {
-    return true;
-  }
-
-  return accept.some((pattern) => {
-    // Wildcard family: "image/*"
-    if (pattern.endsWith("/*")) {
-      const family = pattern.slice(0, -2);
-      return file.type.startsWith(`${family}/`);
-    }
-    // Extension pattern: ".png"
-    if (pattern.startsWith(".")) {
-      return file.name.toLowerCase().endsWith(pattern.toLowerCase());
-    }
-    // Exact MIME: "image/png"
-    return file.type === pattern;
-  });
+export function FileUploadDropzone({
+  className,
+  isDragging = false,
+  size = "default",
+  children,
+  ...props
+}: FileUploadDropzoneProps) {
+  return (
+    <div
+      className={cn(fileUploadVariants({ size }), className)}
+      data-dragging={isDragging}
+      data-slot="file-upload-dropzone"
+      {...props}
+    >
+      {children}
+    </div>
+  );
 }
 
+// ---------------------------------------------------------------------------
+// FileUploadList
+// ---------------------------------------------------------------------------
+
+/** Props for the {@link FileUploadList} component. */
+export type FileUploadListProps = React.ComponentProps<"ul">;
+
 /**
- * Validate a list of candidate files against size and type constraints.
- *
- * @param candidates - Files to validate.
- * @param accept - Accepted MIME types / file extensions (empty = any).
- * @param maxSize - Maximum bytes per file (undefined = no limit).
- * @returns An object with `accepted` files and an optional `rejectedMessage`
- *   describing the **first** rejection reason encountered.
+ * A vertical list wrapper for {@link FileUploadItem}s. Defaults to an
+ * accessible label and a stacked layout.
  */
-function validateFiles(
-  candidates: File[],
-  accept: string[],
-  maxSize: number | undefined
-): ValidationResult {
-  const accepted: File[] = [];
-  let rejectedMessage: string | undefined;
-
-  for (const file of candidates) {
-    if (maxSize !== undefined && file.size > maxSize) {
-      if (rejectedMessage === undefined) {
-        rejectedMessage = `${file.name} exceeds the maximum size`;
-      }
-      continue;
-    }
-
-    if (!matchesAccept(file, accept)) {
-      if (rejectedMessage === undefined) {
-        rejectedMessage = `${file.name} is not an accepted file type`;
-      }
-      continue;
-    }
-
-    accepted.push(file);
-  }
-
-  return { accepted, rejectedMessage };
+export function FileUploadList({
+  className,
+  "aria-label": ariaLabel = "Selected files",
+  ...props
+}: FileUploadListProps) {
+  return (
+    <ul
+      aria-label={ariaLabel}
+      className={cn("flex flex-col gap-2", className)}
+      data-slot="file-upload-list"
+      {...props}
+    />
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -209,39 +617,23 @@ function validateFiles(
 export interface FileUploadItemProps {
   /** Additional class names applied to the list item element. */
   className?: string;
-  /** The `File` object to display. */
-  file: File;
+  /** The tracked file to display. */
+  file: FileWithPreview;
   /** Called when the user clicks the remove button. */
   onRemove?: () => void;
 }
 
 /**
- * A single row in the file list, showing the file's icon, name, size,
- * and a remove button.
- *
- * @remarks
- * This component is intentionally presentational — it receives a `File`
- * and an optional `onRemove` callback, and renders a styled `<li>` with:
- * - A leading icon (`Image01Icon` for images, `File01Icon` for everything
- *   else), rendered via `HugeiconsIcon`.
- * - The file name (truncated with `truncate` when it overflows).
- * - The human-readable file size via `formatBytes`.
- * - A ghost remove `Button` carrying `aria-label="Remove <filename>"`.
- *
- * @example
- * ```tsx
- * <FileUploadItem
- *   file={myFile}
- *   onRemove={() => removeFile(myFile)}
- * />
- * ```
+ * A single row in the file list — a thumbnail (for images) or type icon, the
+ * file name, its human-readable size, and a remove button.
  */
 export function FileUploadItem({
   file,
   onRemove,
   className,
 }: FileUploadItemProps) {
-  const Icon = iconFor(file);
+  const { name, size } = file.file;
+  const isImage = file.file.type.startsWith("image/");
 
   return (
     <li
@@ -251,25 +643,28 @@ export function FileUploadItem({
       )}
       data-slot="file-upload-item"
     >
-      {/* Leading file-type icon */}
-      <span className="shrink-0 text-muted-foreground">
-        <HugeiconsIcon icon={Icon} size={18} />
+      <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted text-muted-foreground">
+        {isImage && file.preview ? (
+          <img
+            alt={name}
+            className="size-full object-cover"
+            height={36}
+            src={file.preview}
+            width={36}
+          />
+        ) : (
+          <HugeiconsIcon icon={iconFor(file.file)} size={18} />
+        )}
       </span>
 
-      {/* File info */}
       <div className="min-w-0 flex-1">
-        <p className="truncate font-medium text-foreground text-sm">
-          {file.name}
-        </p>
-        <p className="text-muted-foreground text-xs">
-          {formatBytes(file.size)}
-        </p>
+        <p className="truncate font-medium text-foreground text-sm">{name}</p>
+        <p className="text-muted-foreground text-xs">{formatBytes(size)}</p>
       </div>
 
-      {/* Remove button */}
       {onRemove !== undefined && (
         <Button
-          aria-label={`Remove ${file.name}`}
+          aria-label={`Remove ${name}`}
           className="shrink-0"
           onClick={onRemove}
           size="icon-sm"
@@ -287,199 +682,84 @@ export function FileUploadItem({
 // ---------------------------------------------------------------------------
 
 /** Props for the {@link FileUpload} component. */
-export interface FileUploadProps
-  extends Omit<DropZoneProps, "onDrop" | "children" | "className">,
-    VariantProps<typeof fileUploadVariants> {
+export interface FileUploadProps {
   /**
-   * Accepted MIME types and/or file extensions (e.g. `["image/png", ".pdf"]`).
-   * Passed to the OS file picker via `FileTrigger` and used for client-side
-   * validation. When omitted every file type is accepted.
+   * Accepted MIME types and/or extensions as a comma-separated string
+   * (e.g. `"image/*,.pdf"`). When omitted every type is accepted.
    */
-  accept?: string[];
-
-  /** Additional class names applied to the outer wrapper `<div>`. */
+  accept?: string;
+  /** Additional class names applied to the outer wrapper. */
   className?: string;
-
-  /**
-   * Initial file list for uncontrolled usage.
-   *
-   * @defaultValue []
-   */
-  defaultValue?: File[];
-
-  /** Disables the entire widget (dropzone + browse button). */
+  /** Files to seed the list with on mount. */
+  defaultFiles?: FileMetadata[];
+  /** Disables the dropzone and browse button. */
   disabled?: boolean;
-
   /**
-   * Prompt shown inside the dropzone above the "Browse files" button.
+   * Prompt shown inside the dropzone above the browse button.
    *
    * @defaultValue "Drag & drop files here, or"
    */
   label?: React.ReactNode;
-
-  /**
-   * Maximum file size in bytes. Files exceeding this limit are rejected and
-   * `onError` is called with a descriptive message.
-   */
+  /** Maximum number of files (only enforced when `multiple`). */
+  maxFiles?: number;
+  /** Maximum size per file in bytes. */
   maxSize?: number;
-
   /**
-   * Allow selecting and dropping multiple files at once.
+   * Allow selecting and dropping multiple files.
    *
    * @defaultValue false
    */
   multiple?: boolean;
-
-  /**
-   * Called with a human-readable message when one or more files are rejected
-   * due to type or size constraints. Only the **first** rejection per drop /
-   * browse interaction is reported.
-   */
-  onError?: (message: string) => void;
-
-  /**
-   * Called whenever the accepted file list changes — both in controlled and
-   * uncontrolled mode.
-   */
-  onValueChange?: (files: File[]) => void;
-
-  /**
-   * Controlled file list. When provided the component is in controlled mode
-   * and `onValueChange` must update this value externally.
-   */
-  value?: File[];
+  /** Called with human-readable messages when files are rejected. */
+  onError?: (errors: string[]) => void;
+  /** Called with the full list whenever it changes. */
+  onValueChange?: (files: FileWithPreview[]) => void;
+  /** Density of the dropzone. */
+  size?: FileUploadSize;
 }
 
 /**
- * A drag-and-drop file upload zone with an optional file browser trigger.
+ * A drag-and-drop file upload zone with a browse button and a file list,
+ * built on the headless {@link useFileUpload} hook and native File APIs.
  *
  * @remarks
- * Built on React Aria Components `DropZone` and `FileTrigger`, so it is
- * fully keyboard- and screen-reader-accessible out of the box.
- *
- * ### Controlled vs. uncontrolled
- * Pass `value` + `onValueChange` for controlled mode. Omit `value` (optionally
- * supply `defaultValue`) for uncontrolled mode — the component manages its own
- * internal list and still calls `onValueChange` on every change.
- *
- * ### Validation
- * Accepted file types are constrained by `accept` and `maxSize`. The first
- * rejected file per interaction triggers `onError`.
- *
- * ### Deduplication
- * In `multiple` mode incoming files are appended and deduplicated by
- * `name + size`. In single-file mode the existing list is replaced.
+ * The component is uncontrolled — it owns its file list and reports changes
+ * via `onValueChange`. For bespoke layouts (avatars, galleries, tables),
+ * compose {@link useFileUpload} with your own markup instead.
  *
  * @example
  * ```tsx
- * // Uncontrolled, single file
  * <FileUpload
- *   accept={["image/*"]}
+ *   accept="image/*"
  *   maxSize={5 * 1024 * 1024}
- *   onValueChange={(files) => console.log(files)}
- *   onError={(msg) => alert(msg)}
- * />
- *
- * // Controlled, multiple files
- * const [files, setFiles] = React.useState<File[]>([]);
- * <FileUpload
  *   multiple
- *   value={files}
- *   onValueChange={setFiles}
+ *   onValueChange={(files) => console.log(files)}
+ *   onError={(errors) => console.warn(errors)}
  * />
  * ```
  */
 export function FileUpload({
-  accept = [],
-  multiple = false,
-  maxSize,
-  value,
-  defaultValue = [],
-  onValueChange,
-  onError,
-  disabled = false,
-  size,
+  accept,
   className,
+  defaultFiles,
+  disabled = false,
   label = "Drag & drop files here, or",
-  ...dropZoneProps
+  maxFiles,
+  maxSize,
+  multiple = false,
+  onError,
+  onValueChange,
+  size = "default",
 }: FileUploadProps) {
-  // Internal state — only used in uncontrolled mode.
-  const [internalFiles, setInternalFiles] =
-    React.useState<File[]>(defaultValue);
-
-  // Resolve the active file list: controlled takes priority.
-  const files = value === undefined ? internalFiles : value;
-
-  /**
-   * Commit a new file list — updates internal state (uncontrolled) and always
-   * calls `onValueChange`.
-   */
-  function commit(nextFiles: File[]): void {
-    if (value === undefined) {
-      setInternalFiles(nextFiles);
-    }
-    onValueChange?.(nextFiles);
-  }
-
-  /**
-   * Merge validated candidates into the current list.
-   * In single-file mode the list is replaced. In multiple mode new files are
-   * appended and deduplicated by `name + size`.
-   */
-  function mergeFiles(candidates: File[]): void {
-    const { accepted, rejectedMessage } = validateFiles(
-      candidates,
-      accept,
-      maxSize
-    );
-
-    if (rejectedMessage !== undefined) {
-      onError?.(rejectedMessage);
-    }
-
-    if (accepted.length === 0) {
-      return;
-    }
-
-    if (!multiple) {
-      const [first] = accepted;
-      if (first) {
-        commit([first]);
-      }
-      return;
-    }
-
-    // Append + dedupe by name+size
-    const existing = new Set(files.map((f) => `${f.name}-${f.size}`));
-    const fresh = accepted.filter((f) => !existing.has(`${f.name}-${f.size}`));
-    commit([...files, ...fresh]);
-  }
-
-  /** Handle files dropped onto the dropzone. */
-  async function handleDrop(
-    e: Parameters<NonNullable<DropZoneProps["onDrop"]>>[0]
-  ): Promise<void> {
-    const fileItems = e.items.filter((item) => item.kind === "file");
-    const resolved = await Promise.all(
-      fileItems.map((item) =>
-        (item as { kind: "file"; getFile: () => Promise<File> }).getFile()
-      )
-    );
-    mergeFiles(resolved);
-  }
-
-  /** Handle files selected via the OS picker. */
-  function handleSelect(fileList: FileList | null): void {
-    if (fileList === null) {
-      return;
-    }
-    mergeFiles(Array.from(fileList));
-  }
-
-  /** Remove a file by its index in the list. */
-  function removeFile(index: number): void {
-    commit(files.filter((_, i) => i !== index));
-  }
+  const [{ files, isDragging, errors }, actions] = useFileUpload({
+    accept,
+    initialFiles: defaultFiles,
+    maxFiles,
+    maxSize,
+    multiple,
+    onError,
+    onFilesChange: onValueChange,
+  });
 
   return (
     <div
@@ -490,54 +770,65 @@ export function FileUpload({
       )}
       data-slot="file-upload"
     >
-      {/* Drop zone */}
-      <DropZone
-        {...dropZoneProps}
-        className={(renderProps) =>
-          cn(
-            fileUploadVariants({ size }),
-            renderProps.isDropTarget && "border-ring bg-accent"
-          )
-        }
-        data-slot="file-upload-dropzone"
-        isDisabled={disabled}
-        onDrop={handleDrop}
+      {/*
+       * The dropzone is a presentational target for mouse drag-and-drop —
+       * keyboard users reach the file picker via the inner Browse button, so
+       * the wrapper is intentionally non-focusable. Adding `role="button"` +
+       * `tabIndex` here would nest a focusable button inside another focusable
+       * button (axe `nested-interactive`).
+       */}
+      <FileUploadDropzone
+        isDragging={isDragging}
+        onClick={actions.openFileDialog}
+        onDragEnter={actions.handleDragEnter}
+        onDragLeave={actions.handleDragLeave}
+        onDragOver={actions.handleDragOver}
+        onDrop={actions.handleDrop}
+        size={size}
       >
-        {/* Cloud upload icon */}
+        <input
+          aria-label="File upload"
+          {...actions.getInputProps({ disabled })}
+          className="sr-only"
+        />
         <span className="text-muted-foreground">
           <HugeiconsIcon icon={CloudUploadIcon} size={dropzoneIconSize(size)} />
         </span>
-
-        {/* Prompt label */}
         <p className="text-muted-foreground text-sm">{label}</p>
-
-        {/* Browse button */}
-        <FileTrigger
-          acceptedFileTypes={accept.length > 0 ? accept : undefined}
-          allowsMultiple={multiple}
-          onSelect={handleSelect}
+        <Button
+          disabled={disabled}
+          onClick={(e) => {
+            e.stopPropagation();
+            actions.openFileDialog();
+          }}
+          size="sm"
+          type="button"
+          variant="outline"
         >
-          <Button disabled={disabled} size="sm" variant="outline">
-            Browse files
-          </Button>
-        </FileTrigger>
-      </DropZone>
+          Browse files
+        </Button>
+      </FileUploadDropzone>
 
-      {/* File list — hidden when empty */}
+      {errors.length > 0 && (
+        <p
+          className="text-destructive text-sm"
+          data-slot="file-upload-error"
+          role="alert"
+        >
+          {errors[0]}
+        </p>
+      )}
+
       {files.length > 0 && (
-        <ul
-          aria-label="Selected files"
-          className="flex flex-col gap-2"
-          data-slot="file-upload-list"
-        >
-          {files.map((file, index) => (
+        <FileUploadList>
+          {files.map((file) => (
             <FileUploadItem
               file={file}
-              key={fileKey(file, index)}
-              onRemove={() => removeFile(index)}
+              key={file.id}
+              onRemove={() => actions.removeFile(file.id)}
             />
           ))}
-        </ul>
+        </FileUploadList>
       )}
     </div>
   );

@@ -1,5 +1,17 @@
 # Git hooks managed by lefthook. Installed automatically by the root `prepare`
 # script on `bun install`. Run `bunx lefthook install` to (re)install manually.
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      # Biome's full suite (lint + format + a11y rules from `ultracite/biome/core`)
+      # over the staged JS/TS/CSS/JSON files only. `--staged` makes Biome read
+      # the index instead of the working tree so we lint what's actually being
+      # committed. Fail closed: developers run `bunx biome check --write` to fix
+      # rather than the hook auto-rewriting files behind their back.
+      glob: "*.{ts,tsx,mts,cts,js,jsx,mjs,cjs,json,jsonc,css}"
+      run: bunx @biomejs/biome check --staged --no-errors-on-unmatched --files-ignore-unknown=true
+
 commit-msg:
   commands:
     commitlint:

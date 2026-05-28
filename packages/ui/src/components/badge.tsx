@@ -11,20 +11,27 @@ import { cn } from "../utils/index";
 /**
  * Class-variance-authority recipe for the {@link Badge}.
  *
- * Exposes two axes:
+ * Exposes three axes:
  * - `variant` — colour and emphasis. Solid fills (`default`, `info`,
  *   `success`, `warning`, `destructive`, `invert`, `secondary`), tinted
  *   light fills (`*-light`), bordered outlines (`*-outline`), plus the
  *   low-emphasis `ghost` and `link` options.
  * - `size` — height/padding presets from `xs` through `xl`.
+ * - `radius` — `pill` (default, full-pill), `md` (matches button radius), or
+ *   `sm` (subtle 4 px). Use `md` for tag chips inside data tables.
  *
  * Exported so consumers can apply the same visual style to non-`<span>`
  * elements without deriving the class list manually.
  */
 const badgeVariants = cva(
-  "relative inline-flex w-fit shrink-0 items-center justify-center whitespace-nowrap rounded-4xl border border-transparent font-medium outline-none transition-shadow focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*=size-])]:size-3 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "relative inline-flex w-fit shrink-0 items-center justify-center whitespace-nowrap border border-transparent font-medium outline-none transition-shadow focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*=size-])]:size-3 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
+      radius: {
+        pill: "rounded-4xl",
+        md: "rounded-md",
+        sm: "rounded-sm",
+      },
       variant: {
         default: "bg-primary text-primary-foreground",
         outline: "border-border bg-transparent dark:bg-input/32",
@@ -58,7 +65,7 @@ const badgeVariants = cva(
         "destructive-outline":
           "border-border bg-background text-destructive-accent dark:bg-input/30",
         "invert-outline":
-          "border-border bg-background text-invert-foreground dark:bg-input/30",
+          "border-border bg-background text-foreground dark:bg-input/30",
         "secondary-outline":
           "border-border bg-background text-secondary-foreground dark:bg-input/30",
         ghost:
@@ -76,6 +83,7 @@ const badgeVariants = cva(
     defaultVariants: {
       variant: "default",
       size: "default",
+      radius: "pill",
     },
   }
 );
@@ -131,6 +139,12 @@ interface BadgeProps extends useRender.ComponentProps<"span"> {
   /** Called when the dismiss button is clicked. */
   onDismiss?: () => void;
   /**
+   * Corner radius preset applied via {@link badgeVariants}.
+   * `"pill"` (default, full-pill) · `"md"` (rounded square, matches buttons) ·
+   * `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables.
+   */
+  radius?: VariantProps<typeof badgeVariants>["radius"];
+  /**
    * Size preset applied via {@link badgeVariants}.
    * `"xs"` through `"xl"`; controls height, padding, and font size.
    */
@@ -180,6 +194,7 @@ function Badge({
   className,
   variant,
   size,
+  radius,
   render,
   children,
   iconLeft,
@@ -226,7 +241,7 @@ function Badge({
   const defaultProps = {
     "data-slot": "badge",
     className: cn(
-      badgeVariants({ variant, size }),
+      badgeVariants({ variant, size, radius }),
       mono && "font-mono uppercase tracking-wide",
       className
     ),

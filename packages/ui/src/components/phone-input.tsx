@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  ArrowDown01Icon,
-  Search01Icon,
-  Tick01Icon,
-} from "@hugeicons/core-free-icons";
+import { ArrowDown01Icon, Tick01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import React from "react";
 import { CircleFlag } from "react-circle-flags";
@@ -19,11 +15,39 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
 } from "./command";
-import { Input, type InputProps } from "./input";
+import { Input } from "./input";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+
+/**
+ * Height variant shared by the number input and the country-selector button —
+ * `"sm"` | `"default"` | `"lg"`.
+ */
+type PhoneInputVariant = "sm" | "default" | "lg";
+
+/** Maps each {@link PhoneInputVariant} to a matching height utility class. */
+const variantHeights: Record<PhoneInputVariant, string> = {
+  sm: "h-7",
+  default: "h-8",
+  lg: "h-9",
+};
+
+/**
+ * Internal context threading layout options from {@link PhoneInput} down to the
+ * country picker and number input (which `react-phone-number-input` renders for
+ * us, so props cannot be passed directly).
+ */
+type PhoneInputContextValue = {
+  variant: PhoneInputVariant;
+  popupClassName?: string;
+};
+
+const PhoneInputContext = React.createContext<PhoneInputContextValue>({
+  variant: "default",
+});
 
 /** A single entry in the country selector list. */
 type CountryEntry = { label: string; value: Country | undefined };
@@ -46,6 +70,7 @@ const CountrySelect = ({
   options: countryList,
   onChange,
 }: CountrySelectProps) => {
+  const { variant, popupClassName } = React.useContext(PhoneInputContext);
   const [searchValue, setSearchValue] = React.useState("");
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -65,7 +90,10 @@ const CountrySelect = ({
         render={
           <Button
             aria-label="Select country"
-            className="flex gap-1 rounded-s-md rounded-e-none border-r-0 px-3 focus:z-10"
+            className={cn(
+              "flex gap-1 rounded-s-md rounded-e-none border-r-0 px-3 focus:z-10",
+              variantHeights[variant]
+            )}
             disabled={disabled}
             type="button"
             variant="outline"
@@ -78,30 +106,20 @@ const CountrySelect = ({
         />
         <HugeiconsIcon
           className={cn(
-            "-mr-2 size-4 text-muted-foreground/80",
+            "-mr-2 size-4 text-muted-foreground",
             disabled ? "hidden" : ""
           )}
           icon={ArrowDown01Icon}
         />
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className={cn("w-[300px] p-0", popupClassName)}>
         <Command>
-          <div className="flex items-center border-input border-b px-3 py-2">
-            <div className="inline-flex h-4 w-4 shrink-0 items-center justify-center">
-              <HugeiconsIcon
-                className="size-4 text-muted-foreground/80"
-                icon={Search01Icon}
-              />
-            </div>
-            <input
-              aria-label="Search country"
-              className="ml-3 flex h-6 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/70 disabled:cursor-not-allowed disabled:opacity-50"
-              cmdk-input=""
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Search country..."
-              value={searchValue}
-            />
-          </div>
+          <CommandInput
+            aria-label="Search country"
+            onValueChange={setSearchValue}
+            placeholder="Search country..."
+            value={searchValue}
+          />
           <CommandList className="max-h-72">
             <CommandEmpty>No country found.</CommandEmpty>
             <CommandGroup className="p-1">
@@ -160,7 +178,7 @@ const CountrySelectOption = ({
     <CommandItem className="gap-2" onSelect={handleSelect}>
       <FlagComponent country={country} countryName={countryName} />
       <span className="flex-1 text-sm">{countryName}</span>
-      <span className="text-foreground/50 text-sm">{`+${getCountryCallingCode(country)}`}</span>
+      <span className="text-muted-foreground text-sm">{`+${getCountryCallingCode(country)}`}</span>
       <HugeiconsIcon
         className={cn(
           "ml-auto size-4",
@@ -206,21 +224,24 @@ const FlagComponent = ({ country, countryName }: FlagComponentProps) => {
  * @remarks
  * `onChange` is re-typed to always receive a `Value` string (never
  * `undefined`) — an empty string is substituted when the library emits
- * `undefined` for incomplete numbers. `size` controls the height of the
- * underlying text input — `"sm"` | `"default"` | `"lg"`.
+ * `undefined` for incomplete numbers.
  */
 export type PhoneInputProps = Omit<
   React.ComponentProps<"input">,
   "onChange" | "value" | "ref" | "size"
 > &
-  Omit<React.ComponentProps<typeof RPNInput>, "onChange" | "size"> &
-  Pick<InputProps, "size"> & {
+  Omit<React.ComponentProps<typeof RPNInput>, "onChange" | "size"> & {
     /** Called with the formatted E.164 phone number string as the user types;
      *  receives an empty string instead of `undefined` for partial inputs. */
     onChange?: (value: Value) => void;
     /** Called whenever the user selects a different country in the
      *  {@link CountrySelect} popover. */
     onCountryChange?: (country: Country) => void;
+    /** Height of the field and country button — `"sm"` | `"default"` | `"lg"`
+     *  (default `"default"`). */
+    variant?: PhoneInputVariant;
+    /** Extra classes merged onto the country-selector popover content. */
+    popupClassName?: string;
   };
 
 /**
@@ -236,7 +257,8 @@ export type PhoneInputProps = Omit<
  *
  * The `onChange` callback always receives an E.164 `Value` string; when
  * `RPNInput` emits `undefined` (partial or empty number) it is coerced to an
- * empty string to keep controlled-input consumers stable.
+ * empty string to keep controlled-input consumers stable. Use `variant` to
+ * size the whole field and `popupClassName` to restyle the country popover.
  *
  * `smartCaret` is disabled to prevent caret-jump quirks on mobile browsers.
  *
@@ -257,40 +279,39 @@ const PhoneInput = ({
   onCountryChange,
   value,
   ref,
-  size = "default",
+  variant = "default",
+  popupClassName,
   ...props
 }: PhoneInputProps & {
   ref?: React.Ref<React.ComponentRef<typeof RPNInput>>;
 }) => {
+  const contextValue = React.useMemo(
+    () => ({ variant, popupClassName }),
+    [variant, popupClassName]
+  );
+
   return (
-    <div data-slot="phone-input">
-      <RPNInput
-        className={cn("flex", className)}
-        countrySelectComponent={CountrySelect}
-        flagComponent={FlagComponent}
-        inputComponent={InputComponent}
-        onChange={(inputValue: Value | undefined) =>
-          onChange?.(inputValue || ("" as Value))
-        }
-        onCountryChange={onCountryChange}
-        ref={ref}
-        /**
-         * Handles the onChange event.
-         *
-         * react-phone-number-input might trigger the onChange event as undefined
-         * when a valid phone number is not entered. To prevent this,
-         * the value is coerced to an empty string.
-         *
-         * @param {E164Number | undefined} inputValue - The entered value
-         */
-        smartCaret={false}
-        value={value || undefined}
-        {...props}
-        // RPNInput spreads unrecognised props onto the inputComponent via
-        // FeatureProps<InputComponentProps>; `size` reaches InputComponent here.
-        size={size}
-      />
-    </div>
+    <PhoneInputContext.Provider value={contextValue}>
+      <div
+        className="[&:has(input[aria-invalid=true])_button]:border-destructive [&:has(input[aria-invalid=true])_button]:ring-3 [&:has(input[aria-invalid=true])_button]:ring-destructive/20"
+        data-slot="phone-input"
+      >
+        <RPNInput
+          className={cn("flex", className)}
+          countrySelectComponent={CountrySelect}
+          flagComponent={FlagComponent}
+          inputComponent={InputComponent}
+          onChange={(inputValue: Value | undefined) =>
+            onChange?.(inputValue || ("" as Value))
+          }
+          onCountryChange={onCountryChange}
+          ref={ref}
+          smartCaret={false}
+          value={value || undefined}
+          {...props}
+        />
+      </div>
+    </PhoneInputContext.Provider>
   );
 };
 
@@ -299,26 +320,29 @@ PhoneInput.displayName = "PhoneInput";
 /**
  * Thin `Input` wrapper passed as `inputComponent` to {@link PhoneInput};
  * strips the start-side border radius so it joins flush with the country
- * selector button. Accepts `size` from `InputProps` so the height can be
- * controlled from the parent `PhoneInput`.
+ * selector button. Reads the active size {@link PhoneInputVariant} from
+ * {@link PhoneInputContext} so its height tracks the parent `PhoneInput`.
  */
 const InputComponent = ({
   className,
   ref,
-  size,
   ...props
-}: Omit<React.ComponentProps<"input">, "size"> &
-  Pick<InputProps, "size"> & {
-    ref?: React.RefObject<HTMLInputElement | null>;
-  }) => (
-  <Input
-    className={cn("rounded-s-none rounded-e-md", className)}
-    size={size}
-    {...props}
-    ref={ref}
-  />
-);
+}: Omit<React.ComponentProps<"input">, "size"> & {
+  ref?: React.RefObject<HTMLInputElement | null>;
+}) => {
+  const { variant } = React.useContext(PhoneInputContext);
+
+  return (
+    <Input
+      className={cn("rounded-s-none rounded-e-md", className)}
+      size={variant}
+      {...props}
+      ref={ref}
+    />
+  );
+};
 
 InputComponent.displayName = "InputComponent";
 
+export type { PhoneInputVariant };
 export { PhoneInput };

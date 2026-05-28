@@ -38,6 +38,12 @@ describe("Alert", () => {
     expect(alert).toHaveClass("bg-card");
   });
 
+  it("applies invert variant classes", () => {
+    render(<Alert variant="invert">Announcement</Alert>);
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveClass("bg-invert", "text-invert-foreground");
+  });
+
   it.each([
     ["info", "text-info-accent"],
     ["success", "text-success-accent"],

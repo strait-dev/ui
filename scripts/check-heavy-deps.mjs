@@ -26,6 +26,10 @@ const HEAVY = [
   "react-day-picker",
   "react-phone-number-input",
   "@tanstack/react-table",
+  "@tanstack/react-virtual",
+  "@dnd-kit/core",
+  "@dnd-kit/sortable",
+  "@dnd-kit/utilities",
 ];
 
 // A component is "shared/low-level" once at least this many other components

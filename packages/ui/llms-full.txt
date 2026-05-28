@@ -110,6 +110,34 @@ Data slots: `toggle-group`, `toggle-group-item`
 
 ## Forms
 
+### Autocomplete
+
+Import: `import { ... } from "@strait/ui/components/autocomplete";`
+
+Optional arrow that visually connects the popup to its anchor.
+
+Exports: `Autocomplete`, `AutocompleteArrow`, `AutocompleteBackdrop`, `AutocompleteClear`, `AutocompleteCollection`, `AutocompleteContent`, `AutocompleteContentProps`, `AutocompleteEmpty`, `AutocompleteGroup`, `AutocompleteGroupLabel`, `AutocompleteInput`, `AutocompleteItem`, `AutocompleteList`, `AutocompletePortal`, `AutocompletePositioner`, `AutocompleteProps`, `AutocompleteRow`, `AutocompleteSeparator`, `AutocompleteStatus`, `AutocompleteTrigger`, `AutocompleteValue`
+
+Props (`AutocompleteContentProps`):
+Extends: `React.ComponentProps<typeof AutocompletePrimitive.Popup>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `align` | `AutocompletePrimitive.Positioner.Props["align"]` |  | `"start"` | Alignment of the popup against its anchor (default `"start"`). |
+| `alignOffset` | `AutocompletePrimitive.Positioner.Props["alignOffset"]` |  | `0` | Offset in pixels along the alignment axis (default `0`). |
+| `anchor` | `AutocompletePrimitive.Positioner.Props["anchor"]` |  |  | Custom anchor element to position against instead of the input. |
+| `showBackdrop` | `boolean` |  | `false` | Render an AutocompleteBackdrop behind the popup. |
+| `side` | `AutocompletePrimitive.Positioner.Props["side"]` |  | `"bottom"` | Preferred side to place the popup (default `"bottom"`). |
+| `sideOffset` | `AutocompletePrimitive.Positioner.Props["sideOffset"]` |  | `4` | Gap in pixels between the popup and its anchor (default `4`). |
+
+Props (`AutocompleteProps`):
+Extends: `React.ComponentProps< typeof AutocompletePrimitive.Root >`
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `autocomplete-arrow`, `autocomplete-backdrop`, `autocomplete-clear`, `autocomplete-collection`, `autocomplete-empty`, `autocomplete-group`, `autocomplete-group-label`, `autocomplete-input`, `autocomplete-item`, `autocomplete-list`, `autocomplete-popup`, `autocomplete-portal`, `autocomplete-positioner`, `autocomplete-row`, `autocomplete-separator`, `autocomplete-status`, `autocomplete-trigger`, `autocomplete-value`
+
 ### Calendar
 
 Import: `import { ... } from "@strait/ui/components/calendar";`
@@ -146,18 +174,42 @@ Variants:
 
 Data slots: `checkbox`, `checkbox-indicator`
 
-### Combobox
+### Date Selector
 
-Import: `import { ... } from "@strait/ui/components/combobox";`
+Import: `import { ... } from "@strait/ui/components/date-selector";`
 
-A badge representing one selected value inside ComboboxChips.
+A compact date filter that selects by day, month, quarter, half-year, or year with `is` / `before` / `after` / `between` operators. Reorders into a popover or dialog by wrapping it; the day view reuses Calendar and the coarser periods render their own grids.
 
-Exports: `Combobox`, `ComboboxChip`, `ComboboxChips`, `ComboboxChipsInput`, `ComboboxCollection`, `ComboboxContent`, `ComboboxEmpty`, `ComboboxGroup`, `ComboboxInput`, `ComboboxItem`, `ComboboxLabel`, `ComboboxList`, `ComboboxProps`, `ComboboxSeparator`, `ComboboxTrigger`, `ComboboxValue`, `useComboboxAnchor`
+Exports: `DEFAULT_DATE_SELECTOR_I18N`, `DateSelector`, `DateSelectorFilterType`, `DateSelectorI18nConfig`, `DateSelectorPeriodType`, `DateSelectorProps`, `DateSelectorRangePoint`, `DateSelectorValue`, `formatDateValue`, `useDateSelector`, `useDateSelectorContext`
 
-Props (`ComboboxProps`):
-Extends: `React.ComponentProps<typeof ComboboxPrimitive.Root>`
+Props (`DateSelectorProps`):
 
-Data slots: `combobox-chip`, `combobox-chip-input`, `combobox-chip-remove`, `combobox-chips`, `combobox-clear`, `combobox-collection`, `combobox-content`, `combobox-empty`, `combobox-group`, `combobox-item`, `combobox-label`, `combobox-list`, `combobox-separator`, `combobox-trigger`, `combobox-value`, `input-group-button`
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allowRange` | `boolean` |  | `true` | When `true` (default), enables the `between` range operator. |
+| `baseYear` | `number` |  |  | Centre year for the generated year list. Defaults to the current year. |
+| `className` | `string` |  |  | Additional classes for the root element. |
+| `dayDateFormat` | `string` |  | `"MM/dd/yyyy"` | `date-fns` format used to render and parse day values. |
+| `dayDateFormats` | `string[]` |  |  | Extra `date-fns` formats accepted when parsing typed input. |
+| `defaultFilterType` | `DateSelectorFilterType` |  | `"is"` | The operator selected on first render. Defaults to `"is"`. |
+| `defaultPeriodType` | `DateSelectorPeriodType` |  | `"day"` | The period selected on first render. Defaults to `"day"`. |
+| `i18n` | `Partial<DateSelectorI18nConfig>` |  |  | Partial i18n overrides merged over the English defaults. |
+| `inputHint` | `string` |  |  | When set, the input becomes editable and shows this hint while focused. |
+| `label` | `string` |  |  | Optional heading rendered beside the operator tabs. |
+| `maxYear` | `number` |  | `2026` | Upper bound (inclusive) of the year list. |
+| `minYear` | `number` |  | `2015` | Lower bound (inclusive) of the year list. |
+| `onChange` | `(value: DateSelectorValue) => void` |  |  | Called whenever the selection changes. |
+| `periodTypes` | `DateSelectorPeriodType[]` |  |  | Restricts which period tabs are shown, in order. |
+| `presetMode` | `DateSelectorFilterType` |  |  | Locks the operator to a fixed value and disables the operator tabs. |
+| `showInput` | `boolean` |  | `true` | When `true` (default), renders the text input above the picker. |
+| `showTwoMonths` | `boolean` |  | `true` | When `true` (default), the day view shows two months on desktop. |
+| `value` | `DateSelectorValue` |  |  | The controlled selection. |
+| `weekStartsOn` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` |  |  | First day of the week (0 = Sunday … 6 = Saturday). |
+| `yearRange` | `number` |  | `10` | Number of years listed when `minYear`/`maxYear` are not set. |
+
+Data slots: `date-selector`, `date-selector-days`, `date-selector-input`, `date-selector-label`, `date-selector-operators`, `date-selector-periods`
+
+Heavy dependencies: `react-day-picker`
 
 ### Field
 
@@ -179,42 +231,53 @@ Variants:
 
 Data slots: `field`, `field-content`, `field-description`, `field-error`, `field-group`, `field-label`, `field-legend`, `field-separator`, `field-separator-content`, `field-set`, `field-title`
 
-### File Upload
+### FileUpload
 
 Import: `import { ... } from "@strait/ui/components/file-upload";`
 
-A drag-and-drop file upload zone with an optional file browser trigger.
+A drag-and-drop file upload zone with a browse button and a file list, built on the headless useFileUpload hook and native File APIs.
 
-Exports: `FileUpload`, `FileUploadItem`, `FileUploadItemProps`, `FileUploadProps`, `fileUploadVariants`, `formatBytes`
+Exports: `FileMetadata`, `FileUpload`, `FileUploadActions`, `FileUploadDropzone`, `FileUploadDropzoneProps`, `FileUploadItem`, `FileUploadItemProps`, `FileUploadList`, `FileUploadListProps`, `FileUploadOptions`, `FileUploadProps`, `FileUploadSize`, `FileUploadState`, `FileWithPreview`, `fileUploadVariants`, `formatBytes`, `useFileUpload`
+
+Props (`FileUploadDropzoneProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `isDragging` | `boolean` |  | `false` | Whether a drag is currently hovering — toggles the active styling. |
+| `size` | `FileUploadSize` |  | `"default"` | Density of the dropzone. |
 
 Props (`FileUploadItemProps`):
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `className` | `string` |  |  | Additional class names applied to the list item element. |
-| `file` | `File` | yes |  | The `File` object to display. |
+| `file` | `FileWithPreview` | yes |  | The tracked file to display. |
 | `onRemove` | `() => void` |  |  | Called when the user clicks the remove button. |
 
+Props (`FileUploadListProps`):
+Extends: `React.ComponentProps<"ul">`
+
 Props (`FileUploadProps`):
-Extends: `Omit<DropZoneProps, "onDrop" | "children" | "className">`, `VariantProps<typeof fileUploadVariants>`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `accept` | `string[]` |  | `[]` | Accepted MIME types and/or file extensions (e.g. `["image/png", ".pdf"]`). Passed to the OS file picker via `FileTrigger` and used for client-side validation. When omitted every file type is accepted. |
-| `className` | `string` |  |  | Additional class names applied to the outer wrapper `<div>`. |
-| `defaultValue` | `File[]` |  | `[]` | Initial file list for uncontrolled usage. |
-| `disabled` | `boolean` |  | `false` | Disables the entire widget (dropzone + browse button). |
-| `label` | `React.ReactNode` |  | `"Drag & drop files here, or"` | Prompt shown inside the dropzone above the "Browse files" button. |
-| `maxSize` | `number` |  |  | Maximum file size in bytes. Files exceeding this limit are rejected and `onError` is called with a descriptive message. |
-| `multiple` | `boolean` |  | `false` | Allow selecting and dropping multiple files at once. |
-| `onError` | `(message: string) => void` |  |  | Called with a human-readable message when one or more files are rejected due to type or size constraints. Only the **first** rejection per drop / browse interaction is reported. |
-| `onValueChange` | `(files: File[]) => void` |  |  | Called whenever the accepted file list changes — both in controlled and uncontrolled mode. |
-| `value` | `File[]` |  |  | Controlled file list. When provided the component is in controlled mode and `onValueChange` must update this value externally. |
+| `accept` | `string` |  |  | Accepted MIME types and/or extensions as a comma-separated string (e.g. `"image/*,.pdf"`). When omitted every type is accepted. |
+| `className` | `string` |  |  | Additional class names applied to the outer wrapper. |
+| `defaultFiles` | `FileMetadata[]` |  |  | Files to seed the list with on mount. |
+| `disabled` | `boolean` |  | `false` | Disables the dropzone and browse button. |
+| `label` | `React.ReactNode` |  | `"Drag & drop files here, or"` | Prompt shown inside the dropzone above the browse button. |
+| `maxFiles` | `number` |  |  | Maximum number of files (only enforced when `multiple`). |
+| `maxSize` | `number` |  |  | Maximum size per file in bytes. |
+| `multiple` | `boolean` |  | `false` | Allow selecting and dropping multiple files. |
+| `onError` | `(errors: string[]) => void` |  |  | Called with human-readable messages when files are rejected. |
+| `onValueChange` | `(files: FileWithPreview[]) => void` |  |  | Called with the full list whenever it changes. |
+| `size` | `FileUploadSize` |  | `"default"` | Density of the dropzone. |
 
 Variants:
 - `size`: `sm`, `default`, `lg` (default: `default`)
 
-Data slots: `file-upload`, `file-upload-dropzone`, `file-upload-item`, `file-upload-list`
+Data slots: `file-upload`, `file-upload-dropzone`, `file-upload-error`, `file-upload-item`, `file-upload-list`
 
 ### Form
 
@@ -575,10 +638,12 @@ Extends: `useRender.ComponentProps<"span">`
 | `iconRight` | `IconSvgElement` |  |  | Icon rendered immediately after children. |
 | `mono` | `boolean` |  |  | When `true`, applies `font-mono uppercase tracking-wide` for monospaced label styling — useful for version numbers, codes, or IDs. |
 | `onDismiss` | `() => void` |  |  | Called when the dismiss button is clicked. |
+| `radius` | `VariantProps<typeof badgeVariants>["radius"]` |  |  | Corner radius preset applied via badgeVariants. `"pill"` (default, full-pill) · `"md"` (rounded square, matches buttons) · `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables. |
 | `size` | `VariantProps<typeof badgeVariants>["size"]` |  |  | Size preset applied via badgeVariants. `"xs"` through `"xl"`; controls height, padding, and font size. |
 | `variant` | `VariantProps<typeof badgeVariants>["variant"]` |  |  | Colour and emphasis style applied via badgeVariants. Includes solid fills, tinted `*-light` fills, bordered `*-outline` variants, `ghost`, and `link`. |
 
 Variants:
+- `radius`: `pill`, `md`, `sm` (default: `pill`)
 - `variant`: `default`, `outline`, `secondary`, `info`, `success`, `warning`, `destructive`, `invert`, `primary-light`, `warning-light`, `success-light`, `info-light`, `destructive-light`, `invert-light`, `secondary-light`, `primary-outline`, `warning-outline`, `success-outline`, `info-outline`, `destructive-outline`, `invert-outline`, `secondary-outline`, `ghost`, `link` (default: `default`)
 - `size`: `xs`, `sm`, `default`, `lg`, `xl` (default: `default`)
 
@@ -794,35 +859,124 @@ Props (`ConfigRowProps`):
 
 Data slots: `config-row`
 
-### DataTable
+### DataGrid
 
-Import: `import { ... } from "@strait/ui/components/data-table";`
+Import: `import { ... } from "@strait/ui/components/data-grid";`
 
-A fully-featured data table built on TanStack Table v8.
+Root component for the DataGrid system.
 
-Exports: `DataTable`, `DataTableProps`, `DataTableRowActions`, `DataTableRowActionsProps`, `createSelectColumn`
+Exports: `DataGrid`, `DataGridApiFetchParams`, `DataGridApiResponse`, `DataGridColumnFilter`, `DataGridColumnFilterProps`, `DataGridColumnHeader`, `DataGridColumnHeaderProps`, `DataGridColumnVisibility`, `DataGridContainer`, `DataGridContextProps`, `DataGridPagination`, `DataGridPaginationProps`, `DataGridProps`, `DataGridProvider`, `DataGridRequestParams`, `DataGridScrollArea`, `DataGridScrollAreaProps`, `DataGridSelectionBar`, `DataGridSelectionBarProps`, `DataGridTable`, `DataGridTableClassNames`, `DataGridTableDnd`, `DataGridTableDndRowHandle`, `DataGridTableDndRows`, `DataGridTableEmpty`, `DataGridTableFoot`, `DataGridTableFootRow`, `DataGridTableFootRowCell`, `DataGridTableHeadRowCellResize`, `DataGridTableLayout`, `DataGridTableLoader`, `DataGridTableRowActions`, `DataGridTableRowActionsProps`, `DataGridTableRowPin`, `DataGridTableRowSelect`, `DataGridTableRowSelectAll`, `DataGridTableVirtual`, `DataGridTableVirtualProps`, `DataGridTableVirtualScrollElements`, `DataGridTableVirtualizerOptions`, `getColumnHeaderLabel`, `useDataGrid`
 
-Props (`DataTableProps`):
-
-| Prop | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `columns` | `ColumnDef<TData, TValue>[]` | yes |  | TanStack Table column definitions for the table. |
-| `data` | `TData[]` | yes |  | Array of row records to display. |
-| `searchKey` | `string` |  |  | Column `id` to use for the global search input. When omitted the search bar is hidden. |
-| `searchPlaceholder` | `string` |  | `"Search..."` | Placeholder text shown inside the search input. |
-| `showColumnVisibility` | `boolean` |  | `true` | Whether to render the column-visibility dropdown. |
-| `showPagination` | `boolean` |  | `true` | Whether to render the Previous / Next pagination controls. |
-| `pageSize` | `number` |  | `10` | Number of rows per page when pagination is enabled. |
-| `className` | `string` |  |  | Additional class names merged onto the outermost table wrapper div. |
-
-Props (`DataTableRowActionsProps`):
+Props (`DataGridColumnFilterProps`):
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `row` | `TData` | yes |  | The typed row record passed to each action's `onClick` callback. |
-| `actions` | `{ label: string; onClick: (row: TData) => void; icon?: React.ReactNode; }[]` |  | `[]` | List of menu items to render in the row-actions dropdown. |
+| `column` | `Column<TData, TValue>` |  |  | The TanStack Table column to filter. |
+| `options` | `{ /** Display label. */ label: string; /** Filter value matched against `getFacetedUniqueValues`. */ value: string; /** Optional icon component. */ icon?: React.ComponentType<{ className?: string }>; }[]` | yes |  | List of filterable option values. |
+| `title` | `string` |  |  | Display title for the trigger button and search input placeholder. |
 
-Data slots: `data-table`, `data-table-row-actions`
+Props (`DataGridColumnHeaderProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `column` | `Column<TData, TValue>` | yes |  | The TanStack Table column instance. |
+| `filter` | `React.ReactNode` |  |  | Optional filter node rendered as the first item in the column dropdown. |
+| `icon` | `React.ReactNode` |  |  | Optional icon rendered before the title. |
+| `pinnable` | `boolean` |  |  | Whether pinning is supported (passed through; read from tableLayout). |
+| `title` | `string` |  |  | Display title; falls back to `meta.headerTitle`, string header, or `column.id`. |
+| `visibility` | `boolean` |  |  | Whether to include a Columns visibility submenu. Default `false`. |
+
+Props (`DataGridContextProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `isLoading` | `boolean` | yes |  | Whether the grid is in a loading state. |
+| `props` | `DataGridProps<TData>` | yes |  | The resolved merged props passed to DataGrid. |
+| `recordCount` | `number` | yes |  | Total record count (drives pagination info and empty-state checks). |
+| `table` | `Table<TData>` | yes |  | The TanStack Table instance. |
+
+Props (`DataGridPaginationProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Extra class names on the root element. |
+| `ellipsisText` | `string` |  |  | Ellipsis text. Default `"..."`. |
+| `info` | `string` |  |  | Pagination info template string. Default `"{from} - {to} of {count}"`. |
+| `infoSkeleton` | `React.ReactNode` |  |  | Skeleton shown for the info section while loading. |
+| `more` | `boolean` |  |  | Whether to render grouped ellipsis page buttons. Default `false`. |
+| `moreLimit` | `number` |  |  | Number of page buttons per group. Default `5`. |
+| `nextPageLabel` | `string` |  |  | Aria-label for the next-page button. Default `"Go to next page"`. |
+| `previousPageLabel` | `string` |  |  | Aria-label for the previous-page button. Default `"Go to previous page"`. |
+| `rowsPerPageLabel` | `string` |  |  | Label for the rows-per-page control. Default `"Rows per page"`. |
+| `sizes` | `number[]` |  |  | Available page-size options. Default `[5, 10, 25, 50, 100]`. |
+| `sizesDescription` | `string` |  |  | Label after the page-size select. Default `"per page"`. |
+| `sizesInfo` | `string` |  |  | Extra info shown next to the sizes select. |
+| `sizesLabel` | `string` |  |  | Label before the page-size select. Default `"Show"`. |
+| `sizesSkeleton` | `React.ReactNode` |  |  | Skeleton shown for the sizes section while loading. |
+
+Props (`DataGridProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allRowsLoadedMessage` | `React.ReactNode \| string` |  |  | Message shown in the virtual infinite-scroll footer once all rows are loaded. |
+| `children` | `React.ReactNode` |  |  | Content rendered inside the provider (all sub-components). |
+| `className` | `string` |  |  | Extra class names on the outermost container (when using DataGridContainer). |
+| `emptyMessage` | `React.ReactNode \| string` |  |  | Message shown in the empty-state row when there is no data. |
+| `fetchingMoreMessage` | `React.ReactNode \| string` |  |  | Message shown in the virtual infinite-scroll footer while fetching more rows. |
+| `isLoading` | `boolean` |  |  | When `true`, the grid is in a loading state. |
+| `loadingMessage` | `React.ReactNode \| string` |  |  | Custom content shown in the spinner overlay. |
+| `loadingMode` | `"skeleton" \| "spinner"` |  |  | Controls whether loading renders skeleton rows (`"skeleton"`) or a centred spinner (`"spinner"`). |
+| `onRowClick` | `(row: TData) => void` |  |  | Called when a body row is clicked. |
+| `recordCount` | `number` | yes |  | Total number of records — used by pagination and empty-state checks. |
+| `table` | `Table<TData>` |  |  | The TanStack Table instance created by `useReactTable`. |
+| `tableClassNames` | `DataGridTableClassNames` |  |  | Class-name overrides for individual structural elements. |
+| `tableLayout` | `DataGridTableLayout` |  |  | Feature-flag bag that controls layout and interactive column/row features. |
+
+Props (`DataGridScrollAreaProps`):
+Extends: `Omit< ScrollAreaPrimitive.Root.Props, "children" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` | yes |  | Content rendered inside the scroll area. |
+| `orientation` | `"horizontal" \| "vertical" \| "both"` |  | `"both"` | Which scroll axes to enable. Default `"both"`. |
+
+Props (`DataGridSelectionBarProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `actions` | `BulkAction[]` | yes |  | Bulk action buttons rendered inside the toolbar. Each action's `onClick` is responsible for resetting selection if desired — the clear (×) button handles selection reset automatically. |
+| `className` | `string` |  |  | Additional class names forwarded to BulkActionBar. |
+| `children` | `React.ReactNode` |  |  | Extra content rendered between the count label and the action buttons (forwarded to BulkActionBar's `children` slot). |
+
+Props (`DataGridTableRowActionsProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `row` | `Row<TData>` | yes |  | The TanStack row whose actions are being exposed. Passed through to children via the `data-row-id` attribute for test selectors; the row itself is available to consumers via the surrounding closure. |
+| `children` | `React.ReactNode` | yes |  | DropdownMenuItem children rendered inside the menu. Compose `DropdownMenuItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, etc. |
+| `label` | `string` |  | `"Row actions"` | Accessible label for the trigger button. Defaults to `"Row actions"`. |
+| `className` | `string` |  |  | Additional class names merged onto the trigger button. |
+
+Props (`DataGridTableVirtualProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `estimateSize` | `number` |  |  | Estimated row height in px. Default `48`. |
+| `fetchMoreOffset` | `number` |  | `0` | Number of items from the end to trigger `onFetchMore`. Default `0`. |
+| `footerContent` | `React.ReactNode` |  |  | Footer content. |
+| `hasMore` | `boolean` |  |  | `false` = all loaded; `true` / `undefined` = more available. |
+| `height` | `number \| string` |  |  | Fixed height for a self-contained scroll container. |
+| `isFetchingMore` | `boolean` |  | `false` | Whether a fetch is in progress (disables duplicate fetches). Default `false`. |
+| `onFetchMore` | `() => void` |  |  | If provided, enables infinite scroll mode. |
+| `overscan` | `number` |  | `10` | Number of rows to render outside the visible area. Default `10`. |
+| `renderHeader` | `boolean` |  | `true` | Whether to render the header. Default `true`. |
+| `virtualizerOptions` | `DataGridTableVirtualizerOptions<TData>` |  |  | Advanced virtualizer options. |
+
+Variants:
+- `dense`: `true`, `false` (default: `false`)
+
+Data slots: `data-grid`, `data-grid-column-header`, `data-grid-pagination`, `data-grid-row-actions`, `data-grid-row-pin`, `data-grid-row-select-all`, `data-grid-row-select-checkbox`, `data-grid-row-select-indicator`, `data-grid-row-spacer`, `data-grid-scroll-area`, `data-grid-scrollbar`, `data-grid-table`, `data-grid-table-body`, `data-grid-table-body-cell`, `data-grid-table-body-cell-skeleton`, `data-grid-table-body-row`, `data-grid-table-body-row-expanded`, `data-grid-table-body-row-skeleton`, `data-grid-table-empty`, `data-grid-table-foot`, `data-grid-table-foot-cell`, `data-grid-table-foot-row`, `data-grid-table-head`, `data-grid-table-head-cell`, `data-grid-table-head-cell-resize`, `data-grid-table-head-row`, `data-grid-table-loader`, `data-grid-table-viewport`, `data-grid-thumb`, `data-grid-virtual-spacer-bottom`, `data-grid-virtual-spacer-top`, `data-grid-virtual-status-complete`, `data-grid-virtual-status-loading`, `scroll-area-content`, `scroll-area-viewport`
 
 Heavy dependencies: `@tanstack/react-table`
 
@@ -877,11 +1031,11 @@ Variants:
 
 Data slots: `execution-trace-bar`, `execution-trace-bar-legend`, `execution-trace-bar-segment`
 
-### Filter
+### Filters
 
-Import: `import { ... } from "@strait/ui/components/filter";`
+Import: `import { ... } from "@strait/ui/components/filters";`
 
-Renders just the active filter chips (no "Add filter" trigger).
+A faceted filter builder modelled on corr.sh's Filters.
 
 Exports: `CustomRendererProps`, `DEFAULT_I18N`, `DEFAULT_OPERATORS`, `Filter`, `FilterFieldConfig`, `FilterFieldGroup`, `FilterFieldType`, `FilterFieldsConfig`, `FilterGroup`, `FilterI18nConfig`, `FilterI18nOperators`, `FilterOperator`, `FilterOption`, `Filters`, `FiltersContent`, `FiltersContentProps`, `FiltersProps`, `createFilter`, `createFilterGroup`
 
@@ -916,6 +1070,7 @@ Props (`FiltersProps`):
 | `radius` | `"default" \| "full"` |  | `"default"` | Chip corner style. |
 | `shortcutKey` | `string` |  | `"f"` | Key for the shortcut. |
 | `shortcutLabel` | `string` |  | `"F"` | Label shown in the trigger's `Kbd` hint. |
+| `showSearchInput` | `boolean` |  | `true` | Show the search box at the top of the field picker. |
 | `size` | `FilterSize` |  | `"default"` | Control density. |
 | `trigger` | `React.ReactElement` |  |  | Replace the default "Add filter" trigger element. |
 | `variant` | `"solid" \| "default"` |  | `"default"` | Reserved spacing style. |
@@ -1109,6 +1264,45 @@ Variants:
 - `variant`: `default`, `muted`, `ghost` (default: `default`)
 
 Data slots: `relative-time-card-content`, `relative-time-card-trigger`
+
+### Sortable
+
+Import: `import { ... } from "@strait/ui/components/sortable";`
+
+Drag-to-reorder container built on dnd-kit. Wraps its children in a `DndContext` + `SortableContext` and renders a floating overlay that mirrors the actively dragged SortableItem.
+
+Exports: `Sortable`, `SortableItem`, `SortableItemHandle`, `SortableItemHandleProps`, `SortableItemProps`, `SortableProps`
+
+Props (`SortableItemHandleProps`):
+Extends: `ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `cursor` | `boolean` |  | `true` | When `true` (default), applies `cursor-grab` / `cursor-grabbing` to signal draggability. Set `false` to manage the cursor yourself. |
+
+Props (`SortableItemProps`):
+Extends: `ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `boolean` |  | `false` | When `true`, the item cannot be dragged and is dimmed. |
+| `value` | `string` | yes |  | Stable id for this item; must equal `getItemValue(item)` on the parent Sortable. |
+
+Props (`SortableProps`):
+Extends: `Omit<ComponentProps<"div">, "onDragStart" | "onDragEnd">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `getItemValue` | `(item: T) => string` | yes |  | Derives the stable string id for an item. Must match the `value` passed to the corresponding SortableItem. |
+| `modifiers` | `Modifiers` |  |  | dnd-kit modifiers applied to both the drag and the overlay. |
+| `onDragEnd` | `(event: DragEndEvent) => void` |  |  | Forwarded to dnd-kit's `DndContext` `onDragEnd` (fires before reorder). |
+| `onDragStart` | `(event: DragStartEvent) => void` |  |  | Forwarded to dnd-kit's `DndContext` `onDragStart`. |
+| `onMove` | `(event: { event: DragEndEvent; activeIndex: number; overIndex: number; }) => void` |  |  | Escape hatch invoked instead of the built-in `arrayMove`. Receives the raw drag event plus the resolved source/target indices, letting you run a custom reorder (e.g. server-synced). When provided, `onValueChange` is **not** called automatically. |
+| `onValueChange` | `(value: T[]) => void` | yes |  | Called with the reordered list after a successful drag. |
+| `strategy` | `SortableStrategy` |  | `"vertical"` | Layout strategy used for measuring/reflowing during a drag. `"vertical"` (default) for stacked lists, `"horizontal"` for rows, and `"grid"` for wrapped two-dimensional grids. |
+| `value` | `T[]` | yes |  | The ordered list of items rendered as SortableItems. |
+
+Data slots: `sortable`, `sortable-item`, `sortable-item-handle`
 
 ### Status Badge
 
@@ -1416,13 +1610,93 @@ Extends: `React.ComponentProps<"nav">`
 
 Data slots: `pagination`, `pagination-content`, `pagination-ellipsis`, `pagination-item`, `pagination-link`
 
+### Scrollspy
+
+Import: `import { ... } from "@strait/ui/components/scrollspy";`
+
+Tracks the section currently in view and marks its corresponding navigation anchor with `data-active="true"`. Anchors opt in via `data-{dataAttribute}-anchor="<section-id>"`; clicking one smooth-scrolls to its section and (optionally) updates the URL hash.
+
+Exports: `Scrollspy`, `ScrollspyProps`
+
+Props (`ScrollspyProps`):
+Extends: `Omit<ComponentProps<"div">, "children">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `ReactNode` | yes |  | The navigation links to track; anchors carry `data-{dataAttribute}-anchor`. |
+| `dataAttribute` | `string` |  | `"scrollspy"` | The data-attribute namespace used to find anchors and apply offsets, e.g. `"scrollspy"` looks for `data-scrollspy-anchor`. Defaults to `"scrollspy"`. |
+| `history` | `boolean` |  | `true` | When `true` (default), the active section id is synced to the URL hash. |
+| `offset` | `number` |  | `0` | Pixels subtracted from each section's offset before comparing against the scroll position. Override per anchor with `data-{dataAttribute}-offset`. |
+| `onUpdate` | `(id: string) => void` |  |  | Called with the active section id whenever the active anchor changes. |
+| `smooth` | `boolean` |  | `true` | When `true` (default), click-to-scroll uses smooth scrolling. |
+| `targetRef` | `RefObject<HTMLElement \| Document \| null \| undefined>` |  |  | The scroll container to observe. Defaults to the document/window when omitted. Pass a ref to a scrollable element (or one wrapping a `data-slot="scroll-area-viewport"`) to spy inside it. |
+
+Data slots: `scroll-area-viewport`, `scrollspy`
+
 ### Sidebar
 
 Import: `import { ... } from "@strait/ui/components/sidebar";`
 
 The sidebar panel itself — a collapsible column rendered inside a SidebarProvider.
 
-Exports: `Sidebar`, `SidebarContent`, `SidebarFooter`, `SidebarGroup`, `SidebarGroupAction`, `SidebarGroupContent`, `SidebarGroupLabel`, `SidebarHeader`, `SidebarInput`, `SidebarInset`, `SidebarMenu`, `SidebarMenuAction`, `SidebarMenuBadge`, `SidebarMenuButton`, `SidebarMenuItem`, `SidebarMenuSkeleton`, `SidebarMenuSub`, `SidebarMenuSubButton`, `SidebarMenuSubItem`, `SidebarProps`, `SidebarProvider`, `SidebarProviderProps`, `SidebarRail`, `SidebarSeparator`, `SidebarTrigger`, `useSidebar`
+Exports: `Sidebar`, `SidebarCard`, `SidebarCardContent`, `SidebarCardDescription`, `SidebarCardFooter`, `SidebarCardHeader`, `SidebarCardProps`, `SidebarCardTitle`, `SidebarContent`, `SidebarFooter`, `SidebarGroup`, `SidebarGroupAction`, `SidebarGroupContent`, `SidebarGroupLabel`, `SidebarGroupProps`, `SidebarHeader`, `SidebarInput`, `SidebarInset`, `SidebarMenu`, `SidebarMenuAction`, `SidebarMenuBadge`, `SidebarMenuButton`, `SidebarMenuButtonProps`, `SidebarMenuDragHandle`, `SidebarMenuFlyout`, `SidebarMenuItem`, `SidebarMenuItemProps`, `SidebarMenuProps`, `SidebarMenuSkeleton`, `SidebarMenuSub`, `SidebarMenuSubButton`, `SidebarMenuSubItem`, `SidebarMenuSubProps`, `SidebarPanel`, `SidebarPanelProps`, `SidebarProps`, `SidebarProvider`, `SidebarProviderProps`, `SidebarRail`, `SidebarRailButton`, `SidebarRailButtonProps`, `SidebarSearchButton`, `SidebarSearchButtonProps`, `SidebarSeparator`, `SidebarSwitcher`, `SidebarSwitcherCurrent`, `SidebarSwitcherItem`, `SidebarSwitcherItemProps`, `SidebarSwitcherProps`, `SidebarToggleRail`, `SidebarTrigger`, `SidebarUserButton`, `SidebarUserButtonProps`, `useSidebar`
+
+Props (`SidebarCardProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `hideOnCollapse` | `boolean` |  | `true` | Hide the card entirely when the sidebar is collapsed to icon width. Defaults to `true` — most upgrade / onboarding prompts only make sense when there's room for the headline copy. |
+
+Props (`SidebarGroupProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collapsible` | `string` |  |  | Persistence key for the group's open/closed state. When set, the group becomes a Base UI `Collapsible` and its SidebarGroupLabel promotes itself to a disclosure trigger with a rotating chevron. |
+| `defaultOpen` | `boolean` |  | `true` | Initial open state when uncontrolled. Defaults to `true`. |
+| `onOpenChange` | `(open: boolean) => void` |  |  | Called when the group's open state changes in controlled mode. |
+| `open` | `boolean` |  |  | Controlled openness; pair with onOpenChange. |
+| `pinned` | `boolean` |  |  | When `true`, the group floats to the bottom of SidebarContent via `margin-top: auto` — handy for "Settings" / "Help" rows that should always sit at the foot of the nav list. |
+
+Props (`SidebarMenuButtonProps`):
+Extends: `useRender.ComponentProps<"button">`, `React.ComponentProps<"button">`, `VariantProps<typeof sidebarMenuButtonVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `isActive` | `boolean` |  | `false` | Whether this row represents the current page. Sets `data-active` and `aria-current="page"`. |
+| `tooltip` | `string \| React.ComponentProps<typeof TooltipContent>` |  |  | Tooltip shown when the sidebar is collapsed to icon or when the label is truncated. |
+| `hasSubMenu` | `boolean` |  |  | When `true`, promotes this button into a Base UI `Collapsible.Trigger` for the enclosing SidebarMenuItem's sub-menu and appends a rotating chevron at the trailing edge. |
+
+Props (`SidebarMenuItemProps`):
+Extends: `React.ComponentProps<"li">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` |  |  | Persistence key shared by this item's hasSubMenu button and its SidebarMenuSub. Required when the item contains a sub-menu; otherwise leave unset and the item behaves like a plain `<li>`. |
+
+Props (`SidebarMenuProps`):
+Extends: `React.ComponentProps<"ul">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `items` | `string[]` |  |  | Ordered list of stable item ids. Required when `reorderable`. |
+| `onReorder` | `(items: string[]) => void` |  |  | Fired with the reshuffled list after a successful drag. |
+| `reorderable` | `boolean` |  |  | Opt into drag-to-reorder. When `true`, pair with `items` + `onReorder` and give each child SidebarMenuItem a `value` matching one of the `items` entries. The menu renders as a `role="list"` div so the dnd-kit wrappers can sit inside without breaking HTML semantics. |
+
+Props (`SidebarMenuSubProps`):
+Extends: `React.ComponentProps<"ul">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | Persistence key — must match the enclosing SidebarMenuItem's `value`. Required: the sub-menu cannot animate open/closed without it. |
+
+Props (`SidebarPanelProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | Stable id matched against `activeRailItem` to decide visibility. |
 
 Props (`SidebarProps`):
 Extends: `React.ComponentProps<"div">`
@@ -1431,7 +1705,7 @@ Extends: `React.ComponentProps<"div">`
 | --- | --- | --- | --- | --- |
 | `side` | `"left" \| "right"` |  | `"left"` | Viewport edge the panel anchors to; `"left"` (default) or `"right"`. |
 | `variant` | `"sidebar" \| "floating" \| "inset"` |  | `"sidebar"` | Visual treatment of the sidebar surface. - `"sidebar"` — flat panel flush with the viewport edge (default). - `"floating"` — rounded corners and a shadow ring. - `"inset"` — makes the content area (SidebarInset) appear nested inside the sidebar colour. |
-| `collapsible` | `"offcanvas" \| "icon" \| "none"` |  | `"offcanvas"` | Collapse mode when the sidebar is toggled closed. - `"offcanvas"` — slides the panel fully off-screen (default). - `"icon"` — shrinks to icon width, hiding labels. - `"none"` — disables collapsing; the panel is always visible. |
+| `collapsible` | `"offcanvas" \| "icon" \| "rail" \| "none"` |  | `"offcanvas"` | Collapse mode when the sidebar is toggled closed. - `"offcanvas"` — slides the panel fully off-screen (default). - `"icon"` — shrinks to icon width, hiding labels. - `"rail"` — dual-panel mode: a narrow icon column (SidebarRail) stays fixed while a wider secondary panel (SidebarPanel) slides in / out based on which SidebarRailButton is active. - `"none"` — disables collapsing; the panel is always visible. |
 
 Props (`SidebarProviderProps`):
 Extends: `React.ComponentProps<"div">`
@@ -1442,11 +1716,59 @@ Extends: `React.ComponentProps<"div">`
 | `open` | `boolean` |  |  | Controlled open state; pair with onOpenChange. |
 | `onOpenChange` | `(open: boolean) => void` |  |  | Called when the sidebar's open state changes in controlled mode. |
 
+Props (`SidebarRailButtonProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title" | "value">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `React.ReactNode` | yes |  | Icon node rendered as the button's content. |
+| `tooltip` | `string` |  |  | Optional accessible name / hover tooltip. |
+| `value` | `string` | yes |  | Stable id selecting which SidebarPanel this button opens. |
+
+Props (`SidebarSearchButtonProps`):
+Extends: `React.ComponentProps<"button">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `onTrigger` | `() => void` |  |  | Fires on click and on the registered keyboard shortcut. |
+| `placeholder` | `string` |  | `"Search…"` | Placeholder text shown in the row. Defaults to `"Search…"`. |
+| `shortcut` | `string \| null` |  | `"⌘K"` | Keyboard hint glyph displayed at the trailing edge (e.g. `"⌘K"`). Pass `null` to hide the hint while still wiring the shortcut handler. |
+| `shortcutKey` | `string` |  | `"k"` | Character key that triggers the shortcut combo with Cmd/Ctrl. Defaults to `"k"`. |
+
+Props (`SidebarSwitcherItemProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `logo` | `React.ReactNode` |  |  | Optional logo / avatar node rendered before the name. |
+| `meta` | `string` |  |  | Optional secondary metadata line (e.g. plan, role). Rendered underneath the name in muted text. |
+| `name` | `string` | yes |  | Display name of the workspace. |
+| `selected` | `boolean` |  |  | When `true`, the item is rendered as the active selection and shows a trailing check glyph. Surfaces as `data-selected="true"` on the DOM node for styling hooks. |
+
+Props (`SidebarSwitcherProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` |  |  | Popover body — typically a list of SidebarSwitcherItems plus any auxiliary actions (e.g. "Create workspace"). |
+| `current` | `SidebarSwitcherCurrent` | yes |  | The currently selected workspace; controls the trigger row. |
+
+Props (`SidebarUserButtonProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `avatar` | `React.ReactNode` |  |  | Avatar element rendered to the leading edge (typically an `<Avatar>` or `<img>`). Sized down to fit the row at `size-7`. |
+| `email` | `string` |  |  | Optional secondary line — often the user's email. |
+| `menu` | `React.ReactNode` |  |  | Menu body — Base UI `MenuPrimitive.Item` and friends. When omitted, the button still renders the chevron unless static is set; clicks fall through to the consumer's `onClick`. |
+| `name` | `string` | yes |  | Primary display name. |
+| `static` | `boolean` |  |  | When `true`, the row is a plain account chip with no menu wrapper and no chevron — handy when the surrounding shell already provides the account dropdown elsewhere. |
+
 Variants:
 - `variant`: `default`, `outline` (default: `default`)
 - `size`: `default`, `sm`, `lg` (default: `default`)
 
-Data slots: `sidebar`, `sidebar-container`, `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-content`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-item`, `sidebar-menu-skeleton`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-rail`, `sidebar-separator`, `sidebar-trigger`, `sidebar-wrapper`
+Data slots: `sidebar`, `sidebar-card`, `sidebar-card-content`, `sidebar-card-description`, `sidebar-card-footer`, `sidebar-card-header`, `sidebar-card-title`, `sidebar-container`, `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-content`, `sidebar-group-label-chevron`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-button-chevron`, `sidebar-menu-drag-handle`, `sidebar-menu-flyout`, `sidebar-menu-item`, `sidebar-menu-skeleton`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-menu-sub-panel`, `sidebar-panel`, `sidebar-rail`, `sidebar-rail-button`, `sidebar-rail-column`, `sidebar-rail-panel-wrap`, `sidebar-search-button`, `sidebar-separator`, `sidebar-switcher`, `sidebar-switcher-body`, `sidebar-switcher-chevron`, `sidebar-switcher-item`, `sidebar-switcher-item-check`, `sidebar-switcher-item-logo`, `sidebar-switcher-logo`, `sidebar-switcher-popover`, `sidebar-toggle-rail`, `sidebar-toggle-rail-glyph`, `sidebar-trigger`, `sidebar-user-button`, `sidebar-user-button-avatar`, `sidebar-user-button-body`, `sidebar-user-button-chevron`, `sidebar-user-button-menu`, `sidebar-wrapper`
 
 ### Stepper
 
@@ -1674,7 +1996,7 @@ Props (`AlertProps`):
 Extends: `React.ComponentProps<"div">`, `VariantProps<typeof alertVariants>`
 
 Variants:
-- `variant`: `default`, `info`, `success`, `warning`, `destructive` (default: `default`)
+- `variant`: `default`, `info`, `success`, `warning`, `destructive`, `invert` (default: `default`)
 
 Data slots: `alert`, `alert-action`, `alert-description`, `alert-title`
 
@@ -1836,10 +2158,31 @@ Import: `import { ... } from "@strait/ui/components/accordion";`
 
 A vertically stacked set of collapsible sections, each with a trigger and an animated content panel.
 
-Exports: `Accordion`, `AccordionContent`, `AccordionItem`, `AccordionProps`, `AccordionTrigger`
+Exports: `Accordion`, `AccordionContent`, `AccordionItem`, `AccordionItemProps`, `AccordionProps`, `AccordionTrigger`, `AccordionTriggerIndicator`, `AccordionTriggerProps`, `AccordionVariant`, `accordionItemVariants`
+
+Props (`AccordionItemProps`):
+Extends: `AccordionPrimitive.Item.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `variant` | `AccordionVariant` |  |  | Visual style for this item. Overrides the variant inherited from the parent Accordion when set. |
 
 Props (`AccordionProps`):
 Extends: `AccordionPrimitive.Root.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `variant` | `AccordionVariant` |  | `"default"` | Visual style applied to every item. Each AccordionItem can override it locally with its own `variant`. Defaults to `"default"`. |
+
+Props (`AccordionTriggerProps`):
+Extends: `AccordionPrimitive.Trigger.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `indicator` | `AccordionTriggerIndicator` |  | `"chevron"` | Built-in collapse/expand indicator placement. - `"chevron"` (default) — down arrow when collapsed, up arrow when open. - `"plus-minus"` — plus glyph when collapsed, minus when open. - `"none"` — suppress the built-in indicator; supply your own as the last child of the trigger (tag it `data-slot="accordion-trigger-icon"` to inherit sizing). |
+
+Variants:
+- `variant`: `default`, `outline`, `solid` (default: `default`)
 
 Data slots: `accordion`, `accordion-content`, `accordion-item`, `accordion-trigger`, `accordion-trigger-icon`
 
@@ -1855,6 +2198,28 @@ Props (`CollapsibleProps`):
 Extends: `CollapsiblePrimitive.Root.Props`
 
 Data slots: `collapsible`, `collapsible-content`, `collapsible-trigger`
+
+### Frame
+
+Import: `import { ... } from "@strait/ui/components/frame";`
+
+A bordered surface that hosts one or more FramePanel children.
+
+Exports: `Frame`, `FrameDescription`, `FrameFooter`, `FrameHeader`, `FramePanel`, `FrameProps`, `FrameTitle`, `frameVariants`
+
+Props (`FrameProps`):
+Extends: `React.ComponentProps<"div">`, `FrameVariantProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dense` | `boolean` |  | `false` | When `true`, FramePanels drop their inner padding. Useful when the panel's content owns its own padding (e.g. a `<DataGrid>`). Default `false`. |
+| `stacked` | `boolean` |  | `false` | When `true`, sibling FramePanels are joined edge-to-edge with shared borders (no gap, no inner radius between them). Only the first and last panels keep rounded corners. Default `false`. |
+
+Variants:
+- `variant`: `default`, `ghost` (default: `default`)
+- `spacing`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `frame`, `frame-description`, `frame-footer`, `frame-header`, `frame-panel`, `frame-title`
 
 ### Resizable
 
@@ -2436,15 +2801,17 @@ Import: `import { ... } from "@strait/ui/components/phone-input";`
 
 An international phone number field composed of a flag/country-code selector and a number text input that formats as the user types.
 
-Exports: `PhoneInput`, `PhoneInputProps`
+Exports: `PhoneInput`, `PhoneInputProps`, `PhoneInputVariant`
 
 Props (`PhoneInputProps`):
-Extends: `Omit< React.ComponentProps<"input">, "onChange" | "value" | "ref" | "size" >`, `Omit<React.ComponentProps<typeof RPNInput>, "onChange" | "size">`, `Pick<InputProps, "size">`
+Extends: `Omit< React.ComponentProps<"input">, "onChange" | "value" | "ref" | "size" >`, `Omit<React.ComponentProps<typeof RPNInput>, "onChange" | "size">`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `onChange` | `(value: Value) => void` |  |  | Called with the formatted E.164 phone number string as the user types; receives an empty string instead of `undefined` for partial inputs. |
 | `onCountryChange` | `(country: Country) => void` |  |  | Called whenever the user selects a different country in the CountrySelect popover. |
+| `variant` | `PhoneInputVariant` |  | `"default"` | Height of the field and country button — `"sm"` \| `"default"` \| `"lg"` (default `"default"`). |
+| `popupClassName` | `string` |  |  | Extra classes merged onto the country-selector popover content. |
 
 Data slots: `phone-input`
 

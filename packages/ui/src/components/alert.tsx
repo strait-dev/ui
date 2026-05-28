@@ -10,7 +10,8 @@ import { cn } from "../utils/index";
  * - `variant` — intent of the message. `"default"` renders a neutral card
  *   surface; `"info"`, `"success"`, `"warning"`, and `"destructive"` tint the
  *   border, background, text, and icon with the matching semantic token so the
- *   whole alert reads as a single intent.
+ *   whole alert reads as a single intent; `"invert"` flips to a high-contrast
+ *   solid surface for maximum emphasis.
  *
  * Exported so consumers can derive the same look on non-alert elements
  * without re-implementing the class list.
@@ -21,13 +22,15 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-card text-card-foreground",
-        info: "border-info/30 bg-info/5 text-info-accent *:data-[slot=alert-description]:text-info-accent/90",
+        info: "border-info/30 bg-info/5 text-info-accent *:data-[slot=alert-description]:text-info-accent",
         success:
-          "border-success/30 bg-success/5 text-success-accent *:data-[slot=alert-description]:text-success-accent/90",
+          "border-success/30 bg-success/5 text-success-accent *:data-[slot=alert-description]:text-success-accent",
         warning:
-          "border-warning/30 bg-warning/5 text-warning-accent *:data-[slot=alert-description]:text-warning-accent/90",
+          "border-warning/30 bg-warning/5 text-warning-accent *:data-[slot=alert-description]:text-warning-accent",
         destructive:
-          "border-destructive/30 bg-destructive/5 text-destructive-accent *:data-[slot=alert-description]:text-destructive-accent/90",
+          "border-destructive/30 bg-destructive/5 text-destructive-accent *:data-[slot=alert-description]:text-destructive-accent",
+        invert:
+          "border-invert bg-invert text-invert-foreground *:data-[slot=alert-description]:text-invert-foreground",
       },
     },
     defaultVariants: {
@@ -54,7 +57,8 @@ export type AlertProps = React.ComponentProps<"div"> &
  *   immediately when it appears in the DOM.
  * - Pass `variant` to signal intent — `"info"`, `"success"`, `"warning"`,
  *   and `"destructive"` tint the border, background, text, and icon with
- *   the matching semantic token; `"default"` stays neutral.
+ *   the matching semantic token; `"default"` stays neutral; `"invert"`
+ *   renders a high-contrast solid surface.
  * - Drop any 16 × 16 SVG icon as a direct child; {@link alertVariants}
  *   handles sizing and vertical alignment via CSS selectors.
  *

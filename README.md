@@ -1,9 +1,7 @@
 # Strait UI
 
 [![npm version](https://img.shields.io/npm/v/@strait/ui?logo=npm&color=cb3837)](https://www.npmjs.com/package/@strait/ui)
-[![npm downloads](https://img.shields.io/npm/dm/@strait/ui?color=cb3837)](https://www.npmjs.com/package/@strait/ui)
-[![install size](https://packagephobia.com/badge?p=@strait/ui)](https://packagephobia.com/result?p=@strait/ui)
-[![license](https://img.shields.io/npm/l/@strait/ui?color=blue)](./LICENSE)
+[![license](https://img.shields.io/github/license/strait-dev/ui?color=blue)](./LICENSE)
 [![CI](https://github.com/strait-dev/ui/actions/workflows/ci.yml/badge.svg)](https://github.com/strait-dev/ui/actions/workflows/ci.yml)
 [![published with provenance](https://img.shields.io/badge/provenance-npm-3b82f6?logo=npm)](https://docs.npmjs.com/generating-provenance-statements)
 
@@ -22,7 +20,7 @@ Storybook site, published from `main` (see [Documentation site](#documentation-s
 
 ## Highlights
 
-- **Custom design language** — GitBook-inspired warm-stone neutrals with an orange accent,
+- **Custom design language** — warm-stone neutrals with an orange accent,
   an `oklch` color system, and a tuned radius/typography scale. Not a stock shadcn theme.
 - **Semantic tokens everywhere** — components style themselves with intent tokens
   (`bg-success/10`, `text-destructive-accent`, `var(--chart-1..5)`), so re-theming is a
@@ -75,7 +73,7 @@ tokens, and component keyframes:
 import "@strait/ui/css";
 ```
 
-The library is built with the GitBook-inspired Inter + JetBrains Mono pairing. Install the
+The library is built with an Inter + JetBrains Mono font pairing. Install the
 fonts your design calls for, e.g.:
 
 ```ts

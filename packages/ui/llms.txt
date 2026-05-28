@@ -13,11 +13,12 @@
 
 ## Forms
 
+- [Autocomplete](@strait/ui/components/autocomplete): Optional arrow that visually connects the popup to its anchor.
 - [Calendar](@strait/ui/components/calendar): A styled date-picker calendar built on top of `react-day-picker`'s `DayPicker`.
 - [Checkbox](@strait/ui/components/checkbox): A binary toggle control that indicates a checked or unchecked state.
-- [Combobox](@strait/ui/components/combobox): A badge representing one selected value inside ComboboxChips.
+- [Date Selector](@strait/ui/components/date-selector): A compact date filter that selects by day, month, quarter, half-year, or year with `is` / `before` / `after` / `between` operators. Reorders into a popover or dialog by wrapping it; the day view reuses Calendar and the coarser periods render their own grids.
 - [Field](@strait/ui/components/field): Single form field: associates a label, control, description, and error.
-- [File Upload](@strait/ui/components/file-upload): A drag-and-drop file upload zone with an optional file browser trigger.
+- [FileUpload](@strait/ui/components/file-upload): A drag-and-drop file upload zone with a browse button and a file list, built on the headless useFileUpload hook and native File APIs.
 - [Form](@strait/ui/components/form): Root provider for a `@tanstack/react-form` managed form.
 - [Input](@strait/ui/components/input): A single-line text control for user input.
 - [Input Group](@strait/ui/components/input-group): A composite control that visually merges an input (or textarea) with leading/trailing addons, icons, buttons, or labels into a single bordered group.
@@ -47,10 +48,10 @@
 - [Code Block](@strait/ui/components/code-block): Read-only code display surface with Shiki-powered syntax highlighting, an optional language label, line numbers, and a clipboard copy button.
 - [Code Block Command](@strait/ui/components/code-block-command): A package-manager command block with tabs for npm, pnpm, yarn, and bun, a copy button that copies the active manager's command, and persistent manager selection via `localStorage`.
 - [Config Row](@strait/ui/components/config-row): A single label/value row for settings panels, detail drawers, and info grids.
-- [DataTable](@strait/ui/components/data-table): A fully-featured data table built on TanStack Table v8.
+- [DataGrid](@strait/ui/components/data-grid): Root component for the DataGrid system.
 - [Description List](@strait/ui/components/description-list): Semantic description list root (`<dl>`). Compose with DescriptionTerm and DescriptionDetails to build accessible key–value displays.
 - [Execution Trace Bar](@strait/ui/components/execution-trace-bar): Horizontal stacked proportional bar that visualises time or value breakdown across labelled segments, with per-segment tooltips and an optional legend.
-- [Filter](@strait/ui/components/filter): Renders just the active filter chips (no "Add filter" trigger).
+- [Filters](@strait/ui/components/filters): A faceted filter builder modelled on corr.sh's Filters.
 - [Item](@strait/ui/components/item): Flexible row-level container for list entries, menu rows, or card-like tiles in an ItemGroup.
 - [JSON Viewer](@strait/ui/components/json-viewer): Hand-rolled recursive, collapsible, colorised JSON tree viewer.
 - [Leaderboard](@strait/ui/components/leaderboard): Root of a Leaderboard. A vertical stack of ranked rows, each with a value-proportional fill bar behind its label.
@@ -58,6 +59,7 @@
 - [QR Code](@strait/ui/components/qr-code): Root component that renders an SVG QR code and provides context to all child sub-components.
 - [Radial Gauge](@strait/ui/components/radial-gauge): Circular radial-bar gauge that fills proportionally to a `value / max` ratio.
 - [Relative Time Card](@strait/ui/components/relative-time-card): Shows a compact, formatted timestamp that — on hover — reveals a card with the live relative time and the same instant rendered across one or more timezones (plus the viewer's local zone).
+- [Sortable](@strait/ui/components/sortable): Drag-to-reorder container built on dnd-kit. Wraps its children in a `DndContext` + `SortableContext` and renders a floating overlay that mirrors the actively dragged SortableItem.
 - [Status Badge](@strait/ui/components/status-badge): A Badge that maps an orchestration status keyword to a consistent colour, a leading status dot, and a humanised label.
 - [Table](@strait/ui/components/table): Responsive data table with a horizontally scrollable container.
 - [Tag Group](@strait/ui/components/tag-group): An accessible group container for a set of selectable or removable tags.
@@ -74,6 +76,7 @@
 - [NavigationMenu](@strait/ui/components/navigation-menu): Horizontal navigation bar with flyout content panels.
 - [NavigationRail](@strait/ui/components/navigation-rail): A fixed-width vertical nav column that holds icon-only navigation items.
 - [Pagination](@strait/ui/components/pagination): Accessible navigation landmark for moving between pages of content.
+- [Scrollspy](@strait/ui/components/scrollspy): Tracks the section currently in view and marks its corresponding navigation anchor with `data-active="true"`. Anchors opt in via `data-{dataAttribute}-anchor="<section-id>"`; clicking one smooth-scrolls to its section and (optionally) updates the URL hash.
 - [Sidebar](@strait/ui/components/sidebar): The sidebar panel itself — a collapsible column rendered inside a SidebarProvider.
 - [Stepper](@strait/ui/components/stepper): A multi-step progress indicator that tracks which step is currently active.
 - [Tabs](@strait/ui/components/tabs): Layered content panel controlled by a row (or column) of tab buttons.
@@ -107,6 +110,7 @@
 
 - [Accordion](@strait/ui/components/accordion): A vertically stacked set of collapsible sections, each with a trigger and an animated content panel.
 - [Collapsible](@strait/ui/components/collapsible): A lightweight single-panel show/hide container driven by a trigger.
+- [Frame](@strait/ui/components/frame): A bordered surface that hosts one or more FramePanel children.
 - [Resizable](@strait/ui/components/resizable): Drag handle separator between two ResizablePanel elements.
 - [Scroll Area](@strait/ui/components/scroll-area): A cross-browser custom scroll container with styled overlaid scrollbars.
 - [Separator](@strait/ui/components/separator): A thin dividing line between sections of content.

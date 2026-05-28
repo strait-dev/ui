@@ -44,6 +44,9 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@hugeicons/core-free-icons": "^4.1.1",
     "@hugeicons/react": "^1.1.6",
     "@internationalized/date": "^3.12.1",
@@ -53,6 +56,7 @@
     "@tailwindcss/postcss": "^4.3.0",
     "@tanstack/react-form": "^1.32.0",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.25",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "class-variance-authority": "^0.7.1",
@@ -278,10 +282,15 @@
       "import": "./dist/components/relative-time-card.js",
       "default": "./dist/components/relative-time-card.js"
     },
-    "./components/filter": {
-      "types": "./dist/components/filter.d.ts",
-      "import": "./dist/components/filter.js",
-      "default": "./dist/components/filter.js"
+    "./components/filters": {
+      "types": "./dist/components/filters.d.ts",
+      "import": "./dist/components/filters.js",
+      "default": "./dist/components/filters.js"
+    },
+    "./components/frame": {
+      "types": "./dist/components/frame.d.ts",
+      "import": "./dist/components/frame.js",
+      "default": "./dist/components/frame.js"
     },
     "./components/json-viewer": {
       "types": "./dist/components/json-viewer.d.ts",
@@ -673,10 +682,10 @@
       "import": "./dist/components/item.js",
       "default": "./dist/components/item.js"
     },
-    "./components/combobox": {
-      "types": "./dist/components/combobox.d.ts",
-      "import": "./dist/components/combobox.js",
-      "default": "./dist/components/combobox.js"
+    "./components/autocomplete": {
+      "types": "./dist/components/autocomplete.d.ts",
+      "import": "./dist/components/autocomplete.js",
+      "default": "./dist/components/autocomplete.js"
     },
     "./components/stepper": {
       "types": "./dist/components/stepper.d.ts",
@@ -688,10 +697,10 @@
       "import": "./dist/components/timeline.js",
       "default": "./dist/components/timeline.js"
     },
-    "./components/data-table": {
-      "types": "./dist/components/data-table.d.ts",
-      "import": "./dist/components/data-table.js",
-      "default": "./dist/components/data-table.js"
+    "./components/data-grid": {
+      "types": "./dist/components/data-grid.d.ts",
+      "import": "./dist/components/data-grid.js",
+      "default": "./dist/components/data-grid.js"
     },
     "./components/charts": {
       "types": "./dist/components/charts.d.ts",
@@ -702,6 +711,21 @@
       "types": "./dist/components/navigation-rail.d.ts",
       "import": "./dist/components/navigation-rail.js",
       "default": "./dist/components/navigation-rail.js"
+    },
+    "./components/sortable": {
+      "types": "./dist/components/sortable.d.ts",
+      "import": "./dist/components/sortable.js",
+      "default": "./dist/components/sortable.js"
+    },
+    "./components/scrollspy": {
+      "types": "./dist/components/scrollspy.d.ts",
+      "import": "./dist/components/scrollspy.js",
+      "default": "./dist/components/scrollspy.js"
+    },
+    "./components/date-selector": {
+      "types": "./dist/components/date-selector.d.ts",
+      "import": "./dist/components/date-selector.js",
+      "default": "./dist/components/date-selector.js"
     }
   },
   "devDependencies": {
