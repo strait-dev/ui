@@ -1,5 +1,236 @@
 # @strait/ui
 
+## 0.1.2
+
+### Patch Changes
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`26e0e7f`](https://github.com/strait-dev/ui/commit/26e0e7fdda0ad86f8e3823d5e221152f0aeb70ff) Thanks [@leonardomso](https://github.com/leonardomso)! - feat: add accordion variants and alert invert variant
+
+  `Accordion` gains a `variant` prop (`default` | `outline` | `solid`) that flows
+  to each item through context and can be overridden per `AccordionItem`; the
+  `accordionItemVariants` recipe is exported. `Alert` gains an `invert` variant for
+  a high-contrast solid surface. Both additions are backward compatible.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`89998da`](https://github.com/strait-dev/ui/commit/89998dafab4fb6027ae9ed384bd9265e688a17a0) Thanks [@leonardomso](https://github.com/leonardomso)! - feat(ui): add `indicator` prop on `AccordionTrigger` and broaden showcase stories
+
+  `AccordionTrigger` now accepts `indicator: "chevron" | "plus-minus" | "none"`
+  (default `"chevron"`) to switch between the built-in chevron, a plus/minus
+  glyph that flips on expand, or no built-in icon at all (BYO via
+  `data-slot="accordion-trigger-icon"`).
+
+  Storybook gains seven new examples covering the new prop and richer
+  composition patterns: `PlusMinusIndicator`, `CustomIndicator`, `InCard`,
+  `InFrame`, `NestedAccordion`, `UserList` (with avatars), `OnboardingSteps`
+  (with badges), and `SettingsSections` (with icons).
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`9167bd4`](https://github.com/strait-dev/ui/commit/9167bd48d10d6ae856bbbddb12ed5a0f587f716e) Thanks [@leonardomso](https://github.com/leonardomso)! - feat!: add Autocomplete component, remove Combobox
+
+  `Autocomplete` is a free-text input with a filtered suggestion list, built on
+  Base UI's `Autocomplete` primitive and restyled to Strait tokens. It ships with
+  `AutocompleteInput` (with `size` and inline `showTrigger` / `showClear`
+  buttons), `AutocompleteContent`, `AutocompleteList`, `AutocompleteItem`,
+  `AutocompleteGroup` / `AutocompleteGroupLabel`, `AutocompleteEmpty`,
+  `AutocompleteStatus`, and the remaining popup parts.
+
+  **Breaking:** the `Combobox` component (`@strait/ui/components/combobox`) is
+  removed. Use `Autocomplete` for suggestion inputs.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`3e127af`](https://github.com/strait-dev/ui/commit/3e127af43ebb2327d7330440166cef93a8103225) Thanks [@leonardomso](https://github.com/leonardomso)! - feat: add DateSelector date-filter component
+
+  A compact date filter that selects by day, month, quarter, half-year, or
+  year, with `is` / `before` / `after` / `between` operators. The day view reuses
+  `Calendar`; coarser periods render their own grids. Locks the operator with
+  `presetMode`, restricts granularities with `periodTypes`, and localises every
+  label through a partial `i18n` override.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`48eabcb`](https://github.com/strait-dev/ui/commit/48eabcb2b02e201d203045b1d4a7d2af03ea5e39) Thanks [@leonardomso](https://github.com/leonardomso)! - feat: add Scrollspy section-tracking component
+
+  Adds `Scrollspy`, which highlights the navigation anchor for the section
+  currently in view and smooth-scrolls to a section when its anchor is clicked.
+  Anchors opt in with `data-scrollspy-anchor`, the active link receives
+  `data-active="true"`, and an optional `targetRef` spies inside a scroll
+  container (or a `data-slot="scroll-area-viewport"` it wraps).
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`d305dad`](https://github.com/strait-dev/ui/commit/d305dad1fe147111546a4c904852de5ff7e2ddef) Thanks [@leonardomso](https://github.com/leonardomso)! - feat: add Sortable drag-to-reorder component
+
+  Adds `Sortable`, `SortableItem`, and `SortableItemHandle`, built on dnd-kit, for
+  reorderable vertical lists, horizontal rows, and grids. The list is controlled
+  via `value` / `getItemValue` / `onValueChange`, drags start from a handle, and a
+  floating overlay mirrors the active item. Restyled to Strait design tokens.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`93818f1`](https://github.com/strait-dev/ui/commit/93818f1c4ac366eb883f8b079e31c513a7513afa) Thanks [@leonardomso](https://github.com/leonardomso)! - docs(ui): expand Alert showcase stories with real-world patterns
+
+  Add nine new Storybook stories that demonstrate compound `Alert` usage:
+  `WithCloseButton`, `WithMultipleActions`, `UrgentBilling`, `ServiceStatus`
+  (neutral surface with a live status badge), `FeatureDiscovery` (invert
+  surface), `OnboardingNudge`, `ExtendedMessage` (multi-paragraph), `UserMessage`
+  (avatar in the icon slot), and `AccountVerified`. No API changes.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`f7ab1df`](https://github.com/strait-dev/ui/commit/f7ab1df8ebd332a4519a7a0ca1ce20bf65ed2903) Thanks [@leonardomso](https://github.com/leonardomso)! - feat(ui): add `radius` axis on Badge and showcase stories
+
+  `Badge` now accepts `radius: "pill" | "md" | "sm"` (default `"pill"`).
+  Use `"md"` for tag-style chips inside data tables, where the full-pill
+  shape feels out of place against squared cells.
+
+  Storybook gains seven new stories: `Radius` (the new axis), `AvatarChip`,
+  `WithFlag`, `AsLink` (badge as `<a>` via `render`), `NotificationOverlay`
+  (absolute-positioned count over an icon button), `RatingChip`, and
+  `PlanTier`.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`a310bca`](https://github.com/strait-dev/ui/commit/a310bca41268d0f3bb5c11425f700437e8633c08) Thanks [@leonardomso](https://github.com/leonardomso)! - docs(ui): expand Breadcrumb showcase stories with composition patterns
+
+  Nine new Storybook stories demonstrate how to compose `Breadcrumb` with
+  other parts of the system: `WithDropdown` (sibling page menu),
+  `EllipsisDropdown` (collapsed-trail reveal), `IconsPerItem`,
+  `DoubleChevronSeparator`, `PillStyle` (muted top-bar shell), `WithAvatar`
+  (workspace ownership), `WithBadge` (counts and environment tags),
+  `HomeIcon` (dedicated root link), and `DocumentContext` (folder → file). No
+  API change.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`bd7d269`](https://github.com/strait-dev/ui/commit/bd7d2696f95221b1da1348cf7f6ac564e2aa70a2) Thanks [@leonardomso](https://github.com/leonardomso)! - docs(ui): expand Button showcase stories with interaction patterns
+
+  Twelve new Storybook stories demonstrate compound `Button` usage:
+  `CopyWithFeedback`, `AsyncAction`, `LikeWithCount`, `StarWithCount`,
+  `WithNotificationBadge`, `WithStatusDot`, `GoBackLink`, `SlidingIconHover`,
+  `ThemeToggle`, `SocialLogin`, `SocialIconOnly`, and `ConfirmFeedback`. No
+  API change.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`9d25bc6`](https://github.com/strait-dev/ui/commit/9d25bc61b1ff44c352d7affa584f65a75fb571af) Thanks [@leonardomso](https://github.com/leonardomso)! - feat(ui): add DataGridTableRowActions and DataGridSelectionBar
+
+  Two additive helpers for `DataGrid`:
+
+  - `DataGridTableRowActions<TData>` — drop-in cell helper that renders an
+    ellipsis trigger and a `DropdownMenu` shell; consumers supply
+    `DropdownMenuItem` children (Edit / Delete / …) for per-row commands.
+  - `DataGridSelectionBar` — selection-aware floating toolbar that reads the
+    selected row count from `DataGrid` context and renders a fixed-position
+    `BulkActionBar` whenever one or more rows are selected. The clear (×)
+    button calls `table.resetRowSelection()` automatically.
+
+  Both compose cleanly with the existing parts and require no new runtime
+  dependencies.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`d71bfda`](https://github.com/strait-dev/ui/commit/d71bfda41d4337acdaf6c25bd917624f5d9618a2) Thanks [@leonardomso](https://github.com/leonardomso)! - feat(ui): add Frame component for grouping stacked or separated panels
+
+  `Frame` is a bordered surface that hosts one or more `FramePanel` children,
+  useful for settings groups, summary blocks, or any layout where related
+  panels share a common outer container.
+
+  Parts: `Frame`, `FramePanel`, `FrameHeader`, `FrameTitle`,
+  `FrameDescription`, `FrameFooter`.
+
+  Props on `Frame`:
+
+  - `variant: "default" | "ghost"` — outer border vs. transparent shell.
+  - `spacing: "sm" | "default" | "lg"` — gap between non-stacked panels.
+  - `stacked` — join panels edge-to-edge with shared borders.
+  - `dense` — drop inner panel padding (delegate it to the child).
+
+  Retheme corners by overriding `--frame-radius` on the root.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`a02aa0d`](https://github.com/strait-dev/ui/commit/a02aa0d538ca6e04959dcaa606dbb7f4ae9d97a8) Thanks [@leonardomso](https://github.com/leonardomso)! - feat!: align PhoneInput API with ReUI (`size` → `variant`)
+
+  `PhoneInput`'s height prop is renamed from `size` to `variant`
+  (`"sm" | "default" | "lg"`) to match the ReUI API, and now sizes the country
+  selector button alongside the input. A new `popupClassName` prop restyles the
+  country popover, and an `aria-invalid` field now tints the country button with
+  the destructive ring. **Breaking:** replace `size` with `variant`.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`729c38f`](https://github.com/strait-dev/ui/commit/729c38f2136424729d77cf28ffbb1600a6266a00) Thanks [@leonardomso](https://github.com/leonardomso)! - feat!: rename Filter to Filters, align with ReUI
+
+  The `Filter` component is renamed to `Filters` and moves from
+  `@strait/ui/components/filter` to `@strait/ui/components/filters`. The public
+  API is aligned with ReUI: `Filters` now accepts `showSearchInput` (default
+  `true`) to toggle the search box at the top of the field picker.
+
+  **Breaking:** update imports from `@strait/ui/components/filter` to
+  `@strait/ui/components/filters`.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`af21279`](https://github.com/strait-dev/ui/commit/af212798e993b10577ff1c3dfa95733b379ddacb) Thanks [@leonardomso](https://github.com/leonardomso)! - feat!: replace DataTable with DataGrid (TanStack + virtual + DnD)
+
+  `DataTable` is removed and replaced by `DataGrid`, a richer ReUI-aligned API
+  built on TanStack Table v8, `@tanstack/react-virtual`, and `@dnd-kit/*`. The
+  new component exposes a context root (`DataGrid`), composable parts
+  (`DataGridContainer`, `DataGridTable`, `DataGridPagination`,
+  `DataGridColumnHeader`, `DataGridColumnFilter`, `DataGridColumnVisibility`,
+  `DataGridScrollArea`), virtualised + infinite-scroll variants
+  (`DataGridTableVirtual`), and drag-and-drop variants for columns
+  (`DataGridTableDnd`) and rows (`DataGridTableDndRows`,
+  `DataGridTableDndRowHandle`), plus row selection, row pinning, column
+  pinning/resizing, footer aggregates, and skeleton/spinner loading states.
+
+  **Breaking:** the `./components/data-table` subpath export is removed in
+  favour of `./components/data-grid`. Consumers must migrate to the new API
+  (see Storybook for a per-variant reference).
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`01d943f`](https://github.com/strait-dev/ui/commit/01d943f118b4fa1f7ea447607af754b9b81f1b8e) Thanks [@leonardomso](https://github.com/leonardomso)! - feat!: rework FileUpload on a headless useFileUpload hook
+
+  `FileUpload` is re-implemented on top of a new headless `useFileUpload` hook
+  (native File / drag-and-drop APIs) instead of React Aria's `DropZone`. The hook
+  is exported for building bespoke layouts, alongside new presentational parts
+  (`FileUploadDropzone`, `FileUploadList`, `FileUploadItem`) and the `formatBytes`
+  helper.
+
+  **Breaking:** `FileUpload` is now uncontrolled — the `value` prop is removed in
+  favour of `defaultFiles` + `onValueChange` (now called with `FileWithPreview[]`).
+  `accept` is now a comma-separated string (e.g. `"image/*,.pdf"`) rather than a
+  string array, matching the underlying input.
+
+- [#7](https://github.com/strait-dev/ui/pull/7) [`616277c`](https://github.com/strait-dev/ui/commit/616277c5ad7ba40eb044fa66c90f99e60c4119a1) Thanks [@leonardomso](https://github.com/leonardomso)! - feat(ui)!: rework Sidebar into a full app-shell primitive
+
+  `Sidebar` is reshaped to power any modern app shell. The active row now
+  owns its own visual (2 px left accent rail + soft `--sidebar-active*`
+  fill + `aria-current="page"`), sub-menus animate open and closed via
+  Base UI `Collapsible`, hover-popovers (Base UI `Menu`) mirror the
+  sub-menu when the sidebar is collapsed to icon width, and polished
+  compound parts ship for the most common app-shell needs:
+  `SidebarUserButton`, `SidebarSwitcher` / `SidebarSwitcherItem`,
+  `SidebarCard` (+ `Header` / `Title` / `Description` / `Content` /
+  `Footer`), and `SidebarSearchButton` with a built-in ⌘K shortcut.
+
+  A new `collapsible="rail"` mode renders a narrow icon column
+  (`SidebarRail` + `SidebarRailButton`) alongside a wider secondary
+  `SidebarPanel`, animated by `activeRailItem` on the provider. Menus
+  opt into drag-to-reorder by passing `reorderable` + `items` +
+  `onReorder`; pair each item with `SidebarMenuDragHandle`.
+
+  The collapse animation moves from `ease-linear` to `ease-out` (with
+  `motion-reduce:transition-none`), `SidebarInput` becomes transparent
+  so it sits cleanly on the sidebar surface, and truncated labels now
+  surface their full text via the existing tooltip path. The provider
+  context gains `openSubmenus` / `toggleSubmenu` / `setSubmenuOpen` /
+  `isSubmenuOpen` plus `activeRailItem` / `setActiveRailItem`.
+
+  Storybook ships 22 showcase stories, including `Collapse_Rail`,
+  `DisclosureSubMenu`, `SubMenuFlyout`, `Reorderable`, `WithSwitcher`,
+  `WithUserButton`, `WithCard`, the flagship `RealWorldDashboard` (now
+  wired to a real `CommandMenu` via the search button), and a sibling
+  `RealWorldWithSupport` mirroring shadcn's `sidebar-08` support + feedback
+  footer pattern.
+
+  **Breaking changes**
+
+  - `SidebarMenuSub` now requires a `value: string` prop; pair it with
+    its parent `SidebarMenuItem`'s `value`.
+  - The old `SidebarRail` (drag handle) has been renamed
+    `SidebarToggleRail`. `SidebarRail` now refers to the always-visible
+    icon column used by `collapsible="rail"`.
+  - `Sidebar.collapsible` gains a new value: `"rail"`.
+
+  **Migration**
+
+  ```diff
+  - <SidebarMenuItem>
+  + <SidebarMenuItem value="settings">
+      <SidebarMenuButton>Settings</SidebarMenuButton>
+  -   <SidebarMenuSub>…</SidebarMenuSub>
+  +   <SidebarMenuSub value="settings">…</SidebarMenuSub>
+    </SidebarMenuItem>
+
+  - <SidebarRail />
+  + <SidebarToggleRail />
+  ```
+
 ## 0.1.1
 
 ### Patch Changes
