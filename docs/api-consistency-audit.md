@@ -35,12 +35,11 @@ from having used a sibling. For a design system — whose entire value
 proposition is "learn it once, apply it everywhere" — predictability *is* the
 product.
 
-My recommendation (detailed in [§7](#7-recommended-approach)) is the
-**incremental, deprecation-aliased** path: codify the canonical standards in the
-contract, add lint rules that fail only on *new* drift, and migrate existing
-components behind back-compat aliases over one or two minor releases. This buys
-the consistency without a hard breaking-change cliff for consumers on a `0.x`
-package that is still gaining adopters.
+The team has decided on a **full rename in one breaking release** (see
+[§8](#8-recommended-approach)): converge size scale, the intent/variant axis,
+boolean naming, and the `asChild` holdouts to canonical form in a single major,
+shipped with a migration guide and codemod. The phased alternative is retained in
+§8 for context.
 
 ---
 
