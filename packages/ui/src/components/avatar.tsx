@@ -40,7 +40,7 @@ export type AvatarProps = AvatarPrimitive.Root.Props & {
  * <Avatar size="lg">
  *   <AvatarImage src="/avatars/acme.png" alt="Acme Corp" />
  *   <AvatarFallback>AC</AvatarFallback>
- *   <AvatarBadge intent="online" />
+ *   <AvatarBadge status="online" />
  * </Avatar>
  * ```
  */
@@ -99,10 +99,10 @@ function AvatarFallback({
  * CVA recipe for {@link AvatarBadge} presence colours.
  *
  * @remarks
- * Each `intent` maps to a semantic colour token so the badge communicates
+ * Each `status` maps to a semantic colour token so the badge communicates
  * user presence without hard-coded palette values.
  *
- * | intent    | token                  | meaning                  |
+ * | status    | token                  | meaning                  |
  * |-----------|------------------------|--------------------------|
  * | `online`  | `bg-success`           | active and reachable     |
  * | `busy`    | `bg-destructive`       | do-not-disturb           |
@@ -111,15 +111,15 @@ function AvatarFallback({
  *
  * @example
  * ```tsx
- * <AvatarBadge intent="online" />
- * <AvatarBadge intent="busy" />
+ * <AvatarBadge status="online" />
+ * <AvatarBadge status="busy" />
  * ```
  *
  * {@link AvatarBadge}
  */
 const avatarBadgeVariants = cva("", {
   variants: {
-    intent: {
+    status: {
       online: "bg-success",
       busy: "bg-destructive",
       away: "bg-warning",
@@ -135,16 +135,16 @@ const avatarBadgeVariants = cva("", {
  * optional SVG icon (e.g. an online indicator) is hidden at the `"sm"` and
  * `"xs"` sizes where there is not enough space to render it legibly.
  *
- * Use the `intent` prop to apply a semantic presence colour via
+ * Use the `status` prop to apply a semantic presence colour via
  * {@link avatarBadgeVariants}. When omitted the badge uses `bg-primary`
  * (the original appearance), preserving backwards-compatibility.
  *
  * @example
  * ```tsx
- * <AvatarBadge intent="online" />   // green success dot
- * <AvatarBadge intent="busy" />     // red destructive dot
- * <AvatarBadge intent="away" />     // amber warning dot
- * <AvatarBadge intent="offline" />  // muted neutral dot
+ * <AvatarBadge status="online" />   // green success dot
+ * <AvatarBadge status="busy" />     // red destructive dot
+ * <AvatarBadge status="away" />     // amber warning dot
+ * <AvatarBadge status="offline" />  // muted neutral dot
  * <AvatarBadge />                   // unchanged primary dot
  * ```
  *
@@ -152,7 +152,7 @@ const avatarBadgeVariants = cva("", {
  */
 function AvatarBadge({
   className,
-  intent,
+  status,
   ...props
 }: React.ComponentProps<"span"> & VariantProps<typeof avatarBadgeVariants>) {
   return (
@@ -164,7 +164,7 @@ function AvatarBadge({
         "group-data-[size=default]/avatar:size-2.5 group-data-[size=default]/avatar:[&>svg]:size-2",
         "group-data-[size=lg]/avatar:size-3 group-data-[size=lg]/avatar:[&>svg]:size-2",
         "group-data-[size=xl]/avatar:size-3.5 group-data-[size=xl]/avatar:[&>svg]:size-2.5",
-        avatarBadgeVariants({ intent }),
+        avatarBadgeVariants({ status }),
         className
       )}
       data-slot="avatar-badge"

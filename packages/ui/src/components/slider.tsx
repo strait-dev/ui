@@ -30,13 +30,13 @@ const sliderTrackVariants = cva(
 /**
  * Class-variance-authority recipe for the {@link Slider} filled range indicator.
  *
- * Colors the filled portion of the track with the appropriate intent token.
+ * Colors the filled portion of the track with the appropriate variant token.
  */
 const sliderRangeVariants = cva(
   "select-none data-horizontal:h-full data-vertical:w-full",
   {
     variants: {
-      intent: {
+      variant: {
         default: "bg-primary",
         success: "bg-success",
         warning: "bg-warning",
@@ -45,7 +45,7 @@ const sliderRangeVariants = cva(
       },
     },
     defaultVariants: {
-      intent: "default",
+      variant: "default",
     },
   }
 );
@@ -64,7 +64,7 @@ const sliderThumbVariants = cva(
         default: "size-3",
         lg: "size-4",
       },
-      intent: {
+      variant: {
         default: "border-ring ring-ring/50",
         success: "border-success ring-success/50",
         warning: "border-warning ring-warning/50",
@@ -74,7 +74,7 @@ const sliderThumbVariants = cva(
     },
     defaultVariants: {
       size: "default",
-      intent: "default",
+      variant: "default",
     },
   }
 );
@@ -82,7 +82,7 @@ const sliderThumbVariants = cva(
 /**
  * Props for {@link Slider}.
  *
- * Extends Base UI's slider root props with `size` and `intent` variant axes.
+ * Extends Base UI's slider root props with `size` and `variant` axes.
  */
 export type SliderProps = SliderPrimitive.Root.Props &
   VariantProps<typeof sliderTrackVariants> &
@@ -114,7 +114,7 @@ export type SliderProps = SliderPrimitive.Root.Props &
  * - Supports `orientation="vertical"` via Base UI; the component
  *   responds to `data-vertical` / `data-horizontal` on the root.
  * - `size` controls track thickness and thumb size: `"sm"`, `"default"`, `"lg"`.
- * - `intent` colors the filled range and thumb: `"default"` (primary),
+ * - `variant` colors the filled range and thumb: `"default"` (primary),
  *   `"success"`, `"warning"`, `"info"`, `"destructive"`.
  *
  * @example
@@ -122,11 +122,11 @@ export type SliderProps = SliderPrimitive.Root.Props &
  * // Single thumb (uncontrolled)
  * <Slider defaultValue={[40]} aria-label="Volume" />
  *
- * // Range slider (controlled) with success intent
+ * // Range slider (controlled) with success variant
  * <Slider
  *   value={[20, 80]}
  *   onValueChange={([lo, hi]) => setRange([lo, hi])}
- *   intent="success"
+ *   variant="success"
  *   size="lg"
  * />
  * ```
@@ -138,7 +138,7 @@ function Slider({
   min = 0,
   max = 100,
   size = "default",
-  intent = "default",
+  variant = "default",
   "aria-label": ariaLabel,
   ...props
 }: SliderProps) {
@@ -169,7 +169,7 @@ function Slider({
           data-slot="slider-track"
         >
           <SliderPrimitive.Indicator
-            className={cn(sliderRangeVariants({ intent }))}
+            className={cn(sliderRangeVariants({ variant }))}
             data-slot="slider-range"
           />
         </SliderPrimitive.Track>
@@ -179,7 +179,7 @@ function Slider({
             // accessible name on the thumb input, not the root). Omitted when
             // undefined so a Field/FieldLabel association still works.
             aria-label={ariaLabel}
-            className={cn(sliderThumbVariants({ size, intent }))}
+            className={cn(sliderThumbVariants({ size, variant }))}
             data-slot="slider-thumb"
             // biome-ignore lint/suspicious/noArrayIndexKey: thumbs are positional and identically rendered; index is the stable identity.
             key={index}

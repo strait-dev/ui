@@ -103,32 +103,32 @@ describe("Slider", () => {
   });
 
   /* ------------------------------------------------------------------ */
-  /* Intent variant                                                      */
+  /* Variant variant                                                     */
   /* ------------------------------------------------------------------ */
 
-  it("applies success bg class to the range when intent=success", () => {
+  it("applies success bg class to the range when variant=success", () => {
     const { container } = render(
-      <Slider aria-label="Volume" defaultValue={[40]} intent="success" />
+      <Slider aria-label="Volume" defaultValue={[40]} variant="success" />
     );
     const range = container.querySelector("[data-slot='slider-range']");
     expect(range).toHaveClass("bg-success");
   });
 
-  it("applies destructive border/ring class to the thumb when intent=destructive", () => {
+  it("applies destructive border/ring class to the thumb when variant=destructive", () => {
     const { container } = render(
-      <Slider aria-label="Volume" defaultValue={[40]} intent="destructive" />
+      <Slider aria-label="Volume" defaultValue={[40]} variant="destructive" />
     );
     const thumb = container.querySelector("[data-slot='slider-thumb']");
     expect(thumb).toHaveClass("border-destructive");
   });
 
-  it("combines size=lg and intent=warning correctly", () => {
+  it("combines size=lg and variant=warning correctly", () => {
     const { container } = render(
       <Slider
         aria-label="Volume"
         defaultValue={[40]}
-        intent="warning"
         size="lg"
+        variant="warning"
       />
     );
     const range = container.querySelector("[data-slot='slider-range']");

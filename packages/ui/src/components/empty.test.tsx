@@ -43,16 +43,16 @@ describe("Empty", () => {
     ).toHaveAttribute("data-slot", "empty-content");
   });
 
-  it("EmptyMedia defaults to variant default", () => {
+  it("EmptyMedia defaults to media default", () => {
     render(<EmptyMedia>img</EmptyMedia>);
     const media = screen.getByText("img").closest("[data-slot=empty-icon]");
-    expect(media).toHaveAttribute("data-variant", "default");
+    expect(media).toHaveAttribute("data-media", "default");
   });
 
-  it("EmptyMedia applies icon variant", () => {
-    render(<EmptyMedia variant="icon">svg</EmptyMedia>);
+  it("EmptyMedia applies icon media", () => {
+    render(<EmptyMedia media="icon">svg</EmptyMedia>);
     const media = screen.getByText("svg").closest("[data-slot=empty-icon]");
-    expect(media).toHaveAttribute("data-variant", "icon");
+    expect(media).toHaveAttribute("data-media", "icon");
     expect(media).toHaveClass("bg-muted");
   });
 
@@ -97,9 +97,9 @@ describe("Empty border prop", () => {
 // ---------------------------------------------------------------------------
 
 describe("EmptyMedia size axis", () => {
-  it("sm size applies size-6 box class on icon variant", () => {
+  it("sm size applies size-6 box class on icon media", () => {
     render(
-      <EmptyMedia size="sm" variant="icon">
+      <EmptyMedia media="icon" size="sm">
         content
       </EmptyMedia>
     );
@@ -108,9 +108,9 @@ describe("EmptyMedia size axis", () => {
     expect(media).toHaveClass("size-6");
   });
 
-  it("default size applies size-8 box class on icon variant", () => {
+  it("default size applies size-8 box class on icon media", () => {
     render(
-      <EmptyMedia size="default" variant="icon">
+      <EmptyMedia media="icon" size="default">
         content
       </EmptyMedia>
     );
@@ -118,9 +118,9 @@ describe("EmptyMedia size axis", () => {
     expect(media).toHaveClass("size-8");
   });
 
-  it("lg size applies size-12 box class on icon variant", () => {
+  it("lg size applies size-12 box class on icon media", () => {
     render(
-      <EmptyMedia size="lg" variant="icon">
+      <EmptyMedia media="icon" size="lg">
         content
       </EmptyMedia>
     );
@@ -129,53 +129,53 @@ describe("EmptyMedia size axis", () => {
     expect(media).toHaveClass("size-12");
   });
 
-  it("size does not apply fixed box class on default variant", () => {
-    // variant=default → no compound variant fires for size, so no size-* class
-    const classes = emptyMediaVariants({ variant: "default", size: "lg" });
+  it("size does not apply fixed box class on default media", () => {
+    // media=default → no compound variant fires for size, so no size-* class
+    const classes = emptyMediaVariants({ media: "default", size: "lg" });
     expect(classes).not.toContain("size-12");
     expect(classes).not.toContain("size-8");
     expect(classes).not.toContain("size-6");
   });
 
   it("emptyMediaVariants helper reflects sm icon sizing classes", () => {
-    const classes = emptyMediaVariants({ variant: "icon", size: "sm" });
+    const classes = emptyMediaVariants({ media: "icon", size: "sm" });
     expect(classes).toContain("size-6");
   });
 
   it("emptyMediaVariants helper reflects lg icon sizing classes", () => {
-    const classes = emptyMediaVariants({ variant: "icon", size: "lg" });
+    const classes = emptyMediaVariants({ media: "icon", size: "lg" });
     expect(classes).toContain("size-12");
   });
 });
 
 // ---------------------------------------------------------------------------
-// EmptyMedia intent axis
+// EmptyMedia variant axis
 // ---------------------------------------------------------------------------
 
-describe("EmptyMedia intent axis", () => {
-  it("defaults to muted intent (bg-muted text-foreground) on icon variant", () => {
-    render(<EmptyMedia variant="icon">content</EmptyMedia>);
+describe("EmptyMedia variant axis", () => {
+  it("defaults to muted variant (bg-muted text-foreground) on icon media", () => {
+    render(<EmptyMedia media="icon">content</EmptyMedia>);
     const media = screen.getByText("content").closest("[data-slot=empty-icon]");
-    expect(media).toHaveAttribute("data-intent", "muted");
+    expect(media).toHaveAttribute("data-variant", "muted");
     expect(media).toHaveClass("bg-muted");
     expect(media).toHaveClass("text-foreground");
   });
 
-  it("info intent applies bg-info/10 and text-info-accent on icon variant", () => {
+  it("info variant applies bg-info/10 and text-info-accent on icon media", () => {
     render(
-      <EmptyMedia intent="info" variant="icon">
+      <EmptyMedia media="icon" variant="info">
         content
       </EmptyMedia>
     );
     const media = screen.getByText("content").closest("[data-slot=empty-icon]");
-    expect(media).toHaveAttribute("data-intent", "info");
+    expect(media).toHaveAttribute("data-variant", "info");
     expect(media).toHaveClass("bg-info/10");
     expect(media).toHaveClass("text-info-accent");
   });
 
-  it("success intent applies bg-success/10 and text-success-accent on icon variant", () => {
+  it("success variant applies bg-success/10 and text-success-accent on icon media", () => {
     render(
-      <EmptyMedia intent="success" variant="icon">
+      <EmptyMedia media="icon" variant="success">
         content
       </EmptyMedia>
     );
@@ -184,9 +184,9 @@ describe("EmptyMedia intent axis", () => {
     expect(media).toHaveClass("text-success-accent");
   });
 
-  it("warning intent applies bg-warning/10 and text-warning-accent on icon variant", () => {
+  it("warning variant applies bg-warning/10 and text-warning-accent on icon media", () => {
     render(
-      <EmptyMedia intent="warning" variant="icon">
+      <EmptyMedia media="icon" variant="warning">
         content
       </EmptyMedia>
     );
@@ -195,9 +195,9 @@ describe("EmptyMedia intent axis", () => {
     expect(media).toHaveClass("text-warning-accent");
   });
 
-  it("destructive intent applies bg-destructive/10 and text-destructive-accent on icon variant", () => {
+  it("destructive variant applies bg-destructive/10 and text-destructive-accent on icon media", () => {
     render(
-      <EmptyMedia intent="destructive" variant="icon">
+      <EmptyMedia media="icon" variant="destructive">
         content
       </EmptyMedia>
     );
@@ -206,15 +206,15 @@ describe("EmptyMedia intent axis", () => {
     expect(media).toHaveClass("text-destructive-accent");
   });
 
-  it("intent bg does not apply when variant=default", () => {
-    // No compound variant fires, so no intent-specific bg class
-    const classes = emptyMediaVariants({ variant: "default", intent: "info" });
+  it("variant bg does not apply when media=default", () => {
+    // No compound variant fires, so no variant-specific bg class
+    const classes = emptyMediaVariants({ media: "default", variant: "info" });
     expect(classes).not.toContain("bg-info/10");
     expect(classes).not.toContain("bg-muted");
   });
 
-  it("emptyMediaVariants helper reflects warning intent classes", () => {
-    const classes = emptyMediaVariants({ variant: "icon", intent: "warning" });
+  it("emptyMediaVariants helper reflects warning variant classes", () => {
+    const classes = emptyMediaVariants({ media: "icon", variant: "warning" });
     expect(classes).toContain("bg-warning/10");
     expect(classes).toContain("text-warning-accent");
   });

@@ -22,7 +22,7 @@ const meta = {
           "**Size** — `size` scales both the outer box and the inner check icon:",
           "`sm` (14 px), `default` (16 px), `lg` (20 px).",
           "",
-          "**Intent** — `intent` tints the border and checked background.",
+          "**Variant** — `variant` tints the border and checked background.",
           "`default` uses primary; `destructive` uses the destructive semantic token.",
           "",
           "Use `defaultChecked` for uncontrolled usage, or `checked` +",
@@ -46,7 +46,7 @@ const meta = {
       description: "Scales the box and check icon.",
       table: { defaultValue: { summary: "default" } },
     },
-    intent: {
+    variant: {
       control: "select",
       options: ["default", "destructive"],
       description: "Tints the border and checked background.",
@@ -56,7 +56,7 @@ const meta = {
   args: {
     disabled: false,
     size: "default",
-    intent: "default",
+    variant: "default",
   },
 } satisfies Meta<typeof Checkbox>;
 
@@ -135,28 +135,30 @@ export const Sizes: Story = {
 };
 
 /* ------------------------------------------------------------------ */
-/* Intents                                                             */
+/* Variants                                                            */
 /* ------------------------------------------------------------------ */
 
-/** Default vs destructive intent — unchecked and checked. */
-export const Intents: Story = {
+/** Default vs destructive variant — unchecked and checked. */
+export const Variants: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      {(["default", "destructive"] as const).map((intent) => (
-        <div className="flex items-center gap-4" key={intent}>
+      {(["default", "destructive"] as const).map((variant) => (
+        <div className="flex items-center gap-4" key={variant}>
           <div className="flex items-center gap-2">
-            <Checkbox id={`intent-${intent}-unchecked`} intent={intent} />
-            <Label htmlFor={`intent-${intent}-unchecked`}>
-              {intent} unchecked
+            <Checkbox id={`variant-${variant}-unchecked`} variant={variant} />
+            <Label htmlFor={`variant-${variant}-unchecked`}>
+              {variant} unchecked
             </Label>
           </div>
           <div className="flex items-center gap-2">
             <Checkbox
               defaultChecked
-              id={`intent-${intent}-checked`}
-              intent={intent}
+              id={`variant-${variant}-checked`}
+              variant={variant}
             />
-            <Label htmlFor={`intent-${intent}-checked`}>{intent} checked</Label>
+            <Label htmlFor={`variant-${variant}-checked`}>
+              {variant} checked
+            </Label>
           </div>
         </div>
       ))}

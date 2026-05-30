@@ -35,6 +35,48 @@ const EXEMPT = {
   // cloneElement annotations on an unknown trigger element, where there is no
   // ComponentProps equivalent — these are not component prop definitions.
   propTyping: new Set(["command-menu.tsx"]),
+  // ---- API-naming rules (§11–§14), added during the convergence tracked in
+  // docs/api-consistency-audit.md. Each set grandfathers the CURRENT violators
+  // only — any NEW component that breaks the rule fails the build. Shrink each
+  // set toward empty as components are migrated. ----
+  // §14: Base UI `render`, never Radix `asChild`. credenza.tsx is a permanent,
+  // legitimate exemption: its `asChild` lands on `DrawerTrigger`/`DrawerClose`,
+  // which are thin re-exports of vaul's primitives, and vaul's polymorphism API
+  // *is* `asChild` (there is no `render` equivalent). The desktop branch already
+  // uses `render` on the Base UI Dialog parts; only the vaul branch needs
+  // `asChild`. (tree.tsx was a false positive — its matches were the substring
+  // `hasChildItems`, not a real `asChild` prop.)
+  asChild: new Set(["credenza.tsx"]),
+  // §13: every component exports a named `*Props` type. Only the two headless
+  // components are exempt — direction.tsx re-exports Base UI's
+  // DirectionProvider (no props of its own) and checkbox-tree.tsx is a
+  // render-prop where the consumer owns the markup. Every other component
+  // already complies via the brace re-export form.
+  namedProps: new Set(["direction.tsx", "checkbox-tree.tsx"]),
+  // §11: the semantic cva axis is named `variant` (or `status`/`shape`).
+  // The intent→variant migration is complete; no files are grandfathered.
+  intentAxis: new Set([]),
+  // §12: boolean props/flags unprefixed + positively phrased.
+  boolNaming: new Set([
+    "calendar-rac.tsx",
+    "chart.tsx",
+    "checkbox-tree.tsx",
+    "code-block-command.tsx",
+    "credenza.tsx",
+    "data-grid.tsx",
+    "date-picker.tsx",
+    "date-selector.tsx",
+    "file-upload.tsx",
+    "input-with-loader.tsx",
+    "json-viewer.tsx",
+    "multiselect.tsx",
+    "navigation-rail.tsx",
+    "pagination.tsx",
+    "select-with-search.tsx",
+    "sidebar.tsx",
+    "sortable.tsx",
+    "stepper.tsx",
+  ]),
 };
 
 const RAW_COLOR =
@@ -123,6 +165,40 @@ for (const file of files) {
         )
       ) {
         add(file, "propTyping", `:${i + 1} prefer React.ComponentProps<...>`);
+      }
+    });
+  }
+
+  // Rule §14: polymorphism via Base UI `render`, never Radix `asChild`.
+  if (!EXEMPT.asChild.has(file) && /\basChild\b/.test(src)) {
+    add(file, "asChild", "uses asChild (use the Base UI render prop)");
+  }
+
+  // Rule §13: a named `*Props` type/interface is exported. Accept every export
+  // form the library uses: inline (`export type/interface XProps`), the
+  // value-and-type brace re-export (`export { X, type XProps }`), and the
+  // type-only brace block (`export type { XProps, ... }`, often multi-line).
+  // `[^}]` spans newlines, so the brace form matches across lines.
+  const exportsProps =
+    /export\s+(?:type|interface)\s+\w+Props\b/.test(src) ||
+    /export\s+(?:type\s+)?\{[^}]*\b\w+Props\b[^}]*\}/.test(src);
+  if (!(EXEMPT.namedProps.has(file) || exportsProps)) {
+    add(file, "namedProps", "no exported *Props type");
+  }
+
+  // Rule §11: the semantic cva axis is named `variant`, not `intent`.
+  if (!EXEMPT.intentAxis.has(file) && /\bintent:\s*\{/.test(src)) {
+    add(file, "intentAxis", "cva axis named `intent` (use `variant`/`status`)");
+  }
+
+  // Rule §12: boolean props/flags unprefixed + positively phrased.
+  if (!EXEMPT.boolNaming.has(file)) {
+    lines.forEach((ln, i) => {
+      if (/\b(?:is|has)[A-Z][A-Za-z]*\??:\s*boolean\b/.test(ln)) {
+        add(file, "boolNaming", `:${i + 1} ${ln.trim().slice(0, 50)}`);
+      }
+      if (/\bhide[A-Z][A-Za-z]*\??:\s*boolean\b/.test(ln)) {
+        add(file, "boolNaming", `:${i + 1} ${ln.trim().slice(0, 50)}`);
       }
     });
   }

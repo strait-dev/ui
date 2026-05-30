@@ -91,6 +91,8 @@ PostCSS setup:
 - **Semantic tokens everywhere** — components style themselves with intent tokens
   (`bg-success/10`, `text-destructive-accent`, `var(--chart-1..5)`), so re-theming is a
   tokens-only change and dark mode comes for free.
+- **One-token rebrand** — set `--brand` to any color and the foreground, soft/outline
+  accent, chart, and sidebar tokens derive from it automatically (light + dark).
 - **Composable by default** — every component forwards `className`, exposes `data-slot`
   sub-parts, and uses Base UI's polymorphic `render` prop where an element needs to change.
 - **Typed end to end** — React 19, TypeScript, and named `Props` types for every component.

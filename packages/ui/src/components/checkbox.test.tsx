@@ -92,20 +92,24 @@ describe("Checkbox", () => {
   });
 
   /* ------------------------------------------------------------------ */
-  /* Intent variant                                                      */
+  /* Variant variant                                                     */
   /* ------------------------------------------------------------------ */
 
-  it("applies destructive border class when intent=destructive", () => {
+  it("applies destructive border class when variant=destructive", () => {
     const { container } = render(
-      <Checkbox aria-label="Delete" intent="destructive" />
+      <Checkbox aria-label="Delete" variant="destructive" />
     );
     const checkbox = container.querySelector("[data-slot='checkbox']");
     expect(checkbox).toHaveClass("border-destructive");
   });
 
-  it("renders with size=sm and intent=destructive together", () => {
+  it("renders with size=sm and variant=destructive together", () => {
     const { container } = render(
-      <Checkbox aria-label="Small destructive" intent="destructive" size="sm" />
+      <Checkbox
+        aria-label="Small destructive"
+        size="sm"
+        variant="destructive"
+      />
     );
     const checkbox = container.querySelector("[data-slot='checkbox']");
     expect(checkbox).toHaveClass("size-3.5");

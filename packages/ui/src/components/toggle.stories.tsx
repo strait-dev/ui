@@ -9,13 +9,13 @@ import type { ComponentProps } from "react";
 
 import { Toggle } from "./toggle";
 
-type ToggleVariant = NonNullable<ComponentProps<typeof Toggle>["variant"]>;
+type ToggleEmphasis = NonNullable<ComponentProps<typeof Toggle>["emphasis"]>;
 type ToggleSize = NonNullable<ComponentProps<typeof Toggle>["size"]>;
-type ToggleIntent = NonNullable<ComponentProps<typeof Toggle>["intent"]>;
+type ToggleVariant = NonNullable<ComponentProps<typeof Toggle>["variant"]>;
 
-const variantOptions: ToggleVariant[] = ["default", "outline"];
+const emphasisOptions: ToggleEmphasis[] = ["default", "outline"];
 const sizeOptions: ToggleSize[] = ["xs", "sm", "default", "lg", "xl"];
-const intentOptions: ToggleIntent[] = [
+const variantOptions: ToggleVariant[] = [
   "default",
   "destructive",
   "success",
@@ -40,16 +40,16 @@ const meta = {
           "**Size** — five presets: `xs` (24 px), `sm` (28 px), `default` (32 px),",
           "`lg` (36 px), `xl` (40 px).",
           "",
-          "**Intent** — five colour treatments for the pressed/active state:",
+          "**Variant** — five colour treatments for the pressed/active state:",
           "`default` (muted), `destructive`, `success`, `info`, `warning`.",
         ].join("\n"),
       },
     },
   },
   argTypes: {
-    variant: {
+    emphasis: {
       control: "select",
-      options: variantOptions,
+      options: emphasisOptions,
       description: "Visual style.",
       table: { defaultValue: { summary: "default" } },
     },
@@ -59,9 +59,9 @@ const meta = {
       description: "Height/padding preset.",
       table: { defaultValue: { summary: "default" } },
     },
-    intent: {
+    variant: {
       control: "select",
-      options: intentOptions,
+      options: variantOptions,
       description: "Tints the pressed/active state.",
       table: { defaultValue: { summary: "default" } },
     },
@@ -72,9 +72,9 @@ const meta = {
     },
   },
   args: {
-    variant: "default",
+    emphasis: "default",
     size: "default",
-    intent: "default",
+    variant: "default",
     "aria-label": "Toggle bold",
     children: <HugeiconsIcon icon={TextBoldIcon} />,
   },
@@ -88,11 +88,11 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {};
 
 /** The two visual styles. */
-export const Variants: Story = {
+export const Emphasis: Story = {
   render: (args) => (
     <div className="flex items-center gap-3">
-      {variantOptions.map((variant) => (
-        <Toggle {...args} key={variant} variant={variant} />
+      {emphasisOptions.map((emphasis) => (
+        <Toggle {...args} emphasis={emphasis} key={emphasis} />
       ))}
     </div>
   ),
@@ -103,23 +103,23 @@ export const Sizes: Story = {
   render: (args) => (
     <div className="flex items-center gap-3">
       {sizeOptions.map((size) => (
-        <Toggle {...args} key={size} size={size} variant="outline" />
+        <Toggle {...args} emphasis="outline" key={size} size={size} />
       ))}
     </div>
   ),
 };
 
-/** All five intent colours — shown in the pressed/on state. */
-export const Intents: Story = {
+/** All five variant colours — shown in the pressed/on state. */
+export const Variants: Story = {
   render: (args) => (
     <div className="flex items-center gap-3">
-      {intentOptions.map((intent) => (
+      {variantOptions.map((variant) => (
         <Toggle
           {...args}
           defaultPressed
-          intent={intent}
-          key={intent}
-          variant="outline"
+          emphasis="outline"
+          key={variant}
+          variant={variant}
         />
       ))}
     </div>
@@ -130,15 +130,15 @@ export const Intents: Story = {
 export const States: Story = {
   render: (args) => (
     <div className="flex items-center gap-3">
-      <Toggle {...args} aria-label="Off" variant="outline" />
-      <Toggle {...args} aria-label="On" defaultPressed variant="outline" />
-      <Toggle {...args} aria-label="Disabled" disabled variant="outline" />
+      <Toggle {...args} aria-label="Off" emphasis="outline" />
+      <Toggle {...args} aria-label="On" defaultPressed emphasis="outline" />
+      <Toggle {...args} aria-label="Disabled" disabled emphasis="outline" />
       <Toggle
         {...args}
         aria-label="Disabled on"
         defaultPressed
         disabled
-        variant="outline"
+        emphasis="outline"
       />
     </div>
   ),
@@ -151,7 +151,7 @@ export const WithText: Story = {
     children: undefined,
   },
   render: (args) => (
-    <Toggle {...args} aria-label="Italic" variant="outline">
+    <Toggle {...args} aria-label="Italic" emphasis="outline">
       <HugeiconsIcon icon={TextItalicIcon} />
       Italic
     </Toggle>
@@ -163,13 +163,13 @@ export const IconOnly: Story = {
   args: { children: undefined },
   render: (args) => (
     <div className="flex items-center gap-3">
-      <Toggle {...args} aria-label="Bold" variant="outline">
+      <Toggle {...args} aria-label="Bold" emphasis="outline">
         <HugeiconsIcon icon={TextBoldIcon} />
       </Toggle>
-      <Toggle {...args} aria-label="Italic" variant="outline">
+      <Toggle {...args} aria-label="Italic" emphasis="outline">
         <HugeiconsIcon icon={TextItalicIcon} />
       </Toggle>
-      <Toggle {...args} aria-label="Underline" variant="outline">
+      <Toggle {...args} aria-label="Underline" emphasis="outline">
         <HugeiconsIcon icon={TextUnderlineIcon} />
       </Toggle>
     </div>

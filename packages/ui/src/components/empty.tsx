@@ -31,7 +31,7 @@ export interface EmptyProps extends React.ComponentProps<"div"> {
  * ```tsx
  * <Empty>
  *   <EmptyHeader>
- *     <EmptyMedia variant="icon">
+ *     <EmptyMedia media="icon">
  *       <FolderIcon />
  *     </EmptyMedia>
  *     <EmptyTitle>No files yet</EmptyTitle>
@@ -85,22 +85,22 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
  *
  * Exposes three axes:
  *
- * - `variant` — `"default"` is transparent and suits illustrations or custom
+ * - `media` — `"default"` is transparent and suits illustrations or custom
  *   imagery; `"icon"` wraps the child in a rounded square with chrome colours
- *   controlled by the `intent` axis.
+ *   controlled by the `variant` axis.
  *
  * - `size` — `"sm"` / `"default"` / `"lg"` scale the container and its
- *   child SVG. Size only applies a fixed box dimension when `variant="icon"`;
- *   for `variant="default"` the container is unsized.
+ *   child SVG. Size only applies a fixed box dimension when `media="icon"`;
+ *   for `media="default"` the container is unsized.
  *
- * - `intent` — `"muted"` (default) | `"info"` | `"success"` | `"warning"` |
- *   `"destructive"`. Intent colours only apply when `variant="icon"`.
+ * - `variant` — `"muted"` (default) | `"info"` | `"success"` | `"warning"` |
+ *   `"destructive"`. Variant colours only apply when `media="icon"`.
  */
 const emptyMediaVariants = cva(
   "mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
-      variant: {
+      media: {
         default: "bg-transparent",
         icon: "flex items-center justify-center rounded-lg",
       },
@@ -109,7 +109,7 @@ const emptyMediaVariants = cva(
         default: "",
         lg: "",
       },
-      intent: {
+      variant: {
         muted: "",
         info: "",
         success: "",
@@ -118,53 +118,53 @@ const emptyMediaVariants = cva(
       },
     },
     compoundVariants: [
-      // ── size × variant=icon ──────────────────────────────────────────────
+      // ── size × media=icon ────────────────────────────────────────────────
       {
-        variant: "icon",
+        media: "icon",
         size: "sm",
         className: "size-6 [&_svg:not([class*='size-'])]:size-3.5",
       },
       {
-        variant: "icon",
+        media: "icon",
         size: "default",
         className: "size-8 [&_svg:not([class*='size-'])]:size-4",
       },
       {
-        variant: "icon",
+        media: "icon",
         size: "lg",
         className: "size-12 [&_svg:not([class*='size-'])]:size-6",
       },
-      // ── intent × variant=icon ────────────────────────────────────────────
+      // ── variant × media=icon ─────────────────────────────────────────────
       {
-        variant: "icon",
-        intent: "muted",
+        media: "icon",
+        variant: "muted",
         className: "bg-muted text-foreground",
       },
       {
-        variant: "icon",
-        intent: "info",
+        media: "icon",
+        variant: "info",
         className: "bg-info/10 text-info-accent",
       },
       {
-        variant: "icon",
-        intent: "success",
+        media: "icon",
+        variant: "success",
         className: "bg-success/10 text-success-accent",
       },
       {
-        variant: "icon",
-        intent: "warning",
+        media: "icon",
+        variant: "warning",
         className: "bg-warning/10 text-warning-accent",
       },
       {
-        variant: "icon",
-        intent: "destructive",
+        media: "icon",
+        variant: "destructive",
         className: "bg-destructive/10 text-destructive-accent",
       },
     ],
     defaultVariants: {
-      variant: "default",
+      media: "default",
       size: "default",
-      intent: "muted",
+      variant: "muted",
     },
   }
 );
@@ -174,29 +174,29 @@ const emptyMediaVariants = cva(
  * image, or icon container styled via {@link emptyMediaVariants}.
  *
  * @remarks
- * Use `variant="icon"` to wrap a small SVG in a tinted rounded chip. Pair
+ * Use `media="icon"` to wrap a small SVG in a tinted rounded chip. Pair
  * with `size` (`"sm"` | `"default"` | `"lg"`) to control the chip dimensions
- * and with `intent` to apply semantic colour (`"muted"` | `"info"` |
+ * and with `variant` to apply semantic colour (`"muted"` | `"info"` |
  * `"success"` | `"warning"` | `"destructive"`).
  *
  * @example Info icon, large
  * ```tsx
- * <EmptyMedia variant="icon" size="lg" intent="info">
+ * <EmptyMedia media="icon" size="lg" variant="info">
  *   <InfoCircleIcon />
  * </EmptyMedia>
  * ```
  */
 function EmptyMedia({
   className,
-  variant = "default",
+  media = "default",
   size = "default",
-  intent = "muted",
+  variant = "muted",
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof emptyMediaVariants>) {
   return (
     <div
-      className={cn(emptyMediaVariants({ variant, size, intent, className }))}
-      data-intent={intent}
+      className={cn(emptyMediaVariants({ media, size, variant, className }))}
+      data-media={media}
       data-size={size}
       data-slot="empty-icon"
       data-variant={variant}

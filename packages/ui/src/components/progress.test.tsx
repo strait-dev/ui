@@ -68,8 +68,8 @@ describe("Progress", () => {
     expect(track).toHaveClass("h-2.5");
   });
 
-  it("intent success applies bg-success to the progress indicator", () => {
-    const { container } = render(<Progress intent="success" value={50} />);
+  it("variant success applies bg-success to the progress indicator", () => {
+    const { container } = render(<Progress value={50} variant="success" />);
     const indicator = container.querySelector(
       '[data-slot="progress-indicator"]'
     );

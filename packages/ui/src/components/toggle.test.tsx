@@ -31,9 +31,9 @@ describe("Toggle", () => {
     expect(onPressedChange).toHaveBeenCalledWith(true, expect.anything());
   });
 
-  it("applies outline variant classes when variant is outline", () => {
+  it("applies outline emphasis classes when emphasis is outline", () => {
     render(
-      <Toggle aria-label="Italic" variant="outline">
+      <Toggle aria-label="Italic" emphasis="outline">
         I
       </Toggle>
     );
@@ -58,7 +58,7 @@ describe("Toggle", () => {
 
   it("exposes a toggleVariants helper", () => {
     expect(toggleVariants({ size: "lg" })).toContain("h-9");
-    expect(toggleVariants({ variant: "outline" })).toContain("border-input");
+    expect(toggleVariants({ emphasis: "outline" })).toContain("border-input");
   });
 
   /* ------------------------------------------------------------------ */
@@ -93,26 +93,26 @@ describe("Toggle", () => {
   });
 
   /* ------------------------------------------------------------------ */
-  /* Intent variant                                                      */
+  /* Variant axis                                                        */
   /* ------------------------------------------------------------------ */
 
-  it("includes destructive pressed class when intent=destructive", () => {
-    const classes = toggleVariants({ intent: "destructive" });
+  it("includes destructive pressed class when variant=destructive", () => {
+    const classes = toggleVariants({ variant: "destructive" });
     expect(classes).toContain("aria-pressed:bg-destructive");
   });
 
-  it("includes success pressed class when intent=success", () => {
-    const classes = toggleVariants({ intent: "success" });
+  it("includes success pressed class when variant=success", () => {
+    const classes = toggleVariants({ variant: "success" });
     expect(classes).toContain("aria-pressed:bg-success");
   });
 
-  it("includes warning pressed class when intent=warning", () => {
-    const classes = toggleVariants({ intent: "warning" });
+  it("includes warning pressed class when variant=warning", () => {
+    const classes = toggleVariants({ variant: "warning" });
     expect(classes).toContain("aria-pressed:bg-warning");
   });
 
-  it("includes info pressed class when intent=info", () => {
-    const classes = toggleVariants({ intent: "info" });
+  it("includes info pressed class when variant=info", () => {
+    const classes = toggleVariants({ variant: "info" });
     expect(classes).toContain("aria-pressed:bg-info");
   });
 });

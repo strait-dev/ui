@@ -35,10 +35,10 @@ const meta = {
           "empty states with icons, copy, and call-to-action buttons.",
           "",
           "`EmptyMedia` accepts:",
-          "- `variant`: `default` (transparent background) or `icon` (rounded chip).",
+          "- `media`: `default` (transparent background) or `icon` (rounded chip).",
           "- `size`: `sm` | `default` | `lg` — scales the icon chip and its SVG child.",
-          "- `intent`: `muted` | `info` | `success` | `warning` | `destructive` —",
-          '  applies semantic tint colours; only meaningful when `variant="icon"`.',
+          "- `variant`: `muted` | `info` | `success` | `warning` | `destructive` —",
+          '  applies semantic tint colours; only meaningful when `media="icon"`.',
           "",
           "`Empty` accepts a `border` prop (default `true`) that toggles a",
           "`border border-dashed` outline around the container.",
@@ -87,12 +87,12 @@ export const Playground: Story = {
   ),
 };
 
-/** `EmptyMedia` with the `icon` variant — muted rounded chip. */
+/** `EmptyMedia` with the `icon` media — muted rounded chip. */
 export const WithIconVariant: Story = {
   render: (args) => (
     <Empty className="min-h-64 w-96" {...args}>
       <EmptyHeader>
-        <EmptyMedia variant="icon">
+        <EmptyMedia media="icon">
           <HugeiconsIcon icon={FolderIcon} />
         </EmptyMedia>
         <EmptyTitle>No projects found</EmptyTitle>
@@ -165,7 +165,7 @@ export const Borderless: Story = {
 
 /**
  * Three sizes of the icon chip — `sm`, `default`, and `lg` — side by side.
- * Size only applies when `variant="icon"`.
+ * Size only applies when `media="icon"`.
  */
 export const IconSizes: Story = {
   render: () => (
@@ -173,7 +173,7 @@ export const IconSizes: Story = {
       {(["sm", "default", "lg"] as const).map((size) => (
         <Empty border className="min-h-40 w-36" key={size}>
           <EmptyHeader>
-            <EmptyMedia size={size} variant="icon">
+            <EmptyMedia media="icon" size={size}>
               <HugeiconsIcon icon={FolderIcon} />
             </EmptyMedia>
             <EmptyTitle>{size}</EmptyTitle>
@@ -185,24 +185,24 @@ export const IconSizes: Story = {
 };
 
 /**
- * All five intent tints on the icon chip.
- * Intent colours are only applied when `variant="icon"`.
+ * All five variant tints on the icon chip.
+ * Variant colours are only applied when `media="icon"`.
  */
-export const IconIntents: Story = {
+export const IconVariants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
       {(
         [
-          { intent: "muted", label: "Muted", icon: InboxIcon },
-          { intent: "info", label: "Info", icon: InformationCircleIcon },
-          { intent: "success", label: "Success", icon: FolderOpenIcon },
-          { intent: "warning", label: "Warning", icon: Alert02Icon },
-          { intent: "destructive", label: "Destructive", icon: FolderIcon },
+          { variant: "muted", label: "Muted", icon: InboxIcon },
+          { variant: "info", label: "Info", icon: InformationCircleIcon },
+          { variant: "success", label: "Success", icon: FolderOpenIcon },
+          { variant: "warning", label: "Warning", icon: Alert02Icon },
+          { variant: "destructive", label: "Destructive", icon: FolderIcon },
         ] as const
-      ).map(({ intent, label, icon }) => (
-        <Empty border className="min-h-44 w-40" key={intent}>
+      ).map(({ variant, label, icon }) => (
+        <Empty border className="min-h-44 w-40" key={variant}>
           <EmptyHeader>
-            <EmptyMedia intent={intent} variant="icon">
+            <EmptyMedia media="icon" variant={variant}>
               <HugeiconsIcon icon={icon} />
             </EmptyMedia>
             <EmptyTitle>{label}</EmptyTitle>
@@ -219,7 +219,7 @@ export const Gallery: Story = {
     <div className="grid grid-cols-2 gap-4">
       <Empty border className="min-h-52">
         <EmptyHeader>
-          <EmptyMedia variant="icon">
+          <EmptyMedia media="icon">
             <HugeiconsIcon icon={InboxIcon} />
           </EmptyMedia>
           <EmptyTitle>Empty inbox</EmptyTitle>
@@ -229,7 +229,7 @@ export const Gallery: Story = {
 
       <Empty border className="min-h-52">
         <EmptyHeader>
-          <EmptyMedia variant="icon">
+          <EmptyMedia media="icon">
             <HugeiconsIcon icon={FolderOpenIcon} />
           </EmptyMedia>
           <EmptyTitle>No files</EmptyTitle>

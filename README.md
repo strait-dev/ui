@@ -94,7 +94,28 @@ import { ThemeProvider } from "next-themes";
 </ThemeProvider>;
 ```
 
-### 3. (Optional) extend the Tailwind config
+### 3. (Optional) set a custom brand color
+
+`--brand` is the single source of truth for the accent. Set it to any color
+format after importing the stylesheet and the rest of the brand system —
+`--brand-foreground` (contrast-flipped text on the fill), `--brand-accent`
+(legible text for soft/outline variants), the first chart color, and the active
+sidebar rail — derives from it automatically:
+
+```css
+@import "@strait/ui/css";
+
+:root {
+  --brand: #6366f1; /* hex, rgb(), or oklch() — that's the whole rebrand */
+}
+```
+
+The same value applies to light and dark mode, and every derived token stays
+individually overridable. (`--brand` is the accent; `--primary` is the warm-ink
+default-button color.) See the **Theming** story in Storybook for the full
+token reference.
+
+### 4. (Optional) extend the Tailwind config
 
 If your own app uses Tailwind and you want to consume the same tokens, the package exports
 its config and PostCSS setup:
