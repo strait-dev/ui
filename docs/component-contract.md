@@ -176,6 +176,86 @@ box.) Don't introduce `h-9`/`rounded-md` for new form controls.
 
 ---
 
+### 10. Size scale
+
+Components with a `size` axis expose a **contiguous subset** of the canonical
+scale, always written in this order:
+
+```
+xs · sm · default · lg · xl
+```
+
+- `default` is the unmarked middle step — never rename it to `md`.
+- Don't reorder (`default | sm | xs` ❌) or invent steps outside the scale.
+- Two documented, namespaced extensions are allowed where a primitive truly
+  needs them:
+  - **Overlay width** (`Dialog`, `Alert Dialog`) may add `full`.
+  - **Square/icon controls** (`Button`) may add the `icon` / `icon-{step}`
+    family — a *shape* modifier that rides alongside size.
+
+✅ `size: sm | default | lg`
+❌ `size: default | sm | xs | xl` (out of order) / `size: md` (renamed default)
+
+---
+
+### 11. Variant axis naming
+
+The semantic axis a component varies on is named **`variant`** — not `intent`.
+A flattened colour×fill enum (Button's `brand-solid | brand | brand-outline | …`)
+is acceptable and is the gold standard; the rule is about the *axis name*, not
+the shape of its values.
+
+When an axis encodes a genuinely different concept, name it for that concept
+rather than overloading `variant`/`intent`:
+
+- **Presence/status** (Avatar's `online | busy | away | offline`) → `status`.
+- **Shape** (`circle | rounded | square`) → `shape`.
+
+✅ `variant: "brand-solid"` · `status: "online"`
+❌ `intent: "brand"` · `intent: "online"`
+
+---
+
+### 12. Boolean prop naming
+
+Boolean props are **unprefixed and positively phrased**.
+
+- No `is*` / `has*` prefix: `loading`, not `isLoading`; `active`, not `isActive`;
+  `required`, not `isRequired`.
+- Positive polarity (default `false` means "off"): `showIcon`, not `hideIcon`;
+  `showGridLines`, not `hideGridLines`. A `hide*` prop forces double-negatives
+  (`hideIcon={false}`) on consumers.
+
+The rule applies to boolean declarations in component files (public props and
+internal flags alike) so the vocabulary stays uniform.
+
+✅ `loading?: boolean` · `showIcon?: boolean`
+❌ `isLoading?: boolean` · `hideIcon?: boolean`
+
+---
+
+### 13. Named props type
+
+Every component exports a named `*Props` type/interface (e.g. `ButtonProps`) so
+consumers can import and extend it. Exempt: provider re-exports and pure
+render-prop components that declare no props of their own (`direction`,
+`checkbox-tree`).
+
+✅ `export interface ButtonProps extends ...`
+❌ props typed inline with no exported alias
+
+---
+
+### 14. Polymorphism via `render`
+
+Components that can render as a different element use Base UI's `render` prop,
+never Radix-style `asChild`.
+
+✅ `<DialogTrigger render={<Button />} />`
+❌ `<DialogTrigger asChild><Button /></DialogTrigger>`
+
+---
+
 ## Enforcement
 
 | Rule | Check id in `check-conventions.mjs` |
@@ -187,6 +267,17 @@ box.) Don't introduce `h-9`/`rounded-md` for new form controls.
 | `"use client"` (§7) | `useClient` |
 | `data-slot` (§6) | `dataSlot` |
 | Prop typing (§8) | `propTyping` |
+| Variant axis name (§11) | `intentAxis` |
+| Boolean naming (§12) | `boolNaming` |
+| Named props type (§13) | `namedProps` |
+| Polymorphism (§14) | `asChild` |
+
+Rules §10–§14 were added during the API-consistency convergence
+(`docs/api-consistency-audit.md`). The pre-existing violators are grandfathered
+in the `EXEMPT` map so the rules fail only on **new** drift; each grandfather set
+shrinks to empty as components are migrated. (§10 size scale is documented but
+not yet machine-checked — it needs cva-axis value parsing, tracked for a later
+slice.)
 
 Exemptions live in the `EXEMPT` map in the script, each with a one-line
 justification. Add an exemption only when a rule genuinely doesn't apply (e.g.

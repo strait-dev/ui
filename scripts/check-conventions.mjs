@@ -35,6 +35,74 @@ const EXEMPT = {
   // cloneElement annotations on an unknown trigger element, where there is no
   // ComponentProps equivalent — these are not component prop definitions.
   propTyping: new Set(["command-menu.tsx"]),
+  // ---- API-naming rules (§11–§14), added during the convergence tracked in
+  // docs/api-consistency-audit.md. Each set grandfathers the CURRENT violators
+  // only — any NEW component that breaks the rule fails the build. Shrink each
+  // set toward empty as components are migrated. ----
+  // §14: Base UI `render`, never Radix `asChild`.
+  asChild: new Set(["credenza.tsx", "tree.tsx"]),
+  // §13: every component exports a named `*Props` type. direction.tsx and
+  // checkbox-tree.tsx are legitimately exempt (provider / render-prop); the
+  // rest are grandfathered drift to migrate.
+  namedProps: new Set([
+    "activity-feed.tsx",
+    "badge.tsx",
+    "banner.tsx",
+    "bar-list.tsx",
+    "bulk-action-bar.tsx",
+    "card-checkbox.tsx",
+    "chart-empty-state.tsx",
+    "chart.tsx",
+    "code-block.tsx",
+    "config-row.tsx",
+    "copy-button.tsx",
+    "date-picker.tsx",
+    "detail-sheet.tsx",
+    "direction.tsx",
+    "execution-trace-bar.tsx",
+    "feature-lock.tsx",
+    "input-with-inline-button.tsx",
+    "json-viewer.tsx",
+    "metric-card.tsx",
+    "radial-gauge.tsx",
+    "relative-time-card.tsx",
+    "secret-input.tsx",
+    "shell.tsx",
+    "spinner.tsx",
+    "tag-group.tsx",
+    "timeline.tsx",
+    "tracker.tsx",
+  ]),
+  // §11: the semantic cva axis is named `variant` (or `status`/`shape`).
+  intentAxis: new Set([
+    "avatar.tsx",
+    "checkbox.tsx",
+    "empty.tsx",
+    "progress.tsx",
+    "slider.tsx",
+    "toggle.tsx",
+  ]),
+  // §12: boolean props/flags unprefixed + positively phrased.
+  boolNaming: new Set([
+    "calendar-rac.tsx",
+    "chart.tsx",
+    "checkbox-tree.tsx",
+    "code-block-command.tsx",
+    "credenza.tsx",
+    "data-grid.tsx",
+    "date-picker.tsx",
+    "date-selector.tsx",
+    "file-upload.tsx",
+    "input-with-loader.tsx",
+    "json-viewer.tsx",
+    "multiselect.tsx",
+    "navigation-rail.tsx",
+    "pagination.tsx",
+    "select-with-search.tsx",
+    "sidebar.tsx",
+    "sortable.tsx",
+    "stepper.tsx",
+  ]),
 };
 
 const RAW_COLOR =
@@ -123,6 +191,38 @@ for (const file of files) {
         )
       ) {
         add(file, "propTyping", `:${i + 1} prefer React.ComponentProps<...>`);
+      }
+    });
+  }
+
+  // Rule §14: polymorphism via Base UI `render`, never Radix `asChild`.
+  if (!EXEMPT.asChild.has(file) && /\basChild\b/.test(src)) {
+    add(file, "asChild", "uses asChild (use the Base UI render prop)");
+  }
+
+  // Rule §13: a named `*Props` type/interface is exported.
+  if (
+    !(
+      EXEMPT.namedProps.has(file) ||
+      /export\s+(?:type|interface)\s+\w+Props\b/.test(src)
+    )
+  ) {
+    add(file, "namedProps", "no exported *Props type");
+  }
+
+  // Rule §11: the semantic cva axis is named `variant`, not `intent`.
+  if (!EXEMPT.intentAxis.has(file) && /\bintent:\s*\{/.test(src)) {
+    add(file, "intentAxis", "cva axis named `intent` (use `variant`/`status`)");
+  }
+
+  // Rule §12: boolean props/flags unprefixed + positively phrased.
+  if (!EXEMPT.boolNaming.has(file)) {
+    lines.forEach((ln, i) => {
+      if (/\b(?:is|has)[A-Z][A-Za-z]*\??:\s*boolean\b/.test(ln)) {
+        add(file, "boolNaming", `:${i + 1} ${ln.trim().slice(0, 50)}`);
+      }
+      if (/\bhide[A-Z][A-Za-z]*\??:\s*boolean\b/.test(ln)) {
+        add(file, "boolNaming", `:${i + 1} ${ln.trim().slice(0, 50)}`);
       }
     });
   }
