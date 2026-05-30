@@ -28,14 +28,14 @@ const meta = {
           "**Size** — five presets cascade from the group to every item:",
           "`xs`, `sm`, `default`, `lg`, `xl`.",
           "",
-          "**Intent** — set once on the group; every item inherits the pressed-state",
+          "**Variant** — set once on the group; every item inherits the pressed-state",
           "colour: `default`, `destructive`, `success`, `info`, `warning`.",
         ].join("\n"),
       },
     },
   },
   argTypes: {
-    variant: {
+    emphasis: {
       control: "select",
       options: ["default", "outline"],
       description: "Visual style — filled `default` or bordered `outline`.",
@@ -47,7 +47,7 @@ const meta = {
       description: "Control height — `xs`, `sm`, `default`, `lg`, or `xl`.",
       table: { defaultValue: { summary: "default" } },
     },
-    intent: {
+    variant: {
       control: "select",
       options: ["default", "destructive", "success", "info", "warning"],
       description: "Tints each item's pressed/active state.",
@@ -69,9 +69,9 @@ const meta = {
     },
   },
   args: {
-    variant: "outline",
+    emphasis: "outline",
     size: "default",
-    intent: "default",
+    variant: "default",
     orientation: "horizontal",
   },
 } satisfies Meta<typeof ToggleGroup>;
@@ -101,13 +101,13 @@ export const Playground: Story = {
 };
 
 /** `default` vs `outline`, both joined into a single control. */
-export const Variants: Story = {
+export const Emphasis: Story = {
   render: (args) => (
     <div className="flex flex-col items-center gap-4">
-      <ToggleGroup {...args} defaultValue={["left"]} variant="default">
+      <ToggleGroup {...args} defaultValue={["left"]} emphasis="default">
         {alignItems}
       </ToggleGroup>
-      <ToggleGroup {...args} defaultValue={["left"]} variant="outline">
+      <ToggleGroup {...args} defaultValue={["left"]} emphasis="outline">
         {alignItems}
       </ToggleGroup>
     </div>
@@ -127,17 +127,17 @@ export const Sizes: Story = {
   ),
 };
 
-/** Five intent colours — pressed items use the matching semantic token. */
-export const Intents: Story = {
+/** Five variant colours — pressed items use the matching semantic token. */
+export const Variants: Story = {
   render: (args) => (
     <div className="flex flex-col items-center gap-4">
       {(["default", "destructive", "success", "info", "warning"] as const).map(
-        (intent) => (
+        (variant) => (
           <ToggleGroup
             {...args}
             defaultValue={["center"]}
-            intent={intent}
-            key={intent}
+            key={variant}
+            variant={variant}
           >
             {alignItems}
           </ToggleGroup>

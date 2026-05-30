@@ -8,7 +8,7 @@ import { cn } from "../utils/index";
 import { toggleVariants } from "./toggle";
 
 /**
- * Internal context that distributes shared `variant`, `size`, `intent`,
+ * Internal context that distributes shared `emphasis`, `size`, `variant`,
  * `spacing`, and `orientation` values from {@link ToggleGroup} down to every
  * {@link ToggleGroupItem} without requiring per-item prop drilling.
  */
@@ -19,8 +19,8 @@ const ToggleGroupContext = React.createContext<
   }
 >({
   size: "default",
+  emphasis: "default",
   variant: "default",
-  intent: "default",
   spacing: 0,
   orientation: "horizontal",
 });
@@ -53,7 +53,7 @@ export type ToggleGroupProps = ToggleGroupPrimitive.Props &
  * {@link ToggleGroupContext}.
  *
  * @remarks
- * - `variant`, `size`, and `intent` cascade to items; individual items can
+ * - `emphasis`, `size`, and `variant` cascade to items; individual items can
  *   override them only when the context values are absent.
  * - `spacing` (a positive integer, default `0`) sets the gap between items
  *   via a CSS custom property. When `0`, items are fused edge-to-edge with
@@ -63,12 +63,12 @@ export type ToggleGroupProps = ToggleGroupPrimitive.Props &
  *   because `role="group"` does not allow that attribute.
  * - `size` accepts `"xs"`, `"sm"`, `"default"`, `"lg"`, `"xl"` (mirroring
  *   the expanded {@link Toggle} size axis).
- * - `intent` tints each item's pressed/active state with a semantic colour
+ * - `variant` tints each item's pressed/active state with a semantic colour
  *   token; set once on the group to apply uniformly.
  *
  * @example
  * ```tsx
- * <ToggleGroup type="multiple" variant="outline" size="sm" intent="success">
+ * <ToggleGroup type="multiple" emphasis="outline" size="sm" variant="success">
  *   <ToggleGroupItem value="bold" aria-label="Bold">
  *     <BoldIcon />
  *   </ToggleGroupItem>
@@ -81,9 +81,9 @@ export type ToggleGroupProps = ToggleGroupPrimitive.Props &
 
 function ToggleGroup({
   className,
+  emphasis,
   variant,
   size,
-  intent,
   spacing = 0,
   orientation = "horizontal",
   children,
@@ -98,7 +98,7 @@ function ToggleGroup({
         "group/toggle-group flex w-fit flex-row items-center gap-[--spacing(var(--gap))] rounded-lg data-vertical:flex-col data-vertical:items-stretch data-[size=sm]:rounded-[min(var(--radius-md),10px)]",
         className
       )}
-      data-intent={intent}
+      data-emphasis={emphasis}
       data-orientation={orientation}
       data-size={size}
       data-slot="toggle-group"
@@ -108,7 +108,7 @@ function ToggleGroup({
       {...props}
     >
       <ToggleGroupContext.Provider
-        value={{ variant, size, intent, spacing, orientation }}
+        value={{ emphasis, variant, size, spacing, orientation }}
       >
         {children}
       </ToggleGroupContext.Provider>
@@ -119,7 +119,7 @@ function ToggleGroup({
 /**
  * Individual selectable item within a {@link ToggleGroup}.
  *
- * Inherits `variant`, `size`, `intent`, and `spacing` from
+ * Inherits `emphasis`, `variant`, `size`, and `spacing` from
  * {@link ToggleGroupContext}; per-item props serve as fallbacks when the
  * context values are absent. Border-collapsing and corner-rounding are handled
  * automatically based on the item's position and the group's spacing setting.
@@ -127,9 +127,9 @@ function ToggleGroup({
 function ToggleGroupItem({
   className,
   children,
+  emphasis = "default",
   variant = "default",
   size = "default",
-  intent = "default",
   ...props
 }: TogglePrimitive.Props & VariantProps<typeof toggleVariants>) {
   const context = React.useContext(ToggleGroupContext);
@@ -137,15 +137,15 @@ function ToggleGroupItem({
   return (
     <TogglePrimitive
       className={cn(
-        "shrink-0 focus:z-10 focus-visible:z-10 group-data-[spacing=0]/toggle-group:rounded-none group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-[spacing=0]/toggle-group:px-2 group-data-horizontal/toggle-group:data-[spacing=0]:last:rounded-r-lg group-data-vertical/toggle-group:data-[spacing=0]:last:rounded-b-lg group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l group-data-vertical/toggle-group:data-[spacing=0]:first:rounded-t-lg group-data-horizontal/toggle-group:data-[spacing=0]:first:rounded-l-lg",
+        "shrink-0 focus:z-10 focus-visible:z-10 group-data-[spacing=0]/toggle-group:rounded-none group-data-vertical/toggle-group:data-[spacing=0]:data-[emphasis=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[emphasis=outline]:border-l-0 group-data-[spacing=0]/toggle-group:px-2 group-data-horizontal/toggle-group:data-[spacing=0]:last:rounded-r-lg group-data-vertical/toggle-group:data-[spacing=0]:last:rounded-b-lg group-data-vertical/toggle-group:data-[spacing=0]:data-[emphasis=outline]:first:border-t group-data-horizontal/toggle-group:data-[spacing=0]:data-[emphasis=outline]:first:border-l group-data-vertical/toggle-group:data-[spacing=0]:first:rounded-t-lg group-data-horizontal/toggle-group:data-[spacing=0]:first:rounded-l-lg",
         toggleVariants({
+          emphasis: context.emphasis ?? emphasis,
           variant: context.variant ?? variant,
           size: context.size ?? size,
-          intent: context.intent ?? intent,
         }),
         className
       )}
-      data-intent={context.intent ?? intent}
+      data-emphasis={context.emphasis ?? emphasis}
       data-size={context.size ?? size}
       data-slot="toggle-group-item"
       data-spacing={context.spacing}

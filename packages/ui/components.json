@@ -422,7 +422,7 @@
       }
     ],
     "variants": {
-      "intent": [
+      "status": [
         "online",
         "busy",
         "away",
@@ -1075,7 +1075,7 @@
           }
         ],
         "extends": [
-          "React.ComponentPropsWithoutRef<typeof Checkbox>",
+          "Omit< React.ComponentPropsWithoutRef<typeof Checkbox>, \"variant\" >",
           "VariantProps<typeof cardCheckboxVariants>"
         ]
       }
@@ -1861,14 +1861,14 @@
         "default",
         "lg"
       ],
-      "intent": [
+      "variant": [
         "default",
         "destructive"
       ]
     },
     "defaultVariants": {
       "size": "default",
-      "intent": "default"
+      "variant": "default"
     },
     "slots": [
       "checkbox",
@@ -3856,7 +3856,7 @@
       }
     ],
     "variants": {
-      "variant": [
+      "media": [
         "default",
         "icon"
       ],
@@ -3865,7 +3865,7 @@
         "default",
         "lg"
       ],
-      "intent": [
+      "variant": [
         "muted",
         "info",
         "success",
@@ -3874,9 +3874,9 @@
       ]
     },
     "defaultVariants": {
-      "variant": "default",
+      "media": "default",
       "size": "default",
-      "intent": "muted"
+      "variant": "muted"
     },
     "slots": [
       "empty",
@@ -9130,7 +9130,7 @@
       }
     ],
     "variants": {
-      "variant": [
+      "emphasis": [
         "default",
         "outline"
       ],
@@ -9141,7 +9141,7 @@
         "lg",
         "xl"
       ],
-      "intent": [
+      "variant": [
         "default",
         "destructive",
         "success",
@@ -9150,9 +9150,9 @@
       ]
     },
     "defaultVariants": {
-      "variant": "default",
+      "emphasis": "default",
       "size": "default",
-      "intent": "default"
+      "variant": "default"
     },
     "slots": [
       "toggle"

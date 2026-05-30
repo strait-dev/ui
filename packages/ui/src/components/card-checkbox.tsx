@@ -57,7 +57,10 @@ const CardCheckboxGroup: React.FC<React.ComponentProps<"div">> = ({
 CardCheckboxGroup.displayName = "CardCheckboxGroup";
 
 /** Props for {@link CardCheckboxItem}. */
-type CardCheckboxItemProps = React.ComponentPropsWithoutRef<typeof Checkbox> &
+type CardCheckboxItemProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Checkbox>,
+  "variant"
+> &
   VariantProps<typeof cardCheckboxVariants> & {
     /** Optional icon rendered to the left of the label and description;
      *  dimmed via `text-muted-foreground` when the item is disabled. */

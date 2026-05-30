@@ -11,7 +11,7 @@ import { cn } from "../utils/index";
  *
  * Exposes two axes:
  * - `size` — box + icon scaling: `"sm"` (14 px), `"default"` (16 px), `"lg"` (20 px).
- * - `intent` — colour treatment: `"default"` keeps the primary fill; `"destructive"`
+ * - `variant` — colour treatment: `"default"` keeps the primary fill; `"destructive"`
  *   tints the border and checked background with the destructive semantic token.
  */
 const checkboxVariants = cva(
@@ -24,7 +24,7 @@ const checkboxVariants = cva(
         default: "size-4",
         lg: "size-5",
       },
-      intent: {
+      variant: {
         default: [
           "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 aria-invalid:aria-checked:border-primary",
           "data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground",
@@ -39,7 +39,7 @@ const checkboxVariants = cva(
     },
     defaultVariants: {
       size: "default",
-      intent: "default",
+      variant: "default",
     },
   }
 );
@@ -87,7 +87,7 @@ export type CheckboxProps = Omit<CheckboxPrimitive.Root.Props, "size"> &
  *   `checked` + `onCheckedChange` (controlled).
  * - The `size` prop scales both the outer box and the inner check icon:
  *   `"sm"` → 14 px, `"default"` → 16 px, `"lg"` → 20 px.
- * - The `intent` prop tints the border and checked background: `"destructive"`
+ * - The `variant` prop tints the border and checked background: `"destructive"`
  *   uses {@link https://tailwindcss.com/docs/customizing-colors the destructive semantic token}.
  *
  * @example
@@ -99,18 +99,18 @@ export type CheckboxProps = Omit<CheckboxPrimitive.Root.Props, "size"> &
  * </div>
  *
  * // Small destructive variant
- * <Checkbox size="sm" intent="destructive" aria-label="Delete item" />
+ * <Checkbox size="sm" variant="destructive" aria-label="Delete item" />
  * ```
  */
 function Checkbox({
   className,
   size = "default",
-  intent = "default",
+  variant = "default",
   ...props
 }: CheckboxProps) {
   return (
     <CheckboxPrimitive.Root
-      className={cn(checkboxVariants({ size, intent }), className)}
+      className={cn(checkboxVariants({ size, variant }), className)}
       data-slot="checkbox"
       {...props}
     >

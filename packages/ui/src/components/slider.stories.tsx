@@ -25,7 +25,7 @@ const meta = {
           "**Size** — `size` controls track thickness and thumb diameter:",
           "`sm` (thin/small), `default`, `lg` (thick/large).",
           "",
-          "**Intent** — `intent` colors both the filled range and the thumb border/ring:",
+          "**Variant** — `variant` colors both the filled range and the thumb border/ring:",
           "`default` (primary), `success`, `warning`, `info`, `destructive`.",
         ].join("\n"),
       },
@@ -57,7 +57,7 @@ const meta = {
       description: "Controls track thickness and thumb size.",
       table: { defaultValue: { summary: "default" } },
     },
-    intent: {
+    variant: {
       control: "select",
       options: ["default", "success", "warning", "info", "destructive"],
       description: "Colors the filled range and thumb.",
@@ -70,7 +70,7 @@ const meta = {
     step: 1,
     defaultValue: [40],
     size: "default",
-    intent: "default",
+    variant: "default",
   },
 } satisfies Meta<typeof Slider>;
 
@@ -159,22 +159,22 @@ export const Sizes: Story = {
 };
 
 /* ------------------------------------------------------------------ */
-/* Intents                                                             */
+/* Variants                                                            */
 /* ------------------------------------------------------------------ */
 
-/** Five intent colours — filled range and thumb ring. */
-export const Intents: Story = {
+/** Five variant colours — filled range and thumb ring. */
+export const Variants: Story = {
   render: (args) => (
     <div className="flex w-72 flex-col gap-6">
       {(["default", "success", "warning", "info", "destructive"] as const).map(
-        (intent) => (
-          <div className="flex flex-col gap-2" key={intent}>
-            <Label>{intent}</Label>
+        (variant) => (
+          <div className="flex flex-col gap-2" key={variant}>
+            <Label>{variant}</Label>
             <Slider
               {...args}
-              aria-label={`Volume ${intent}`}
+              aria-label={`Volume ${variant}`}
               defaultValue={[60]}
-              intent={intent}
+              variant={variant}
             />
           </div>
         )

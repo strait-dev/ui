@@ -71,16 +71,16 @@ describe("ToggleGroup", () => {
     expect(onValueChange).toHaveBeenCalledTimes(2);
   });
 
-  it("reflects variant and size on the group data attributes", () => {
+  it("reflects emphasis and size on the group data attributes", () => {
     render(
-      <ToggleGroup aria-label="Alignment" size="sm" variant="outline">
+      <ToggleGroup aria-label="Alignment" emphasis="outline" size="sm">
         <ToggleGroupItem aria-label="Left" value="left">
           L
         </ToggleGroupItem>
       </ToggleGroup>
     );
     const group = screen.getByRole("group", { name: "Alignment" });
-    expect(group).toHaveAttribute("data-variant", "outline");
+    expect(group).toHaveAttribute("data-emphasis", "outline");
     expect(group).toHaveAttribute("data-size", "sm");
   });
 
@@ -129,32 +129,32 @@ describe("ToggleGroup", () => {
   });
 
   /* ------------------------------------------------------------------ */
-  /* Intent forwarding                                                   */
+  /* Variant forwarding                                                  */
   /* ------------------------------------------------------------------ */
 
-  it("reflects intent on the group data-intent attribute", () => {
+  it("reflects variant on the group data-variant attribute", () => {
     render(
-      <ToggleGroup aria-label="Danger" intent="destructive">
+      <ToggleGroup aria-label="Danger" variant="destructive">
         <ToggleGroupItem aria-label="Delete" value="delete">
           D
         </ToggleGroupItem>
       </ToggleGroup>
     );
     expect(screen.getByRole("group", { name: "Danger" })).toHaveAttribute(
-      "data-intent",
+      "data-variant",
       "destructive"
     );
   });
 
-  it("cascades intent to ToggleGroupItem via data-intent", () => {
+  it("cascades variant to ToggleGroupItem via data-variant", () => {
     render(
-      <ToggleGroup aria-label="Status" intent="success">
+      <ToggleGroup aria-label="Status" variant="success">
         <ToggleGroupItem aria-label="Approve" value="approve">
           OK
         </ToggleGroupItem>
       </ToggleGroup>
     );
     const item = screen.getByRole("button", { name: "Approve" });
-    expect(item).toHaveAttribute("data-intent", "success");
+    expect(item).toHaveAttribute("data-variant", "success");
   });
 });

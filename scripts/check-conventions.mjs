@@ -54,14 +54,8 @@ const EXEMPT = {
   // already complies via the brace re-export form.
   namedProps: new Set(["direction.tsx", "checkbox-tree.tsx"]),
   // §11: the semantic cva axis is named `variant` (or `status`/`shape`).
-  intentAxis: new Set([
-    "avatar.tsx",
-    "checkbox.tsx",
-    "empty.tsx",
-    "progress.tsx",
-    "slider.tsx",
-    "toggle.tsx",
-  ]),
+  // The intent→variant migration is complete; no files are grandfathered.
+  intentAxis: new Set([]),
   // §12: boolean props/flags unprefixed + positively phrased.
   boolNaming: new Set([
     "calendar-rac.tsx",

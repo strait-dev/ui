@@ -10,10 +10,10 @@ import { cn } from "../utils/index";
  * {@link ToggleGroupItem}.
  *
  * Exposes three axes:
- * - `variant` — `"default"` (transparent background, fills on hover/press) or
+ * - `emphasis` — `"default"` (transparent background, fills on hover/press) or
  *   `"outline"` (bordered, same hover/press fill).
  * - `size` — height presets: `"xs"`, `"sm"`, `"default"`, `"lg"`, `"xl"`.
- * - `intent` — pressed/active state colour: `"default"` (muted fill),
+ * - `variant` — pressed/active state colour: `"default"` (muted fill),
  *   `"destructive"`, `"success"`, `"info"`, `"warning"`.
  *
  * Exported so {@link ToggleGroup} can apply consistent styles to its items
@@ -23,7 +23,7 @@ const toggleVariants = cva(
   "group/toggle inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-lg font-medium text-sm outline-none transition-all hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
-      variant: {
+      emphasis: {
         default: "bg-transparent",
         outline: "border border-input bg-transparent hover:bg-muted",
       },
@@ -34,7 +34,7 @@ const toggleVariants = cva(
         lg: "h-9 min-w-9 px-2.5",
         xl: "h-10 min-w-10 px-3 text-base",
       },
-      intent: {
+      variant: {
         default: "aria-pressed:bg-muted data-[state=on]:bg-muted",
         destructive:
           "aria-pressed:bg-destructive aria-pressed:text-destructive-foreground data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground",
@@ -46,9 +46,9 @@ const toggleVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "default",
+      emphasis: "default",
       size: "default",
-      intent: "default",
+      variant: "default",
     },
   }
 );
@@ -62,12 +62,12 @@ export type ToggleProps = TogglePrimitive.Props &
  *
  * Built on Base UI's `Toggle` primitive, so it manages `aria-pressed` and
  * forwards all native button props. Styling is driven by
- * {@link toggleVariants}; pass `variant`, `size`, and `intent` to pick an
+ * {@link toggleVariants}; pass `emphasis`, `size`, and `variant` to pick an
  * appearance.
  *
  * @remarks
  * - The pressed state is reflected via `aria-pressed` and the Tailwind
- *   `data-[state=on]` selector, both of which apply the intent fill.
+ *   `data-[state=on]` selector, both of which apply the variant fill.
  * - Icon-only toggles should always carry an `aria-label` describing the
  *   action (e.g. `aria-label="Bold"`).
  * - To manage a set of related toggles together, use
@@ -78,19 +78,19 @@ export type ToggleProps = TogglePrimitive.Props &
  * <Toggle aria-label="Bold">
  *   <BoldIcon />
  * </Toggle>
- * <Toggle variant="outline" size="xl" intent="success">Save</Toggle>
+ * <Toggle emphasis="outline" size="xl" variant="success">Save</Toggle>
  * ```
  */
 function Toggle({
   className,
-  variant = "default",
+  emphasis = "default",
   size = "default",
-  intent = "default",
+  variant = "default",
   ...props
 }: ToggleProps) {
   return (
     <TogglePrimitive
-      className={cn(toggleVariants({ variant, size, intent, className }))}
+      className={cn(toggleVariants({ emphasis, size, variant, className }))}
       data-slot="toggle"
       {...props}
     />

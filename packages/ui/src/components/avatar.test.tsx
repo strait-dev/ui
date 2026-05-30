@@ -101,51 +101,51 @@ describe("Avatar", () => {
     expect(root?.className).toContain("data-[size=xl]:size-12");
   });
 
-  it("AvatarBadge intent online applies bg-success", () => {
+  it("AvatarBadge status online applies bg-success", () => {
     render(
       <Avatar>
         <AvatarFallback>ON</AvatarFallback>
-        <AvatarBadge intent="online" />
+        <AvatarBadge status="online" />
       </Avatar>
     );
     const badge = document.querySelector("[data-slot=avatar-badge]");
     expect(badge?.className).toContain("bg-success");
   });
 
-  it("AvatarBadge intent busy applies bg-destructive", () => {
+  it("AvatarBadge status busy applies bg-destructive", () => {
     render(
       <Avatar>
         <AvatarFallback>BS</AvatarFallback>
-        <AvatarBadge intent="busy" />
+        <AvatarBadge status="busy" />
       </Avatar>
     );
     const badge = document.querySelector("[data-slot=avatar-badge]");
     expect(badge?.className).toContain("bg-destructive");
   });
 
-  it("AvatarBadge intent away applies bg-warning", () => {
+  it("AvatarBadge status away applies bg-warning", () => {
     render(
       <Avatar>
         <AvatarFallback>AW</AvatarFallback>
-        <AvatarBadge intent="away" />
+        <AvatarBadge status="away" />
       </Avatar>
     );
     const badge = document.querySelector("[data-slot=avatar-badge]");
     expect(badge?.className).toContain("bg-warning");
   });
 
-  it("AvatarBadge intent offline applies bg-muted-foreground", () => {
+  it("AvatarBadge status offline applies bg-muted-foreground", () => {
     render(
       <Avatar>
         <AvatarFallback>OF</AvatarFallback>
-        <AvatarBadge intent="offline" />
+        <AvatarBadge status="offline" />
       </Avatar>
     );
     const badge = document.querySelector("[data-slot=avatar-badge]");
     expect(badge?.className).toContain("bg-muted-foreground");
   });
 
-  it("AvatarBadge without intent keeps bg-primary (backwards compat)", () => {
+  it("AvatarBadge without status keeps bg-primary (backwards compat)", () => {
     render(
       <Avatar>
         <AvatarFallback>NO</AvatarFallback>

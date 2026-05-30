@@ -121,9 +121,9 @@ Props (`ToggleProps`):
 Extends: `TogglePrimitive.Props`, `VariantProps<typeof toggleVariants>`
 
 Variants:
-- `variant`: `default`, `outline` (default: `default`)
+- `emphasis`: `default`, `outline` (default: `default`)
 - `size`: `xs`, `sm`, `default`, `lg`, `xl` (default: `default`)
-- `intent`: `default`, `destructive`, `success`, `info`, `warning` (default: `default`)
+- `variant`: `default`, `destructive`, `success`, `info`, `warning` (default: `default`)
 
 Data slots: `toggle`
 
@@ -207,7 +207,7 @@ Extends: `Omit<CheckboxPrimitive.Root.Props, "size">`, `VariantProps<typeof chec
 
 Variants:
 - `size`: `sm`, `default`, `lg` (default: `default`)
-- `intent`: `default`, `destructive` (default: `default`)
+- `variant`: `default`, `destructive` (default: `default`)
 
 Data slots: `checkbox`, `checkbox-indicator`
 
@@ -651,7 +651,7 @@ Extends: `AvatarPrimitive.Root.Props`
 | `size` | `"xs" \| "default" \| "sm" \| "lg" \| "xl"` |  | `"default"` | Size preset that cascades to every sub-part via `data-size`. Controls the avatar's width/height: `"xs"` (20px) · `"sm"` (24px) · `"default"` (32px) · `"lg"` (40px) · `"xl"` (48px). |
 
 Variants:
-- `intent`: `online`, `busy`, `away`, `offline`
+- `status`: `online`, `busy`, `away`, `offline`
 
 Data slots: `avatar`, `avatar-badge`, `avatar-fallback`, `avatar-group`, `avatar-group-count`, `avatar-image`
 
@@ -2095,9 +2095,9 @@ Extends: `React.ComponentProps<"div">`
 | `border` | `boolean` |  | `true` | When `true` (the default) the root renders a `border border-dashed` outline, signalling the absence of real content. Pass `false` to suppress the border — useful when the empty state lives inside a card that already provides a boundary. |
 
 Variants:
-- `variant`: `default`, `icon` (default: `default`)
+- `media`: `default`, `icon` (default: `default`)
 - `size`: `sm`, `default`, `lg` (default: `default`)
-- `intent`: `muted`, `info`, `success`, `warning`, `destructive` (default: `muted`)
+- `variant`: `muted`, `info`, `success`, `warning`, `destructive` (default: `muted`)
 
 Data slots: `empty`, `empty-content`, `empty-description`, `empty-header`, `empty-icon`, `empty-title`
 
@@ -2365,7 +2365,7 @@ Grid wrapper that spaces a collection of CardCheckboxItem components with a cons
 Exports: `CardCheckboxGroup`, `CardCheckboxItem`, `CardCheckboxItemProps`
 
 Props (`CardCheckboxItemProps`):
-Extends: `React.ComponentPropsWithoutRef<typeof Checkbox>`, `VariantProps<typeof cardCheckboxVariants>`
+Extends: `Omit< React.ComponentPropsWithoutRef<typeof Checkbox>, "variant" >`, `VariantProps<typeof cardCheckboxVariants>`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |

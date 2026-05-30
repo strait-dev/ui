@@ -37,7 +37,7 @@ const progressTrackVariants = cva(
  * Class-variance-authority recipe for {@link ProgressIndicator} color.
  *
  * Exposes one axis:
- * - `intent` — semantic color of the filled bar. `"default"` uses the primary
+ * - `variant` — semantic color of the filled bar. `"default"` uses the primary
  *   brand color; `"success"`, `"warning"`, `"info"`, and `"destructive"` map to
  *   the matching semantic tokens.
  *
@@ -46,7 +46,7 @@ const progressTrackVariants = cva(
  */
 const progressIndicatorVariants = cva("h-full transition-all", {
   variants: {
-    intent: {
+    variant: {
       default: "bg-primary",
       success: "bg-success",
       warning: "bg-warning",
@@ -55,7 +55,7 @@ const progressIndicatorVariants = cva("h-full transition-all", {
     },
   },
   defaultVariants: {
-    intent: "default",
+    variant: "default",
   },
 });
 
@@ -83,12 +83,12 @@ export type ProgressProps = ProgressPrimitive.Root.Props &
  * - Label and value children are laid out via `flex-wrap gap-3`; they
  *   appear above the track when provided.
  * - Pass `size` to control the track height (`"xs" | "sm" | "default" | "lg"`).
- * - Pass `intent` to tint the indicator with a semantic color
+ * - Pass `variant` to tint the indicator with a semantic color
  *   (`"default" | "success" | "warning" | "info" | "destructive"`).
  *
  * @example
  * ```tsx
- * <Progress value={60} size="lg" intent="success">
+ * <Progress value={60} size="lg" variant="success">
  *   <ProgressLabel>Uploading…</ProgressLabel>
  *   <ProgressValue />
  * </Progress>
@@ -99,7 +99,7 @@ function Progress({
   children,
   value,
   size,
-  intent,
+  variant,
   ...props
 }: ProgressProps) {
   return (
@@ -111,7 +111,7 @@ function Progress({
     >
       {children}
       <ProgressTrack size={size}>
-        <ProgressIndicator intent={intent} />
+        <ProgressIndicator variant={variant} />
       </ProgressTrack>
     </ProgressPrimitive.Root>
   );
@@ -144,8 +144,8 @@ function ProgressTrack({
  * Filled bar inside a {@link ProgressTrack} whose width reflects the current
  * `value` passed to {@link Progress}.
  *
- * Accepts an `intent` prop (from {@link progressIndicatorVariants}) to control
- * the fill color. When used inside {@link Progress} the intent is forwarded
+ * Accepts a `variant` prop (from {@link progressIndicatorVariants}) to control
+ * the fill color. When used inside {@link Progress} the variant is forwarded
  * automatically; pass it explicitly only when composing
  * {@link ProgressIndicator} on its own.
  *
@@ -153,13 +153,13 @@ function ProgressTrack({
  */
 function ProgressIndicator({
   className,
-  intent,
+  variant,
   ...props
 }: ProgressPrimitive.Indicator.Props &
   VariantProps<typeof progressIndicatorVariants>) {
   return (
     <ProgressPrimitive.Indicator
-      className={cn(progressIndicatorVariants({ intent }), className)}
+      className={cn(progressIndicatorVariants({ variant }), className)}
       data-slot="progress-indicator"
       {...props}
     />
