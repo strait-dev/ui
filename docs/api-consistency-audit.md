@@ -13,9 +13,9 @@ The library's *visual and structural* contract is in excellent shape. Focus
 rings, semantic colour tokens, `data-slot` tagging, `cn()` merging, `"use
 client"` placement, and prop **typing style** are all machine-enforced by
 [`scripts/check-conventions.mjs`](../scripts/check-conventions.mjs) and currently
-pass with zero violations. Polymorphism is clean: there is **no `asChild`** in
-the codebase — every component uses Base UI's `render` prop as the contract
-requires.
+pass with zero violations. Polymorphism is *almost* clean: 96 components use Base
+UI's `render` prop as the contract requires, with only **2 holdouts still using
+`asChild`** (`credenza.tsx`, `tree.tsx`) — a small, contained fix.
 
 The drift lives one layer up, in the **naming and shape of the public API** —
 exactly the surface a linter doesn't see and a consumer feels most. Four
@@ -24,9 +24,10 @@ classes of inconsistency stand out:
 | # | Finding | Severity | Components affected |
 | - | ------- | -------- | ------------------- |
 | 1 | Fragmented `size` vocabulary (8 distinct scales, inconsistent ordering) | **High** | 29 |
-| 2 | Semantic axis named both `variant` and `intent`, with overlapping values | **High** | 24 |
+| 2 | Semantic axis named both `variant` and `intent`; `intent` overloaded across 3 unrelated concepts | **High** | 24 |
 | 3 | Boolean prop naming drift (`is*` prefix, mixed `show*`/`hide*` polarity) | **Medium** | ~30 |
-| 4 | `*Props` type not exported by every component | **Low** | 12 |
+| 4 | `asChild` holdouts instead of `render` prop | **Medium** | 2 |
+| 5 | `*Props` type not exported by every component | **Low** | 27 |
 
 None of these are bugs. They are **predictability debt**: each one forces a
 consumer to check the docs for a component they should already be able to guess
@@ -113,34 +114,43 @@ The outliers (`Item`, `Progress`, `Sidebar`) reorder/rename to match.
 
 ## 3. Finding 2 — `variant` vs `intent` axis, with overlapping values (High)
 
-The semantic-colour axis is named **`variant`** on 20 components but **`intent`**
-on 4 (Avatar, Checkbox, Empty, Toggle). That alone is a coin-flip for consumers.
-The deeper problem is that the *values* reveal three different concepts wearing
-the same prop name:
+The semantic axis is named **`variant`** on 20 components but **`intent`** on 4
+(Avatar, Checkbox, Empty, Toggle). That alone is a coin-flip for consumers. The
+deeper problem, visible once you read the actual values, is that **`intent` is
+overloaded across three unrelated concepts**, and the *same* semantic-colour
+values appear under *both* axis names:
 
 ```
-intent  Avatar:   default | brand | success | warning | destructive | info   ← semantic colour
-intent  Checkbox: default | brand | success | warning | destructive | info   ← semantic colour
-intent  Toggle:   default | brand | primary                                  ← emphasis level
-variant Avatar:   circle | rounded | square                                  ← shape
-variant Empty:    default | outline | muted                                  ← emphasis/fill style
-variant Badge:    default | brand | success | info | warning | destructive | outline | secondary | muted  ← colour + fill, conflated
-variant Toggle:   default | outline | brand-solid | brand | brand-outline | primary   ← colour + fill, conflated
+intent  Avatar:   online | busy | away | offline                  ← presence STATUS (not colour!)
+intent  Checkbox: default | destructive                           ← semantic colour (2-step)
+intent  Empty:    muted | info | success | warning | destructive  ← semantic colour
+intent  Toggle:   default | destructive | success | info | warning ← semantic colour
+
+variant Alert:    default | info | success | warning | destructive | invert   ← semantic colour
+variant Banner:   info | success | warning | destructive                      ← semantic colour
+variant Card:     default | outline | ghost                                   ← fill/emphasis
+variant Tabs:     default | line | underline                                  ← style
+variant Badge:    default | outline | secondary | info | success | warning | destructive | invert
+                  | primary-light | warning-light | … | destructive-outline | … | ghost | link   ← colour × fill, FLATTENED
+variant Button:   default | secondary | outline | brand-solid | brand | brand-outline
+                  | destructive-solid | destructive | destructive-outline | … | ghost | link      ← colour × fill, FLATTENED
 ```
 
-Three distinct concepts are tangled here:
+Three distinct concepts are tangled across these two prop names:
 
-1. **Intent** — the *semantic colour meaning*: `success | warning | info |
-   destructive | brand`. (This is the vocabulary the
-   [component contract](component-contract.md) already names.)
-2. **Emphasis / fill** — `solid | soft | outline` (Button encodes this as
-   `brand-solid` / `brand` / `brand-outline`).
-3. **Shape** — `circle | rounded | square` (Avatar).
+1. **Intent** — *semantic colour meaning*: `info | success | warning |
+   destructive | brand`. Appears under `intent` (Checkbox, Empty, Toggle) **and**
+   `variant` (Alert, Banner) — same values, two prop names.
+2. **Emphasis / fill** — `solid | soft | outline | ghost | link` (Button encodes
+   this as the `-solid`/`-outline` suffix; Card/Item as `outline`/`ghost`).
+3. **Presence status** — Avatar's `online | busy | away | offline` is genuinely a
+   *different domain concept* mislabelled `intent`; it should be its own axis
+   (e.g. `status`), not share a name with colour.
 
-`Badge.variant` and `Toggle.variant` **conflate intent × emphasis into one flat
-enum** (`brand`, `brand-solid`, `brand-outline`, `outline`, `secondary`,
-`muted`), which is why those lists are long and hard to reason about — they're a
-cartesian product flattened into a single axis.
+`Badge.variant` and `Button.variant` **flatten intent × emphasis into one
+enum** (`brand`, `brand-solid`, `brand-outline`, `destructive-outline`,
+`*-light`, …) — 24 values on Badge. That cartesian-product flattening is why
+those lists are unreadable: two orthogonal axes crushed into one.
 
 **Impact.** The single most-reached-for axis in the library has no predictable
 name *or* shape. A consumer cannot transfer `<Badge variant="success">`
@@ -151,14 +161,18 @@ whether `variant` will mean colour, shape, or fill until they read the type.
 orthogonal concepts:
 
 - **`intent`** for semantic colour everywhere: `default | brand | success |
-  warning | info | destructive`. (Button is the gold standard already in spirit.)
+  warning | info | destructive`. Move Alert/Banner's colour values off `variant`
+  onto `intent`.
 - **`emphasis`** (or keep `variant` *only* for fill style) for `solid | soft |
-  outline`.
-- **`shape`** for `circle | rounded | square`.
+  outline | ghost | link`.
+- **`status`** for Avatar's `online | busy | away | offline` — it is not an
+  intent.
 
-Decompose `Badge`/`Toggle`'s flattened enum into `intent` × `emphasis`. This is
+Decompose `Badge`/`Button`'s flattened enum into `intent` × `emphasis`. This is
 the highest-leverage change in the audit: it turns the most-used and most-tangled
-axis into something guessable.
+axis into something guessable. (Note: this is also the most invasive — every
+`<Button variant="brand-solid">` call site becomes `intent="brand"
+emphasis="solid"`.)
 
 > **Naming decision needed from the team:** `intent` vs `variant` as the colour
 > axis name. `intent` is more precise and already in the contract; `variant` is
@@ -220,22 +234,37 @@ share of the audit.
 
 ---
 
-## 5. Finding 4 — `*Props` type export gaps (Low)
+## 5. Finding 4 — `asChild` holdouts instead of `render` (Medium)
 
-The contract's "named `*Props` type for every component" holds for 112/124.
-Twelve components don't export one:
+The [component contract](component-contract.md) mandates Base UI's `render` prop
+for polymorphism, never Radix-style `asChild`. 96 components comply; **2 do not**:
 
 ```
-direction · checkbox-tree · date-selector · input-with-inline-button · scrollspy
-number-input-percentage-with-chevrons · number-input-with-chevrons
-select-with-search-and-button · date-range-picker-with-presets
-calendar-with-presets · range-calendar-with-presets · calendar-rac
+credenza.tsx · tree.tsx
 ```
 
-Most are higher-level *pattern* compositions (the `*-with-*` family) where the
-props type is currently inlined. `direction` and `checkbox-tree` are legitimately
-exempt (provider re-export / render-prop). The pattern components are not —
-consumers wrapping them can't name their prop type.
+Both are likely carried over from a shadcn/Radix origin and kept `asChild`.
+
+**Impact.** API inconsistency in the exact place the contract is most explicit —
+a consumer who learns `render={<a />}` on every other component hits `asChild` on
+these two. Also a maintenance risk: the contract claims `render` is universal.
+
+**Recommendation.** Migrate both to the `render` prop, then add an `asChild` ban
+to `check-conventions.mjs` so it can't reappear. Small, contained, high
+consistency-per-line.
+
+---
+
+## 6. Finding 5 — `*Props` type export gaps (Low)
+
+The contract's "named `*Props` type for every component" holds for 97/124.
+**27 components don't export one**, including `badge`, `banner`, `spinner`,
+`tag-group`, `metric-card`, `timeline`, `tracker`, `shell`, `chart`,
+`copy-button`, and most of the `*-with-*` pattern family.
+
+`direction` and `checkbox-tree` are legitimately exempt (provider re-export /
+render-prop). The rest are not — consumers wrapping them can't name their prop
+type.
 
 **Impact.** DX only: consumers must `React.ComponentProps<typeof X>` instead of
 importing a named type. No runtime or correctness effect.
@@ -246,12 +275,12 @@ rule becomes enforceable rather than aspirational.
 
 ---
 
-## 6. What's already excellent (and should be protected)
+## 7. What's already excellent (and should be protected)
 
 Worth stating plainly, because it's the foundation the above builds on:
 
-- **Zero `asChild`.** Polymorphism is 100% Base UI `render` prop — no Radix-style
-  `asChild` drift anywhere.
+- **Polymorphism is 96/98 on `render`.** Only 2 `asChild` holdouts remain
+  (Finding 4) — the pattern itself is well-established.
 - **Enforced visual contract passes clean:** focus ring (`ring-3`), disabled,
   `aria-invalid` width, semantic-token-only colours, `cn()` merging, `"use
   client"` placement, `ComponentProps` typing.
@@ -265,7 +294,13 @@ recommendation.
 
 ---
 
-## 7. Recommended approach
+## 8. Recommended approach
+
+> **Team decision (2026-05-30):** proceed with the **full rename in one breaking
+> release**, covering all four actionable areas — size scale, intent/variant axis,
+> boolean naming, and polymorphism (`asChild` → `render`). The phased path below
+> is retained for context, but the chosen execution is the single-release variant
+> described at the end of this section.
 
 **My recommendation: incremental, deprecation-aliased convergence.** Concretely,
 a three-phase rollout:
@@ -304,7 +339,7 @@ them.
 
 ---
 
-## 8. My opinion — is this a good improvement?
+## 9. My opinion — is this a good improvement?
 
 **Yes — but with honest framing about its tier.**
 
