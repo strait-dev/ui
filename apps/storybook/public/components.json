@@ -500,7 +500,7 @@
             "name": "radius",
             "type": "VariantProps<typeof badgeVariants>[\"radius\"]",
             "optional": true,
-            "description": "Corner radius preset applied via badgeVariants. `\"pill\"` (default, full-pill) · `\"md\"` (rounded square, matches buttons) · `\"sm\"` (subtle 4 px). Use `\"md\"` for tag-style chips inside data tables."
+            "description": "Corner radius preset applied via badgeVariants. `\"lg\"` (default, rounded-lg) · `\"pill\"` (full-pill opt-in) · `\"md\"` (rounded-md) · `\"sm\"` (subtle 4 px). Use `\"md\"` for tag-style chips inside data tables; use `\"pill\"` for fully circular badges."
           },
           {
             "name": "size",
@@ -522,6 +522,7 @@
     ],
     "variants": {
       "radius": [
+        "lg",
         "pill",
         "md",
         "sm"
@@ -563,7 +564,7 @@
     "defaultVariants": {
       "variant": "default",
       "size": "default",
-      "radius": "pill"
+      "radius": "lg"
     },
     "slots": [
       "badge",

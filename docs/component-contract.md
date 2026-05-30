@@ -167,12 +167,29 @@ families. `ComponentProps` includes `ref` and `key` correctly. Always spread
 
 ### 9. Form-control height & radius
 
-Form controls match the `Input` baseline: **`h-8`** and **`rounded-lg`**. (Inner
-elements may use `rounded-md`/`rounded-sm`; this rule is about the control's outer
-box.) Don't introduce `h-9`/`rounded-md` for new form controls.
+Form controls match the `Input` baseline: **`h-8`** and **`rounded-lg`** on their
+outer box. The broader radius rule applies to all non-circular component outer
+boxes:
 
-✅ `h-8 rounded-lg` on a select / number-input container
-❌ `h-9 rounded-md`
+- **Non-circular outer boxes** use `rounded-lg`. This is the canonical corner
+  radius for all interactive and container components (buttons, selects, cards,
+  dialogs, toggles, badges, command palettes, etc.).
+- **`rounded-xl`**, **`rounded-2xl`**, **`rounded-3xl`**, **`rounded-4xl`** are
+  retired from all component chrome. They must not appear on outer boxes.
+- **`rounded-full`** is reserved for genuinely circular controls: switch thumbs,
+  radio buttons, sliders, progress tracks, dot indicators, avatars, and Badge's
+  opt-in `pill` radius value.
+- **Inner / nested elements** (`rounded-md`, `rounded-sm`) stay as-is — this
+  rule governs only the component's outer box.
+
+Don't introduce `h-9`/`rounded-md` for new form controls.
+
+✅ `h-8 rounded-lg` on a select / number-input / button outer box
+✅ `rounded-full` on a switch thumb or avatar
+✅ `<Badge radius="pill">` for a full-pill opt-in
+❌ `rounded-xl` on any component outer box
+❌ `rounded-full` as the default on a rectangular button
+❌ `h-9 rounded-md` on a new form control
 
 ---
 
@@ -267,6 +284,7 @@ never Radix-style `asChild`.
 | `"use client"` (§7) | `useClient` |
 | `data-slot` (§6) | `dataSlot` |
 | Prop typing (§8) | `propTyping` |
+| Outer-box radius (§9) | `radius` |
 | Variant axis name (§11) | `intentAxis` |
 | Boolean naming (§12) | `boolNaming` |
 | Named props type (§13) | `namedProps` |

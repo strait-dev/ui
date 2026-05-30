@@ -77,6 +77,36 @@ const EXEMPT = {
     "sortable.tsx",
     "stepper.tsx",
   ]),
+  // §9 radius rule exemptions.
+  //
+  // radius (rounded-xl/2xl/3xl/4xl): badge.tsx uses rounded-4xl intentionally
+  // for its opt-in `pill` radius variant value — this is the only sanctioned
+  // use of a large radius in component chrome.
+  radius: new Set(["badge.tsx"]),
+  //
+  // roundedFull: the following files use rounded-full for genuinely circular
+  // controls, dots, handles, thumbs, or pill opt-ins — NOT rectangular outer
+  // boxes. Each entry is annotated with its circular justification.
+  roundedFull: new Set([
+    "switch.tsx", // switch thumb is a circular pill handle
+    "radio-group.tsx", // radio indicator is a circular dot
+    "slider.tsx", // slider thumb is a circular handle
+    "progress.tsx", // progress bar track and fill are circular-capped
+    "status-badge.tsx", // status dot indicators are circular
+    "avatar.tsx", // avatar is a circular image container
+    "activity-feed.tsx", // activity feed uses circular avatar/dot elements
+    "chart.tsx", // recharts uses circular dot legend markers
+    "charts.tsx", // recharts uses circular dot legend markers
+    "carousel.tsx", // carousel prev/next nav buttons are circular icon buttons
+    "scroll-area.tsx", // scrollbar thumb is a circular-capped pill
+    "skeleton.tsx", // skeleton circle variant is a circular placeholder
+    "data-grid.tsx", // data-grid scrollbar thumbs are circular-capped
+    "sidebar.tsx", // sidebar has circular avatar wrapper and active-rail dots
+    "drawer.tsx", // drawer drag handle is a circular pill indicator
+    "filters.tsx", // filter chip has an opt-in pill/full-radius mode
+    "phone-input.tsx", // flag icons are circular (CircleFlag component)
+    "badge.tsx", // badge dismiss button and dot are circular; pill radius opt-in
+  ]),
 };
 
 const RAW_COLOR =
@@ -199,6 +229,31 @@ for (const file of files) {
       }
       if (/\bhide[A-Z][A-Za-z]*\??:\s*boolean\b/.test(ln)) {
         add(file, "boolNaming", `:${i + 1} ${ln.trim().slice(0, 50)}`);
+      }
+    });
+  }
+
+  // Rule §9 (radius): outer-box corners must be rounded-lg; large radii and
+  // rounded-full are banned outside their respective allowlists.
+  if (!EXEMPT.radius.has(file)) {
+    lines.forEach((ln, i) => {
+      if (/\brounded-(xl|2xl|3xl|4xl)\b/.test(ln)) {
+        add(
+          file,
+          "radius",
+          `:${i + 1} rounded-xl/2xl/3xl/4xl on outer box (use rounded-lg)`
+        );
+      }
+    });
+  }
+  if (!EXEMPT.roundedFull.has(file)) {
+    lines.forEach((ln, i) => {
+      if (/\brounded-full\b/.test(ln)) {
+        add(
+          file,
+          "radius",
+          `:${i + 1} rounded-full on non-circular component (only circular controls may use it)`
+        );
       }
     });
   }

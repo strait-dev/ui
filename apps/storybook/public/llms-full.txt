@@ -675,12 +675,12 @@ Extends: `useRender.ComponentProps<"span">`
 | `iconRight` | `IconSvgElement` |  |  | Icon rendered immediately after children. |
 | `mono` | `boolean` |  |  | When `true`, applies `font-mono uppercase tracking-wide` for monospaced label styling — useful for version numbers, codes, or IDs. |
 | `onDismiss` | `() => void` |  |  | Called when the dismiss button is clicked. |
-| `radius` | `VariantProps<typeof badgeVariants>["radius"]` |  |  | Corner radius preset applied via badgeVariants. `"pill"` (default, full-pill) · `"md"` (rounded square, matches buttons) · `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables. |
+| `radius` | `VariantProps<typeof badgeVariants>["radius"]` |  |  | Corner radius preset applied via badgeVariants. `"lg"` (default, rounded-lg) · `"pill"` (full-pill opt-in) · `"md"` (rounded-md) · `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables; use `"pill"` for fully circular badges. |
 | `size` | `VariantProps<typeof badgeVariants>["size"]` |  |  | Size preset applied via badgeVariants. `"xs"` through `"xl"`; controls height, padding, and font size. |
 | `variant` | `VariantProps<typeof badgeVariants>["variant"]` |  |  | Colour and emphasis style applied via badgeVariants. Includes solid fills, tinted `*-light` fills, bordered `*-outline` variants, `ghost`, and `link`. |
 
 Variants:
-- `radius`: `pill`, `md`, `sm` (default: `pill`)
+- `radius`: `lg`, `pill`, `md`, `sm` (default: `lg`)
 - `variant`: `default`, `outline`, `secondary`, `info`, `success`, `warning`, `destructive`, `invert`, `primary-light`, `warning-light`, `success-light`, `info-light`, `destructive-light`, `invert-light`, `secondary-light`, `primary-outline`, `warning-outline`, `success-outline`, `info-outline`, `destructive-outline`, `invert-outline`, `secondary-outline`, `ghost`, `link` (default: `default`)
 - `size`: `xs`, `sm`, `default`, `lg`, `xl` (default: `default`)
 

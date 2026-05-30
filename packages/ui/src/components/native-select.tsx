@@ -77,9 +77,9 @@ function NativeSelect({
           "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",
           "dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 dark:hover:bg-input/50",
           // Size axis — height and border-radius
-          "data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] data-[size=sm]:py-0.5",
+          "data-[size=sm]:h-7 data-[size=sm]:rounded-lg data-[size=sm]:py-0.5",
           "data-[size=default]:h-8",
-          "data-[size=lg]:h-10 data-[size=lg]:rounded-xl data-[size=lg]:py-2 data-[size=lg]:text-base"
+          "data-[size=lg]:h-10 data-[size=lg]:rounded-lg data-[size=lg]:py-2 data-[size=lg]:text-base"
         )}
         data-size={size}
         data-slot="native-select"
