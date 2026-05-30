@@ -68,7 +68,7 @@ function InputWithInlineButton({
 }: InputWithInlineButtonProps) {
   return (
     <div
-      className={cn("flex rounded-md shadow-xs", wrapperClassName)}
+      className={cn("flex rounded-lg shadow-xs", wrapperClassName)}
       data-slot="input-with-inline-button"
     >
       <Input

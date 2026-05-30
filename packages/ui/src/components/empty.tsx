@@ -58,7 +58,7 @@ function Empty({ className, border = true, ...props }: EmptyProps) {
   return (
     <div
       className={cn(
-        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 text-balance rounded-xl p-6 text-center",
+        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 text-balance rounded-lg p-6 text-center",
         border && "border border-dashed",
         className
       )}

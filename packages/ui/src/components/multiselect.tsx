@@ -22,7 +22,7 @@ const DEFAULT_DEBOUNCE_TIME = 500;
  * | Value | Control min-height | Chip height | Chip text |
  * |-------|--------------------|-------------|-----------|
  * | `sm` | `min-h-8` | `h-6` | `text-xs` |
- * | `default` | `min-h-10` | `h-8` | `text-sm` |
+ * | `default` | `min-h-8` | `h-8` | `text-sm` |
  */
 export type MultipleSelectorSize = "sm" | "default";
 
@@ -407,7 +407,7 @@ const EmptyItemRenderer: React.FC<EmptyItemRendererProps> = ({
 
 // Component for the clear all button
 type ClearAllButtonProps = {
-  hideClearAllButton: boolean;
+  showClearAllButton: boolean;
   disabled?: boolean;
   selected: Option[];
   setSelected: React.Dispatch<React.SetStateAction<Option[]>>;
@@ -416,7 +416,7 @@ type ClearAllButtonProps = {
 };
 
 const ClearAllButton: React.FC<ClearAllButtonProps> = ({
-  hideClearAllButton,
+  showClearAllButton,
   disabled,
   selected,
   setSelected,
@@ -424,7 +424,7 @@ const ClearAllButton: React.FC<ClearAllButtonProps> = ({
   size,
 }) => {
   const shouldHide =
-    hideClearAllButton ||
+    !showClearAllButton ||
     disabled ||
     selected.length < 1 ||
     selected.filter((s) => s.fixed).length === selected.length;
@@ -514,8 +514,8 @@ export type MultipleSelectorProps = {
   maxSelected?: number;
   /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
   onMaxSelected?: (maxLimit: number) => void;
-  /** Hide the placeholder when there are options selected. */
-  hidePlaceholderWhenSelected?: boolean;
+  /** Show the placeholder when there are options selected. */
+  showPlaceholderWhenSelected?: boolean;
   /** Disables the control; pointer events are blocked and opacity is reduced. */
   disabled?: boolean;
   /** Group the options base on provided key. */
@@ -540,15 +540,15 @@ export type MultipleSelectorProps = {
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
     "value" | "placeholder" | "disabled"
   >;
-  /** hide the clear all button. */
-  hideClearAllButton?: boolean;
+  /** show the clear all button. */
+  showClearAllButton?: boolean;
   /**
    * Size axis controlling control height and chip size.
    *
    * | Value | Control min-height | Chip height | Chip text |
    * |-------|--------------------|-------------|-----------|
    * | `sm` | `min-h-8` | `h-6` | `text-xs` |
-   * | `default` | `min-h-10` | `h-8` | `text-sm` |
+   * | `default` | `min-h-8` | `h-8` | `text-sm` |
    *
    * @default "default"
    */
@@ -801,7 +801,7 @@ function MultipleSelector({
   emptyIndicator,
   maxSelected = Number.MAX_SAFE_INTEGER,
   onMaxSelected,
-  hidePlaceholderWhenSelected,
+  showPlaceholderWhenSelected = true,
   disabled,
   groupBy,
   className,
@@ -811,7 +811,7 @@ function MultipleSelector({
   triggerSearchOnFocus = false,
   commandProps,
   inputProps,
-  hideClearAllButton = false,
+  showClearAllButton = true,
   size = "default",
 }: MultipleSelectorProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -953,7 +953,7 @@ function MultipleSelector({
       : commandProps.shouldFilter;
 
   // Derive size-dependent classes
-  const controlMinH = size === "sm" ? "min-h-8" : "min-h-10";
+  const controlMinH = size === "sm" ? "min-h-8" : "min-h-8";
 
   return (
     <Command
@@ -978,7 +978,7 @@ function MultipleSelector({
             "p-1": selected.length !== 0,
             "cursor-text": !disabled && selected.length !== 0,
           },
-          !hideClearAllButton && "pe-9",
+          showClearAllButton && "pe-9",
           className
         )}
         onClick={handleTriggerClick}
@@ -1000,7 +1000,7 @@ function MultipleSelector({
             className={cn(
               "flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground/70 disabled:cursor-not-allowed",
               {
-                "w-full": hidePlaceholderWhenSelected,
+                "w-full": !showPlaceholderWhenSelected,
                 "px-3 py-2": selected.length === 0,
                 "ml-1": selected.length !== 0,
               },
@@ -1011,7 +1011,7 @@ function MultipleSelector({
             onFocus={handleInputFocus}
             onValueChange={handleInputValueChange}
             placeholder={
-              hidePlaceholderWhenSelected && selected.length !== 0
+              !showPlaceholderWhenSelected && selected.length !== 0
                 ? ""
                 : (placeholder ?? "")
             }
@@ -1020,10 +1020,10 @@ function MultipleSelector({
           />
           <ClearAllButton
             disabled={disabled}
-            hideClearAllButton={hideClearAllButton}
             onChange={onChange}
             selected={selected}
             setSelected={setSelected}
+            showClearAllButton={showClearAllButton}
             size={size}
           />
         </div>
@@ -1038,7 +1038,7 @@ function MultipleSelector({
           data-state={open ? "open" : "closed"}
         >
           <CommandList
-            className="bg-popover text-popover-foreground shadow-lg outline-hidden"
+            className="bg-popover text-popover-foreground shadow-md outline-hidden ring-1 ring-foreground/10"
             onMouseEnter={() => {
               setOnScrollbar(true);
             }}

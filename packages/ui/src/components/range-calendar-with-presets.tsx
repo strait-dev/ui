@@ -255,7 +255,7 @@ export function RangeCalendarWithPresets({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-md border bg-popover p-4 text-popover-foreground shadow-md",
+        "flex flex-col gap-4 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md",
         className
       )}
       data-slot="range-calendar-with-presets"

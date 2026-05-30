@@ -33,7 +33,7 @@ const meta = {
           "- `maxSelected` — caps the number of selections.",
           "- `creatable` — allows the user to create new options.",
           "- `groupBy` — groups options by a key in the `Option` object.",
-          "- `hideClearAllButton` — hides the 'clear all' ✕ button.",
+          "- `showClearAllButton` — shows the 'clear all' ✕ button.",
         ].join("\n"),
       },
     },
@@ -55,9 +55,9 @@ const meta = {
       control: { type: "number", min: 1 },
       description: "Maximum number of items that can be selected.",
     },
-    hideClearAllButton: {
+    showClearAllButton: {
       control: "boolean",
-      description: "Hides the clear-all button.",
+      description: "Shows the clear-all button.",
     },
     size: {
       control: "select",
@@ -69,7 +69,7 @@ const meta = {
     placeholder: "Select skills…",
     disabled: false,
     creatable: false,
-    hideClearAllButton: false,
+    showClearAllButton: true,
     size: "default",
   },
 } satisfies Meta<typeof MultipleSelector>;

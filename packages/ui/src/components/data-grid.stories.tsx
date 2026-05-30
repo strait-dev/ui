@@ -994,7 +994,7 @@ export const LoadingSkeleton: Story = {
       initialState: { pagination: { pageSize: 6, pageIndex: 0 } },
     });
     return (
-      <DataGrid isLoading loadingMode="skeleton" recordCount={0} table={table}>
+      <DataGrid loading loadingMode="skeleton" recordCount={0} table={table}>
         <DataGridContainer>
           <DataGridTable />
         </DataGridContainer>
@@ -1199,10 +1199,10 @@ export const InfiniteScroll: Story = {
         <DataGridContainer>
           <DataGridTableVirtual
             estimateSize={44}
+            fetchingMore={isFetching}
             fetchMoreOffset={5}
-            hasMore={hasMore}
             height={400}
-            isFetchingMore={isFetching}
+            moreAvailable={hasMore}
             onFetchMore={() => {
               if (isFetching || !hasMore) {
                 return;

@@ -123,11 +123,11 @@ export function AreaChart({
   intervalType = "equidistantPreserveStart",
   valueFormatter = defaultValueFormatter,
   displayEdgeLabelsOnly = false,
-  hideXAxis = false,
+  showXAxis = true,
   xAxisProps,
-  hideYAxis = false,
+  showYAxis = true,
   yAxisProps,
-  hideGridLines = false,
+  showGridLines = true,
   chartProps,
   ...props
 }: AreaChartProps) {
@@ -150,17 +150,17 @@ export function AreaChart({
           stackOffset={type === "percent" ? "expand" : undefined}
           {...chartProps}
         >
-          {!hideGridLines && (
+          {showGridLines && (
             <CartesianGrid strokeDasharray="3 3" {...cartesianGridProps} />
           )}
           <XAxis
             displayEdgeLabelsOnly={displayEdgeLabelsOnly}
-            hide={hideXAxis}
+            hide={!showXAxis}
             intervalType={intervalType}
             {...xAxisProps}
           />
           <YAxis
-            hide={hideYAxis}
+            hide={!showYAxis}
             tickFormatter={type === "percent" ? valueToPercent : valueFormatter}
             {...yAxisProps}
           />
@@ -177,10 +177,10 @@ export function AreaChart({
               content={
                 typeof tooltip === "boolean" ? (
                   <ChartTooltipContent
-                    hideIndicator={tooltipProps?.hideIndicator}
-                    hideLabel={tooltipProps?.hideLabel}
                     indicator={tooltipProps?.indicator}
                     labelSeparator={tooltipProps?.labelSeparator}
+                    showIndicator={tooltipProps?.showIndicator}
+                    showLabel={tooltipProps?.showLabel}
                   />
                 ) : (
                   tooltip
@@ -295,10 +295,10 @@ export function BarChart({
   valueFormatter = defaultValueFormatter,
   displayEdgeLabelsOnly = false,
   xAxisProps,
-  hideXAxis = false,
+  showXAxis = true,
   yAxisProps,
-  hideYAxis = false,
-  hideGridLines = false,
+  showYAxis = true,
+  showGridLines = true,
   cartesianGridProps,
   chartProps,
   ...props
@@ -335,17 +335,17 @@ export function BarChart({
           stackOffset={stackOffset}
           {...chartProps}
         >
-          {!hideGridLines && (
+          {showGridLines && (
             <CartesianGrid strokeDasharray="4 4" {...cartesianGridProps} />
           )}
           <XAxis
             displayEdgeLabelsOnly={displayEdgeLabelsOnly}
-            hide={hideXAxis}
+            hide={!showXAxis}
             intervalType={intervalType}
             {...xAxisProps}
           />
           <YAxis
-            hide={hideYAxis}
+            hide={!showYAxis}
             tickFormatter={type === "percent" ? valueToPercent : valueFormatter}
             {...yAxisProps}
           />
@@ -448,10 +448,10 @@ export function LineChart({
   valueFormatter = defaultValueFormatter,
   displayEdgeLabelsOnly = false,
   xAxisProps,
-  hideXAxis = false,
+  showXAxis = true,
   yAxisProps,
-  hideYAxis = false,
-  hideGridLines = false,
+  showYAxis = true,
+  showGridLines = true,
   cartesianGridProps,
   chartProps,
   lineProps,
@@ -474,17 +474,17 @@ export function LineChart({
           stackOffset={type === "percent" ? "expand" : undefined}
           {...chartProps}
         >
-          {!hideGridLines && (
+          {showGridLines && (
             <CartesianGrid strokeDasharray="4 4" {...cartesianGridProps} />
           )}
           <XAxis
             displayEdgeLabelsOnly={displayEdgeLabelsOnly}
-            hide={hideXAxis}
+            hide={!showXAxis}
             intervalType={intervalType}
             {...xAxisProps}
           />
           <YAxis
-            hide={hideYAxis}
+            hide={!showYAxis}
             tickFormatter={type === "percent" ? valueToPercent : valueFormatter}
             {...yAxisProps}
           />
@@ -564,9 +564,9 @@ function resolveConfigKey(datum: ChartDatum): string | undefined {
 interface PieChartProps
   extends Omit<
     BaseChartProps,
-    | "hideGridLines"
-    | "hideXAxis"
-    | "hideYAxis"
+    | "showGridLines"
+    | "showXAxis"
+    | "showYAxis"
     | "xAxisProps"
     | "yAxisProps"
     | "displayEdgeLabelsOnly"
@@ -689,7 +689,10 @@ const PieChart = ({
             <ChartTooltip
               content={
                 typeof tooltip === "boolean" ? (
-                  <ChartTooltipContent hideLabel labelSeparator={false} />
+                  <ChartTooltipContent
+                    labelSeparator={false}
+                    showLabel={false}
+                  />
                 ) : (
                   tooltip
                 )

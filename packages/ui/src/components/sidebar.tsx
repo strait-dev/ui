@@ -750,7 +750,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
   return (
     <main
       className={cn(
-        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2 md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm",
+        "relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2 md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-lg md:peer-data-[variant=inset]:shadow-sm",
         className
       )}
       data-slot="sidebar-inset"
@@ -1324,7 +1324,7 @@ function SidebarMenuItem({
         collected.push({
           label: el.props.children,
           href: el.props.href,
-          isActive: el.props.isActive,
+          isActive: el.props.active,
           onClick: el.props.onClick,
         });
         return;
@@ -1487,7 +1487,7 @@ const sidebarMenuButtonVariants = cva(
  * wraps itself in a {@link Tooltip} that appears on the right.
  *
  * @remarks
- * - `isActive` applies the active accent styles and sets `data-active` for
+ * - `active` applies the active accent styles and sets `data-active` for
  *   downstream selectors.
  * - `tooltip` can be a plain string or a full
  *   {@link TooltipContent} props object; the tooltip is automatically hidden
@@ -1497,7 +1497,7 @@ const sidebarMenuButtonVariants = cva(
 export type SidebarMenuButtonProps = useRender.ComponentProps<"button"> &
   React.ComponentProps<"button"> & {
     /** Whether this row represents the current page. Sets `data-active` and `aria-current="page"`. */
-    isActive?: boolean;
+    active?: boolean;
     /** Tooltip shown when the sidebar is collapsed to icon or when the label is truncated. */
     tooltip?: string | React.ComponentProps<typeof TooltipContent>;
     /**
@@ -1505,24 +1505,24 @@ export type SidebarMenuButtonProps = useRender.ComponentProps<"button"> &
      * for the enclosing {@link SidebarMenuItem}'s sub-menu and appends a
      * rotating chevron at the trailing edge.
      */
-    hasSubMenu?: boolean;
+    subMenu?: boolean;
   } & VariantProps<typeof sidebarMenuButtonVariants>;
 
 /**
  * Primary clickable row inside a `SidebarMenuItem`. Renders a polymorphic
  * trigger (via `useRender`), forwards `aria-current="page"` when active, wires
- * the rail-aware active-state recipe, and — when paired with `hasSubMenu` —
+ * the rail-aware active-state recipe, and — when paired with `subMenu` —
  * becomes the disclosure trigger for the enclosing item's `SidebarMenuSub`
  * (animated when expanded, mirrored as a hover-popover flyout when the sidebar
  * is collapsed to icon width).
  */
 function SidebarMenuButton({
   render,
-  isActive = false,
+  active = false,
   variant = "default",
   size = "default",
   tooltip,
-  hasSubMenu,
+  subMenu,
   className,
   children,
   ...props
@@ -1531,17 +1531,17 @@ function SidebarMenuButton({
   const itemCtx = React.useContext(SidebarMenuItemContext);
   const [labelRef, truncated] = useTruncated<HTMLElement>();
 
-  if (hasSubMenu && !itemCtx.value && process.env.NODE_ENV !== "production") {
+  if (subMenu && !itemCtx.value && process.env.NODE_ENV !== "production") {
     // eslint-disable-next-line no-console
     console.error(
-      "SidebarMenuButton: `hasSubMenu` requires the parent SidebarMenuItem to declare a `value` prop."
+      "SidebarMenuButton: `subMenu` requires the parent SidebarMenuItem to declare a `value` prop."
     );
   }
 
   const composedChildren = (
     <>
       {children}
-      {hasSubMenu ? (
+      {subMenu ? (
         <HugeiconsIcon
           className="ml-auto size-4 transition-transform duration-200 ease-out group-aria-expanded/menu-button:rotate-180 group-data-[collapsible=icon]:hidden motion-reduce:transition-none"
           data-slot="sidebar-menu-button-chevron"
@@ -1553,7 +1553,7 @@ function SidebarMenuButton({
   );
 
   const baseRender = tooltip ? <TooltipTrigger render={render} /> : render;
-  const finalRender = hasSubMenu ? (
+  const finalRender = subMenu ? (
     <CollapsiblePrimitive.Trigger
       render={baseRender ?? <button type="button" />}
     />
@@ -1566,7 +1566,7 @@ function SidebarMenuButton({
     props: mergeProps<"button">(
       {
         className: cn(sidebarMenuButtonVariants({ variant, size }), className),
-        "aria-current": isActive ? "page" : undefined,
+        "aria-current": active ? "page" : undefined,
         ref: labelRef as React.Ref<HTMLButtonElement>,
       },
       { ...props, children: composedChildren }
@@ -1576,7 +1576,7 @@ function SidebarMenuButton({
       slot: "sidebar-menu-button",
       sidebar: "menu-button",
       size,
-      active: isActive,
+      active,
     },
   });
 
@@ -1584,7 +1584,7 @@ function SidebarMenuButton({
   // is collapsed, surface the sub-items in a hover-popover so users can
   // still reach them without expanding the sidebar.
   const flyoutCandidate =
-    hasSubMenu && state === "collapsed" && itemCtx.subItems.length > 0;
+    subMenu && state === "collapsed" && itemCtx.subItems.length > 0;
 
   if (!tooltip) {
     return flyoutCandidate ? (
@@ -1799,13 +1799,13 @@ function SidebarMenuSubItem({
 function SidebarMenuSubButton({
   render,
   size = "md",
-  isActive = false,
+  active = false,
   className,
   ...props
 }: useRender.ComponentProps<"a"> &
   React.ComponentProps<"a"> & {
     size?: "sm" | "md";
-    isActive?: boolean;
+    active?: boolean;
   }) {
   return useRender({
     defaultTagName: "a",
@@ -1823,7 +1823,7 @@ function SidebarMenuSubButton({
       slot: "sidebar-menu-sub-button",
       sidebar: "menu-sub-button",
       size,
-      active: isActive,
+      active,
     },
   });
 }
@@ -2153,11 +2153,11 @@ function SidebarSwitcherItem({
 /** Props for {@link SidebarCard}. */
 export interface SidebarCardProps extends React.ComponentProps<"div"> {
   /**
-   * Hide the card entirely when the sidebar is collapsed to icon width.
-   * Defaults to `true` — most upgrade / onboarding prompts only make
+   * Show the card when the sidebar is collapsed to icon width.
+   * Defaults to `false` — most upgrade / onboarding prompts only make
    * sense when there's room for the headline copy.
    */
-  hideOnCollapse?: boolean;
+  showOnCollapse?: boolean;
 }
 
 /**
@@ -2170,14 +2170,14 @@ export interface SidebarCardProps extends React.ComponentProps<"div"> {
  */
 function SidebarCard({
   className,
-  hideOnCollapse = true,
+  showOnCollapse = false,
   ...props
 }: SidebarCardProps) {
   return (
     <div
       className={cn(
         "rounded-lg border border-sidebar-border bg-sidebar-accent/40 p-3 text-sm",
-        hideOnCollapse && "group-data-[collapsible=icon]:hidden",
+        !showOnCollapse && "group-data-[collapsible=icon]:hidden",
         className
       )}
       data-sidebar="card"
@@ -2277,7 +2277,7 @@ function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
       <MenuPrimitive.Portal>
         <MenuPrimitive.Positioner align="start" side="right" sideOffset={4}>
           <MenuPrimitive.Popup
-            className="z-50 min-w-40 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
+            className="z-50 min-w-40 origin-(--transform-origin) overflow-hidden rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
             data-slot="sidebar-menu-flyout"
           >
             {subItems.map((item) => (

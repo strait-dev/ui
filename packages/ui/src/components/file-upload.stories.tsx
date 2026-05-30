@@ -236,7 +236,7 @@ export const Gallery: Story = {
       return (
         <div className="w-[40rem] space-y-4">
           <FileUploadDropzone
-            isDragging={isDragging}
+            dragging={isDragging}
             onClick={actions.openFileDialog}
             onDragEnter={actions.handleDragEnter}
             onDragLeave={actions.handleDragLeave}
@@ -326,7 +326,7 @@ export const WithProgress: Story = {
       return (
         <div className="w-[32rem] space-y-4">
           <FileUploadDropzone
-            isDragging={isDragging}
+            dragging={isDragging}
             onClick={actions.openFileDialog}
             onDragEnter={actions.handleDragEnter}
             onDragLeave={actions.handleDragLeave}
@@ -380,7 +380,7 @@ export const TableList: Story = {
       return (
         <div className="w-[40rem] space-y-4">
           <FileUploadDropzone
-            isDragging={isDragging}
+            dragging={isDragging}
             onClick={actions.openFileDialog}
             onDragEnter={actions.handleDragEnter}
             onDragLeave={actions.handleDragLeave}

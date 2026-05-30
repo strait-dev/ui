@@ -281,7 +281,7 @@ Extends: `React.ComponentProps<"div">`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `isDragging` | `boolean` |  | `false` | Whether a drag is currently hovering — toggles the active styling. |
+| `dragging` | `boolean` |  | `false` | Whether a drag is currently hovering — toggles the active styling. |
 | `size` | `FileUploadSize` |  | `"default"` | Density of the dropzone. |
 
 Props (`FileUploadItemProps`):
@@ -417,7 +417,7 @@ Props (`MultipleSelectorProps`):
 | `onChange` | `(options: Option[]) => void` |  |  | Called with the full updated selection whenever options are added or removed. |
 | `maxSelected` | `number` |  | `Number.MAX_SAFE_INTEGER` | Limit the maximum number of selected options. |
 | `onMaxSelected` | `(maxLimit: number) => void` |  |  | When the number of selected options exceeds the limit, the onMaxSelected will be called. |
-| `hidePlaceholderWhenSelected` | `boolean` |  |  | Hide the placeholder when there are options selected. |
+| `showPlaceholderWhenSelected` | `boolean` |  | `true` | Show the placeholder when there are options selected. |
 | `disabled` | `boolean` |  |  | Disables the control; pointer events are blocked and opacity is reduced. |
 | `groupBy` | `string` |  |  | Group the options base on provided key. |
 | `className` | `string` |  |  | Extra classes merged onto the outer input wrapper element. |
@@ -426,7 +426,7 @@ Props (`MultipleSelectorProps`):
 | `creatable` | `boolean` |  | `false` | Allow user to create option when there is no option matched. |
 | `commandProps` | `React.ComponentPropsWithoutRef<typeof Command>` |  |  | Props of `Command` |
 | `inputProps` | `Omit< React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>, "value" \| "placeholder" \| "disabled" >` |  |  | Props of `CommandInput` |
-| `hideClearAllButton` | `boolean` |  | `false` | hide the clear all button. |
+| `showClearAllButton` | `boolean` |  | `true` | show the clear all button. |
 | `size` | `MultipleSelectorSize` |  | `"default"` | Size axis controlling control height and chip size. |
 
 Data slots: `empty`
@@ -444,7 +444,7 @@ Extends: `Omit<React.ComponentProps<"select">, "size">`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 40 px tall, slightly larger text. |
+| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 36 px tall, slightly larger text. |
 
 Data slots: `native-select`, `native-select-icon`, `native-select-optgroup`, `native-select-option`, `native-select-wrapper`
 
@@ -675,12 +675,12 @@ Extends: `useRender.ComponentProps<"span">`
 | `iconRight` | `IconSvgElement` |  |  | Icon rendered immediately after children. |
 | `mono` | `boolean` |  |  | When `true`, applies `font-mono uppercase tracking-wide` for monospaced label styling — useful for version numbers, codes, or IDs. |
 | `onDismiss` | `() => void` |  |  | Called when the dismiss button is clicked. |
-| `radius` | `VariantProps<typeof badgeVariants>["radius"]` |  |  | Corner radius preset applied via badgeVariants. `"pill"` (default, full-pill) · `"md"` (rounded square, matches buttons) · `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables. |
+| `radius` | `VariantProps<typeof badgeVariants>["radius"]` |  |  | Corner radius preset applied via badgeVariants. `"lg"` (default, rounded-lg) · `"pill"` (full-pill opt-in) · `"md"` (rounded-md) · `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables; use `"pill"` for fully circular badges. |
 | `size` | `VariantProps<typeof badgeVariants>["size"]` |  |  | Size preset applied via badgeVariants. `"xs"` through `"xl"`; controls height, padding, and font size. |
 | `variant` | `VariantProps<typeof badgeVariants>["variant"]` |  |  | Colour and emphasis style applied via badgeVariants. Includes solid fills, tinted `*-light` fills, bordered `*-outline` variants, `ghost`, and `link`. |
 
 Variants:
-- `radius`: `pill`, `md`, `sm` (default: `pill`)
+- `radius`: `lg`, `pill`, `md`, `sm` (default: `lg`)
 - `variant`: `default`, `outline`, `secondary`, `info`, `success`, `warning`, `destructive`, `invert`, `primary-light`, `warning-light`, `success-light`, `info-light`, `destructive-light`, `invert-light`, `secondary-light`, `primary-outline`, `warning-outline`, `success-outline`, `info-outline`, `destructive-outline`, `invert-outline`, `secondary-outline`, `ghost`, `link` (default: `default`)
 - `size`: `xs`, `sm`, `default`, `lg`, `xl` (default: `default`)
 
@@ -808,7 +808,7 @@ Extends: `BaseChartProps`
 | `lineProps` | `Partial<LineProps>` |  |  | Props forwarded to the underlying recharts `<Line>`. |
 
 Props (`PieChartProps`):
-Extends: `Omit< BaseChartProps, | "hideGridLines" | "hideXAxis" | "hideYAxis" | "xAxisProps" | "yAxisProps" | "displayEdgeLabelsOnly" | "legend" | "legendProps" >`
+Extends: `Omit< BaseChartProps, | "showGridLines" | "showXAxis" | "showYAxis" | "xAxisProps" | "yAxisProps" | "displayEdgeLabelsOnly" | "legend" | "legendProps" >`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -961,7 +961,7 @@ Props (`DataGridProps`):
 | `className` | `string` |  |  | Extra class names on the outermost container (when using DataGridContainer). |
 | `emptyMessage` | `React.ReactNode \| string` |  |  | Message shown in the empty-state row when there is no data. |
 | `fetchingMoreMessage` | `React.ReactNode \| string` |  |  | Message shown in the virtual infinite-scroll footer while fetching more rows. |
-| `isLoading` | `boolean` |  |  | When `true`, the grid is in a loading state. |
+| `loading` | `boolean` |  |  | When `true`, the grid is in a loading state. |
 | `loadingMessage` | `React.ReactNode \| string` |  |  | Custom content shown in the spinner overlay. |
 | `loadingMode` | `"skeleton" \| "spinner"` |  |  | Controls whether loading renders skeleton rows (`"skeleton"`) or a centred spinner (`"spinner"`). |
 | `onRowClick` | `(row: TData) => void` |  |  | Called when a body row is clicked. |
@@ -1000,11 +1000,11 @@ Props (`DataGridTableVirtualProps`):
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `estimateSize` | `number` |  |  | Estimated row height in px. Default `48`. |
+| `fetchingMore` | `boolean` |  | `false` | Whether a fetch is in progress (disables duplicate fetches). Default `false`. |
 | `fetchMoreOffset` | `number` |  | `0` | Number of items from the end to trigger `onFetchMore`. Default `0`. |
 | `footerContent` | `React.ReactNode` |  |  | Footer content. |
-| `hasMore` | `boolean` |  |  | `false` = all loaded; `true` / `undefined` = more available. |
 | `height` | `number \| string` |  |  | Fixed height for a self-contained scroll container. |
-| `isFetchingMore` | `boolean` |  | `false` | Whether a fetch is in progress (disables duplicate fetches). Default `false`. |
+| `moreAvailable` | `boolean` |  |  | `false` = all loaded; `true` / `undefined` = more available. |
 | `onFetchMore` | `() => void` |  |  | If provided, enables infinite scroll mode. |
 | `overscan` | `number` |  | `10` | Number of rows to render outside the visible area. Default `10`. |
 | `renderHeader` | `boolean` |  | `true` | Whether to render the header. Default `true`. |
@@ -1610,7 +1610,7 @@ Props (`NavigationRailItemProps`):
 | `label` | `string` | yes |  | Accessible text shown in the tooltip and as `sr-only` content. |
 | `href` | `string` |  |  | Optional URL; pass when the item should behave as an anchor. |
 | `onClick` | `() => void` |  |  | Click handler for the icon button. |
-| `isActive` | `boolean` |  |  | Marks the item as the currently active route. |
+| `active` | `boolean` |  |  | Marks the item as the currently active route. |
 | `disabled` | `boolean` |  |  | Disables pointer events and reduces opacity when `true`. |
 | `badge` | `React.ReactNode` |  |  | Optional indicator node (e.g. `<Ping>`) absolutely positioned at the top-right corner of the button. |
 
@@ -1683,7 +1683,7 @@ Extends: `React.ComponentProps<"div">`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `hideOnCollapse` | `boolean` |  | `true` | Hide the card entirely when the sidebar is collapsed to icon width. Defaults to `true` — most upgrade / onboarding prompts only make sense when there's room for the headline copy. |
+| `showOnCollapse` | `boolean` |  | `false` | Show the card when the sidebar is collapsed to icon width. Defaults to `false` — most upgrade / onboarding prompts only make sense when there's room for the headline copy. |
 
 Props (`SidebarGroupProps`):
 Extends: `React.ComponentProps<"div">`
@@ -1701,9 +1701,9 @@ Extends: `useRender.ComponentProps<"button">`, `React.ComponentProps<"button">`,
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `isActive` | `boolean` |  | `false` | Whether this row represents the current page. Sets `data-active` and `aria-current="page"`. |
+| `active` | `boolean` |  | `false` | Whether this row represents the current page. Sets `data-active` and `aria-current="page"`. |
 | `tooltip` | `string \| React.ComponentProps<typeof TooltipContent>` |  |  | Tooltip shown when the sidebar is collapsed to icon or when the label is truncated. |
-| `hasSubMenu` | `boolean` |  |  | When `true`, promotes this button into a Base UI `Collapsible.Trigger` for the enclosing SidebarMenuItem's sub-menu and appends a rotating chevron at the trailing edge. |
+| `subMenu` | `boolean` |  |  | When `true`, promotes this button into a Base UI `Collapsible.Trigger` for the enclosing SidebarMenuItem's sub-menu and appends a rotating chevron at the trailing edge. |
 
 Props (`SidebarMenuItemProps`):
 Extends: `React.ComponentProps<"li">`
@@ -2394,7 +2394,7 @@ Props (`CheckboxTreeProps`):
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `tree` | `TreeNode` | yes |  | Root TreeNode whose entire hierarchy is rendered and managed. |
-| `renderNode` | `(props: { node: TreeNode; isChecked: boolean \| "indeterminate"; onCheckedChange: () => void; children: React.ReactNode; }) => React.ReactNode` | yes |  | Render-prop called for every node in the tree. |
+| `renderNode` | `(props: { node: TreeNode; checked: boolean \| "indeterminate"; onCheckedChange: () => void; children: React.ReactNode; }) => React.ReactNode` | yes |  | Render-prop called for every node in the tree. |
 
 ### Credenza
 
@@ -2468,7 +2468,7 @@ Props (`DatePickerProps`):
 | `value` | `Date` |  |  | Currently selected date; pass `undefined` to show the placeholder. |
 | `onChange` | `(date: Date \| undefined) => void` |  |  | Called with the selected `Date` (or `undefined`) when the user picks a day or clears the selection via the calendar. |
 | `disabled` | `boolean` |  |  | Disables the trigger button, preventing the calendar from opening. |
-| `isRequired` | `boolean` |  |  | When `true`, appends a red asterisk to the label text. |
+| `required` | `boolean` |  |  | When `true`, appends a red asterisk to the label text. |
 | `label` | `string` |  |  | Optional `<label>` rendered above the trigger button; linked via `htmlFor` to the button's generated id. |
 | `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `<div>`. |
 | `error` | `boolean` |  |  | When `true`, applies a destructive border to the trigger button. |
@@ -2683,8 +2683,8 @@ Extends: `InputProps`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `isLoading` | `boolean` |  | `false` | When `true`, replaces the icon slot with an animated spinner. |
-| `icon` | `React.ReactNode` |  |  | Decorative node rendered at the leading edge; replaced by the spinner while `isLoading` is `true`. |
+| `loading` | `boolean` |  | `false` | When `true`, replaces the icon slot with an animated spinner. |
+| `icon` | `React.ReactNode` |  |  | Decorative node rendered at the leading edge; replaced by the spinner while `loading` is `true`. |
 | `endIcon` | `React.ReactNode` |  |  | Node rendered as a clickable button at the trailing edge of the input (e.g. a clear or submit icon). Requires endIconAriaLabel. |
 | `onEndIconClick` | `() => void` |  |  | Click handler forwarded to the trailing-edge button wrapping endIcon. |
 | `endIconAriaLabel` | `string` |  |  | Accessible label for the trailing-edge endIcon button; required by screen readers when using an icon-only affordance. |
@@ -2923,12 +2923,12 @@ Props (`SelectWithSearchProps`):
 | `id` | `string` |  |  | `id` forwarded to the trigger button; falls back to `name`. |
 | `onOpenChange` | `(open: boolean) => void` |  |  | Called with the new open state whenever the popover opens or closes. |
 | `onEndReached` | `() => void` |  |  | Called by `Virtuoso` when the user scrolls to the bottom of the list. |
-| `renderOption` | `(option: SelectOption, isSelected: boolean) => React.ReactNode` |  |  | Custom renderer for each option row; receives the option and selection state. |
+| `renderOption` | `(option: SelectOption, selected: boolean) => React.ReactNode` |  |  | Custom renderer for each option row; receives the option and selection state. |
 | `renderSelectedOption` | `(option: SelectOption) => React.ReactNode` |  |  | Custom renderer for the selected value shown inside the trigger button. |
 | `renderLoading` | `() => React.ReactNode` |  |  | Renders a loading indicator used both for initial load and next-page fetches. |
 | `renderEmpty` | `() => React.ReactNode` |  |  | Renders empty-state content when `options` is empty and not loading. |
-| `isLoading` | `boolean` |  | `false` | When `true`, shows `renderLoading` instead of the option list. |
-| `isFetchingNextPage` | `boolean` |  | `false` | When `true`, appends the `renderLoading` footer below the virtualized list. |
+| `loading` | `boolean` |  | `false` | When `true`, shows `renderLoading` instead of the option list. |
+| `fetchingNextPage` | `boolean` |  | `false` | When `true`, appends the `renderLoading` footer below the virtualized list. |
 | `size` | `"default" \| "sm" \| "lg" \| "icon"` |  | `"default"` | Controls the size variant passed to the trigger Button. |
 
 Data slots: `select-with-search`
@@ -2992,17 +2992,17 @@ Extends: `React.ComponentProps<"div">`
 | `dataKey` | `string` | yes |  | Field used for the category axis labels. |
 | `defaultSelectedSeries` | `string \| null` |  |  | Uncontrolled initial selected series. Defaults to `null`. |
 | `displayEdgeLabelsOnly` | `boolean` |  |  | Render only the first and last X-axis labels. |
-| `hideGridLines` | `boolean` |  |  | Hides the CartesianGrid when `true`. |
-| `hideXAxis` | `boolean` |  |  | Hides the XAxis when `true`. |
-| `hideYAxis` | `boolean` |  |  | Hides the YAxis when `true`. |
 | `intervalType` | `IntervalType` |  |  | Axis tick interval strategy. |
 | `layout` | `ChartLayout` |  |  | Chart orientation — see ChartLayout. |
 | `legend` | `LegendContentType \| boolean` |  |  | `true` for the default interactive legend, or custom recharts content. |
 | `legendProps` | `Omit< React.ComponentProps<typeof LegendPrimitive>, "content" \| "ref" >` |  |  | Extra props forwarded to the recharts `Legend` element. |
 | `onSelectedSeriesChange` | `(value: string \| null) => void` |  |  | Fires when the selection changes (legend click, bar click, or selector). |
 | `selectedSeries` | `string \| null` |  |  | Controlled selected series (the isolated/highlighted one, or `null`). Share this with a ChartSeriesSelector `value` so a header selector and the in-chart interactive legend stay in sync. |
+| `showGridLines` | `boolean` |  |  | Shows the CartesianGrid when `true`. |
+| `showXAxis` | `boolean` |  |  | Shows the XAxis when `true`. |
+| `showYAxis` | `boolean` |  |  | Shows the YAxis when `true`. |
 | `tooltip` | `TooltipContentType<ValueType, NameType> \| boolean` |  |  | `true` for the default styled tooltip, or a custom recharts content. |
-| `tooltipProps` | `Omit<TooltipProps, "content"> & { hideLabel?: boolean; labelSeparator?: boolean; hideIndicator?: boolean; indicator?: "line" \| "dot" \| "dashed"; nameKey?: string; labelKey?: string; }` |  |  | Extra props forwarded to the recharts `Tooltip` element. |
+| `tooltipProps` | `Omit<TooltipProps, "content"> & { showLabel?: boolean; labelSeparator?: boolean; showIndicator?: boolean; indicator?: "line" \| "dot" \| "dashed"; nameKey?: string; labelKey?: string; }` |  |  | Extra props forwarded to the recharts `Tooltip` element. |
 | `type` | `ChartType` |  |  | Stacking behaviour — see ChartType. |
 | `valueFormatter` | `(value: number) => string` |  |  | Formats numeric value-axis ticks and tooltip values. |
 | `xAxisProps` | `XAxisPrimitiveProps` |  |  | Extra props forwarded to the recharts `XAxis` element. |
@@ -3014,7 +3014,7 @@ Extends: `React.ComponentProps<"div">`, `Pick<LegendProps, "align" | "verticalAl
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `payload` | `readonly LegendPayload[]` |  |  | Recharts legend payload injected automatically by the `Legend` wrapper. |
-| `hideIcon` | `boolean` |  | `false` | When `true`, suppresses the color icon/dot for each legend entry. |
+| `showIcon` | `boolean` |  | `true` | When `true`, shows the color icon/dot for each legend entry. |
 | `nameKey` | `string` |  |  | Data key used to look up the series label in ChartConfig. |
 
 Props (`ChartLegendProps`):
