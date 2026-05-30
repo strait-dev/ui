@@ -5062,7 +5062,7 @@
             "name": "icon",
             "type": "React.ReactNode",
             "optional": true,
-            "description": "Decorative node rendered at the leading edge; replaced by the spinner while `isLoading` is `true`."
+            "description": "Decorative node rendered at the leading edge; replaced by the spinner while `loading` is `true`."
           },
           {
             "name": "endIcon",

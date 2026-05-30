@@ -2684,7 +2684,7 @@ Extends: `InputProps`
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `loading` | `boolean` |  | `false` | When `true`, replaces the icon slot with an animated spinner. |
-| `icon` | `React.ReactNode` |  |  | Decorative node rendered at the leading edge; replaced by the spinner while `isLoading` is `true`. |
+| `icon` | `React.ReactNode` |  |  | Decorative node rendered at the leading edge; replaced by the spinner while `loading` is `true`. |
 | `endIcon` | `React.ReactNode` |  |  | Node rendered as a clickable button at the trailing edge of the input (e.g. a clear or submit icon). Requires endIconAriaLabel. |
 | `onEndIconClick` | `() => void` |  |  | Click handler forwarded to the trailing-edge button wrapping endIcon. |
 | `endIconAriaLabel` | `string` |  |  | Accessible label for the trailing-edge endIcon button; required by screen readers when using an icon-only affordance. |
