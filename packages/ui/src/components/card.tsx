@@ -101,7 +101,7 @@ function Card({
         "data-[size=sm]:gap-3 data-[size=sm]:py-3",
         "data-[size=lg]:gap-6 data-[size=lg]:py-6",
         // image helpers
-        "has-[>img:first-child]:pt-0 has-data-[slot=card-footer]:pb-0 data-[size=lg]:has-data-[slot=card-footer]:pb-0 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "has-[>img:first-child]:pt-0 has-data-[slot=card-footer]:pb-0 data-[size=lg]:has-data-[slot=card-footer]:pb-0 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg",
         className
       )}
       data-size={size}

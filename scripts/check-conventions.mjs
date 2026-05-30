@@ -237,7 +237,9 @@ for (const file of files) {
   // rounded-full are banned outside their respective allowlists.
   if (!EXEMPT.radius.has(file)) {
     lines.forEach((ln, i) => {
-      if (/\brounded-(xl|2xl|3xl|4xl)\b/.test(ln)) {
+      if (
+        /\brounded(?:-(t|b|l|r|s|e|tl|tr|bl|br))?-(xl|2xl|3xl|4xl)\b/.test(ln)
+      ) {
         add(
           file,
           "radius",
