@@ -41,38 +41,12 @@ const EXEMPT = {
   // set toward empty as components are migrated. ----
   // §14: Base UI `render`, never Radix `asChild`.
   asChild: new Set(["credenza.tsx", "tree.tsx"]),
-  // §13: every component exports a named `*Props` type. direction.tsx and
-  // checkbox-tree.tsx are legitimately exempt (provider / render-prop); the
-  // rest are grandfathered drift to migrate.
-  namedProps: new Set([
-    "activity-feed.tsx",
-    "badge.tsx",
-    "banner.tsx",
-    "bar-list.tsx",
-    "bulk-action-bar.tsx",
-    "card-checkbox.tsx",
-    "chart-empty-state.tsx",
-    "chart.tsx",
-    "code-block.tsx",
-    "config-row.tsx",
-    "copy-button.tsx",
-    "date-picker.tsx",
-    "detail-sheet.tsx",
-    "direction.tsx",
-    "execution-trace-bar.tsx",
-    "feature-lock.tsx",
-    "input-with-inline-button.tsx",
-    "json-viewer.tsx",
-    "metric-card.tsx",
-    "radial-gauge.tsx",
-    "relative-time-card.tsx",
-    "secret-input.tsx",
-    "shell.tsx",
-    "spinner.tsx",
-    "tag-group.tsx",
-    "timeline.tsx",
-    "tracker.tsx",
-  ]),
+  // §13: every component exports a named `*Props` type. Only the two headless
+  // components are exempt — direction.tsx re-exports Base UI's
+  // DirectionProvider (no props of its own) and checkbox-tree.tsx is a
+  // render-prop where the consumer owns the markup. Every other component
+  // already complies via the brace re-export form.
+  namedProps: new Set(["direction.tsx", "checkbox-tree.tsx"]),
   // §11: the semantic cva axis is named `variant` (or `status`/`shape`).
   intentAxis: new Set([
     "avatar.tsx",
@@ -200,13 +174,15 @@ for (const file of files) {
     add(file, "asChild", "uses asChild (use the Base UI render prop)");
   }
 
-  // Rule §13: a named `*Props` type/interface is exported.
-  if (
-    !(
-      EXEMPT.namedProps.has(file) ||
-      /export\s+(?:type|interface)\s+\w+Props\b/.test(src)
-    )
-  ) {
+  // Rule §13: a named `*Props` type/interface is exported. Accept every export
+  // form the library uses: inline (`export type/interface XProps`), the
+  // value-and-type brace re-export (`export { X, type XProps }`), and the
+  // type-only brace block (`export type { XProps, ... }`, often multi-line).
+  // `[^}]` spans newlines, so the brace form matches across lines.
+  const exportsProps =
+    /export\s+(?:type|interface)\s+\w+Props\b/.test(src) ||
+    /export\s+(?:type\s+)?\{[^}]*\b\w+Props\b[^}]*\}/.test(src);
+  if (!(EXEMPT.namedProps.has(file) || exportsProps)) {
     add(file, "namedProps", "no exported *Props type");
   }
 
