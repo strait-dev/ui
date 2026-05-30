@@ -1,8 +1,11 @@
 ---
-"@strait/ui": major
+"@strait/ui": minor
 ---
 
 feat!: rename the semantic colour axis from `intent` to `variant`
+
+Breaking change, released as a `0.x` minor (pre-1.0 convention): bumps the
+minor rather than to `1.0.0`.
 
 The colour axis is now consistently named `variant` across the library, matching
 Button, Badge, Alert, and the rest. Six components had used `intent` (or, for
