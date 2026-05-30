@@ -149,7 +149,7 @@ export function InputWithInnerTags({
             {tag.text}
             <Button
               aria-label={`Remove ${tag.text}`}
-              className="ml-0.5 inline-flex size-4 h-auto items-center justify-center rounded px-0.5 text-secondary-foreground/70 transition-colors hover:bg-secondary-foreground/20 hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/50"
+              className="ml-0.5 inline-flex size-4 h-auto items-center justify-center rounded px-0.5 text-secondary-foreground/70 transition-colors hover:bg-secondary-foreground/20 hover:text-secondary-foreground focus-visible:border-ring focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               disabled={disabled}
               onClick={() => handleRemoveTag(tag.id)}
               size="icon"

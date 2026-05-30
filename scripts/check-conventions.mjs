@@ -133,13 +133,89 @@ for (const file of files) {
     });
   }
 
-  // Rule: focus ring must not use ring-2 or ring-offset for the visible ring
+  // Rule: focus ring must be ring-3 (not ring-1, ring-2, ring-4+).
+  // Only flags *focus* rings: focus-visible:ring-N, data-[focus-visible]:ring-N,
+  // focus-within:ring-offset. Plain surface frames like ring-1 ring-foreground/10
+  // are intentional and NOT flagged (no focus-* prefix). ring-0 suppressions on
+  // inner elements (InputGroup inner input, filter chip inner input) are also
+  // intentional — only widths 1, 2, 4, 5+ are non-compliant.
   lines.forEach((ln, i) => {
-    if (/focus-visible:ring-2\b/.test(ln)) {
-      add(file, "focusRing", `:${i + 1} ring-2 (use ring-3)`);
+    // focus-visible:ring-<width> — flag widths 1, 2, 4, 5, 6, 7, 8, 9 (not 0 or 3)
+    const fvMatches = ln.match(/focus-visible:ring-([1-9])\b/g) || [];
+    for (const m of fvMatches) {
+      const width = Number(m.replace("focus-visible:ring-", ""));
+      if (width !== 3) {
+        add(
+          file,
+          "focusRing",
+          `:${i + 1} focus-visible:ring-${width} (use ring-3)`
+        );
+      }
     }
+    // data-[focus-visible]:ring-<width> — attribute-selector form used by RAC
+    const dfvMatches = ln.match(/data-\[focus-visible\]:ring-([1-9])\b/g) || [];
+    for (const m of dfvMatches) {
+      const width = Number(m.replace("data-[focus-visible]:ring-", ""));
+      if (width !== 3) {
+        add(
+          file,
+          "focusRing",
+          `:${i + 1} data-[focus-visible]:ring-${width} (use ring-3)`
+        );
+      }
+    }
+    // focus-within:ring-offset — retired offset pattern
+    if (/focus-within:ring-offset/.test(ln)) {
+      add(
+        file,
+        "focusRing",
+        `:${i + 1} focus-within:ring-offset (remove; use border-ring instead)`
+      );
+    }
+    // Legacy focus-visible:ring-offset (keep for safety)
     if (/focus-visible:ring-offset/.test(ln)) {
-      add(file, "focusRing", `:${i + 1} ring-offset`);
+      add(
+        file,
+        "focusRing",
+        `:${i + 1} focus-visible:ring-offset (retired pattern)`
+      );
+    }
+  });
+
+  // Rule intentOpacity (§intent-opacity): warning opacity values must match the
+  // brand/destructive/success/info families. Flags the specific divergent values
+  // that existed before the 0.1.x consistency fix — if any reappear, the build
+  // fails. Only meaningful in button.tsx but runs globally (cheap, no false-pos).
+  //   - border-warning/50  → retired (use /40)
+  //   - ring-warning/40    → retired focus ring opacity (use /30 solid, /20 soft/outline)
+  //   - bg-warning/25      → retired light-mode soft resting fill (use /10 light, /15 dark:)
+  //     NOTE: dark:hover:bg-warning/25 is ALLOWED (dark-mode hover is intentional);
+  //     only bare bg-warning/25 without a dark: modifier is flagged.
+  lines.forEach((ln, i) => {
+    if (/\bborder-warning\/50\b/.test(ln)) {
+      add(
+        file,
+        "intentOpacity",
+        `:${i + 1} border-warning/50 retired (use /40)`
+      );
+    }
+    if (/\bring-warning\/40\b/.test(ln)) {
+      add(
+        file,
+        "intentOpacity",
+        `:${i + 1} ring-warning/40 retired (use /30 solid, /20 soft/outline)`
+      );
+    }
+    // Flag bg-warning/25 only when it is NOT preceded by a dark: context modifier.
+    // Splits the line into space-separated tokens and checks each individually.
+    for (const token of ln.split(/\s+/)) {
+      if (/^bg-warning\/25\b/.test(token)) {
+        add(
+          file,
+          "intentOpacity",
+          `:${i + 1} bg-warning/25 retired resting fill (use /10 light, /15 dark only)`
+        );
+      }
     }
   });
 

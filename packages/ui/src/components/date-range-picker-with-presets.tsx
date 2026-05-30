@@ -194,8 +194,8 @@ export function DateRangePickerWithPresets({
           ) : null}
           <Group
             className={cn(
-              "flex h-8 w-full items-center rounded-lg border border-input bg-background text-sm ring-offset-background",
-              "focus-within:outline-hidden focus-within:ring-3 focus-within:ring-ring/50 focus-within:ring-offset-2",
+              "flex h-8 w-full items-center rounded-lg border border-input bg-background text-sm",
+              "focus-within:border-ring focus-within:outline-hidden focus-within:ring-3 focus-within:ring-ring/50",
               "disabled:cursor-not-allowed disabled:opacity-50"
             )}
           >
@@ -234,7 +234,7 @@ export function DateRangePickerWithPresets({
           <Popover
             {...overlayProps}
             className={cn(
-              "z-50 mt-2 w-auto rounded-md shadow-md outline-hidden",
+              "z-50 mt-2 w-auto rounded-lg shadow-md outline-hidden",
               "data-entering:animate-in data-exiting:animate-out",
               "data-entering:fade-in-0 data-exiting:fade-out-0",
               "data-entering:zoom-in-95 data-exiting:zoom-out-95",
