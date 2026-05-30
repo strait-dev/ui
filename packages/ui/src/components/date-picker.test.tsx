@@ -27,8 +27,8 @@ describe("DatePicker", () => {
     expect(screen.getByText("Due date")).toBeInTheDocument();
   });
 
-  it("renders a required asterisk when isRequired is true", () => {
-    render(<DatePicker isRequired label="Due date" />);
+  it("renders a required asterisk when required is true", () => {
+    render(<DatePicker label="Due date" required />);
     expect(screen.getByText("*")).toBeInTheDocument();
   });
 

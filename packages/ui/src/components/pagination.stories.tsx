@@ -27,7 +27,7 @@ const meta: Meta<typeof Pagination> = {
           "`PaginationEllipsis`.",
           "",
           "`PaginationLink` forwards to `Button` via a `render` prop on an `<a>` tag.",
-          'The `isActive` prop applies the `outline` variant and sets `aria-current="page"`.',
+          'The `active` prop applies the `outline` variant and sets `aria-current="page"`.',
           "`PaginationPrevious` and `PaginationNext` include an optional `text` prop",
           "to customise the visible label.",
           "",
@@ -67,7 +67,7 @@ export const Playground: Story = {
           <PaginationLink href="#">1</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive>
+          <PaginationLink active href="#">
             2
           </PaginationLink>
         </PaginationItem>
@@ -94,7 +94,7 @@ export const WithEllipsis: Story = {
           <PaginationLink href="#">1</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive>
+          <PaginationLink active href="#">
             2
           </PaginationLink>
         </PaginationItem>
@@ -121,7 +121,7 @@ export const FirstPage: Story = {
           <PaginationPrevious href="#" />
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive>
+          <PaginationLink active href="#">
             1
           </PaginationLink>
         </PaginationItem>
@@ -160,7 +160,7 @@ export const LastPage: Story = {
           <PaginationLink href="#">9</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive>
+          <PaginationLink active href="#">
             10
           </PaginationLink>
         </PaginationItem>
@@ -197,8 +197,8 @@ export const Controlled: Story = {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <PaginationItem key={p}>
                 <PaginationLink
+                  active={p === page}
                   href="#"
-                  isActive={p === page}
                   onClick={(e) => {
                     e.preventDefault();
                     setPage(p);
@@ -236,7 +236,7 @@ export const CustomLabels: Story = {
           <PaginationLink href="#">1</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive>
+          <PaginationLink active href="#">
             2
           </PaginationLink>
         </PaginationItem>
@@ -270,7 +270,7 @@ export const Sizes: Story = {
                 <PaginationLink href="#">1</PaginationLink>
               </PaginationItem>
               <PaginationItem>
-                <PaginationLink href="#" isActive>
+                <PaginationLink active href="#">
                   2
                 </PaginationLink>
               </PaginationItem>

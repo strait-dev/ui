@@ -57,22 +57,34 @@ const EXEMPT = {
   // The intent→variant migration is complete; no files are grandfathered.
   intentAxis: new Set([]),
   // §12: boolean props/flags unprefixed + positively phrased.
+  // Files fully migrated in refactor/unify-radius (all public is*/has*/hide*
+  // props renamed): date-picker.tsx, input-with-loader.tsx,
+  // navigation-rail.tsx, pagination.tsx, select-with-search.tsx — removed.
+  // checkbox-tree.tsx — removed (renderNode `isChecked` param renamed to `checked`).
+  // Remaining entries retain ONLY internal/private names:
+  //   calendar-rac.tsx   — isRange (private calendar-rac param)
+  //   chart.tsx          — hideIndicator (private renderIndicator function param)
+  //   code-block-command.tsx — hasExplicitAlternatives (private param)
+  //   credenza.tsx       — isDesktop (private context field)
+  //   data-grid.tsx      — isLoading (DataGridContextProps & private function params),
+  //                        isInfiniteMode, isFetchingMore, hasMore (private params)
+  //   date-selector.tsx  — isRange (private context/param)
+  //   file-upload.tsx    — isDragging (FileUploadState hook-return field, internal)
+  //   json-viewer.tsx    — isLast (private param)
+  //   multiselect.tsx    — isOpen (×3 private hook types), isLoading (~686 private)
+  //   sidebar.tsx        — isMobile (context), SidebarMenuItemSubItem.isActive (~1262)
+  //   sortable.tsx       — isDragging (context)
+  //   stepper.tsx        — isDisabled/isLoading (context)
   boolNaming: new Set([
     "calendar-rac.tsx",
     "chart.tsx",
-    "checkbox-tree.tsx",
     "code-block-command.tsx",
     "credenza.tsx",
     "data-grid.tsx",
-    "date-picker.tsx",
     "date-selector.tsx",
     "file-upload.tsx",
-    "input-with-loader.tsx",
     "json-viewer.tsx",
     "multiselect.tsx",
-    "navigation-rail.tsx",
-    "pagination.tsx",
-    "select-with-search.tsx",
     "sidebar.tsx",
     "sortable.tsx",
     "stepper.tsx",

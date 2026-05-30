@@ -199,7 +199,7 @@ describe("Sidebar", () => {
         <Sidebar collapsible="none">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton isActive>Active row</SidebarMenuButton>
+              <SidebarMenuButton active>Active row</SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </Sidebar>
@@ -233,13 +233,13 @@ describe("Sidebar", () => {
     expect(onTrigger).toHaveBeenCalledTimes(2);
   });
 
-  it("toggles a SidebarMenuItem sub-menu via the hasSubMenu trigger", async () => {
+  it("toggles a SidebarMenuItem sub-menu via the subMenu trigger", async () => {
     render(
       <SidebarProvider>
         <Sidebar collapsible="none">
           <SidebarMenu>
             <SidebarMenuItem value="settings">
-              <SidebarMenuButton hasSubMenu>Settings</SidebarMenuButton>
+              <SidebarMenuButton subMenu>Settings</SidebarMenuButton>
               <SidebarMenuSub value="settings">
                 <SidebarMenuSubItem>
                   <SidebarMenuSubButton>Profile</SidebarMenuSubButton>

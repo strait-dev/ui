@@ -30,7 +30,7 @@ function BasicRail() {
         <span>Logo</span>
       </NavigationRailHeader>
       <NavigationRailSection>
-        <NavigationRailItem icon={Home01Icon} isActive label="Home" />
+        <NavigationRailItem active icon={Home01Icon} label="Home" />
         <NavigationRailItem icon={Settings01Icon} label="Settings" />
       </NavigationRailSection>
       <NavigationRailFooter>

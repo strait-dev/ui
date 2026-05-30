@@ -40,8 +40,8 @@ expectTypeOf<
   NonNullable<SidebarGroupProps["pinned"]>
 >().toEqualTypeOf<boolean>();
 
-// --- SidebarMenuButton gains hasSubMenu ------------------------------------
-expectTypeOf<SidebarMenuButtonProps>().toHaveProperty("hasSubMenu");
+// --- SidebarMenuButton gains subMenu ------------------------------------
+expectTypeOf<SidebarMenuButtonProps>().toHaveProperty("subMenu");
 
 // --- SidebarMenuItem has the value persistence key -------------------------
 expectTypeOf<SidebarMenuItemProps>().toHaveProperty("value");

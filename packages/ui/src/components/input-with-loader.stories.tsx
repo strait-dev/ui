@@ -18,7 +18,7 @@ const meta: Meta<typeof InputWithLoader> = {
           "trailing icon.",
           "",
           "Composes the `Input` primitive with absolutely-positioned icon slots.",
-          "When `isLoading` is `true` the leading slot shows a spinning `Loading01Icon`",
+          "When `loading` is `true` the leading slot shows a spinning `Loading01Icon`",
           "regardless of the `icon` prop — useful for async search or validation feedback.",
           "The optional `endIcon` slot renders a pressable button (supply `onEndIconClick`",
           "and `endIconAriaLabel`).",
@@ -27,7 +27,7 @@ const meta: Meta<typeof InputWithLoader> = {
     },
   },
   argTypes: {
-    isLoading: {
+    loading: {
       control: "boolean",
       description: "Replace the leading icon with a spinner.",
     },
@@ -50,7 +50,7 @@ const meta: Meta<typeof InputWithLoader> = {
   },
   args: {
     placeholder: "Search…",
-    isLoading: false,
+    loading: false,
   },
 };
 
@@ -58,7 +58,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** Interactive playground — toggle `isLoading` to see the spinner replace the icon. */
+/** Interactive playground — toggle `loading` to see the spinner replace the icon. */
 export const Playground: Story = {
   render: (args) => (
     <div className="flex w-72 flex-col gap-1.5">
@@ -96,7 +96,7 @@ export const Loading: Story = {
         {...args}
         defaultValue="strait"
         id="loader-loading"
-        isLoading
+        loading
         placeholder="Search…"
       />
     </div>

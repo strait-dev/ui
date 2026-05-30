@@ -108,13 +108,13 @@ export type CheckboxTreeProps = {
   /**
    * Render-prop called for every node in the tree.
    *
-   * Receives the node data, its computed tri-state `isChecked` value,
+   * Receives the node data, its computed tri-state `checked` value,
    * an `onCheckedChange` toggle handler, and already-rendered
    * `children` for branch nodes.
    */
   renderNode: (props: {
     node: TreeNode;
-    isChecked: boolean | "indeterminate";
+    checked: boolean | "indeterminate";
     onCheckedChange: () => void;
     children: React.ReactNode;
   }) => React.ReactNode;
@@ -141,10 +141,10 @@ export type CheckboxTreeProps = {
  * ```tsx
  * <CheckboxTree
  *   tree={treeData}
- *   renderNode={({ node, isChecked, onCheckedChange, children }) => (
+ *   renderNode={({ node, checked, onCheckedChange, children }) => (
  *     <div key={node.id}>
  *       <Checkbox
- *         checked={isChecked}
+ *         checked={checked}
  *         onCheckedChange={onCheckedChange}
  *         label={node.label}
  *       />
@@ -162,7 +162,7 @@ export function CheckboxTree({ tree, renderNode }: CheckboxTreeProps) {
 
     return renderNode({
       node,
-      isChecked: isChecked(node),
+      checked: isChecked(node),
       onCheckedChange: () => handleCheck(node),
       children,
     });

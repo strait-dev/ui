@@ -276,13 +276,6 @@ interface BaseChartProps extends React.ComponentProps<"div"> {
 
   /** Render only the first and last X-axis labels. */
   displayEdgeLabelsOnly?: boolean;
-
-  /** Hides the {@link CartesianGrid} when `true`. */
-  hideGridLines?: boolean;
-  /** Hides the {@link XAxis} when `true`. */
-  hideXAxis?: boolean;
-  /** Hides the {@link YAxis} when `true`. */
-  hideYAxis?: boolean;
   /** Axis tick interval strategy. */
   intervalType?: IntervalType;
   /** Chart orientation — see {@link ChartLayout}. */
@@ -305,13 +298,20 @@ interface BaseChartProps extends React.ComponentProps<"div"> {
    */
   selectedSeries?: string | null;
 
+  /** Shows the {@link CartesianGrid} when `true`. */
+  showGridLines?: boolean;
+  /** Shows the {@link XAxis} when `true`. */
+  showXAxis?: boolean;
+  /** Shows the {@link YAxis} when `true`. */
+  showYAxis?: boolean;
+
   /** `true` for the default styled tooltip, or a custom recharts content. */
   tooltip?: TooltipContentType<ValueType, NameType> | boolean;
   /** Extra props forwarded to the recharts `Tooltip` element. */
   tooltipProps?: Omit<TooltipProps, "content"> & {
-    hideLabel?: boolean;
+    showLabel?: boolean;
     labelSeparator?: boolean;
-    hideIndicator?: boolean;
+    showIndicator?: boolean;
     indicator?: "line" | "dot" | "dashed";
     nameKey?: string;
     labelKey?: string;
@@ -704,9 +704,9 @@ const CartesianGrid = ({ className, ...props }: CartesianGridProps) => {
 // #region Tooltip content --------------------------------------------------
 
 type ChartTooltipContentExtras = {
-  hideLabel?: boolean;
+  showLabel?: boolean;
   labelSeparator?: boolean;
-  hideIndicator?: boolean;
+  showIndicator?: boolean;
   indicator?: "line" | "dot" | "dashed";
   nameKey?: string;
   labelKey?: string;
@@ -729,8 +729,8 @@ const ChartTooltipContent = <TValue extends ValueType, TName extends NameType>({
   payload,
   className,
   indicator = "dot",
-  hideLabel = false,
-  hideIndicator = false,
+  showLabel = true,
+  showIndicator = true,
   label,
   labelSeparator = true,
   labelFormatter,
@@ -746,7 +746,7 @@ const ChartTooltipContent = <TValue extends ValueType, TName extends NameType>({
   const { config } = useChart();
 
   const tooltipLabel = useMemo(() => {
-    if (hideLabel || !payload?.length) {
+    if (!(showLabel && payload?.length)) {
       return null;
     }
 
@@ -777,7 +777,7 @@ const ChartTooltipContent = <TValue extends ValueType, TName extends NameType>({
     label,
     labelFormatter,
     payload,
-    hideLabel,
+    showLabel,
     labelClassName,
     config,
     labelKey,
@@ -797,7 +797,7 @@ const ChartTooltipContent = <TValue extends ValueType, TName extends NameType>({
       )}
       ref={ref}
     >
-      {hideLabel ? null : (
+      {showLabel ? (
         <>
           {nestLabel ? null : (
             <span className="font-medium">{tooltipLabel}</span>
@@ -809,7 +809,7 @@ const ChartTooltipContent = <TValue extends ValueType, TName extends NameType>({
             />
           )}
         </>
-      )}
+      ) : null}
       <div className="grid gap-3">
         {payload.map((item, index) => {
           const key = `${nameKey || item.name || item.dataKey || "value"}`;
@@ -831,7 +831,7 @@ const ChartTooltipContent = <TValue extends ValueType, TName extends NameType>({
                 <>
                   {renderIndicator({
                     itemConfig,
-                    hideIndicator,
+                    hideIndicator: !showIndicator,
                     indicator,
                     nestLabel,
                     indicatorColor,
@@ -913,8 +913,8 @@ type ChartLegendContentProps = React.ComponentProps<"div"> &
   Pick<LegendProps, "align" | "verticalAlign"> & {
     /** Recharts legend payload injected automatically by the `Legend` wrapper. */
     payload?: readonly LegendPayload[];
-    /** When `true`, suppresses the color icon/dot for each legend entry. */
-    hideIcon?: boolean;
+    /** When `true`, shows the color icon/dot for each legend entry. */
+    showIcon?: boolean;
     /** Data key used to look up the series label in {@link ChartConfig}. */
     nameKey?: string;
   };
@@ -935,7 +935,7 @@ const legendJustify = {
  */
 const ChartLegendContent = ({
   className,
-  hideIcon = false,
+  showIcon = true,
   payload,
   align = "right",
   verticalAlign = "bottom",
@@ -979,7 +979,7 @@ const ChartLegendContent = ({
             }}
             type="button"
           >
-            {itemConfig?.icon && !hideIcon ? (
+            {itemConfig?.icon && showIcon ? (
               <itemConfig.icon />
             ) : (
               <div

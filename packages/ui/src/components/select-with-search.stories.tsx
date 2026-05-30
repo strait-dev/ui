@@ -29,7 +29,7 @@ const meta: Meta<typeof SelectWithSearch> = {
           "",
           "- Filtering is handled externally (`shouldFilter={false}` on Command); use `onSearchChange` to drive server-side search.",
           "- `renderOption` / `renderSelectedOption` accept render-prop overrides for custom item display.",
-          "- `onEndReached` enables infinite-scroll loading; `isFetchingNextPage` + `renderLoading` show a footer spinner.",
+          "- `onEndReached` enables infinite-scroll loading; `fetchingNextPage` + `renderLoading` show a footer spinner.",
           "- Supports `label`, `error`, `required`, `disabled`, and `size` props.",
         ].join("\n"),
       },

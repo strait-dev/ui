@@ -542,7 +542,7 @@ function dropzoneIconSize(size: FileUploadSize | null | undefined): number {
 /** Props for the {@link FileUploadDropzone} component. */
 export interface FileUploadDropzoneProps extends React.ComponentProps<"div"> {
   /** Whether a drag is currently hovering — toggles the active styling. */
-  isDragging?: boolean;
+  dragging?: boolean;
   /** Density of the dropzone. */
   size?: FileUploadSize;
 }
@@ -554,7 +554,7 @@ export interface FileUploadDropzoneProps extends React.ComponentProps<"div"> {
  * @example
  * ```tsx
  * <FileUploadDropzone
- *   isDragging={isDragging}
+ *   dragging={isDragging}
  *   onDragEnter={handleDragEnter}
  *   onDrop={handleDrop}
  *   onClick={openFileDialog}
@@ -566,7 +566,7 @@ export interface FileUploadDropzoneProps extends React.ComponentProps<"div"> {
  */
 export function FileUploadDropzone({
   className,
-  isDragging = false,
+  dragging = false,
   size = "default",
   children,
   ...props
@@ -574,7 +574,7 @@ export function FileUploadDropzone({
   return (
     <div
       className={cn(fileUploadVariants({ size }), className)}
-      data-dragging={isDragging}
+      data-dragging={dragging}
       data-slot="file-upload-dropzone"
       {...props}
     >
@@ -778,7 +778,7 @@ export function FileUpload({
        * button (axe `nested-interactive`).
        */}
       <FileUploadDropzone
-        isDragging={isDragging}
+        dragging={isDragging}
         onClick={actions.openFileDialog}
         onDragEnter={actions.handleDragEnter}
         onDragLeave={actions.handleDragLeave}

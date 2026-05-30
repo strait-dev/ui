@@ -43,7 +43,7 @@ export type NavigationRailProps = React.ComponentProps<"div"> & {
  *     <NavigationRailItem
  *       icon={HomeIcon}
  *       label="Home"
- *       isActive
+ *       active
  *     />
  *     <NavigationRailItem icon={SettingsIcon} label="Settings" />
  *   </NavigationRailSection>
@@ -85,7 +85,7 @@ export type NavigationRailItemProps = {
   /** Click handler for the icon button. */
   onClick?: () => void;
   /** Marks the item as the currently active route. */
-  isActive?: boolean;
+  active?: boolean;
   /** Disables pointer events and reduces opacity when `true`. */
   disabled?: boolean;
   /** Optional indicator node (e.g. `<Ping>`) absolutely positioned at the
@@ -106,14 +106,14 @@ export type NavigationRailItemProps = {
  *   absolutely positioned at the top-right corner of the button.
  * - `disabled` adds `pointer-events-none` and reduces opacity; it also
  *   passes the native `disabled` attribute to the underlying button.
- * - `isActive` switches the button to the `secondary` variant and adds an
+ * - `active` switches the button to the `secondary` variant and adds an
  *   `bg-accent` class for the active ring treatment.
  */
 export const NavigationRailItem = ({
   icon,
   label,
   onClick,
-  isActive,
+  active,
   disabled,
   badge,
   ref,
@@ -125,7 +125,7 @@ export const NavigationRailItem = ({
         <Button
           className={cn(
             "relative h-14 w-14 rounded-lg",
-            isActive ? "bg-accent" : null,
+            active ? "bg-accent" : null,
             disabled ? "pointer-events-none opacity-50" : null
           )}
           data-slot="navigation-rail-item"
@@ -133,7 +133,7 @@ export const NavigationRailItem = ({
           onClick={onClick}
           ref={ref}
           size="icon"
-          variant={isActive ? "secondary" : "ghost"}
+          variant={active ? "secondary" : "ghost"}
           {...props}
         />
       }
