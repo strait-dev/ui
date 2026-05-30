@@ -5834,7 +5834,7 @@
             "type": "\"sm\" | \"default\" | \"lg\"",
             "optional": true,
             "default": "\"default\"",
-            "description": "Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 40 px tall, slightly larger text."
+            "description": "Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 36 px tall, slightly larger text."
           }
         ],
         "extends": [

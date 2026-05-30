@@ -226,7 +226,7 @@ function BannerContent({ className, ...props }: React.ComponentProps<"div">) {
 function BannerTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("font-semibold leading-snug", className)}
+      className={cn("font-medium leading-snug", className)}
       data-slot="banner-title"
       {...props}
     />
