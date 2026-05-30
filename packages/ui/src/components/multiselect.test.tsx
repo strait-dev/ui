@@ -105,16 +105,16 @@ describe("MultipleSelector", () => {
   // size variant — control container classes
   // ------------------------------------------------------------------
 
-  it("renders with default size (min-h-10) when size prop is omitted", () => {
+  it("renders with default size (min-h-8) when size prop is omitted", () => {
     const { container } = render(
       <MultipleSelector options={OPTIONS} placeholder="Select frameworks..." />
     );
     // The inner control div carries the min-h class
-    const control = container.querySelector(".min-h-10");
+    const control = container.querySelector(".min-h-8");
     expect(control).toBeInTheDocument();
   });
 
-  it("renders with default size (min-h-10) when size=default is explicit", () => {
+  it("renders with default size (min-h-8) when size=default is explicit", () => {
     const { container } = render(
       <MultipleSelector
         options={OPTIONS}
@@ -122,7 +122,7 @@ describe("MultipleSelector", () => {
         size="default"
       />
     );
-    const control = container.querySelector(".min-h-10");
+    const control = container.querySelector(".min-h-8");
     expect(control).toBeInTheDocument();
   });
 

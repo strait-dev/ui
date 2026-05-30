@@ -22,7 +22,7 @@ const DEFAULT_DEBOUNCE_TIME = 500;
  * | Value | Control min-height | Chip height | Chip text |
  * |-------|--------------------|-------------|-----------|
  * | `sm` | `min-h-8` | `h-6` | `text-xs` |
- * | `default` | `min-h-10` | `h-8` | `text-sm` |
+ * | `default` | `min-h-8` | `h-8` | `text-sm` |
  */
 export type MultipleSelectorSize = "sm" | "default";
 
@@ -548,7 +548,7 @@ export type MultipleSelectorProps = {
    * | Value | Control min-height | Chip height | Chip text |
    * |-------|--------------------|-------------|-----------|
    * | `sm` | `min-h-8` | `h-6` | `text-xs` |
-   * | `default` | `min-h-10` | `h-8` | `text-sm` |
+   * | `default` | `min-h-8` | `h-8` | `text-sm` |
    *
    * @default "default"
    */
@@ -953,7 +953,7 @@ function MultipleSelector({
       : commandProps.shouldFilter;
 
   // Derive size-dependent classes
-  const controlMinH = size === "sm" ? "min-h-8" : "min-h-10";
+  const controlMinH = size === "sm" ? "min-h-8" : "min-h-8";
 
   return (
     <Command
@@ -1038,7 +1038,7 @@ function MultipleSelector({
           data-state={open ? "open" : "closed"}
         >
           <CommandList
-            className="bg-popover text-popover-foreground shadow-lg outline-hidden"
+            className="bg-popover text-popover-foreground shadow-md outline-hidden ring-1 ring-foreground/10"
             onMouseEnter={() => {
               setOnScrollbar(true);
             }}
