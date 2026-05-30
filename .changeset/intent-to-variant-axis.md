@@ -1,11 +1,12 @@
 ---
-"@strait/ui": minor
+"@strait/ui": patch
 ---
 
 feat!: rename the semantic colour axis from `intent` to `variant`
 
-Breaking change, released as a `0.x` minor (pre-1.0 convention): bumps the
-minor rather than to `1.0.0`.
+**BREAKING CHANGE** (shipped in the `0.1.3` patch by maintainer decision): even
+though the version bump is a patch, this renames public props. Update call sites
+when upgrading — see the migration notes below.
 
 The colour axis is now consistently named `variant` across the library, matching
 Button, Badge, Alert, and the rest. Six components had used `intent` (or, for
