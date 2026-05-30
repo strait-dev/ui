@@ -233,24 +233,31 @@ share of the audit.
 
 ---
 
-## 5. Finding 4 — `asChild` holdouts instead of `render` (Medium)
+## 5. Finding 4 — `asChild` usage vs `render` (✅ Resolved — 1 false positive, 1 legitimate boundary)
 
-The [component contract](component-contract.md) mandates Base UI's `render` prop
-for polymorphism, never Radix-style `asChild`. 96 components comply; **2 do not**:
+**Original finding (overstated):** "2 components (`credenza.tsx`, `tree.tsx`) use
+`asChild` instead of `render`; migrate both."
 
-```
-credenza.tsx · tree.tsx
-```
+**Correction after reading source:**
 
-Both are likely carried over from a shadcn/Radix origin and kept `asChild`.
+- **`tree.tsx` was a false positive.** The scan matched the substring inside
+  `hasChildItems`, not a real `asChild` prop. The `\basChild\b` enforcement
+  regex never flagged it; it was an erroneous grandfather entry, now removed.
+- **`credenza.tsx` is a legitimate, permanent exemption.** Credenza is a
+  responsive overlay that renders a Base UI `Dialog` on desktop and a **vaul**
+  `Drawer` on mobile. The desktop branch already uses `render`; the mobile
+  branch's `asChild` lands on `DrawerTrigger`/`DrawerClose`, which are thin
+  re-exports of vaul's primitives — and vaul's polymorphism API *is* `asChild`,
+  with no `render` equivalent. Forcing `render` here would mean wrapping vaul to
+  translate `render → asChild`, adding indirection for zero consumer-facing gain.
 
-**Impact.** API inconsistency in the exact place the contract is most explicit —
-a consumer who learns `render={<a />}` on every other component hits `asChild` on
-these two. Also a maintenance risk: the contract claims `render` is universal.
+So there is **no migration to do**. The `asChild` ban (§14) is enforced in
+`check-conventions.mjs`, with `credenza.tsx` recorded as a documented permanent
+exemption (vaul boundary), exactly like `code-block.tsx` is exempt from the
+raw-colour rule for its always-dark terminal surface.
 
-**Recommendation.** Migrate both to the `render` prop, then add an `asChild` ban
-to `check-conventions.mjs` so it can't reappear. Small, contained, high
-consistency-per-line.
+**Lesson (again):** confirm scan-derived findings against source. Two of the
+five findings in this audit (this one and §6) were scan artifacts, not real work.
 
 ---
 
@@ -278,8 +285,9 @@ rule becomes enforceable rather than aspirational.
 
 Worth stating plainly, because it's the foundation the above builds on:
 
-- **Polymorphism is 96/98 on `render`.** Only 2 `asChild` holdouts remain
-  (Finding 4) — the pattern itself is well-established.
+- **Polymorphism is effectively 100% on `render`.** The one `asChild` site
+  (credenza's vaul branch, Finding 4) is a legitimate library-boundary exemption,
+  now enforced — the pattern is universal across the library's own primitives.
 - **Enforced visual contract passes clean:** focus ring (`ring-3`), disabled,
   `aria-invalid` width, semantic-token-only colours, `cn()` merging, `"use
   client"` placement, `ComponentProps` typing.

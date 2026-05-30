@@ -39,8 +39,14 @@ const EXEMPT = {
   // docs/api-consistency-audit.md. Each set grandfathers the CURRENT violators
   // only — any NEW component that breaks the rule fails the build. Shrink each
   // set toward empty as components are migrated. ----
-  // §14: Base UI `render`, never Radix `asChild`.
-  asChild: new Set(["credenza.tsx", "tree.tsx"]),
+  // §14: Base UI `render`, never Radix `asChild`. credenza.tsx is a permanent,
+  // legitimate exemption: its `asChild` lands on `DrawerTrigger`/`DrawerClose`,
+  // which are thin re-exports of vaul's primitives, and vaul's polymorphism API
+  // *is* `asChild` (there is no `render` equivalent). The desktop branch already
+  // uses `render` on the Base UI Dialog parts; only the vaul branch needs
+  // `asChild`. (tree.tsx was a false positive — its matches were the substring
+  // `hasChildItems`, not a real `asChild` prop.)
+  asChild: new Set(["credenza.tsx"]),
   // §13: every component exports a named `*Props` type. Only the two headless
   // components are exempt — direction.tsx re-exports Base UI's
   // DirectionProvider (no props of its own) and checkbox-tree.tsx is a
