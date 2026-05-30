@@ -58,24 +58,40 @@ export function Providers({ children }: { children: React.ReactNode }) {
 Any approach that toggles a `.dark` class works — `next-themes` just handles
 system preference, persistence, and avoiding a flash on load.
 
-## Overriding tokens
+## Rebrand with one colour
 
-To rebrand, redefine the tokens after importing the stylesheet. Override only what
-you need; the rest inherits Strait's defaults.
+`--brand` is the single source of truth for your accent. Set it to **any** colour —
+hex, `rgb()`, or `oklch()` — and the rest of the brand system derives from it
+automatically:
 
 ```css
 @import "@strait/ui/css";
 
 :root {
-  /* Make the brand colour your own */
-  --brand: oklch(0.62 0.21 264);
-  --brand-foreground: oklch(0.985 0.001 106.423);
-  /* Round things a little less */
-  --radius: 0.5rem;
+  --brand: #6366f1; /* that's it — derivations follow */
 }
+```
 
-.dark {
-  --brand: oklch(0.68 0.19 264);
+Setting `--brand` re-themes everything that keys off it:
+
+- **`--brand-foreground`** — text drawn on the solid brand fill. Contrast-flips to
+  near-black or near-white based on the brand's lightness, so it stays legible
+  whether your brand is deep navy or pale yellow.
+- **`--brand-accent`** — the readable text/border colour used by the soft and outline
+  brand variants on tinted surfaces. Darkens in light mode and lightens in dark mode
+  to clear WCAG AA on the tint.
+- **`--chart-1`**, **`--sidebar-active-rail`**, and the active-row tint all follow
+  `--brand` too.
+
+The same value is used in light and dark mode. Each derived token is an ordinary
+custom property, so you can still override any of them individually as an escape
+hatch — and tweak unrelated tokens like radius the same way:
+
+```css
+:root {
+  --brand: #6366f1;
+  --brand-accent: oklch(0.45 0.2 277); /* optional: hand-tune the soft/outline text */
+  --radius: 0.5rem; /* round things a little less */
 }
 ```
 
@@ -89,6 +105,9 @@ outline emphasis consistently:
 - **`--<name>-accent`** — a readable text/border colour for soft and outline
   variants on tinted (10%-opacity) surfaces, tuned to clear WCAG AA 4.5:1.
 
-The intents are `success`, `destructive`, `info`, and `warning`; `brand` and
-`primary` follow the same `base` / `-foreground` shape. Keep the triad in sync
-when you override so soft and outline variants stay legible.
+The intents are `success`, `destructive`, `info`, and `warning`; `primary` follows
+the `base` / `-foreground` shape. When you override a status intent, keep its triad
+in sync so soft and outline variants stay legible.
+
+`brand` carries the same triad, but you only set `--brand` — its `-foreground` and
+`-accent` derive automatically (see [Rebrand with one colour](#rebrand-with-one-colour)).

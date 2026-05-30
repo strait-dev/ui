@@ -125,7 +125,10 @@ Backgrounds and the foreground text that sits on them.
 ## Brand & primary
 
 `--primary` is warm ink (used for default buttons); `--brand` is the signature
-orange used for emphasis. Each has a `-foreground` for text drawn on top.
+orange used for emphasis. Each has a `-foreground` for text drawn on top. `--brand`
+also carries a `-accent` — the AA-legible text/border colour for soft and outline
+brand variants — and is the one token you set to rebrand: `-foreground` and `-accent`
+derive from it automatically.
 
 <Themes>
   <div
@@ -137,6 +140,7 @@ orange used for emphasis. Each has a `-foreground` for text drawn on top.
   >
     <Pair base="primary" fg="primary-foreground" label="Default action" />
     <Pair base="brand" fg="brand-foreground" label="Brand emphasis" />
+    <Swatch token="brand-accent" label="Soft / outline text" />
   </div>
 </Themes>
 

@@ -21,8 +21,15 @@
   /* Primary buttons use warm ink (black); orange lives in --brand */
   --primary: oklch(0.216 0.006 56.043);
   --primary-foreground: oklch(0.985 0.001 106.423);
+  /* --brand is the single rebrand input — set it to any colour (hex/rgb/oklch)
+     and the tokens below derive from it. --brand-foreground contrast-flips to
+     near-black/white by brand lightness; --brand-accent darkens for AA-legible
+     text/border on the soft (/10) + outline variants. Both stay overridable. */
   --brand: oklch(0.6696 0.222 37.42);
-  --brand-foreground: oklch(0.985 0.001 106.423);
+  --brand-foreground: oklch(
+    from var(--brand) clamp(0, (0.62 - l) * 1000, 1) 0 h
+  );
+  --brand-accent: oklch(from var(--brand) min(l, 0.5) c h);
   --secondary: oklch(0.97 0.001 106.424);
   --secondary-foreground: oklch(0.216 0.006 56.043);
   --muted: oklch(0.97 0.001 106.424);
@@ -50,7 +57,7 @@
   --border: oklch(0.923 0.003 48.717);
   --input: oklch(0.923 0.003 48.717);
   --ring: oklch(0.553 0.013 58.071);
-  --chart-1: oklch(0.6696 0.222 37.42);
+  --chart-1: var(--brand);
   --chart-2: oklch(0.769 0.188 70.08);
   --chart-3: oklch(0.553 0.013 58.071);
   --chart-4: oklch(0.7 0.18 145);
@@ -63,11 +70,11 @@
   --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
   --sidebar-border: oklch(0.923 0.003 48.717);
   --sidebar-ring: oklch(0.553 0.013 58.071);
-  /* Active row: soft peach fill on warm stone + brand-orange left rail.
+  /* Active row: soft brand tint on the page background + brand left rail.
      Foreground stays neutral ink so contrast stays AA-comfortable. */
-  --sidebar-active: oklch(0.96 0.04 50);
+  --sidebar-active: color-mix(in oklch, var(--brand) 12%, var(--background));
   --sidebar-active-foreground: oklch(0.216 0.006 56.043);
-  --sidebar-active-rail: oklch(0.6696 0.222 37.42);
+  --sidebar-active-rail: var(--brand);
 }
 
 .dark {
@@ -81,7 +88,11 @@
   --primary: oklch(0.97 0.001 106.424);
   --primary-foreground: oklch(0.216 0.006 56.043);
   --brand: oklch(0.6696 0.222 37.42);
-  --brand-foreground: oklch(0.985 0.001 106.423);
+  --brand-foreground: oklch(
+    from var(--brand) clamp(0, (0.62 - l) * 1000, 1) 0 h
+  );
+  /* Soft/outline tint sits on a dark surface here, so lighten for AA legibility. */
+  --brand-accent: oklch(from var(--brand) max(l, 0.72) c h);
   --secondary: oklch(0.268 0.007 34.298);
   --secondary-foreground: oklch(0.985 0.001 106.423);
   --muted: oklch(0.268 0.007 34.298);
@@ -105,7 +116,7 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.709 0.01 56.259);
-  --chart-1: oklch(0.6696 0.222 37.42);
+  --chart-1: var(--brand);
   --chart-2: oklch(0.769 0.188 70.08);
   --chart-3: oklch(0.709 0.01 56.259);
   --chart-4: oklch(0.7 0.18 145);
@@ -118,10 +129,10 @@
   --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.709 0.01 56.259);
-  /* Mirror the light recipe: warm dark fill + bright brand-orange rail. */
-  --sidebar-active: oklch(0.32 0.06 40);
+  /* Mirror the light recipe: brand tint over the dark page bg + bright brand rail. */
+  --sidebar-active: color-mix(in oklch, var(--brand) 22%, var(--background));
   --sidebar-active-foreground: oklch(0.985 0.001 106.423);
-  --sidebar-active-rail: oklch(0.6696 0.222 37.42);
+  --sidebar-active-rail: var(--brand);
 }
 
 @theme inline {
@@ -170,6 +181,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
+  --color-brand-accent: var(--brand-accent);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);

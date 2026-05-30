@@ -36,9 +36,9 @@ const buttonVariants = cva(
         "brand-solid":
           "bg-brand text-brand-foreground hover:bg-brand/90 focus-visible:border-brand/40 focus-visible:ring-brand/30",
         brand:
-          "bg-brand/10 text-brand hover:bg-brand/15 focus-visible:border-brand/40 focus-visible:ring-brand/20 dark:bg-brand/15 dark:hover:bg-brand/25",
+          "bg-brand/10 text-brand-accent hover:bg-brand/15 focus-visible:border-brand/40 focus-visible:ring-brand/20 dark:bg-brand/15 dark:hover:bg-brand/25",
         "brand-outline":
-          "border-brand/30 text-brand hover:bg-brand/10 focus-visible:border-brand/40 focus-visible:ring-brand/20",
+          "border-brand/30 text-brand-accent hover:bg-brand/10 focus-visible:border-brand/40 focus-visible:ring-brand/20",
 
         /* ---- Destructive (red) ---- */
         "destructive-solid":

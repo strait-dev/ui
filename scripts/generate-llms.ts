@@ -46,6 +46,47 @@ const LIBRARY_SUMMARY =
   "type. Components render a polymorphic root via the Base UI `render` prop " +
   "and tag their parts with `data-slot` attributes for styling and testing.";
 
+// Theming preamble emitted into both llms artifacts. The token system is the
+// same for every component, so documenting it once up front saves consumers
+// (and LLMs) from inferring it per-component. Kept in sync with the
+// "Getting Started/Theming" story (src/docs/theming.mdx).
+const THEMING_GUIDE = `## Theming
+
+All colours are semantic \`oklch\` CSS custom properties defined in
+\`@strait/ui/css\`. Components reference token-backed Tailwind utilities
+(\`bg-primary\`, \`text-muted-foreground\`, …), never raw colours, so theming is
+a matter of redefining variables after importing the stylesheet.
+
+### Set a custom brand (primary) colour
+
+\`--brand\` is the single source of truth for the accent. Set it to any colour
+format and the rest of the brand system derives automatically:
+
+\`\`\`css
+@import "@strait/ui/css";
+
+:root {
+  --brand: #6366f1; /* hex, rgb(), or oklch() — that's the whole rebrand */
+}
+\`\`\`
+
+Setting \`--brand\` re-themes everything keyed off it:
+- \`--brand-foreground\` — text on the solid brand fill; contrast-flips to
+  near-black/white by the brand's lightness.
+- \`--brand-accent\` — AA-legible text/border for the soft and outline brand
+  variants on tinted surfaces (darkens in light mode, lightens in dark mode).
+- \`--chart-1\`, \`--sidebar-active-rail\`, and the active-row tint follow too.
+
+The same value is used in light and dark mode. Every derived token is an
+ordinary custom property, so any of them can still be overridden individually.
+Note: \`--primary\` is warm ink (default buttons), distinct from \`--brand\`.
+
+### Dark mode
+
+Dark mode is a \`.dark\` class on (or above) the themed element — typically
+\`<html>\`. Tokens cascade, so toggling the class re-themes every component;
+\`next-themes\` is the recommended wiring.`;
+
 // Category ordering for the generated index (most actionable first).
 const CATEGORY_ORDER = [
   "Actions",
@@ -536,7 +577,14 @@ for (const list of byCategory.values()) {
 // --- render llms.txt -------------------------------------------------------
 
 function renderIndex(): string {
-  const lines = ["# Strait UI", "", `> ${LIBRARY_SUMMARY}`, ""];
+  const lines = [
+    "# Strait UI",
+    "",
+    `> ${LIBRARY_SUMMARY}`,
+    "",
+    THEMING_GUIDE,
+    "",
+  ];
   for (const category of orderedCategories) {
     lines.push(`## ${category}`, "");
     for (const doc of byCategory.get(category) ?? []) {
@@ -580,6 +628,8 @@ function renderFull(): string {
     "# Strait UI — Full Reference",
     "",
     `> ${LIBRARY_SUMMARY}`,
+    "",
+    THEMING_GUIDE,
     "",
   ];
   for (const category of orderedCategories) {
