@@ -1,5 +1,47 @@
 # @strait/ui
 
+## 0.1.3
+
+### Patch Changes
+
+- [#9](https://github.com/strait-dev/ui/pull/9) [`cec71b3`](https://github.com/strait-dev/ui/commit/cec71b32348b9bbab5880eb1ff1dd8fa4971769f) Thanks [@leonardomso](https://github.com/leonardomso)! - feat: derive the brand palette from a single `--brand` token
+
+  Rebranding now takes one line — set `--brand` to any colour (hex, `rgb()`, or
+  `oklch()`) and the rest follows. `--brand-foreground` contrast-flips to
+  near-black/white by lightness, the new `--brand-accent` keeps soft and outline
+  brand buttons AA-legible in light and dark, and `--chart-1`,
+  `--sidebar-active-rail`, and the active-row tint now track `--brand`
+  automatically instead of duplicating its literal.
+
+  Docs updated to match: the Theming guide and Colors story document the
+  single-token rebrand, and the generated `llms.txt` / `llms-full.txt` artifacts
+  now carry a Theming section so LLM consumers can discover it.
+
+- [#9](https://github.com/strait-dev/ui/pull/9) [`f63f5df`](https://github.com/strait-dev/ui/commit/f63f5df3ca7ed55a7fae0d5a74bc2f86e85f3005) Thanks [@leonardomso](https://github.com/leonardomso)! - feat!: rename the semantic colour axis from `intent` to `variant`
+
+  **BREAKING CHANGE** (shipped in the `0.1.3` patch by maintainer decision): even
+  though the version bump is a patch, this renames public props. Update call sites
+  when upgrading — see the migration notes below.
+
+  The colour axis is now consistently named `variant` across the library, matching
+  Button, Badge, Alert, and the rest. Six components had used `intent` (or, for
+  Avatar, a misnamed presence axis); they have been migrated:
+
+  - **Checkbox**, **Progress**, **Slider** — `intent` → `variant`.
+  - **Avatar** (`AvatarBadge`) — `intent` → `status` (its `online | busy | away |
+offline` values are presence state, not a colour intent).
+  - **Empty** (`EmptyMedia`) — the former `variant` (`default | icon`) is now
+    `media`; the colour axis is now `variant`.
+  - **Toggle** / **ToggleGroup** — the former `variant` (`default | outline`) is
+    now `emphasis`; the colour axis is now `variant`.
+
+  Migration: rename the prop at call sites accordingly, e.g.
+  `<Checkbox intent="destructive">` → `<Checkbox variant="destructive">`,
+  `<AvatarBadge intent="online">` → `<AvatarBadge status="online">`,
+  `<EmptyMedia variant="icon">` → `<EmptyMedia media="icon">`,
+  `<Toggle variant="outline" intent="success">` →
+  `<Toggle emphasis="outline" variant="success">`.
+
 ## 0.1.2
 
 ### Patch Changes
