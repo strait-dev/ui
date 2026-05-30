@@ -13,9 +13,9 @@ The library's *visual and structural* contract is in excellent shape. Focus
 rings, semantic colour tokens, `data-slot` tagging, `cn()` merging, `"use
 client"` placement, and prop **typing style** are all machine-enforced by
 [`scripts/check-conventions.mjs`](../scripts/check-conventions.mjs) and currently
-pass with zero violations. Polymorphism is *almost* clean: 96 components use Base
-UI's `render` prop as the contract requires, with only **2 holdouts still using
-`asChild`** (`credenza.tsx`, `tree.tsx`) — a small, contained fix.
+pass with zero violations. Polymorphism is effectively 100% on Base UI's `render`
+prop: the lone `asChild` site (`credenza.tsx`) is a legitimate vaul library
+boundary, now enforced as a documented exemption (Finding 4).
 
 The drift lives one layer up, in the **naming and shape of the public API** —
 exactly the surface a linter doesn't see and a consumer feels most. Four
@@ -36,10 +36,10 @@ proposition is "learn it once, apply it everywhere" — predictability *is* the
 product.
 
 The team has decided on a **full rename in one breaking release** (see
-[§8](#8-recommended-approach)): converge size scale, the intent/variant axis,
-boolean naming, and the `asChild` holdouts to canonical form in a single major,
-shipped with a migration guide and codemod. The phased alternative is retained in
-§8 for context.
+[§8](#8-recommended-approach)): converge size scale, the intent/variant axis, and
+boolean naming to canonical form in a single major, shipped with a migration
+guide and codemod. (Findings 4 and 5 turned out to need no migration — see their
+sections.) The phased alternative is retained in §8 for context.
 
 ---
 
@@ -341,8 +341,8 @@ is defensible; I'd still gate it behind a migration guide + codemod.
 **Sequencing within scope:** do **Finding 2 (intent/variant)** and **Finding 1
 (size)** first — they shape the core mental model and inform every new component.
 **Finding 3 (booleans)** is the most mechanical and can run in parallel.
-**Finding 4 (Props exports)** is a quick cleanup that can ride along with any of
-them.
+**Findings 4 (`asChild`) and 5 (`*Props` exports)** are already resolved — both
+were scan artifacts that needed no migration, only correct enforcement.
 
 ---
 
