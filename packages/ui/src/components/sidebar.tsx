@@ -2277,7 +2277,7 @@ function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
       <MenuPrimitive.Portal>
         <MenuPrimitive.Positioner align="start" side="right" sideOffset={4}>
           <MenuPrimitive.Popup
-            className="z-50 min-w-40 origin-(--transform-origin) overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
+            className="z-50 min-w-40 origin-(--transform-origin) overflow-hidden rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
             data-slot="sidebar-menu-flyout"
           >
             {subItems.map((item) => (
