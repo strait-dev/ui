@@ -323,7 +323,7 @@ export interface DataGridProps<TData extends object> {
   /** Message shown in the virtual infinite-scroll footer while fetching more rows. */
   fetchingMoreMessage?: React.ReactNode | string;
   /** When `true`, the grid is in a loading state. */
-  isLoading?: boolean;
+  loading?: boolean;
   /** Custom content shown in the spinner overlay. */
   loadingMessage?: React.ReactNode | string;
   /** Controls whether loading renders skeleton rows (`"skeleton"`) or a centred spinner (`"spinner"`). */
@@ -392,12 +392,12 @@ export function DataGridProvider<TData extends object>({
       props,
       table,
       recordCount: props.recordCount,
-      isLoading: props.isLoading ?? false,
+      isLoading: props.loading ?? false,
     }),
     [
       table,
       props.recordCount,
-      props.isLoading,
+      props.loading,
       props.loadingMode,
       props.loadingMessage,
       props.fetchingMoreMessage,
@@ -1863,7 +1863,7 @@ export function DataGridPagination(userProps: DataGridPaginationProps) {
       buttons.push(
         <PaginationItem key={i}>
           <PaginationLink
-            isActive={isActive}
+            active={isActive}
             onClick={() => table.setPageIndex(i)}
           >
             <span className="tabular-nums">{i + 1}</span>
@@ -2683,16 +2683,16 @@ export type DataGridTableVirtualizerOptions<TData> = Omit<
 export interface DataGridTableVirtualProps<TData> {
   /** Estimated row height in px. Default `48`. */
   estimateSize?: number;
+  /** Whether a fetch is in progress (disables duplicate fetches). Default `false`. */
+  fetchingMore?: boolean;
   /** Number of items from the end to trigger `onFetchMore`. Default `0`. */
   fetchMoreOffset?: number;
   /** Footer content. */
   footerContent?: React.ReactNode;
-  /** `false` = all loaded; `true` / `undefined` = more available. */
-  hasMore?: boolean;
   /** Fixed height for a self-contained scroll container. */
   height?: number | string;
-  /** Whether a fetch is in progress (disables duplicate fetches). Default `false`. */
-  isFetchingMore?: boolean;
+  /** `false` = all loaded; `true` / `undefined` = more available. */
+  moreAvailable?: boolean;
   /** If provided, enables infinite scroll mode. */
   onFetchMore?: () => void;
   /** Number of rows to render outside the visible area. Default `10`. */
@@ -2845,8 +2845,8 @@ export function DataGridTableVirtual<TData extends object>({
   footerContent,
   renderHeader = true,
   onFetchMore,
-  isFetchingMore = false,
-  hasMore,
+  fetchingMore = false,
+  moreAvailable,
   fetchMoreOffset = 0,
   virtualizerOptions,
 }: DataGridTableVirtualProps<TData>) {
@@ -2936,8 +2936,8 @@ export function DataGridTableVirtual<TData extends object>({
   useEffect(() => {
     if (
       !(isInfiniteMode && virtualItems.length) ||
-      hasMore === false ||
-      isFetchingMore
+      moreAvailable === false ||
+      fetchingMore
     ) {
       return;
     }
@@ -2953,8 +2953,8 @@ export function DataGridTableVirtual<TData extends object>({
     centerRows.length,
     resolvedFetchMoreOffset,
     isInfiniteMode,
-    hasMore,
-    isFetchingMore,
+    moreAvailable,
+    fetchingMore,
     onFetchMore,
   ]);
 
@@ -3001,8 +3001,8 @@ export function DataGridTableVirtual<TData extends object>({
             centerRows={centerRows}
             columnCount={columnCount}
             fetchingMoreMessage={props.fetchingMoreMessage}
-            hasMore={hasMore}
-            isFetchingMore={isFetchingMore}
+            hasMore={moreAvailable}
+            isFetchingMore={fetchingMore}
             isInfiniteMode={isInfiniteMode}
             measureRowRef={null}
             table={table}

@@ -30,7 +30,7 @@ function PaginationFixture() {
           <PaginationLink href="/page/1">1</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="/page/2" isActive>
+          <PaginationLink active href="/page/2">
             2
           </PaginationLink>
         </PaginationItem>

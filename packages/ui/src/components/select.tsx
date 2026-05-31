@@ -22,7 +22,7 @@ import { cn } from "../utils/index";
  * |-------|---------------|-------------------|
  * | `sm` | `h-7` | `py-0.5 text-xs` |
  * | `default` | `h-8` | `py-1 text-sm` |
- * | `lg` | `h-10` | `py-1.5 text-base` |
+ * | `lg` | `h-9` | `py-1.5 text-base` |
  */
 export type SelectSize = "sm" | "default" | "lg";
 
@@ -213,7 +213,7 @@ export type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
    * |-------|-------------|-------------------|
    * | `sm` | `h-7` | Tighter radius |
    * | `default` | `h-8` | Standard |
-   * | `lg` | `h-10` | Standard |
+   * | `lg` | `h-9` | Standard |
    *
    * Falls back to the value provided by the nearest {@link Select} root
    * via context when omitted.
@@ -256,9 +256,9 @@ function SelectTrigger({
         "dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 dark:hover:bg-input/50",
         "[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         // size-specific overrides
-        "data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)]",
+        "data-[size=sm]:h-7 data-[size=sm]:rounded-lg",
         "data-[size=default]:h-8",
-        "data-[size=lg]:h-10 data-[size=lg]:text-base",
+        "data-[size=lg]:h-9 data-[size=lg]:text-base",
         className
       )}
       data-size={size}

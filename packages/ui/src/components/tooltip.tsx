@@ -15,7 +15,7 @@ import { cn } from "../utils/index";
  *   for a softer, theme-aware appearance.
  * - `size` — padding and text-size preset. `default` preserves the original
  *   `px-3 py-1.5 text-xs` appearance; `sm` tightens it to `px-2 py-1
- *   text-[0.7rem]`.
+ *   text-xs`.
  *
  * All animation, positioning, and `data-[slot=kbd]` adjustment classes are
  * part of the base string and are never affected by variant switching.
@@ -68,10 +68,10 @@ const tooltipContentVariants = cva(
        * Padding + text-size preset.
        *
        * - `default` — `px-3 py-1.5 text-xs` (original).
-       * - `sm` — `px-2 py-1 text-[0.7rem]` (compact).
+       * - `sm` — `px-2 py-1 text-xs` (compact).
        */
       size: {
-        sm: "px-2 py-1 text-[0.7rem]",
+        sm: "px-2 py-1 text-xs",
         default: "px-3 py-1.5 text-xs",
       },
     },

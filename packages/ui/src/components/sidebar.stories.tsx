@@ -158,7 +158,7 @@ function BasicMenu({ active = "dashboard" }: { active?: string }) {
     <SidebarMenu>
       {navItems.map(({ icon, label, id }) => (
         <SidebarMenuItem key={id}>
-          <SidebarMenuButton isActive={id === active} tooltip={label}>
+          <SidebarMenuButton active={id === active} tooltip={label}>
             <HugeiconsIcon icon={icon} />
             <span>{label}</span>
           </SidebarMenuButton>
@@ -487,7 +487,7 @@ export const ActiveState: Story = {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton isActive>
+                    <SidebarMenuButton active>
                       <HugeiconsIcon icon={Settings01Icon} />
                       <span>Active row</span>
                     </SidebarMenuButton>
@@ -588,13 +588,13 @@ export const DisclosureSubMenu: Story = {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem value="settings">
-                    <SidebarMenuButton hasSubMenu>
+                    <SidebarMenuButton subMenu>
                       <HugeiconsIcon icon={Settings01Icon} />
                       <span>Settings</span>
                     </SidebarMenuButton>
                     <SidebarMenuSub value="settings">
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton isActive>
+                        <SidebarMenuSubButton active>
                           Profile
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -607,7 +607,7 @@ export const DisclosureSubMenu: Story = {
                     </SidebarMenuSub>
                   </SidebarMenuItem>
                   <SidebarMenuItem value="docs">
-                    <SidebarMenuButton hasSubMenu>
+                    <SidebarMenuButton subMenu>
                       <HugeiconsIcon icon={File01Icon} />
                       <span>Docs</span>
                     </SidebarMenuButton>
@@ -644,7 +644,7 @@ export const SubMenuFlyout: Story = {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem value="settings">
-                    <SidebarMenuButton hasSubMenu tooltip="Settings">
+                    <SidebarMenuButton subMenu tooltip="Settings">
                       <HugeiconsIcon icon={Settings01Icon} />
                       <span>Settings</span>
                     </SidebarMenuButton>
@@ -1066,7 +1066,7 @@ function RealWorldDashboardRender() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton isActive tooltip="Dashboard">
+                    <SidebarMenuButton active tooltip="Dashboard">
                       <HugeiconsIcon icon={Home01Icon} />
                       <span>Dashboard</span>
                     </SidebarMenuButton>
@@ -1079,13 +1079,13 @@ function RealWorldDashboardRender() {
                     <SidebarMenuBadge>24</SidebarMenuBadge>
                   </SidebarMenuItem>
                   <SidebarMenuItem value="playground">
-                    <SidebarMenuButton hasSubMenu tooltip="Playground">
+                    <SidebarMenuButton subMenu tooltip="Playground">
                       <HugeiconsIcon icon={MagicWand02Icon} />
                       <span>Playground</span>
                     </SidebarMenuButton>
                     <SidebarMenuSub value="playground">
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton isActive>
+                        <SidebarMenuSubButton active>
                           History
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -1098,7 +1098,7 @@ function RealWorldDashboardRender() {
                     </SidebarMenuSub>
                   </SidebarMenuItem>
                   <SidebarMenuItem value="models">
-                    <SidebarMenuButton hasSubMenu tooltip="Models">
+                    <SidebarMenuButton subMenu tooltip="Models">
                       <HugeiconsIcon icon={BotIcon} />
                       <span>Models</span>
                     </SidebarMenuButton>
@@ -1115,7 +1115,7 @@ function RealWorldDashboardRender() {
                     </SidebarMenuSub>
                   </SidebarMenuItem>
                   <SidebarMenuItem value="documentation">
-                    <SidebarMenuButton hasSubMenu tooltip="Documentation">
+                    <SidebarMenuButton subMenu tooltip="Documentation">
                       <HugeiconsIcon icon={BookOpen01Icon} />
                       <span>Documentation</span>
                     </SidebarMenuButton>
@@ -1264,7 +1264,7 @@ function RealWorldWithSupportRender() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton isActive tooltip="Dashboard">
+                    <SidebarMenuButton active tooltip="Dashboard">
                       <HugeiconsIcon icon={Home01Icon} />
                       <span>Dashboard</span>
                     </SidebarMenuButton>

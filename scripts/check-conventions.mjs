@@ -57,25 +57,67 @@ const EXEMPT = {
   // The intent→variant migration is complete; no files are grandfathered.
   intentAxis: new Set([]),
   // §12: boolean props/flags unprefixed + positively phrased.
+  // Files fully migrated in refactor/unify-radius (all public is*/has*/hide*
+  // props renamed): date-picker.tsx, input-with-loader.tsx,
+  // navigation-rail.tsx, pagination.tsx, select-with-search.tsx — removed.
+  // checkbox-tree.tsx — removed (renderNode `isChecked` param renamed to `checked`).
+  // Remaining entries retain ONLY internal/private names:
+  //   calendar-rac.tsx   — isRange (private calendar-rac param)
+  //   chart.tsx          — hideIndicator (private renderIndicator function param)
+  //   code-block-command.tsx — hasExplicitAlternatives (private param)
+  //   credenza.tsx       — isDesktop (private context field)
+  //   data-grid.tsx      — isLoading (DataGridContextProps & private function params),
+  //                        isInfiniteMode, isFetchingMore, hasMore (private params)
+  //   date-selector.tsx  — isRange (private context/param)
+  //   file-upload.tsx    — isDragging (FileUploadState hook-return field, internal)
+  //   json-viewer.tsx    — isLast (private param)
+  //   multiselect.tsx    — isOpen (×3 private hook types), isLoading (~686 private)
+  //   sidebar.tsx        — isMobile (context), SidebarMenuItemSubItem.isActive (~1262)
+  //   sortable.tsx       — isDragging (context)
+  //   stepper.tsx        — isDisabled/isLoading (context)
   boolNaming: new Set([
     "calendar-rac.tsx",
     "chart.tsx",
-    "checkbox-tree.tsx",
     "code-block-command.tsx",
     "credenza.tsx",
     "data-grid.tsx",
-    "date-picker.tsx",
     "date-selector.tsx",
     "file-upload.tsx",
-    "input-with-loader.tsx",
     "json-viewer.tsx",
     "multiselect.tsx",
-    "navigation-rail.tsx",
-    "pagination.tsx",
-    "select-with-search.tsx",
     "sidebar.tsx",
     "sortable.tsx",
     "stepper.tsx",
+  ]),
+  // §9 radius rule exemptions.
+  //
+  // radius (rounded-xl/2xl/3xl/4xl): badge.tsx uses rounded-4xl intentionally
+  // for its opt-in `pill` radius variant value — this is the only sanctioned
+  // use of a large radius in component chrome.
+  radius: new Set(["badge.tsx"]),
+  //
+  // roundedFull: the following files use rounded-full for genuinely circular
+  // controls, dots, handles, thumbs, or pill opt-ins — NOT rectangular outer
+  // boxes. Each entry is annotated with its circular justification.
+  roundedFull: new Set([
+    "switch.tsx", // switch thumb is a circular pill handle
+    "radio-group.tsx", // radio indicator is a circular dot
+    "slider.tsx", // slider thumb is a circular handle
+    "progress.tsx", // progress bar track and fill are circular-capped
+    "status-badge.tsx", // status dot indicators are circular
+    "avatar.tsx", // avatar is a circular image container
+    "activity-feed.tsx", // activity feed uses circular avatar/dot elements
+    "chart.tsx", // recharts uses circular dot legend markers
+    "charts.tsx", // recharts uses circular dot legend markers
+    "carousel.tsx", // carousel prev/next nav buttons are circular icon buttons
+    "scroll-area.tsx", // scrollbar thumb is a circular-capped pill
+    "skeleton.tsx", // skeleton circle variant is a circular placeholder
+    "data-grid.tsx", // data-grid scrollbar thumbs are circular-capped
+    "sidebar.tsx", // sidebar has circular avatar wrapper and active-rail dots
+    "drawer.tsx", // drawer drag handle is a circular pill indicator
+    "filters.tsx", // filter chip has an opt-in pill/full-radius mode
+    "phone-input.tsx", // flag icons are circular (CircleFlag component)
+    "badge.tsx", // badge dismiss button and dot are circular; pill radius opt-in
   ]),
 };
 
@@ -103,13 +145,89 @@ for (const file of files) {
     });
   }
 
-  // Rule: focus ring must not use ring-2 or ring-offset for the visible ring
+  // Rule: focus ring must be ring-3 (not ring-1, ring-2, ring-4+).
+  // Only flags *focus* rings: focus-visible:ring-N, data-[focus-visible]:ring-N,
+  // focus-within:ring-offset. Plain surface frames like ring-1 ring-foreground/10
+  // are intentional and NOT flagged (no focus-* prefix). ring-0 suppressions on
+  // inner elements (InputGroup inner input, filter chip inner input) are also
+  // intentional — only widths 1, 2, 4, 5+ are non-compliant.
   lines.forEach((ln, i) => {
-    if (/focus-visible:ring-2\b/.test(ln)) {
-      add(file, "focusRing", `:${i + 1} ring-2 (use ring-3)`);
+    // focus-visible:ring-<width> — flag widths 1, 2, 4, 5, 6, 7, 8, 9 (not 0 or 3)
+    const fvMatches = ln.match(/focus-visible:ring-([1-9])\b/g) || [];
+    for (const m of fvMatches) {
+      const width = Number(m.replace("focus-visible:ring-", ""));
+      if (width !== 3) {
+        add(
+          file,
+          "focusRing",
+          `:${i + 1} focus-visible:ring-${width} (use ring-3)`
+        );
+      }
     }
+    // data-[focus-visible]:ring-<width> — attribute-selector form used by RAC
+    const dfvMatches = ln.match(/data-\[focus-visible\]:ring-([1-9])\b/g) || [];
+    for (const m of dfvMatches) {
+      const width = Number(m.replace("data-[focus-visible]:ring-", ""));
+      if (width !== 3) {
+        add(
+          file,
+          "focusRing",
+          `:${i + 1} data-[focus-visible]:ring-${width} (use ring-3)`
+        );
+      }
+    }
+    // focus-within:ring-offset — retired offset pattern
+    if (/focus-within:ring-offset/.test(ln)) {
+      add(
+        file,
+        "focusRing",
+        `:${i + 1} focus-within:ring-offset (remove; use border-ring instead)`
+      );
+    }
+    // Legacy focus-visible:ring-offset (keep for safety)
     if (/focus-visible:ring-offset/.test(ln)) {
-      add(file, "focusRing", `:${i + 1} ring-offset`);
+      add(
+        file,
+        "focusRing",
+        `:${i + 1} focus-visible:ring-offset (retired pattern)`
+      );
+    }
+  });
+
+  // Rule intentOpacity (§intent-opacity): warning opacity values must match the
+  // brand/destructive/success/info families. Flags the specific divergent values
+  // that existed before the 0.1.x consistency fix — if any reappear, the build
+  // fails. Only meaningful in button.tsx but runs globally (cheap, no false-pos).
+  //   - border-warning/50  → retired (use /40)
+  //   - ring-warning/40    → retired focus ring opacity (use /30 solid, /20 soft/outline)
+  //   - bg-warning/25      → retired light-mode soft resting fill (use /10 light, /15 dark:)
+  //     NOTE: dark:hover:bg-warning/25 is ALLOWED (dark-mode hover is intentional);
+  //     only bare bg-warning/25 without a dark: modifier is flagged.
+  lines.forEach((ln, i) => {
+    if (/\bborder-warning\/50\b/.test(ln)) {
+      add(
+        file,
+        "intentOpacity",
+        `:${i + 1} border-warning/50 retired (use /40)`
+      );
+    }
+    if (/\bring-warning\/40\b/.test(ln)) {
+      add(
+        file,
+        "intentOpacity",
+        `:${i + 1} ring-warning/40 retired (use /30 solid, /20 soft/outline)`
+      );
+    }
+    // Flag bg-warning/25 only when it is NOT preceded by a dark: context modifier.
+    // Splits the line into space-separated tokens and checks each individually.
+    for (const token of ln.split(/\s+/)) {
+      if (/^bg-warning\/25\b/.test(token)) {
+        add(
+          file,
+          "intentOpacity",
+          `:${i + 1} bg-warning/25 retired resting fill (use /10 light, /15 dark only)`
+        );
+      }
     }
   });
 
@@ -199,6 +317,33 @@ for (const file of files) {
       }
       if (/\bhide[A-Z][A-Za-z]*\??:\s*boolean\b/.test(ln)) {
         add(file, "boolNaming", `:${i + 1} ${ln.trim().slice(0, 50)}`);
+      }
+    });
+  }
+
+  // Rule §9 (radius): outer-box corners must be rounded-lg; large radii and
+  // rounded-full are banned outside their respective allowlists.
+  if (!EXEMPT.radius.has(file)) {
+    lines.forEach((ln, i) => {
+      if (
+        /\brounded(?:-(t|b|l|r|s|e|tl|tr|bl|br))?-(xl|2xl|3xl|4xl)\b/.test(ln)
+      ) {
+        add(
+          file,
+          "radius",
+          `:${i + 1} rounded-xl/2xl/3xl/4xl on outer box (use rounded-lg)`
+        );
+      }
+    });
+  }
+  if (!EXEMPT.roundedFull.has(file)) {
+    lines.forEach((ln, i) => {
+      if (/\brounded-full\b/.test(ln)) {
+        add(
+          file,
+          "radius",
+          `:${i + 1} rounded-full on non-circular component (only circular controls may use it)`
+        );
       }
     });
   }

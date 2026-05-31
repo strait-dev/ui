@@ -57,7 +57,7 @@ export type PaginationProps = React.ComponentProps<"nav"> & {
  * {@link Button} (via its `render` prop) so every page control inherits
  * the full button styling system while keeping the correct `<a>` semantics
  * for keyboard navigation.
- * Pass `isActive` on {@link PaginationLink} to mark the current page
+ * Pass `active` on {@link PaginationLink} to mark the current page
  * (`aria-current="page"` is set automatically).
  * The `text` label on {@link PaginationPrevious} and
  * {@link PaginationNext} is hidden on small viewports (`sm:block`).
@@ -77,7 +77,7 @@ export type PaginationProps = React.ComponentProps<"nav"> & {
  *       <PaginationLink href="/page/1">1</PaginationLink>
  *     </PaginationItem>
  *     <PaginationItem>
- *       <PaginationLink href="/page/2" isActive>2</PaginationLink>
+ *       <PaginationLink href="/page/2" active>2</PaginationLink>
  *     </PaginationItem>
  *     <PaginationItem>
  *       <PaginationEllipsis />
@@ -139,7 +139,7 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 // ---------------------------------------------------------------------------
 
 type PaginationLinkProps = {
-  isActive?: boolean;
+  active?: boolean;
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
   React.ComponentProps<"a">;
 
@@ -147,7 +147,7 @@ type PaginationLinkProps = {
  * Individual page link inside a {@link PaginationItem}.
  *
  * Renders as a {@link Button} whose underlying element is an `<a>` tag.
- * When `isActive` is true the link receives `aria-current="page"` and
+ * When `active` is true the link receives `aria-current="page"` and
  * switches to the `outline` variant for visual emphasis.
  *
  * @remarks
@@ -163,7 +163,7 @@ type PaginationLinkProps = {
  */
 function PaginationLink({
   className,
-  isActive,
+  active,
   size,
   ...props
 }: PaginationLinkProps) {
@@ -188,14 +188,14 @@ function PaginationLink({
       nativeButton={false}
       render={
         <a
-          aria-current={isActive ? "page" : undefined}
-          data-active={isActive}
+          aria-current={active ? "page" : undefined}
+          data-active={active}
           data-slot="pagination-link"
           {...props}
         />
       }
       size={resolvedSize}
-      variant={isActive ? "outline" : "ghost"}
+      variant={active ? "outline" : "ghost"}
     />
   );
 }

@@ -15,7 +15,7 @@ import { cn } from "../utils/index";
  */
 export const cardVariants = cva(
   // Base classes shared across all variants
-  "group/card flex flex-col overflow-hidden rounded-xl text-card-foreground text-sm",
+  "group/card flex flex-col overflow-hidden rounded-lg text-card-foreground text-sm",
   {
     variants: {
       variant: {
@@ -101,7 +101,7 @@ function Card({
         "data-[size=sm]:gap-3 data-[size=sm]:py-3",
         "data-[size=lg]:gap-6 data-[size=lg]:py-6",
         // image helpers
-        "has-[>img:first-child]:pt-0 has-data-[slot=card-footer]:pb-0 data-[size=lg]:has-data-[slot=card-footer]:pb-0 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "has-[>img:first-child]:pt-0 has-data-[slot=card-footer]:pb-0 data-[size=lg]:has-data-[slot=card-footer]:pb-0 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg",
         className
       )}
       data-size={size}
@@ -120,7 +120,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-lg px-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
         "group-data-[size=sm]/card:px-3",
         "group-data-[size=lg]/card:px-6",
         "[.border-b]:pb-4 group-data-[size=lg]/card:[.border-b]:pb-6 group-data-[size=sm]/card:[.border-b]:pb-3",
@@ -199,7 +199,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex items-center rounded-b-xl border-t bg-muted/50 px-4 py-2.5",
+        "flex items-center rounded-b-lg border-t bg-muted/50 px-4 py-2.5",
         "group-data-[size=sm]/card:px-3 group-data-[size=sm]/card:py-2",
         "group-data-[size=lg]/card:px-6 group-data-[size=lg]/card:py-3.5",
         className

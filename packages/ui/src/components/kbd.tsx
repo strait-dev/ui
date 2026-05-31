@@ -15,7 +15,7 @@ const kbdVariants = cva(
     variants: {
       size: {
         /** Slightly smaller cap for dense UIs. */
-        sm: "h-4 min-w-4 px-0.5 text-[10px]",
+        sm: "h-4 min-w-4 px-0.5 text-micro",
         /** Original look — unchanged default. */
         default: "h-5 min-w-5 px-1 text-xs",
         /** Taller cap with larger text for wider legend keys. */

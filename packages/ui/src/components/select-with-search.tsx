@@ -64,7 +64,7 @@ export type SelectWithSearchProps = {
   /** Called by `Virtuoso` when the user scrolls to the bottom of the list. */
   onEndReached?: () => void;
   /** Custom renderer for each option row; receives the option and selection state. */
-  renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
+  renderOption?: (option: SelectOption, selected: boolean) => React.ReactNode;
   /** Custom renderer for the selected value shown inside the trigger button. */
   renderSelectedOption?: (option: SelectOption) => React.ReactNode;
   /** Renders a loading indicator used both for initial load and next-page fetches. */
@@ -72,9 +72,9 @@ export type SelectWithSearchProps = {
   /** Renders empty-state content when `options` is empty and not loading. */
   renderEmpty?: () => React.ReactNode;
   /** When `true`, shows `renderLoading` instead of the option list. */
-  isLoading?: boolean;
+  loading?: boolean;
   /** When `true`, appends the `renderLoading` footer below the virtualized list. */
-  isFetchingNextPage?: boolean;
+  fetchingNextPage?: boolean;
   /** Controls the size variant passed to the trigger {@link Button}. */
   size?: "default" | "sm" | "lg" | "icon";
 };
@@ -101,7 +101,7 @@ export type SelectWithSearchProps = {
  * short `TIMEOUT` to allow the virtual list to fully render first.
  *
  * Pass `onEndReached` to load the next page when the user scrolls
- * to the bottom; use `isFetchingNextPage` + `renderLoading` to show
+ * to the bottom; use `fetchingNextPage` + `renderLoading` to show
  * a footer spinner while the page loads.
  *
  * @example
@@ -113,7 +113,7 @@ export type SelectWithSearchProps = {
  *   onValueChange={setCountry}
  *   onSearchChange={setSearch}
  *   onEndReached={fetchNextPage}
- *   isFetchingNextPage={isFetching}
+ *   fetchingNextPage={isFetching}
  *   renderLoading={() => <Spinner />}
  * />
  * ```
@@ -139,8 +139,8 @@ export function SelectWithSearch({
   renderSelectedOption,
   renderLoading,
   renderEmpty,
-  isLoading = false,
-  isFetchingNextPage = false,
+  loading = false,
+  fetchingNextPage = false,
   size = "default",
 }: SelectWithSearchProps) {
   const [open, setOpen] = useState(false);
@@ -288,14 +288,14 @@ export function SelectWithSearch({
 
   // Footer component for showing loading state
   const FooterComponent = useCallback(() => {
-    if (!(isFetchingNextPage && renderLoading)) {
+    if (!(fetchingNextPage && renderLoading)) {
       return null;
     }
     return <div className="p-1">{renderLoading()}</div>;
-  }, [isFetchingNextPage, renderLoading]);
+  }, [fetchingNextPage, renderLoading]);
 
   const renderContent = useCallback(() => {
-    if (isLoading && renderLoading) {
+    if (loading && renderLoading) {
       return <div className="p-1">{renderLoading()}</div>;
     }
 
@@ -322,7 +322,7 @@ export function SelectWithSearch({
 
     // Only include Footer component when actually fetching next page
     const footerComponent =
-      isFetchingNextPage && renderLoading ? { Footer: FooterComponent } : {};
+      fetchingNextPage && renderLoading ? { Footer: FooterComponent } : {};
 
     return (
       <CommandGroup className="overflow-visible p-0">
@@ -339,7 +339,7 @@ export function SelectWithSearch({
       </CommandGroup>
     );
   }, [
-    isLoading,
+    loading,
     renderLoading,
     options,
     renderEmpty,
@@ -347,7 +347,7 @@ export function SelectWithSearch({
     ItemRenderer,
     onEndReached,
     FooterComponent,
-    isFetchingNextPage,
+    fetchingNextPage,
   ]);
 
   const labelElement = useMemo(

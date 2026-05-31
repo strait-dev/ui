@@ -17,8 +17,9 @@ import { cn } from "../utils/index";
  *   light fills (`*-light`), bordered outlines (`*-outline`), plus the
  *   low-emphasis `ghost` and `link` options.
  * - `size` — height/padding presets from `xs` through `xl`.
- * - `radius` — `pill` (default, full-pill), `md` (matches button radius), or
- *   `sm` (subtle 4 px). Use `md` for tag chips inside data tables.
+ * - `radius` — `lg` (default, rounded-lg square), `pill` (full-pill opt-in),
+ *   `md` (rounded-md), or `sm` (subtle 4 px). Use `md` for tag chips inside
+ *   data tables; use `pill` for fully circular badges.
  *
  * Exported so consumers can apply the same visual style to non-`<span>`
  * elements without deriving the class list manually.
@@ -28,13 +29,14 @@ const badgeVariants = cva(
   {
     variants: {
       radius: {
+        lg: "rounded-lg",
         pill: "rounded-4xl",
         md: "rounded-md",
         sm: "rounded-sm",
       },
       variant: {
         default: "bg-primary text-primary-foreground",
-        outline: "border-border bg-transparent dark:bg-input/32",
+        outline: "border-border bg-transparent dark:bg-input/30",
         secondary: "bg-secondary text-secondary-foreground",
         info: "bg-info text-info-foreground",
         success: "bg-success text-success-foreground",
@@ -73,8 +75,8 @@ const badgeVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        xs: "h-4 min-w-4 gap-1 px-1 py-0.25 text-[0.6rem] leading-none",
-        sm: "h-4.5 min-w-4.5 gap-1 px-1 py-0.25 text-[0.625rem] leading-none",
+        xs: "h-4 min-w-4 gap-1 px-1 py-0.25 text-micro leading-none",
+        sm: "h-4.5 min-w-4.5 gap-1 px-1 py-0.25 text-micro leading-none",
         default: "h-5 min-w-5 gap-1 px-1.25 py-0.5 text-xs",
         lg: "h-5.5 min-w-5.5 gap-1 px-1.5 py-0.5 text-xs",
         xl: "h-6 min-w-6 gap-1.5 px-2 py-0.75 text-sm",
@@ -83,7 +85,7 @@ const badgeVariants = cva(
     defaultVariants: {
       variant: "default",
       size: "default",
-      radius: "pill",
+      radius: "lg",
     },
   }
 );
@@ -140,8 +142,9 @@ interface BadgeProps extends useRender.ComponentProps<"span"> {
   onDismiss?: () => void;
   /**
    * Corner radius preset applied via {@link badgeVariants}.
-   * `"pill"` (default, full-pill) · `"md"` (rounded square, matches buttons) ·
-   * `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables.
+   * `"lg"` (default, rounded-lg) · `"pill"` (full-pill opt-in) · `"md"` (rounded-md) ·
+   * `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables;
+   * use `"pill"` for fully circular badges.
    */
   radius?: VariantProps<typeof badgeVariants>["radius"];
   /**

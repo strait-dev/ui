@@ -82,13 +82,13 @@ beforeAll(() => {
 function Grid({
   data = rows,
   cols = columns,
-  isLoading,
+  loading,
   loadingMode,
   emptyMessage,
 }: {
   data?: Row[];
   cols?: ColumnDef<Row>[];
-  isLoading?: boolean;
+  loading?: boolean;
   loadingMode?: "skeleton" | "spinner";
   emptyMessage?: string;
 }) {
@@ -101,7 +101,7 @@ function Grid({
   return (
     <DataGrid
       emptyMessage={emptyMessage}
-      isLoading={isLoading}
+      loading={loading}
       loadingMode={loadingMode}
       recordCount={data.length}
       table={table}
@@ -137,8 +137,8 @@ describe("DataGrid", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders skeleton rows when isLoading + loadingMode='skeleton'", () => {
-    render(<Grid data={[]} isLoading loadingMode="skeleton" />);
+  it("renders skeleton rows when loading + loadingMode='skeleton'", () => {
+    render(<Grid data={[]} loading loadingMode="skeleton" />);
     expect(
       document.querySelectorAll(
         '[data-slot="data-grid-table-body-row-skeleton"]'

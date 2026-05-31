@@ -10,16 +10,16 @@ import { Input, type InputProps } from "./input";
  * Props for {@link InputWithLoader}.
  *
  * @remarks
- * When `isLoading` is `true` the `icon` slot is replaced by a spinning
+ * When `loading` is `true` the `icon` slot is replaced by a spinning
  * indicator; the original icon reappears once loading resolves. The
  * `endIcon` is always interactive — wrap it with `endIconAriaLabel` for
  * accessibility when using icon-only affordances (e.g. a clear button).
  */
 export type InputWithLoaderProps = InputProps & {
   /** When `true`, replaces the {@link icon} slot with an animated spinner. */
-  isLoading?: boolean;
+  loading?: boolean;
   /** Decorative node rendered at the leading edge; replaced by the spinner
-   *  while `isLoading` is `true`. */
+   *  while `loading` is `true`. */
   icon?: React.ReactNode;
   /** Node rendered as a clickable button at the trailing edge of the input
    *  (e.g. a clear or submit icon). Requires {@link endIconAriaLabel}. */
@@ -40,7 +40,7 @@ export type InputWithLoaderProps = InputProps & {
  * Wraps the `Input` primitive in a relative container and overlays up to
  * two absolutely-positioned icon slots:
  * - **Start slot** — shows `icon` normally; replaced by a spinning
- *   `Loading01Icon` when `isLoading` is `true`. Pointer events are
+ *   `Loading01Icon` when `loading` is `true`. Pointer events are
  *   disabled on this slot.
  * - **End slot** — renders `endIcon` as a clickable `<button>` when
  *   provided; useful for clear or action affordances. Always supply
@@ -53,14 +53,14 @@ export type InputWithLoaderProps = InputProps & {
  * ```tsx
  * <InputWithLoader
  *   icon={<SearchIcon />}
- *   isLoading={isFetching}
+ *   loading={isFetching}
  *   placeholder="Search…"
  * />
  * ```
  */
 function InputWithLoader({
   className,
-  isLoading = false,
+  loading = false,
   icon,
   endIcon,
   onEndIconClick,
@@ -75,13 +75,13 @@ function InputWithLoader({
         {...props}
       />
       {/* Show start slot when an icon is provided or loading is active. */}
-      {icon || isLoading ? (
+      {icon || loading ? (
         <div
           className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50"
           data-slot="start-icon"
         >
           {/* Loading state takes priority over the static icon. */}
-          {isLoading ? (
+          {loading ? (
             <HugeiconsIcon
               aria-hidden="true"
               className="size-4 animate-spin"

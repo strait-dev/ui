@@ -36,7 +36,7 @@ const meta: Meta<typeof NavigationRail> = {
           "Props of note:",
           '- `NavigationRail.orientation` — `"left"` (default) or `"right"`.',
           "- `NavigationRailItem.icon` — required `IconSvgElement` from Hugeicons.",
-          "- `NavigationRailItem.isActive` — applies secondary/accent background.",
+          "- `NavigationRailItem.active` — applies secondary/accent background.",
           "- `NavigationRailItem.badge` — renders a small dot badge on the icon.",
         ].join("\n"),
       },
@@ -65,7 +65,7 @@ export const Playground: Story = {
     <div className="flex h-96 w-fit rounded-lg border">
       <NavigationRail {...args}>
         <NavigationRailSection>
-          <NavigationRailItem icon={Home01Icon} isActive label="Home" />
+          <NavigationRailItem active icon={Home01Icon} label="Home" />
           <NavigationRailItem icon={Search01Icon} label="Search" />
           <NavigationRailItem icon={Notification01Icon} label="Notifications" />
           <NavigationRailItem icon={Settings01Icon} label="Settings" />
@@ -86,7 +86,7 @@ export const WithHeaderAndFooter: Story = {
           </div>
         </NavigationRailHeader>
         <NavigationRailSection>
-          <NavigationRailItem icon={Home01Icon} isActive label="Home" />
+          <NavigationRailItem active icon={Home01Icon} label="Home" />
           <NavigationRailItem icon={Search01Icon} label="Search" />
           <NavigationRailItem icon={Notification01Icon} label="Notifications" />
         </NavigationRailSection>
@@ -105,7 +105,7 @@ export const RightOrientation: Story = {
     <div className="flex h-96 w-fit rounded-lg border">
       <NavigationRail {...args} orientation="right">
         <NavigationRailSection>
-          <NavigationRailItem icon={Home01Icon} isActive label="Home" />
+          <NavigationRailItem active icon={Home01Icon} label="Home" />
           <NavigationRailItem icon={Search01Icon} label="Search" />
           <NavigationRailItem icon={Settings01Icon} label="Settings" />
         </NavigationRailSection>
@@ -120,7 +120,7 @@ export const WithBadge: Story = {
     <div className="flex h-72 w-fit rounded-lg border">
       <NavigationRail {...args}>
         <NavigationRailSection>
-          <NavigationRailItem icon={Home01Icon} isActive label="Home" />
+          <NavigationRailItem active icon={Home01Icon} label="Home" />
           <NavigationRailItem
             badge={<span className="h-2 w-2 rounded-full bg-destructive" />}
             icon={Notification01Icon}
@@ -139,7 +139,7 @@ export const WithDisabled: Story = {
     <div className="flex h-72 w-fit rounded-lg border">
       <NavigationRail {...args}>
         <NavigationRailSection>
-          <NavigationRailItem icon={Home01Icon} isActive label="Home" />
+          <NavigationRailItem active icon={Home01Icon} label="Home" />
           <NavigationRailItem disabled icon={Search01Icon} label="Search" />
           <NavigationRailItem icon={Settings01Icon} label="Settings" />
         </NavigationRailSection>
@@ -167,8 +167,8 @@ export const Controlled: Story = {
             <NavigationRailSection>
               {items.map(({ icon, label, id }) => (
                 <NavigationRailItem
+                  active={active === id}
                   icon={icon}
-                  isActive={active === id}
                   key={id}
                   label={label}
                   onClick={() => setActive(id)}

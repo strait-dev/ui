@@ -500,7 +500,7 @@
             "name": "radius",
             "type": "VariantProps<typeof badgeVariants>[\"radius\"]",
             "optional": true,
-            "description": "Corner radius preset applied via badgeVariants. `\"pill\"` (default, full-pill) · `\"md\"` (rounded square, matches buttons) · `\"sm\"` (subtle 4 px). Use `\"md\"` for tag-style chips inside data tables."
+            "description": "Corner radius preset applied via badgeVariants. `\"lg\"` (default, rounded-lg) · `\"pill\"` (full-pill opt-in) · `\"md\"` (rounded-md) · `\"sm\"` (subtle 4 px). Use `\"md\"` for tag-style chips inside data tables; use `\"pill\"` for fully circular badges."
           },
           {
             "name": "size",
@@ -522,6 +522,7 @@
     ],
     "variants": {
       "radius": [
+        "lg",
         "pill",
         "md",
         "sm"
@@ -563,7 +564,7 @@
     "defaultVariants": {
       "variant": "default",
       "size": "default",
-      "radius": "pill"
+      "radius": "lg"
     },
     "slots": [
       "badge",
@@ -1381,24 +1382,6 @@
             "description": "Render only the first and last X-axis labels."
           },
           {
-            "name": "hideGridLines",
-            "type": "boolean",
-            "optional": true,
-            "description": "Hides the CartesianGrid when `true`."
-          },
-          {
-            "name": "hideXAxis",
-            "type": "boolean",
-            "optional": true,
-            "description": "Hides the XAxis when `true`."
-          },
-          {
-            "name": "hideYAxis",
-            "type": "boolean",
-            "optional": true,
-            "description": "Hides the YAxis when `true`."
-          },
-          {
             "name": "intervalType",
             "type": "IntervalType",
             "optional": true,
@@ -1435,6 +1418,24 @@
             "description": "Controlled selected series (the isolated/highlighted one, or `null`). Share this with a ChartSeriesSelector `value` so a header selector and the in-chart interactive legend stay in sync."
           },
           {
+            "name": "showGridLines",
+            "type": "boolean",
+            "optional": true,
+            "description": "Shows the CartesianGrid when `true`."
+          },
+          {
+            "name": "showXAxis",
+            "type": "boolean",
+            "optional": true,
+            "description": "Shows the XAxis when `true`."
+          },
+          {
+            "name": "showYAxis",
+            "type": "boolean",
+            "optional": true,
+            "description": "Shows the YAxis when `true`."
+          },
+          {
             "name": "tooltip",
             "type": "TooltipContentType<ValueType, NameType> | boolean",
             "optional": true,
@@ -1442,7 +1443,7 @@
           },
           {
             "name": "tooltipProps",
-            "type": "Omit<TooltipProps, \"content\"> & { hideLabel?: boolean; labelSeparator?: boolean; hideIndicator?: boolean; indicator?: \"line\" | \"dot\" | \"dashed\"; nameKey?: string; labelKey?: string; }",
+            "type": "Omit<TooltipProps, \"content\"> & { showLabel?: boolean; labelSeparator?: boolean; showIndicator?: boolean; indicator?: \"line\" | \"dot\" | \"dashed\"; nameKey?: string; labelKey?: string; }",
             "optional": true,
             "description": "Extra props forwarded to the recharts `Tooltip` element."
           },
@@ -1485,11 +1486,11 @@
             "description": "Recharts legend payload injected automatically by the `Legend` wrapper."
           },
           {
-            "name": "hideIcon",
+            "name": "showIcon",
             "type": "boolean",
             "optional": true,
-            "default": "false",
-            "description": "When `true`, suppresses the color icon/dot for each legend entry."
+            "default": "true",
+            "description": "When `true`, shows the color icon/dot for each legend entry."
           },
           {
             "name": "nameKey",
@@ -1788,7 +1789,7 @@
           }
         ],
         "extends": [
-          "Omit< BaseChartProps, | \"hideGridLines\" | \"hideXAxis\" | \"hideYAxis\" | \"xAxisProps\" | \"yAxisProps\" | \"displayEdgeLabelsOnly\" | \"legend\" | \"legendProps\" >"
+          "Omit< BaseChartProps, | \"showGridLines\" | \"showXAxis\" | \"showYAxis\" | \"xAxisProps\" | \"yAxisProps\" | \"displayEdgeLabelsOnly\" | \"legend\" | \"legendProps\" >"
         ]
       }
     ],
@@ -1822,7 +1823,7 @@
           },
           {
             "name": "renderNode",
-            "type": "(props: { node: TreeNode; isChecked: boolean | \"indeterminate\"; onCheckedChange: () => void; children: React.ReactNode; }) => React.ReactNode",
+            "type": "(props: { node: TreeNode; checked: boolean | \"indeterminate\"; onCheckedChange: () => void; children: React.ReactNode; }) => React.ReactNode",
             "optional": false,
             "description": "Render-prop called for every node in the tree."
           }
@@ -2668,7 +2669,7 @@
             "description": "Message shown in the virtual infinite-scroll footer while fetching more rows."
           },
           {
-            "name": "isLoading",
+            "name": "loading",
             "type": "boolean",
             "optional": true,
             "description": "When `true`, the grid is in a loading state."
@@ -2804,6 +2805,13 @@
             "description": "Estimated row height in px. Default `48`."
           },
           {
+            "name": "fetchingMore",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether a fetch is in progress (disables duplicate fetches). Default `false`."
+          },
+          {
             "name": "fetchMoreOffset",
             "type": "number",
             "optional": true,
@@ -2817,23 +2825,16 @@
             "description": "Footer content."
           },
           {
-            "name": "hasMore",
-            "type": "boolean",
-            "optional": true,
-            "description": "`false` = all loaded; `true` / `undefined` = more available."
-          },
-          {
             "name": "height",
             "type": "number | string",
             "optional": true,
             "description": "Fixed height for a self-contained scroll container."
           },
           {
-            "name": "isFetchingMore",
+            "name": "moreAvailable",
             "type": "boolean",
             "optional": true,
-            "default": "false",
-            "description": "Whether a fetch is in progress (disables duplicate fetches). Default `false`."
+            "description": "`false` = all loaded; `true` / `undefined` = more available."
           },
           {
             "name": "onFetchMore",
@@ -3078,7 +3079,7 @@
             "description": "Disables the trigger button, preventing the calendar from opening."
           },
           {
-            "name": "isRequired",
+            "name": "required",
             "type": "boolean",
             "optional": true,
             "description": "When `true`, appends a red asterisk to the label text."
@@ -4142,7 +4143,7 @@
         "name": "FileUploadDropzoneProps",
         "props": [
           {
-            "name": "isDragging",
+            "name": "dragging",
             "type": "boolean",
             "optional": true,
             "default": "false",
@@ -5051,7 +5052,7 @@
         "name": "InputWithLoaderProps",
         "props": [
           {
-            "name": "isLoading",
+            "name": "loading",
             "type": "boolean",
             "optional": true,
             "default": "false",
@@ -5061,7 +5062,7 @@
             "name": "icon",
             "type": "React.ReactNode",
             "optional": true,
-            "description": "Decorative node rendered at the leading edge; replaced by the spinner while `isLoading` is `true`."
+            "description": "Decorative node rendered at the leading edge; replaced by the spinner while `loading` is `true`."
           },
           {
             "name": "endIcon",
@@ -5733,10 +5734,11 @@
             "description": "When the number of selected options exceeds the limit, the onMaxSelected will be called."
           },
           {
-            "name": "hidePlaceholderWhenSelected",
+            "name": "showPlaceholderWhenSelected",
             "type": "boolean",
             "optional": true,
-            "description": "Hide the placeholder when there are options selected."
+            "default": "true",
+            "description": "Show the placeholder when there are options selected."
           },
           {
             "name": "disabled",
@@ -5789,11 +5791,11 @@
             "description": "Props of `CommandInput`"
           },
           {
-            "name": "hideClearAllButton",
+            "name": "showClearAllButton",
             "type": "boolean",
             "optional": true,
-            "default": "false",
-            "description": "hide the clear all button."
+            "default": "true",
+            "description": "show the clear all button."
           },
           {
             "name": "size",
@@ -5833,7 +5835,7 @@
             "type": "\"sm\" | \"default\" | \"lg\"",
             "optional": true,
             "default": "\"default\"",
-            "description": "Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 40 px tall, slightly larger text."
+            "description": "Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 36 px tall, slightly larger text."
           }
         ],
         "extends": [
@@ -5974,7 +5976,7 @@
             "description": "Click handler for the icon button."
           },
           {
-            "name": "isActive",
+            "name": "active",
             "type": "boolean",
             "optional": true,
             "description": "Marks the item as the currently active route."
@@ -7606,7 +7608,7 @@
           },
           {
             "name": "renderOption",
-            "type": "(option: SelectOption, isSelected: boolean) => React.ReactNode",
+            "type": "(option: SelectOption, selected: boolean) => React.ReactNode",
             "optional": true,
             "description": "Custom renderer for each option row; receives the option and selection state."
           },
@@ -7629,14 +7631,14 @@
             "description": "Renders empty-state content when `options` is empty and not loading."
           },
           {
-            "name": "isLoading",
+            "name": "loading",
             "type": "boolean",
             "optional": true,
             "default": "false",
             "description": "When `true`, shows `renderLoading` instead of the option list."
           },
           {
-            "name": "isFetchingNextPage",
+            "name": "fetchingNextPage",
             "type": "boolean",
             "optional": true,
             "default": "false",
@@ -7889,11 +7891,11 @@
         "name": "SidebarCardProps",
         "props": [
           {
-            "name": "hideOnCollapse",
+            "name": "showOnCollapse",
             "type": "boolean",
             "optional": true,
-            "default": "true",
-            "description": "Hide the card entirely when the sidebar is collapsed to icon width. Defaults to `true` — most upgrade / onboarding prompts only make sense when there's room for the headline copy."
+            "default": "false",
+            "description": "Show the card when the sidebar is collapsed to icon width. Defaults to `false` — most upgrade / onboarding prompts only make sense when there's room for the headline copy."
           }
         ],
         "extends": [
@@ -7943,7 +7945,7 @@
         "name": "SidebarMenuButtonProps",
         "props": [
           {
-            "name": "isActive",
+            "name": "active",
             "type": "boolean",
             "optional": true,
             "default": "false",
@@ -7956,7 +7958,7 @@
             "description": "Tooltip shown when the sidebar is collapsed to icon or when the label is truncated."
           },
           {
-            "name": "hasSubMenu",
+            "name": "subMenu",
             "type": "boolean",
             "optional": true,
             "description": "When `true`, promotes this button into a Base UI `Collapsible.Trigger` for the enclosing SidebarMenuItem's sub-menu and appends a rotating chevron at the trailing edge."
@@ -8961,12 +8963,12 @@
       "TimelineHeader",
       "TimelineIndicator",
       "TimelineIndicatorProps",
-      "TimelineIntent",
       "TimelineItem",
       "TimelineItemProps",
       "TimelineProps",
       "TimelineSeparator",
-      "TimelineTitle"
+      "TimelineTitle",
+      "TimelineVariant"
     ],
     "types": [
       {
@@ -9027,18 +9029,18 @@
             "description": "Direction of the step track. Defaults to `\"vertical\"`."
           },
           {
-            "name": "variant",
+            "name": "line",
             "type": "\"solid\" | \"dotted\"",
             "optional": true,
             "default": "\"solid\"",
             "description": "Connector line rendering style. - `\"solid\"` (default) — filled bar using `bg-*` classes. - `\"dotted\"` — dashed border line drawn via `border-*` + `border-dashed`."
           },
           {
-            "name": "intent",
-            "type": "TimelineIntent",
+            "name": "variant",
+            "type": "TimelineVariant",
             "optional": true,
             "default": "\"primary\"",
-            "description": "Colour intent applied to completed-step indicators and separators. Defaults to `\"primary\"`."
+            "description": "Colour variant applied to completed-step indicators and separators. Defaults to `\"primary\"`."
           },
           {
             "name": "size",

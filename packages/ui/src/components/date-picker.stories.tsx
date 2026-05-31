@@ -17,7 +17,7 @@ const meta: Meta<typeof DatePicker> = {
           "A popover-based date picker built on **react-day-picker** v9 + our `Calendar` + `Popover`/`Button` primitives.",
           "",
           "- Trigger is a labelled outline button showing the selected date or a placeholder.",
-          "- Supports `label`, `isRequired`, `disabled`, and `error` props.",
+          "- Supports `label`, `required`, `disabled`, and `error` props.",
           "- Fully controlled: pass `value` + `onChange`.",
         ].join("\n"),
       },
@@ -32,7 +32,7 @@ const meta: Meta<typeof DatePicker> = {
       control: "boolean",
       description: "Applies destructive border to the trigger.",
     },
-    isRequired: {
+    required: {
       control: "boolean",
       description: "Shows a required asterisk next to the label.",
     },
@@ -45,7 +45,7 @@ const meta: Meta<typeof DatePicker> = {
     label: "Due date",
     disabled: false,
     error: false,
-    isRequired: false,
+    required: false,
   },
 };
 
@@ -57,7 +57,7 @@ function ControlledDatePicker(props: {
   label?: string;
   disabled?: boolean;
   error?: boolean;
-  isRequired?: boolean;
+  required?: boolean;
   initialValue?: Date;
 }) {
   const [date, setDate] = useState<Date | undefined>(props.initialValue);
@@ -66,9 +66,9 @@ function ControlledDatePicker(props: {
       <DatePicker
         disabled={props.disabled}
         error={props.error}
-        isRequired={props.isRequired}
         label={props.label}
         onChange={setDate}
+        required={props.required}
         value={date}
       />
       <p className="mt-2 text-muted-foreground text-sm">

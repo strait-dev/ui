@@ -85,9 +85,9 @@ const meta: Meta<typeof Badge> = {
     },
     radius: {
       control: "select",
-      options: ["pill", "md", "sm"],
+      options: ["lg", "pill", "md", "sm"],
       description: "Corner radius preset.",
-      table: { defaultValue: { summary: "pill" } },
+      table: { defaultValue: { summary: "lg" } },
     },
     children: { control: "text", description: "Badge label." },
     mono: {
@@ -404,13 +404,13 @@ export const AsButton: Story = {
 /* ------------------------------------------------------------------ */
 
 /**
- * The three `radius` presets side by side — `pill` (default), `md` for
- * tag-style chips matching button corners, and `sm` for a subtle square.
+ * The four `radius` presets side by side — `lg` (default), `pill` (opt-in full-pill),
+ * `md` for tag-style chips matching button corners, and `sm` for a subtle square.
  */
 export const Radius: Story = {
   render: (args) => (
     <div className="flex flex-col gap-3">
-      {(["pill", "md", "sm"] as const).map((radius) => (
+      {(["lg", "pill", "md", "sm"] as const).map((radius) => (
         <div className="flex items-center gap-3" key={radius}>
           <span className="w-12 text-muted-foreground text-xs">{radius}</span>
           <Badge {...args} radius={radius} variant="secondary-light">

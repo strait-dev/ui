@@ -156,18 +156,18 @@ describe("Timeline", () => {
   });
 
   // ---------------------------------------------------------------------------
-  // variant axis (solid | dotted)
+  // line axis (solid | dotted)
   // ---------------------------------------------------------------------------
 
-  it("defaults to data-variant=solid on root", () => {
+  it("defaults to data-line=solid on root", () => {
     render(<TimelineFixture value={1} />);
     const root = document.querySelector("[data-slot=timeline]");
-    expect(root).toHaveAttribute("data-variant", "solid");
+    expect(root).toHaveAttribute("data-line", "solid");
   });
 
-  it("sets data-variant=dotted on root when variant=dotted", () => {
+  it("sets data-line=dotted on root when line=dotted", () => {
     render(
-      <Timeline value={1} variant="dotted">
+      <Timeline line="dotted" value={1}>
         <TimelineItem step={1}>
           <TimelineSeparator />
           <TimelineTitle>Step</TimelineTitle>
@@ -175,12 +175,12 @@ describe("Timeline", () => {
       </Timeline>
     );
     const root = document.querySelector("[data-slot=timeline]");
-    expect(root).toHaveAttribute("data-variant", "dotted");
+    expect(root).toHaveAttribute("data-line", "dotted");
   });
 
-  it("sets data-variant=solid on root when variant=solid", () => {
+  it("sets data-line=solid on root when line=solid", () => {
     render(
-      <Timeline value={1} variant="solid">
+      <Timeline line="solid" value={1}>
         <TimelineItem step={1}>
           <TimelineSeparator />
           <TimelineTitle>Step</TimelineTitle>
@@ -188,45 +188,45 @@ describe("Timeline", () => {
       </Timeline>
     );
     const root = document.querySelector("[data-slot=timeline]");
-    expect(root).toHaveAttribute("data-variant", "solid");
+    expect(root).toHaveAttribute("data-line", "solid");
   });
 
   // ---------------------------------------------------------------------------
-  // intent axis
+  // variant axis
   // ---------------------------------------------------------------------------
 
-  it("defaults to data-intent=primary on root", () => {
+  it("defaults to data-variant=primary on root", () => {
     render(<TimelineFixture value={1} />);
     const root = document.querySelector("[data-slot=timeline]");
-    expect(root).toHaveAttribute("data-intent", "primary");
+    expect(root).toHaveAttribute("data-variant", "primary");
   });
 
-  it("sets data-intent=success on root when intent=success", () => {
+  it("sets data-variant=success on root when variant=success", () => {
     render(
-      <Timeline intent="success" value={1}>
+      <Timeline value={1} variant="success">
         <TimelineItem step={1}>
           <TimelineTitle>Step</TimelineTitle>
         </TimelineItem>
       </Timeline>
     );
     const root = document.querySelector("[data-slot=timeline]");
-    expect(root).toHaveAttribute("data-intent", "success");
+    expect(root).toHaveAttribute("data-variant", "success");
   });
 
   it.each([
     "info",
     "warning",
     "destructive",
-  ] as const)("sets data-intent=%s on root", (intent) => {
+  ] as const)("sets data-variant=%s on root", (variant) => {
     render(
-      <Timeline intent={intent} value={1}>
+      <Timeline value={1} variant={variant}>
         <TimelineItem step={1}>
           <TimelineTitle>Step</TimelineTitle>
         </TimelineItem>
       </Timeline>
     );
     const root = document.querySelector("[data-slot=timeline]");
-    expect(root).toHaveAttribute("data-intent", intent);
+    expect(root).toHaveAttribute("data-variant", variant);
   });
 
   // ---------------------------------------------------------------------------

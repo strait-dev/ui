@@ -19,7 +19,7 @@ type DatePickerProps = {
   /** Disables the trigger button, preventing the calendar from opening. */
   disabled?: boolean;
   /** When `true`, appends a red asterisk to the {@link label} text. */
-  isRequired?: boolean;
+  required?: boolean;
   /** Optional `<label>` rendered above the trigger button; linked via
    *  `htmlFor` to the button's generated id. */
   label?: string;
@@ -38,7 +38,7 @@ type DatePickerProps = {
  *
  * @remarks
  * - An optional `label` renders above the trigger with an associated `htmlFor`
- *   link; pass `isRequired` to append a red asterisk.
+ *   link; pass `required` to append a red asterisk.
  * - `error=true` applies a destructive border to the trigger.
  * - The component is purely controlled — manage `value` and `onChange` in the
  *   parent. To clear the selection pass `undefined` to `onChange`.
@@ -49,7 +49,7 @@ type DatePickerProps = {
  *
  * <DatePicker
  *   label="Due date"
- *   isRequired
+ *   required
  *   value={date}
  *   onChange={setDate}
  * />
@@ -59,7 +59,7 @@ function DatePicker({
   value,
   onChange,
   disabled,
-  isRequired,
+  required,
   label,
   className,
   error,
@@ -76,7 +76,7 @@ function DatePicker({
           htmlFor={datePickerId}
         >
           {label}
-          {isRequired ? <span className="text-destructive">*</span> : null}
+          {required ? <span className="text-destructive">*</span> : null}
         </label>
       ) : null}
       <Popover>

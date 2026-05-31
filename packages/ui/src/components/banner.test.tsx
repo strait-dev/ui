@@ -164,10 +164,10 @@ describe("BannerTitle", () => {
     expect(el).toHaveTextContent("Title");
   });
 
-  it("applies font-semibold and leading-snug", () => {
+  it("applies font-medium and leading-snug", () => {
     render(<BannerTitle>Title</BannerTitle>);
     const el = document.querySelector("[data-slot='banner-title']");
-    expect(el).toHaveClass("font-semibold", "leading-snug");
+    expect(el).toHaveClass("font-medium", "leading-snug");
   });
 });
 

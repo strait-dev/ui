@@ -14,25 +14,25 @@ type TreeNode = {
 function makeRenderNode() {
   return ({
     node,
-    isChecked,
+    checked,
     onCheckedChange,
     children,
   }: {
     node: TreeNode;
-    isChecked: boolean | "indeterminate";
+    checked: boolean | "indeterminate";
     onCheckedChange: () => void;
     children: React.ReactNode;
   }) => (
     <div key={node.id}>
       <input
         aria-checked={
-          isChecked === "indeterminate" ? "mixed" : isChecked ? "true" : "false"
+          checked === "indeterminate" ? "mixed" : checked ? "true" : "false"
         }
         aria-label={node.label}
-        checked={isChecked === true}
+        checked={checked === true}
         data-testid={`node-${node.id}`}
         onChange={onCheckedChange}
-        readOnly={isChecked === "indeterminate"}
+        readOnly={checked === "indeterminate"}
         type="checkbox"
       />
       <span>{node.label}</span>
@@ -150,7 +150,7 @@ describe("CheckboxTree", () => {
     );
   });
 
-  it("calls renderNode with node, isChecked, onCheckedChange, and children", () => {
+  it("calls renderNode with node, checked, onCheckedChange, and children", () => {
     const renderNode = vi.fn(
       ({
         node,
@@ -158,7 +158,7 @@ describe("CheckboxTree", () => {
         children,
       }: {
         node: TreeNode;
-        isChecked: boolean | "indeterminate";
+        checked: boolean | "indeterminate";
         onCheckedChange: () => void;
         children: React.ReactNode;
       }) => (
@@ -176,7 +176,7 @@ describe("CheckboxTree", () => {
     expect(renderNode).toHaveBeenCalledTimes(3);
     const firstCall = renderNode.mock.calls[0]?.[0];
     expect(firstCall).toHaveProperty("node");
-    expect(firstCall).toHaveProperty("isChecked");
+    expect(firstCall).toHaveProperty("checked");
     expect(firstCall).toHaveProperty("onCheckedChange");
     expect(firstCall).toHaveProperty("children");
   });

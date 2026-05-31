@@ -15,7 +15,7 @@ const meta: Meta<typeof CheckboxTree> = {
           "A headless checkbox tree component that manages checked/indeterminate state for nested node hierarchies.",
           "",
           "- `tree` accepts a recursive `TreeNode` object (`id`, `label`, optional `defaultChecked`, optional `children`).",
-          "- `renderNode` is a render-prop that receives `{ node, isChecked, onCheckedChange, children }` — you supply the markup.",
+          "- `renderNode` is a render-prop that receives `{ node, checked, onCheckedChange, children }` — you supply the markup.",
           "- Parent nodes show an **indeterminate** state when only some children are checked.",
           "- Checking a parent cascades down to all children; unchecking cascades as well.",
         ].join("\n"),
@@ -63,13 +63,13 @@ const PERMISSIONS_TREE = {
 
 function TreeNodeRenderer({
   node,
-  isChecked,
+  checked,
   onCheckedChange,
   children,
   depth = 0,
 }: {
   node: { id: string; label: string };
-  isChecked: boolean | "indeterminate";
+  checked: boolean | "indeterminate";
   onCheckedChange: () => void;
   children: React.ReactNode;
   depth?: number;
@@ -78,9 +78,9 @@ function TreeNodeRenderer({
     <div style={{ paddingLeft: `${depth * 20}px` }}>
       <div className="flex items-center gap-2 py-1">
         <Checkbox
-          checked={isChecked === true}
+          checked={checked === true}
           id={node.id}
-          indeterminate={isChecked === "indeterminate"}
+          indeterminate={checked === "indeterminate"}
           onCheckedChange={onCheckedChange}
         />
         <label className="cursor-pointer select-none text-sm" htmlFor={node.id}>
@@ -97,9 +97,9 @@ export const Playground: Story = {
   render: () => (
     <div className="w-72 rounded-md border p-4">
       <CheckboxTree
-        renderNode={({ node, isChecked, onCheckedChange, children }) => (
+        renderNode={({ node, checked, onCheckedChange, children }) => (
           <TreeNodeRenderer
-            isChecked={isChecked}
+            checked={checked}
             key={node.id}
             node={node}
             onCheckedChange={onCheckedChange}
@@ -128,9 +128,9 @@ export const ShallowTree: Story = {
     return (
       <div className="w-60 rounded-md border p-4">
         <CheckboxTree
-          renderNode={({ node, isChecked, onCheckedChange, children }) => (
+          renderNode={({ node, checked, onCheckedChange, children }) => (
             <TreeNodeRenderer
-              isChecked={isChecked}
+              checked={checked}
               key={node.id}
               node={node}
               onCheckedChange={onCheckedChange}
@@ -161,9 +161,9 @@ export const AllChecked: Story = {
     return (
       <div className="w-60 rounded-md border p-4">
         <CheckboxTree
-          renderNode={({ node, isChecked, onCheckedChange, children }) => (
+          renderNode={({ node, checked, onCheckedChange, children }) => (
             <TreeNodeRenderer
-              isChecked={isChecked}
+              checked={checked}
               key={node.id}
               node={node}
               onCheckedChange={onCheckedChange}

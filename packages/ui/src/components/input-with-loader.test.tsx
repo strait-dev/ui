@@ -36,11 +36,11 @@ describe("InputWithLoader", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders a spinner (not the icon) when isLoading is true", () => {
+  it("renders a spinner (not the icon) when loading is true", () => {
     render(
       <InputWithLoader
         icon={<span data-testid="my-icon" />}
-        isLoading
+        loading
         placeholder="Search"
       />
     );
@@ -52,8 +52,8 @@ describe("InputWithLoader", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders spinner when isLoading is true with no icon", () => {
-    render(<InputWithLoader isLoading placeholder="Search" />);
+  it("renders spinner when loading is true with no icon", () => {
+    render(<InputWithLoader loading placeholder="Search" />);
     expect(
       document.querySelector("[data-slot='start-icon']")
     ).toBeInTheDocument();

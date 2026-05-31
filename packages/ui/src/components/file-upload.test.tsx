@@ -81,7 +81,7 @@ describe("FileUpload", () => {
 
 describe("FileUploadDropzone", () => {
   it("reflects the dragging state via data-dragging", () => {
-    render(<FileUploadDropzone isDragging>drop</FileUploadDropzone>);
+    render(<FileUploadDropzone dragging>drop</FileUploadDropzone>);
     expect(
       document.querySelector("[data-slot='file-upload-dropzone']")
     ).toHaveAttribute("data-dragging", "true");
