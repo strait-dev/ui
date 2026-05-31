@@ -11,8 +11,8 @@ import { cn } from "../utils/index";
 // Types
 // ---------------------------------------------------------------------------
 
-/** Intent values that drive completed-step colour. */
-type TimelineIntent =
+/** Variant values that drive completed-step colour. */
+type TimelineVariant =
   | "primary"
   | "success"
   | "info"
@@ -24,9 +24,9 @@ type TimelineContextValue = {
   activeStep: number;
   setActiveStep: (step: number) => void;
   /** Connector line style. `"solid"` (default) = filled bar; `"dotted"` = dashed border. */
-  variant: "solid" | "dotted";
-  /** Colour intent applied to completed steps. Defaults to `"primary"`. */
-  intent: TimelineIntent;
+  line: "solid" | "dotted";
+  /** Colour variant applied to completed steps. Defaults to `"primary"`. */
+  variant: TimelineVariant;
   /** Size preset. `"default"` keeps existing proportions; `"sm"` shrinks everything. */
   size: "sm" | "default";
 };
@@ -49,11 +49,11 @@ const useTimeline = () => {
 };
 
 // ---------------------------------------------------------------------------
-// Intent class maps
+// Variant class maps
 // ---------------------------------------------------------------------------
 
 /**
- * Per-intent Tailwind classes applied to the completed indicator border
+ * Per-variant Tailwind classes applied to the completed indicator border
  * and the separator background when the *next* sibling is completed.
  *
  * The separator completed colour is applied via `TimelineItem` using the
@@ -61,8 +61,8 @@ const useTimeline = () => {
  * classes are needed here (the indicator class is consumed by
  * `TimelineIndicator`).
  */
-const intentClasses: Record<
-  TimelineIntent,
+const variantClasses: Record<
+  TimelineVariant,
   { indicator: string; separator: string }
 > = {
   primary: {
@@ -111,12 +111,12 @@ type TimelineProps = React.ComponentProps<"div"> & {
    * - `"solid"` (default) — filled bar using `bg-*` classes.
    * - `"dotted"` — dashed border line drawn via `border-*` + `border-dashed`.
    */
-  variant?: "solid" | "dotted";
+  line?: "solid" | "dotted";
   /**
-   * Colour intent applied to completed-step indicators and separators.
+   * Colour variant applied to completed-step indicators and separators.
    * Defaults to `"primary"`.
    */
-  intent?: TimelineIntent;
+  variant?: TimelineVariant;
   /**
    * Size preset for indicators, gaps, and text.
    * - `"default"` — existing proportions (no change).
@@ -142,13 +142,13 @@ type TimelineProps = React.ComponentProps<"div"> & {
  *   {@link TimelineItem} and {@link TimelineIndicator} styling.
  * - The separator line between steps is hidden on the last item via the
  *   `group-last` selector, so no special handling is required by consumers.
- * - Use `variant="dotted"` for a dashed connector line.
- * - Use `intent` to tint completed steps with a semantic colour.
+ * - Use `line="dotted"` for a dashed connector line.
+ * - Use `variant` to tint completed steps with a semantic colour.
  * - Use `size="sm"` for a compact layout.
  *
  * @example
  * ```tsx
- * <Timeline value={2} intent="success" variant="dotted" size="sm">
+ * <Timeline value={2} variant="success" line="dotted" size="sm">
  *   {steps.map((s, i) => (
  *     <TimelineItem key={s.id} step={i + 1}>
  *       <TimelineHeader>
@@ -168,8 +168,8 @@ function Timeline({
   value,
   onValueChange,
   orientation = "vertical",
-  variant = "solid",
-  intent = "primary",
+  line = "solid",
+  variant = "primary",
   size = "default",
   className,
   ...props
@@ -192,14 +192,14 @@ function Timeline({
 
   return (
     <TimelineContext.Provider
-      value={{ activeStep: currentStep, setActiveStep, variant, intent, size }}
+      value={{ activeStep: currentStep, setActiveStep, line, variant, size }}
     >
       <div
         className={cn(
           "group/timeline flex data-[orientation=horizontal]:w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col",
           className
         )}
-        data-intent={intent}
+        data-line={line}
         data-orientation={orientation}
         data-size={size}
         data-slot="timeline"
@@ -269,7 +269,7 @@ type TimelineIndicatorProps = React.ComponentProps<"div"> & {
 /**
  * Visual dot/badge placed at the step position inside a
  * {@link TimelineItem}. Marked `aria-hidden`. Border colour switches when
- * the parent item carries `data-completed`, driven by the current intent.
+ * the parent item carries `data-completed`, driven by the current variant.
  * When `icon` is provided the indicator becomes a flex-center container
  * and renders the icon; `children` may also be nested for custom content.
  */
@@ -279,7 +279,7 @@ function TimelineIndicator({
   icon,
   ...props
 }: TimelineIndicatorProps) {
-  const { intent } = useTimeline();
+  const { variant } = useTimeline();
   const hasContent = icon !== undefined || children !== undefined;
 
   return (
@@ -294,8 +294,8 @@ function TimelineIndicator({
         "group-data-[orientation=horizontal]/timeline:-top-6 group-data-[orientation=horizontal]/timeline:left-0 group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
         // Positioning — vertical
         "group-data-[orientation=vertical]/timeline:top-0 group-data-[orientation=vertical]/timeline:-left-6 group-data-[orientation=vertical]/timeline:-translate-x-1/2",
-        // Completed intent colour on the border
-        intentClasses[intent ?? "primary"].indicator,
+        // Completed variant colour on the border
+        variantClasses[variant ?? "primary"].indicator,
         // Flex-center when icon or children present
         hasContent && "flex items-center justify-center",
         className
@@ -326,10 +326,10 @@ type TimelineItemProps = React.ComponentProps<"div"> & {
  * Sets `data-completed` on itself when `step ≤ activeStep`, which the
  * indicator and separator use for their filled styles. The adjacent
  * sibling selector `has-[+[data-completed]]` on the separator turns the
- * connector line intent-coloured once the *next* step is reached.
+ * connector line variant-coloured once the *next* step is reached.
  */
 function TimelineItem({ step, className, ...props }: TimelineItemProps) {
-  const { activeStep, intent } = useTimeline();
+  const { activeStep, variant } = useTimeline();
 
   return (
     <div
@@ -345,8 +345,8 @@ function TimelineItem({ step, className, ...props }: TimelineItemProps) {
         "group-data-[orientation=horizontal]/timeline:not-last:pe-8",
         "group-data-[size=sm]/timeline:group-data-[orientation=horizontal]/timeline:mt-6",
         "group-data-[size=sm]/timeline:group-data-[orientation=horizontal]/timeline:not-last:pe-6",
-        // Completed separator — solid path driven by intent
-        intentClasses[intent ?? "primary"].separator,
+        // Completed separator — solid path driven by variant
+        variantClasses[variant ?? "primary"].separator,
         className
       )}
       data-completed={step <= activeStep || undefined}
@@ -364,7 +364,7 @@ function TimelineItem({ step, className, ...props }: TimelineItemProps) {
  * Connector line drawn between consecutive {@link TimelineItem} steps.
  * Hidden on the last item via `group-last`. Marked `aria-hidden`.
  *
- * When `variant="dotted"` on the parent {@link Timeline}, the connector
+ * When `line="dotted"` on the parent {@link Timeline}, the connector
  * switches to a dashed border instead of a filled bar.
  */
 function TimelineSeparator({
@@ -392,22 +392,22 @@ function TimelineSeparator({
         "group-data-[orientation=horizontal]/timeline:translate-x-4.5",
         "group-data-[orientation=horizontal]/timeline:-translate-y-1/2",
 
-        // ----- Solid variant (default) -----
-        "group-data-[variant=solid]/timeline:bg-primary/10",
+        // ----- Solid line (default) -----
+        "group-data-[line=solid]/timeline:bg-primary/10",
 
-        // ----- Dotted variant — vertical: left border, dashed -----
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=vertical]/timeline:bg-transparent",
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=vertical]/timeline:w-0",
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=vertical]/timeline:border-l-2",
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=vertical]/timeline:border-dashed",
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=vertical]/timeline:border-primary/20",
+        // ----- Dotted line — vertical: left border, dashed -----
+        "group-data-[line=dotted]/timeline:group-data-[orientation=vertical]/timeline:bg-transparent",
+        "group-data-[line=dotted]/timeline:group-data-[orientation=vertical]/timeline:w-0",
+        "group-data-[line=dotted]/timeline:group-data-[orientation=vertical]/timeline:border-l-2",
+        "group-data-[line=dotted]/timeline:group-data-[orientation=vertical]/timeline:border-dashed",
+        "group-data-[line=dotted]/timeline:group-data-[orientation=vertical]/timeline:border-primary/20",
 
-        // ----- Dotted variant — horizontal: top border, dashed -----
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=horizontal]/timeline:bg-transparent",
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=horizontal]/timeline:h-0",
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=horizontal]/timeline:border-t-2",
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=horizontal]/timeline:border-dashed",
-        "group-data-[variant=dotted]/timeline:group-data-[orientation=horizontal]/timeline:border-primary/20",
+        // ----- Dotted line — horizontal: top border, dashed -----
+        "group-data-[line=dotted]/timeline:group-data-[orientation=horizontal]/timeline:bg-transparent",
+        "group-data-[line=dotted]/timeline:group-data-[orientation=horizontal]/timeline:h-0",
+        "group-data-[line=dotted]/timeline:group-data-[orientation=horizontal]/timeline:border-t-2",
+        "group-data-[line=dotted]/timeline:group-data-[orientation=horizontal]/timeline:border-dashed",
+        "group-data-[line=dotted]/timeline:group-data-[orientation=horizontal]/timeline:border-primary/20",
 
         className
       )}
@@ -442,9 +442,9 @@ function TimelineTitle({ className, ...props }: React.ComponentProps<"h3">) {
 export type {
   TimelineContextValue,
   TimelineIndicatorProps,
-  TimelineIntent,
   TimelineItemProps,
   TimelineProps,
+  TimelineVariant,
 };
 export {
   Timeline,

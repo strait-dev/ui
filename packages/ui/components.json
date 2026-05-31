@@ -8963,12 +8963,12 @@
       "TimelineHeader",
       "TimelineIndicator",
       "TimelineIndicatorProps",
-      "TimelineIntent",
       "TimelineItem",
       "TimelineItemProps",
       "TimelineProps",
       "TimelineSeparator",
-      "TimelineTitle"
+      "TimelineTitle",
+      "TimelineVariant"
     ],
     "types": [
       {
@@ -9029,18 +9029,18 @@
             "description": "Direction of the step track. Defaults to `\"vertical\"`."
           },
           {
-            "name": "variant",
+            "name": "line",
             "type": "\"solid\" | \"dotted\"",
             "optional": true,
             "default": "\"solid\"",
             "description": "Connector line rendering style. - `\"solid\"` (default) — filled bar using `bg-*` classes. - `\"dotted\"` — dashed border line drawn via `border-*` + `border-dashed`."
           },
           {
-            "name": "intent",
-            "type": "TimelineIntent",
+            "name": "variant",
+            "type": "TimelineVariant",
             "optional": true,
             "default": "\"primary\"",
-            "description": "Colour intent applied to completed-step indicators and separators. Defaults to `\"primary\"`."
+            "description": "Colour variant applied to completed-step indicators and separators. Defaults to `\"primary\"`."
           },
           {
             "name": "size",

@@ -1420,7 +1420,7 @@ Import: `import { ... } from "@strait/ui/components/timeline";`
 
 Stepped progress tracker that renders a sequence of labeled events.
 
-Exports: `Timeline`, `TimelineContent`, `TimelineContextValue`, `TimelineDate`, `TimelineHeader`, `TimelineIndicator`, `TimelineIndicatorProps`, `TimelineIntent`, `TimelineItem`, `TimelineItemProps`, `TimelineProps`, `TimelineSeparator`, `TimelineTitle`
+Exports: `Timeline`, `TimelineContent`, `TimelineContextValue`, `TimelineDate`, `TimelineHeader`, `TimelineIndicator`, `TimelineIndicatorProps`, `TimelineItem`, `TimelineItemProps`, `TimelineProps`, `TimelineSeparator`, `TimelineTitle`, `TimelineVariant`
 
 Props (`TimelineIndicatorProps`):
 Extends: `React.ComponentProps<"div">`
@@ -1445,8 +1445,8 @@ Extends: `React.ComponentProps<"div">`
 | `value` | `number` |  |  | Active step index (controlled). |
 | `onValueChange` | `(value: number) => void` |  |  | Called when the active step changes. |
 | `orientation` | `"horizontal" \| "vertical"` |  | `"vertical"` | Direction of the step track. Defaults to `"vertical"`. |
-| `variant` | `"solid" \| "dotted"` |  | `"solid"` | Connector line rendering style. - `"solid"` (default) — filled bar using `bg-*` classes. - `"dotted"` — dashed border line drawn via `border-*` + `border-dashed`. |
-| `intent` | `TimelineIntent` |  | `"primary"` | Colour intent applied to completed-step indicators and separators. Defaults to `"primary"`. |
+| `line` | `"solid" \| "dotted"` |  | `"solid"` | Connector line rendering style. - `"solid"` (default) — filled bar using `bg-*` classes. - `"dotted"` — dashed border line drawn via `border-*` + `border-dashed`. |
+| `variant` | `TimelineVariant` |  | `"primary"` | Colour variant applied to completed-step indicators and separators. Defaults to `"primary"`. |
 | `size` | `"sm" \| "default"` |  | `"default"` | Size preset for indicators, gaps, and text. - `"default"` — existing proportions (no change). - `"sm"` — smaller indicator (`size-4`), tighter gaps, smaller text. |
 
 Data slots: `timeline`, `timeline-content`, `timeline-header`, `timeline-indicator`, `timeline-item`, `timeline-separator`, `timeline-title`

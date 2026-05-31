@@ -40,8 +40,8 @@ const meta: Meta<typeof Timeline> = {
           "- `value` — controlled active step",
           "- `onValueChange` — change callback",
           "- `orientation` — `vertical` (default) | `horizontal`",
-          "- `variant` — `solid` (default) | `dotted` — connector line style",
-          "- `intent` — `primary` (default) | `success` | `info` | `warning` | `destructive`",
+          "- `line` — `solid` (default) | `dotted` — connector line style",
+          "- `variant` — `primary` (default) | `success` | `info` | `warning` | `destructive`",
           "- `size` — `default` | `sm`",
           "",
           "`TimelineIndicator` accepts an optional `icon` prop (`IconSvgElement`)",
@@ -57,16 +57,16 @@ const meta: Meta<typeof Timeline> = {
       description: "Layout axis.",
       table: { defaultValue: { summary: "vertical" } },
     },
-    variant: {
+    line: {
       control: "select",
       options: ["solid", "dotted"],
       description: "Connector line style.",
       table: { defaultValue: { summary: "solid" } },
     },
-    intent: {
+    variant: {
       control: "select",
       options: ["primary", "success", "info", "warning", "destructive"],
-      description: "Colour intent for completed steps.",
+      description: "Colour variant for completed steps.",
       table: { defaultValue: { summary: "primary" } },
     },
     size: {
@@ -82,8 +82,8 @@ const meta: Meta<typeof Timeline> = {
   },
   args: {
     orientation: "vertical",
-    variant: "solid",
-    intent: "primary",
+    line: "solid",
+    variant: "primary",
     size: "default",
     defaultValue: 2,
   },
@@ -188,7 +188,7 @@ export const Horizontal: Story = {
 export const SolidConnector: Story = {
   name: "Variant / Solid",
   render: () => (
-    <Timeline defaultValue={2} variant="solid">
+    <Timeline defaultValue={2} line="solid">
       {deploySteps.map(({ step, title, date, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -205,13 +205,13 @@ export const SolidConnector: Story = {
 };
 
 /**
- * Dotted connector line. Sets `data-variant="dotted"` on the root; the
+ * Dotted connector line. Sets `data-line="dotted"` on the root; the
  * separator switches to a `border-dashed` style instead of a filled bar.
  */
 export const DottedConnector: Story = {
   name: "Variant / Dotted",
   render: () => (
-    <Timeline defaultValue={2} variant="dotted">
+    <Timeline defaultValue={2} line="dotted">
       {deploySteps.map(({ step, title, date, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -231,7 +231,7 @@ export const DottedConnector: Story = {
 export const DottedHorizontal: Story = {
   name: "Variant / Dotted Horizontal",
   render: () => (
-    <Timeline defaultValue={2} orientation="horizontal" variant="dotted">
+    <Timeline defaultValue={2} line="dotted" orientation="horizontal">
       {deploySteps.map(({ step, title, date }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -250,11 +250,11 @@ export const DottedHorizontal: Story = {
 /* Intent axis                                                         */
 /* ------------------------------------------------------------------ */
 
-/** Primary intent (default). Completed steps use the `primary` token. */
+/** Primary variant (default). Completed steps use the `primary` token. */
 export const IntentPrimary: Story = {
   name: "Intent / Primary",
   render: () => (
-    <Timeline defaultValue={3} intent="primary">
+    <Timeline defaultValue={3} variant="primary">
       {deploySteps.map(({ step, title, date, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -270,11 +270,11 @@ export const IntentPrimary: Story = {
   ),
 };
 
-/** Success intent. Completed steps use the `success` semantic token. */
+/** Success variant. Completed steps use the `success` semantic token. */
 export const IntentSuccess: Story = {
   name: "Intent / Success",
   render: () => (
-    <Timeline defaultValue={3} intent="success">
+    <Timeline defaultValue={3} variant="success">
       {deploySteps.map(({ step, title, date, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -290,11 +290,11 @@ export const IntentSuccess: Story = {
   ),
 };
 
-/** Info intent. Completed steps use the `info` semantic token. */
+/** Info variant. Completed steps use the `info` semantic token. */
 export const IntentInfo: Story = {
   name: "Intent / Info",
   render: () => (
-    <Timeline defaultValue={2} intent="info">
+    <Timeline defaultValue={2} variant="info">
       {deploySteps.map(({ step, title, date, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -310,11 +310,11 @@ export const IntentInfo: Story = {
   ),
 };
 
-/** Warning intent. Completed steps use the `warning` semantic token. */
+/** Warning variant. Completed steps use the `warning` semantic token. */
 export const IntentWarning: Story = {
   name: "Intent / Warning",
   render: () => (
-    <Timeline defaultValue={2} intent="warning">
+    <Timeline defaultValue={2} variant="warning">
       {deploySteps.map(({ step, title, date, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -330,11 +330,11 @@ export const IntentWarning: Story = {
   ),
 };
 
-/** Destructive intent. Completed steps use the `destructive` semantic token. */
+/** Destructive variant. Completed steps use the `destructive` semantic token. */
 export const IntentDestructive: Story = {
   name: "Intent / Destructive",
   render: () => (
-    <Timeline defaultValue={2} intent="destructive">
+    <Timeline defaultValue={2} variant="destructive">
       {deploySteps.map(({ step, title, date, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -451,13 +451,13 @@ export const IconIndicator: Story = {
 };
 
 /**
- * Icon + intent composition — success intent with per-step icons communicating
+ * Icon + variant composition — success variant with per-step icons communicating
  * step outcomes.
  */
 export const IconWithIntent: Story = {
   name: "Icon / With Intent",
   render: () => (
-    <Timeline defaultValue={3} intent="success" orientation="vertical">
+    <Timeline defaultValue={3} orientation="vertical" variant="success">
       <TimelineItem step={1}>
         <TimelineSeparator />
         <TimelineIndicator icon={CheckmarkCircle01Icon} />
@@ -695,7 +695,7 @@ const activitySteps = [
  */
 export const ActivityFeed: Story = {
   render: () => (
-    <Timeline defaultValue={4} intent="success" size="sm">
+    <Timeline defaultValue={4} size="sm" variant="success">
       {activitySteps.map(({ step, icon, date, title, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
@@ -725,11 +725,11 @@ const roadmapSteps = [
 
 /**
  * Roadmap — a horizontal, dotted milestone track. Demonstrates combining
- * `orientation="horizontal"` with `variant="dotted"` for a planning view.
+ * `orientation="horizontal"` with `line="dotted"` for a planning view.
  */
 export const Roadmap: Story = {
   render: () => (
-    <Timeline defaultValue={2} orientation="horizontal" variant="dotted">
+    <Timeline defaultValue={2} line="dotted" orientation="horizontal">
       {roadmapSteps.map(({ step, date, title, content }) => (
         <TimelineItem key={step} step={step}>
           <TimelineSeparator />
