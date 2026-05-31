@@ -1,5 +1,98 @@
 # @strait/ui
 
+## 0.1.4
+
+### Patch Changes
+
+- [#11](https://github.com/strait-dev/ui/pull/11) [`24672df`](https://github.com/strait-dev/ui/commit/24672dfaad3c883dff99cb722f0dbec16aa9195d) Thanks [@leonardomso](https://github.com/leonardomso)! - feat!: normalize boolean prop names (unprefixed + positive polarity)
+
+  Public boolean props are renamed to drop `is*`/`has*` prefixes and to use
+  positive `show*` polarity instead of `hide*`, completing the API-consistency
+  audit and satisfying contract §12. This is a **breaking change** for the
+  affected components.
+
+  Renames:
+
+  - `isRequired` → `required` (DatePicker)
+  - `isLoading` → `loading` (DataGrid, SelectWithSearch)
+  - `isActive` → `active` (NavigationRail, Pagination, Sidebar menu buttons)
+  - `isDragging` → `dragging` (FileUpload dropzone)
+  - `hasMore` → `moreAvailable`, `isFetchingMore` → `fetchingMore` (DataGrid)
+  - `isFetchingNextPage` → `fetchingNextPage` (SelectWithSearch)
+  - `hasSubMenu` → `subMenu` (Sidebar)
+  - render-callback args: `isChecked` → `checked` (CheckboxTree `renderNode`),
+    `isSelected` → `selected` (SelectWithSearch `renderOption`)
+
+  Inverted `hide*` → `show*` (default flips to `true`; behavior preserved):
+
+  - Chart: `hideGridLines`/`hideXAxis`/`hideYAxis`/`hideLabel`/`hideIndicator`/
+    `hideIcon` → `showGridLines`/`showXAxis`/`showYAxis`/`showLabel`/
+    `showIndicator`/`showIcon`
+  - Multiselect: `hideClearAllButton` → `showClearAllButton`,
+    `hidePlaceholderWhenSelected` → `showPlaceholderWhenSelected`
+  - Sidebar: `hideOnCollapse` → `showOnCollapse`
+
+  Migration: rename the prop at call sites. For the inverted `hide*` → `show*`
+  props, omit the prop to keep the previous default, or pass `show…={false}` to
+  reproduce the old hidden state.
+
+- [#11](https://github.com/strait-dev/ui/pull/11) [`24672df`](https://github.com/strait-dev/ui/commit/24672dfaad3c883dff99cb722f0dbec16aa9195d) Thanks [@leonardomso](https://github.com/leonardomso)! - fix: resolve design-system consistency issues across components
+
+  Audit-driven consistency pass:
+
+  - **Focus rings** now follow the contract everywhere — `resizable`, `tree`,
+    `input-with-inner-tags`, and the date-range pickers had divergent
+    `ring-1`/`ring-2`/`ring-offset` focus treatments; all normalized to the
+    standard `ring-3` ring. The convention linter was broadened to catch these.
+  - **Warning intent** opacity on `Button` now matches the other intents (it had
+    heavier soft/outline/focus tints).
+  - **Form-control heights**: `Select`/`NativeSelect` `lg` size is `h-9` (was
+    `h-10`); `Multiselect` default min-height is `h-8` (was `h-10`) — all aligned
+    to the form-control baseline.
+  - **Radius**: floating surfaces that were still `rounded-md` (`preview-card`,
+    range-calendar-with-presets, the date-range-picker popovers, the sidebar
+    flyout, `input-with-inline-button`) now use the unified `rounded-lg`.
+  - **Typography**: near-12px arbitrary font sizes in `Button`/`Toggle`/`Tooltip`/
+    `Calendar` map to the `text-xs` scale step.
+  - Smaller fixes: `Badge` outline `dark:bg-input/30` (was `/32`), `Multiselect`
+    dropdown gains the standard surface ring, `Banner` title weight and `Popover`
+    title size align with sibling components.
+
+- [#11](https://github.com/strait-dev/ui/pull/11) [`24672df`](https://github.com/strait-dev/ui/commit/24672dfaad3c883dff99cb722f0dbec16aa9195d) Thanks [@leonardomso](https://github.com/leonardomso)! - feat!: rename Timeline `intent` to `variant` (and line-style `variant` to `line`)
+
+  Completes the `intent` → `variant` convergence (Timeline was the last straggler).
+  Timeline already had a `variant` prop for the connector line style, so that axis
+  is renamed to `line` to free `variant` for the semantic colour axis:
+
+  - `intent` → `variant` (`primary | success | info | warning | destructive`);
+    the `TimelineIntent` type is now `TimelineVariant`, and the `data-intent`
+    attribute is now `data-variant`.
+  - the former line-style `variant` (`solid | dotted`) → `line`; `data-variant`
+    for the line style is now `data-line`.
+
+  Migration: `<Timeline intent="success" variant="dotted">` →
+  `<Timeline variant="success" line="dotted">`.
+
+- [#11](https://github.com/strait-dev/ui/pull/11) [`24672df`](https://github.com/strait-dev/ui/commit/24672dfaad3c883dff99cb722f0dbec16aa9195d) Thanks [@leonardomso](https://github.com/leonardomso)! - feat: unify component corner radius to a single `rounded-lg` outer box
+
+  Non-circular components now share one outer-box radius (`rounded-lg`, the
+  existing `--radius` token) so buttons, inputs, and containers read as the same
+  shape. Notable visual changes:
+
+  - **Button** is no longer a full pill — it now uses `rounded-lg` to match inputs.
+  - **Badge** defaults to `rounded-lg` (the `radius="pill"` option is still
+    available for the old pill look).
+  - **Containers** (Card, Dialog, Command, Empty, Sidebar sheet, native select)
+    drop `rounded-xl` to `rounded-lg`.
+  - Small-size form controls (Select, Toggle, ToggleGroup) no longer use a tighter
+    per-size radius cap.
+
+  Genuinely circular controls (Switch, Radio, Slider, Progress, status/avatar
+  dots, etc.) keep `rounded-full`, and inner/nested elements keep their smaller
+  `rounded-md`/`rounded-sm`. The single `--radius` token still lets you re-theme
+  the radius globally. The component contract now documents and the convention
+  linter enforces this radius system.
+
 ## 0.1.3
 
 ### Patch Changes
