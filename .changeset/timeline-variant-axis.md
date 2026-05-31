@@ -1,5 +1,5 @@
 ---
-"@strait/ui": minor
+"@strait/ui": patch
 ---
 
 feat!: rename Timeline `intent` to `variant` (and line-style `variant` to `line`)

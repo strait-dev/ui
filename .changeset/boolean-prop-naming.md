@@ -1,5 +1,5 @@
 ---
-"@strait/ui": minor
+"@strait/ui": patch
 ---
 
 feat!: normalize boolean prop names (unprefixed + positive polarity)
