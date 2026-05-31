@@ -837,7 +837,7 @@ function SidebarSearchButton({
         {placeholder}
       </span>
       {shortcut ? (
-        <kbd className="rounded border border-sidebar-border px-1.5 font-mono text-[10px] group-data-[collapsible=icon]:hidden">
+        <kbd className="rounded border border-sidebar-border px-1.5 font-mono text-micro group-data-[collapsible=icon]:hidden">
           {shortcut}
         </kbd>
       ) : null}

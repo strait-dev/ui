@@ -57,6 +57,9 @@
   --border: oklch(0.923 0.003 48.717);
   --input: oklch(0.923 0.003 48.717);
   --ring: oklch(0.553 0.013 58.071);
+  /* Modal scrim behind dialogs/sheets/drawers. Tokenized so it is themeable
+     and can deepen in dark mode (a flat black/10 is nearly invisible there). */
+  --overlay: oklch(0 0 0 / 0.1);
   --chart-1: var(--brand);
   --chart-2: oklch(0.769 0.188 70.08);
   --chart-3: oklch(0.553 0.013 58.071);
@@ -116,6 +119,8 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.709 0.01 56.259);
+  /* Deeper in dark mode so the scrim reads against dark surfaces. */
+  --overlay: oklch(0 0 0 / 0.4);
   --chart-1: var(--brand);
   --chart-2: oklch(0.769 0.188 70.08);
   --chart-3: oklch(0.709 0.01 56.259);
@@ -171,6 +176,9 @@
   --text-body-sm--line-height: 1.55;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1.5;
+  /* Micro: sub-caption labels on dense chrome (badge xs/sm, kbd). ~10px. */
+  --text-micro: 0.625rem;
+  --text-micro--line-height: 1;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -205,6 +213,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-overlay: var(--overlay);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
