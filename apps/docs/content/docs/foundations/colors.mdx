@@ -1,0 +1,17 @@
+---
+title: Colors
+description: The semantic oklch color tokens every component is built from.
+---
+
+Strait UI has no raw colors — components reference semantic tokens
+(`bg-primary`, `text-muted-foreground`, `border-border`). Each token is an
+`oklch` CSS custom property defined in `@strait/ui/css`, with a light value in
+`:root` and a dark value in `.dark`. Toggle the theme (top right) to see the
+dark values below.
+
+<ColorSwatches />
+
+## Customising
+
+Override any token after importing the stylesheet. Setting `--brand` alone
+re-themes the brand triad, charts, and sidebar — see [Theming](/docs/theming).

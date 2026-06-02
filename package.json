@@ -27,14 +27,14 @@
     "check:docs:pages": "bun scripts/check-docs-pages.mjs",
     "check:changeset": "bun scripts/check-changeset-format.mjs",
     "test:release-notes": "node --test scripts/release-notes.test.mjs",
-    "docs:generate": "bun scripts/generate-llms.ts && bun scripts/generate-demo-registry.ts",
+    "docs:generate": "bun scripts/generate-llms.ts && bun scripts/generate-tokens.ts && bun scripts/generate-demo-registry.ts",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:stories": "bun run --filter @strait/storybook test-storybook",
     "changeset": "changeset",
     "version-packages": "changeset version && bun install",
     "release": "changeset publish",
-    "verify": "biome check . && bun scripts/check-conventions.mjs && bun scripts/check-heavy-deps.mjs && bun scripts/check-trusted-deps.mjs && bun scripts/check-docs.mjs && bun scripts/check-docs-pages.mjs && bun scripts/check-changeset-format.mjs && bun scripts/generate-llms.ts --check && node --test scripts/release-notes.test.mjs && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
+    "verify": "biome check . && bun scripts/check-conventions.mjs && bun scripts/check-heavy-deps.mjs && bun scripts/check-trusted-deps.mjs && bun scripts/check-docs.mjs && bun scripts/check-docs-pages.mjs && bun scripts/check-changeset-format.mjs && bun scripts/generate-llms.ts --check && bun scripts/generate-tokens.ts --check && node --test scripts/release-notes.test.mjs && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {

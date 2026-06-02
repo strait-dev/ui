@@ -1,6 +1,14 @@
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import { ComponentPreview } from "@/src/components/component-preview";
+import {
+  ColorSwatches,
+  IconGallery,
+  RadiusScale,
+  ShadowScale,
+  SpacingScale,
+  TypeScale,
+} from "@/src/components/foundations";
 import { PropsTable } from "@/src/components/props-table";
 import { ThemeExplorer } from "@/src/components/theme-explorer";
 
@@ -12,9 +20,15 @@ import { ThemeExplorer } from "@/src/components/theme-explorer";
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
+    ColorSwatches,
     ComponentPreview,
+    IconGallery,
     PropsTable,
+    RadiusScale,
+    ShadowScale,
+    SpacingScale,
     ThemeExplorer,
+    TypeScale,
     ...components,
   };
 }
