@@ -5,6 +5,26 @@ description: Hand-rolled recursive, collapsible, colorised JSON tree viewer with
 
 <ComponentPreview name="json-viewer/demo" />
 
+## Examples
+
+### Nested object
+
+Deeply nested API responses can be explored by depth with `defaultExpanded`; the `copyable` prop adds a clipboard button in the top-right corner.
+
+<ComponentPreview name="json-viewer/nested" />
+
+### Array of objects
+
+Pass an array as `data` to inspect list responses — common for paginated API results.
+
+<ComponentPreview name="json-viewer/array" />
+
+### Constrained height with scroll
+
+Limit the viewer height with `maxHeight` so long payloads don't push surrounding content out of view.
+
+<ComponentPreview name="json-viewer/constrained" />
+
 ## Reference
 
 <PropsTable name="json-viewer" />

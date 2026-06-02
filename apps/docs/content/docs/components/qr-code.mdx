@@ -5,6 +5,26 @@ description: Root component that renders an SVG QR code with optional logo overl
 
 <ComponentPreview name="qr-code/demo" />
 
+## Examples
+
+### With logo overlay
+
+Place a `QRCodeOverlay` inside the root to centre a logo over the code — always use `level="H"` (30% error correction) so the code stays scannable.
+
+<ComponentPreview name="qr-code/with-overlay" />
+
+### With download button
+
+`QRCodeDownload` renders a button that exports the QR code as an SVG or PNG file.
+
+<ComponentPreview name="qr-code/with-download" />
+
+### Error correction levels
+
+Higher correction levels (`Q`, `H`) survive more occlusion at the cost of denser modules.
+
+<ComponentPreview name="qr-code/error-correction" />
+
 ## Reference
 
 <PropsTable name="qr-code" />

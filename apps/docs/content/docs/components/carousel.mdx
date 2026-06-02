@@ -5,6 +5,26 @@ description: Accessible, touch-friendly carousel built on Embla Carousel with ke
 
 <ComponentPreview name="carousel/demo" />
 
+## Examples
+
+### Basic carousel
+
+A single-slide-at-a-time horizontal carousel with Previous and Next navigation buttons.
+
+<ComponentPreview name="carousel/basic" />
+
+### Multiple slides
+
+Set `basis-1/2` on each `CarouselItem` to show two slides simultaneously and pass `opts={{ align: "start" }}` to keep them snapped at the start edge.
+
+<ComponentPreview name="carousel/multi-slide" />
+
+### Looping image gallery
+
+Pass `opts={{ loop: true }}` to enable infinite looping; slides wrap around when the user scrolls past the last one.
+
+<ComponentPreview name="carousel/loop" />
+
 ## Reference
 
 <PropsTable name="carousel" />

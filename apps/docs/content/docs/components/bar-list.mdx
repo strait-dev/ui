@@ -5,6 +5,26 @@ description: A horizontal ranked bar list with labels overlaid on value-proporti
 
 <ComponentPreview name="bar-list/demo" />
 
+## Examples
+
+### With links
+
+Add an `href` to any row to render its label as an external link.
+
+<ComponentPreview name="bar-list/with-links" />
+
+### Sort order
+
+Control the rendering order with `sortOrder`: `"descending"` (default), `"ascending"`, or `"none"` to preserve insertion order.
+
+<ComponentPreview name="bar-list/sort-orders" />
+
+### Value formatter
+
+Use `valueFormatter` to format trailing values — for example, as currency using `Intl.NumberFormat`.
+
+<ComponentPreview name="bar-list/value-formatter" />
+
 ## Reference
 
 <PropsTable name="bar-list" />

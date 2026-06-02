@@ -5,6 +5,26 @@ description: A free-text input with a filtered suggestion list, built on the Bas
 
 <ComponentPreview name="autocomplete/demo" />
 
+## Examples
+
+### With trigger and clear
+
+Use `showTrigger` to add a chevron that opens the list, and `showClear` to add a button that resets the value. When both are present the clear button replaces the trigger once the field has a value.
+
+<ComponentPreview name="autocomplete/with-trigger-and-clear" />
+
+### Grouped suggestions
+
+Pass an array of `{ value, items }` as `items` and render each group with `AutocompleteGroup` and `AutocompleteGroupLabel`.
+
+<ComponentPreview name="autocomplete/groups" />
+
+### Sizes
+
+Three height variants — `sm`, `default`, and `lg` — mirror the `Input` scale so autocompletes align with other form controls.
+
+<ComponentPreview name="autocomplete/sizes" />
+
 ## Reference
 
 <PropsTable name="autocomplete" />

@@ -5,6 +5,20 @@ description: Re-exports Base UI's DirectionProvider and useDirection hook for pr
 
 <ComponentPreview name="direction/demo" />
 
+## Examples
+
+### LTR and RTL providers
+
+Wrap different subtrees with `DirectionProvider` to apply independent text directions within the same page.
+
+<ComponentPreview name="direction/rtl-text" />
+
+### Reading direction with useDirection
+
+Call `useDirection` inside a component to read the current direction value from the nearest `DirectionProvider`.
+
+<ComponentPreview name="direction/use-direction" />
+
 ## Reference
 
 <PropsTable name="direction" />

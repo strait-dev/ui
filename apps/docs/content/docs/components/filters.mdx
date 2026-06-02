@@ -5,6 +5,26 @@ description: A faceted filter builder with chip-based field, operator, and value
 
 <ComponentPreview name="filters/demo" />
 
+## Examples
+
+### Basic filters
+
+A controlled `Filters` instance with `select` and `text` field types seeded with one active filter chip.
+
+<ComponentPreview name="filters/basic" />
+
+### Multiselect field
+
+`type: "multiselect"` accumulates multiple values; the chip reads "N selected" and the option list stays open while toggling.
+
+<ComponentPreview name="filters/multiselect" />
+
+### No active filters
+
+When `filters` is an empty array only the "Filter" trigger is shown; clicking it opens the searchable field picker.
+
+<ComponentPreview name="filters/empty" />
+
 ## Reference
 
 <PropsTable name="filters" />

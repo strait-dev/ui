@@ -5,6 +5,26 @@ description: A vertical stack of ranked rows with a value-proportional fill bar 
 
 <ComponentPreview name="leaderboard/demo" />
 
+## Examples
+
+### Top pages
+
+A basic leaderboard with a header title and value-proportional fill bars behind each row.
+
+<ComponentPreview name="leaderboard/top-pages" />
+
+### With header action
+
+Combine `LeaderboardHeader`, `LeaderboardTitle`, and `LeaderboardAction` to attach a badge or control on the trailing edge of the header.
+
+<ComponentPreview name="leaderboard/with-header-action" />
+
+### Render prop — percentage display
+
+Pass a function as `children` to receive `{ value, percentage }` and format the trailing label however you like.
+
+<ComponentPreview name="leaderboard/render-prop" />
+
 ## Reference
 
 <PropsTable name="leaderboard" />

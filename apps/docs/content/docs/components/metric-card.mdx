@@ -5,6 +5,26 @@ description: Self-contained metric summary card with a title, primary value, opt
 
 <ComponentPreview name="metric-card/demo" />
 
+## Examples
+
+### With sparkline
+
+Pass a numeric `data` array to render a mini bar chart that conveys trend at a glance.
+
+<ComponentPreview name="metric-card/with-sparkline" />
+
+### Delta directions
+
+The `direction` field on `delta` controls the icon and colour: `"up"` is success-accented, `"down"` is destructive-accented, and `"neutral"` uses muted grey.
+
+<ComponentPreview name="metric-card/delta-directions" />
+
+### Dashboard row
+
+Place multiple `MetricCard` components in a grid for a dense dashboard summary.
+
+<ComponentPreview name="metric-card/dashboard-row" />
+
 ## Reference
 
 <PropsTable name="metric-card" />

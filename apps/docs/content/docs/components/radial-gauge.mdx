@@ -5,6 +5,26 @@ description: Circular radial-bar gauge that fills proportionally to a value/max 
 
 <ComponentPreview name="radial-gauge/demo" />
 
+## Examples
+
+### Color states
+
+The fill color resolves automatically: below 70% uses `--chart-1`, 70–89% switches to `--warning`, and 90%+ switches to `--destructive`.
+
+<ComponentPreview name="radial-gauge/color-states" />
+
+### Custom color and max
+
+Override the automatic color with an explicit `color` prop, or set a non-100 `max` to represent a real-world scale.
+
+<ComponentPreview name="radial-gauge/custom-color" />
+
+### Dashboard
+
+Group multiple gauges for a system-health overview — each gauge is self-contained in any fixed-size container.
+
+<ComponentPreview name="radial-gauge/dashboard" />
+
 ## Reference
 
 <PropsTable name="radial-gauge" />

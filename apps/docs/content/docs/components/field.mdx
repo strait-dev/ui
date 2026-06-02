@@ -5,6 +5,26 @@ description: A composable field layout system that associates a label, control, 
 
 <ComponentPreview name="field/demo" />
 
+## Examples
+
+### Orientations
+
+The `orientation` prop switches between `vertical` (label stacked above), `horizontal` (label beside), and `responsive` (vertical on small screens, horizontal on wider viewports).
+
+<ComponentPreview name="field/orientations" />
+
+### With description and error
+
+Pair `FieldDescription` for helper text and `FieldError` for validation messages. Set `data-invalid="true"` on the root to tint the label and error text destructive.
+
+<ComponentPreview name="field/with-description-and-error" />
+
+### Grouped fields
+
+Use `FieldGroup`, `FieldSet`, and `FieldLegend` to section a longer form, and `FieldSeparator` to divide sections.
+
+<ComponentPreview name="field/grouped" />
+
 ## Reference
 
 <PropsTable name="field" />

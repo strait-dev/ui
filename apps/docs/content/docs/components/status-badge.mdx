@@ -5,6 +5,26 @@ description: A Badge that maps an orchestration status keyword to a consistent c
 
 <ComponentPreview name="status-badge/demo" />
 
+## Examples
+
+### All statuses
+
+Every built-in status keyword maps to a semantic colour and a humanised label — unknown keywords degrade gracefully to a neutral grey pill.
+
+<ComponentPreview name="status-badge/all-statuses" />
+
+### Sizes
+
+The `size` prop cascades to the leading dot so badge and dot stay proportional at every scale.
+
+<ComponentPreview name="status-badge/sizes" />
+
+### With pulse
+
+Add `pulse` for an `animate-ping` ring behind the dot — use it for genuinely real-time states like `running` or `active`.
+
+<ComponentPreview name="status-badge/with-pulse" />
+
 ## Reference
 
 <PropsTable name="status-badge" />

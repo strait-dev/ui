@@ -5,6 +5,26 @@ description: A one-time-password input that renders a fixed-length sequence of d
 
 <ComponentPreview name="input-otp/demo" />
 
+## Examples
+
+### Four-Digit PIN
+
+A single `InputOTPGroup` with no separator, suitable for a numeric PIN entry.
+
+<ComponentPreview name="input-otp/four-digit-pin" />
+
+### Eight-Character Recovery Key
+
+Split an 8-slot code into two groups of 4 separated by a dash for improved readability.
+
+<ComponentPreview name="input-otp/eight-char-split" />
+
+### Disabled
+
+Pass `disabled` to dim all slots and block interaction, for example on an expired code.
+
+<ComponentPreview name="input-otp/disabled" />
+
 ## Reference
 
 <PropsTable name="input-otp" />

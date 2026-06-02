@@ -5,6 +5,26 @@ description: A styled wrapper around the native select element, with a decorativ
 
 <ComponentPreview name="native-select/demo" />
 
+## Examples
+
+### Sizes
+
+The `size` prop (`sm`, `default`, `lg`) adjusts height and border radius — it does not map to the HTML `size` attribute.
+
+<ComponentPreview name="native-select/sizes" />
+
+### States
+
+Disabled and invalid states apply the full contract: `opacity-50` for disabled, and `aria-invalid` ring for invalid.
+
+<ComponentPreview name="native-select/states" />
+
+### With option groups
+
+Use `NativeSelectOptGroup` to label sections of related options, delegating grouping to the native OS picker.
+
+<ComponentPreview name="native-select/with-groups" />
+
 ## Reference
 
 <PropsTable name="native-select" />

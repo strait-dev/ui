@@ -5,6 +5,26 @@ description: Read-only code display surface with Shiki-powered syntax highlighti
 
 <ComponentPreview name="code-block/demo" />
 
+## Examples
+
+### Multiple languages
+
+Pass any Shiki-supported `language` — `tsx`, `bash`, `go`, `python`, `sql`, and more — to get accurate syntax highlighting.
+
+<ComponentPreview name="code-block/languages" />
+
+### Variants
+
+The `variant` prop controls the surface: `"default"` is a muted bordered box; `"dark"` forces a dark terminal-style surface regardless of the active colour scheme.
+
+<ComponentPreview name="code-block/variants" />
+
+### Line numbers
+
+Set `showLineNumbers` to render a numbered gutter, useful for code that is referenced by line in surrounding prose.
+
+<ComponentPreview name="code-block/line-numbers" />
+
 ## Reference
 
 <PropsTable name="code-block" />

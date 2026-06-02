@@ -5,6 +5,20 @@ description: A data-driven command palette with a global hotkey trigger and grou
 
 <ComponentPreview name="command-menu/demo" />
 
+## Examples
+
+### Multiple groups
+
+Organize items into named sections by passing several objects to `groups`; each group renders a heading and its own list of items with optional icons and keyboard shortcuts.
+
+<ComponentPreview name="command-menu/multi-group" />
+
+### Keyword search
+
+Items match queries on both their visible `label` and any extra `keywords` you supply, so users can find items even when they don't know the exact name.
+
+<ComponentPreview name="command-menu/with-keywords" />
+
 ## Reference
 
 <PropsTable name="command-menu" />

@@ -5,6 +5,26 @@ description: A searchable multi-select input built on cmdk, where each selected 
 
 <ComponentPreview name="multiselect/demo" />
 
+## Examples
+
+### Sizes
+
+The `size` prop controls the control min-height and the height and text size of selected badges: `default` for `min-h-[42px]` / `h-8` chips, `sm` for a more compact `min-h-8` / `h-6` chips.
+
+<ComponentPreview name="multiselect/sizes" />
+
+### Controlled
+
+Pass `value` and `onChange` to manage the selection from the parent and reflect changes elsewhere in the UI.
+
+<ComponentPreview name="multiselect/controlled" />
+
+### Grouped options
+
+Provide a `groupBy` key to automatically bucket options under labelled headings in the dropdown.
+
+<ComponentPreview name="multiselect/grouped" />
+
 ## Reference
 
 <PropsTable name="multiselect" />

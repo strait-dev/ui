@@ -5,6 +5,26 @@ description: Package-manager command block with npm, pnpm, yarn, and bun tabs th
 
 <ComponentPreview name="code-block-command/demo" />
 
+## Examples
+
+### Auto-derived commands
+
+Supply only the `npm` command and the component automatically derives the `pnpm`, `yarn`, and `bun` equivalents.
+
+<ComponentPreview name="code-block-command/auto-derive" />
+
+### With AI prompt tab
+
+Pass a `prompt` string to append an extra "AI" tab with a ready-to-paste instruction for an AI assistant.
+
+<ComponentPreview name="code-block-command/with-ai-tab" />
+
+### npx commands
+
+`npx` commands are correctly converted to `pnpm dlx`, `yarn dlx`, and `bunx` equivalents.
+
+<ComponentPreview name="code-block-command/npx" />
+
 ## Reference
 
 <PropsTable name="code-block-command" />
