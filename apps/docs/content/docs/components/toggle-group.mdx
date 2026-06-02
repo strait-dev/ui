@@ -1,0 +1,35 @@
+---
+title: Toggle Group
+description: A set of toggles where one or more options can be active at once.
+---
+
+<ComponentPreview name="toggle-group/demo" />
+
+## Usage
+
+```tsx
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@strait/ui/components/toggle-group";
+
+export function Example() {
+  return (
+    <ToggleGroup defaultValue={["center"]}>
+      <ToggleGroupItem aria-label="Align left" value="left">
+        Left
+      </ToggleGroupItem>
+      <ToggleGroupItem aria-label="Align center" value="center">
+        Center
+      </ToggleGroupItem>
+      <ToggleGroupItem aria-label="Align right" value="right">
+        Right
+      </ToggleGroupItem>
+    </ToggleGroup>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="toggle-group" />

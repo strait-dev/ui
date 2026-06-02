@@ -6,5 +6,10 @@ export const demoImports: Record<
   string,
   () => Promise<{ default: ComponentType }>
 > = {
+  "button-group/demo": () => import("@/demos/button-group/demo"),
   "button/default": () => import("@/demos/button/default"),
+  "copy-button/demo": () => import("@/demos/copy-button/demo"),
+  "kbd/demo": () => import("@/demos/kbd/demo"),
+  "toggle-group/demo": () => import("@/demos/toggle-group/demo"),
+  "toggle/demo": () => import("@/demos/toggle/demo"),
 };

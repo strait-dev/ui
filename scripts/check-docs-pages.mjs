@@ -24,7 +24,7 @@ if (missing.length > 0) {
   console.error(
     `✗ ${missing.length} component(s) missing a docs page in ${PAGES_DIR}:\n` +
       `${missing.map((s) => `  - ${s}.mdx`).join("\n")}\n` +
-      "Run `bun scripts/scaffold-docs.ts` to generate the missing pages."
+      "Add a page (and demo) for each, following an existing component page."
   );
   process.exit(1);
 }
