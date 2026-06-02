@@ -8,7 +8,7 @@ import {
 } from "fumadocs-ui/layouts/docs/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { source } from "@/lib/source";
+import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
 export default async function Page(props: {
@@ -53,8 +53,11 @@ export async function generateMetadata(props: {
     notFound();
   }
 
+  const image = getPageImage(page).url;
   return {
     title: page.data.title,
     description: page.data.description,
+    openGraph: { images: image },
+    twitter: { card: "summary_large_image", images: image },
   };
 }

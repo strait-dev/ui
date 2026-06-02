@@ -20,6 +20,7 @@
     "@strait/ui": "workspace:*",
     "@tanstack/react-form": "^1.33.0",
     "@tanstack/react-table": "^8.21.3",
+    "@vercel/analytics": "^2.0.1",
     "fumadocs-core": "16.9.3",
     "fumadocs-mdx": "^15.0.10",
     "fumadocs-ui": "16.9.3",
