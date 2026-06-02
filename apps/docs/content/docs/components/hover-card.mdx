@@ -1,0 +1,47 @@
+---
+title: Hover Card
+description: A floating preview panel that appears on hover to surface supplemental read-only information about a link or element.
+---
+
+<ComponentPreview name="hover-card/demo" />
+
+## Usage
+
+```tsx
+import { UserIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+import { Button } from "@strait/ui/components/button";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@strait/ui/components/hover-card";
+
+export default function HoverCardDemo() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger render={<Button variant="link">@janesmith</Button>} />
+      <HoverCardContent>
+        <div className="flex items-center gap-3">
+          <div className="flex size-8 items-center justify-center rounded-full bg-muted">
+            <HugeiconsIcon className="size-4" icon={UserIcon} />
+          </div>
+          <div>
+            <p className="font-medium text-sm">Jane Smith</p>
+            <p className="text-muted-foreground text-xs">@janesmith</p>
+          </div>
+        </div>
+        <p className="mt-2 text-muted-foreground text-xs">
+          Product designer at Strait. Crafting delightful user experiences.
+        </p>
+        <p className="mt-1 text-muted-foreground text-xs">Joined January 2021</p>
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="hover-card" />

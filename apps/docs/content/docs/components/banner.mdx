@@ -1,0 +1,45 @@
+---
+title: Banner
+description: A composable status strip for announcements and call-to-action prompts across info, success, warning, and destructive intents.
+---
+
+<ComponentPreview name="banner/demo" />
+
+## Usage
+
+```tsx
+import { Button } from "@strait/ui/components/button";
+import {
+  Banner,
+  BannerActions,
+  BannerClose,
+  BannerContent,
+  BannerDescription,
+  BannerIcon,
+  BannerTitle,
+} from "@strait/ui/components/banner";
+
+export default function BannerDemo() {
+  return (
+    <Banner variant="warning" className="w-full max-w-lg">
+      <BannerIcon />
+      <BannerContent>
+        <BannerTitle>Free plan limit reached</BannerTitle>
+        <BannerDescription>
+          You have used 90% of your monthly quota.
+        </BannerDescription>
+      </BannerContent>
+      <BannerActions>
+        <Button size="sm" variant="outline">
+          Upgrade
+        </Button>
+        <BannerClose />
+      </BannerActions>
+    </Banner>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="banner" />

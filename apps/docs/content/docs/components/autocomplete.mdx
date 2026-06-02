@@ -1,0 +1,47 @@
+---
+title: Autocomplete
+description: A free-text input with a filtered suggestion list, built on the Base UI Autocomplete primitive.
+---
+
+<ComponentPreview name="autocomplete/demo" />
+
+## Usage
+
+```tsx
+import {
+  Autocomplete,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
+} from "@strait/ui/components/autocomplete";
+import { Label } from "@strait/ui/components/label";
+
+const fruits = ["Apple", "Banana", "Blueberry", "Cherry", "Mango", "Orange"];
+
+export function Example() {
+  return (
+    <div className="flex w-72 flex-col gap-1.5">
+      <Label>Favorite fruit</Label>
+      <Autocomplete items={fruits}>
+        <AutocompleteInput placeholder="Search fruits…" />
+        <AutocompleteContent>
+          <AutocompleteEmpty>No fruits found.</AutocompleteEmpty>
+          <AutocompleteList>
+            {(item: string) => (
+              <AutocompleteItem key={item} value={item}>
+                {item}
+              </AutocompleteItem>
+            )}
+          </AutocompleteList>
+        </AutocompleteContent>
+      </Autocomplete>
+    </div>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="autocomplete" />

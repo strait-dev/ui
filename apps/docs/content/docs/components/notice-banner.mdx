@@ -1,0 +1,37 @@
+---
+title: Notice Banner
+description: A monolithic self-contained banner with built-in dismiss state, icon, title, and optional action slot.
+---
+
+<ComponentPreview name="notice-banner/demo" />
+
+## Usage
+
+```tsx
+import { Button } from "@strait/ui/components/button";
+import { NoticeBanner, NoticeBannerAction } from "@strait/ui/components/notice-banner";
+
+export default function NoticeBannerDemo() {
+  return (
+    <NoticeBanner
+      variant="info"
+      title="New feature available"
+      action={
+        <NoticeBannerAction>
+          <Button size="sm" variant="outline">
+            Learn more
+          </Button>
+        </NoticeBannerAction>
+      }
+      dismissible
+      className="w-full max-w-lg"
+    >
+      Try the redesigned dashboard for a faster workflow.
+    </NoticeBanner>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="notice-banner" />

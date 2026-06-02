@@ -1,0 +1,35 @@
+---
+title: Native Select
+description: A styled wrapper around the native select element, with a decorative chevron icon and size variants.
+---
+
+<ComponentPreview name="native-select/demo" />
+
+## Usage
+
+```tsx
+import { Label } from "@strait/ui/components/label";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@strait/ui/components/native-select";
+
+export function Example() {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor="country">Country</Label>
+      <NativeSelect id="country">
+        <NativeSelectOption value="">Select a country…</NativeSelectOption>
+        <NativeSelectOption value="us">United States</NativeSelectOption>
+        <NativeSelectOption value="gb">United Kingdom</NativeSelectOption>
+        <NativeSelectOption value="ca">Canada</NativeSelectOption>
+        <NativeSelectOption value="au">Australia</NativeSelectOption>
+      </NativeSelect>
+    </div>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="native-select" />

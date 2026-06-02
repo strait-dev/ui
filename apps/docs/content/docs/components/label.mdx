@@ -1,0 +1,28 @@
+---
+title: Label
+description: An accessible label for a form control, with optional required indicator and size variants.
+---
+
+<ComponentPreview name="label/demo" />
+
+## Usage
+
+```tsx
+import { Input } from "@strait/ui/components/input";
+import { Label } from "@strait/ui/components/label";
+
+export function Example() {
+  return (
+    <div className="flex w-64 flex-col gap-1.5">
+      <Label htmlFor="full-name" required>
+        Full name
+      </Label>
+      <Input id="full-name" placeholder="Jane Doe" type="text" />
+    </div>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="label" />

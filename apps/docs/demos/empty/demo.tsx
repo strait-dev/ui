@@ -1,0 +1,29 @@
+import { FolderIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+import { Button } from "@strait/ui/components/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@strait/ui/components/empty";
+
+export default function EmptyDemo() {
+  return (
+    <Empty className="min-h-48 w-80">
+      <EmptyHeader>
+        <EmptyMedia media="icon" size="lg" variant="muted">
+          <HugeiconsIcon icon={FolderIcon} />
+        </EmptyMedia>
+        <EmptyTitle>No files yet</EmptyTitle>
+        <EmptyDescription>Upload a file to get started.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button>Upload file</Button>
+      </EmptyContent>
+    </Empty>
+  );
+}

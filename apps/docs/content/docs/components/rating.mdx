@@ -1,0 +1,32 @@
+---
+title: Rating
+description: A star rating input that supports controlled, uncontrolled, read-only, and disabled states with full keyboard navigation.
+---
+
+<ComponentPreview name="rating/demo" />
+
+## Usage
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { Rating } from "@strait/ui/components/rating";
+
+export function Example() {
+  const [value, setValue] = useState(3);
+
+  return (
+    <Rating
+      aria-label="Product rating"
+      max={5}
+      onValueChange={setValue}
+      value={value}
+    />
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="rating" />

@@ -1,0 +1,32 @@
+---
+title: Calendar
+description: A styled date-picker calendar built on react-day-picker, supporting single-date, range, and multi-date selection modes.
+---
+
+<ComponentPreview name="calendar/demo" />
+
+## Usage
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import type { DateRange } from "react-day-picker";
+import { Calendar } from "@strait/ui/components/calendar";
+
+export function Example() {
+  const [selected, setSelected] = useState<DateRange | undefined>();
+
+  return (
+    <Calendar
+      mode="range"
+      onSelect={setSelected}
+      selected={selected}
+    />
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="calendar" />

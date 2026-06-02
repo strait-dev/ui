@@ -1,0 +1,36 @@
+---
+title: Alert
+description: An inline feedback banner for status messages, warnings, and errors.
+---
+
+<ComponentPreview name="alert/demo" />
+
+## Usage
+
+```tsx
+import { InformationCircleIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@strait/ui/components/alert";
+
+export default function AlertDemo() {
+  return (
+    <Alert variant="info">
+      <HugeiconsIcon icon={InformationCircleIcon} />
+      <AlertTitle>New feature available</AlertTitle>
+      <AlertDescription>
+        The redesigned dashboard is now available. Try it out from your account
+        settings.
+      </AlertDescription>
+    </Alert>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="alert" />

@@ -1,0 +1,77 @@
+---
+title: Form
+description: A thin wrapper around @tanstack/react-form that wires field context, label associations, validation states, and error messages automatically.
+---
+
+<ComponentPreview name="form/demo" />
+
+## Usage
+
+```tsx
+"use client";
+
+import { useForm } from "@tanstack/react-form";
+import { Button } from "@strait/ui/components/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@strait/ui/components/form";
+import { Input } from "@strait/ui/components/input";
+
+export function Example() {
+  const form = useForm({
+    defaultValues: { email: "" },
+    onSubmit: ({ value }) => {
+      alert(JSON.stringify(value, null, 2));
+    },
+  });
+
+  return (
+    <Form form={form}>
+      <form
+        className="flex w-80 flex-col gap-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+      >
+        <FormField
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel required>Email</FormLabel>
+              <FormControl
+                render={
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="you@example.com"
+                    type="email"
+                    value={field.state.value}
+                  />
+                }
+              />
+              <FormDescription>We will never share your email.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+          validators={{
+            onSubmit: ({ value }) =>
+              value ? undefined : "Email is required.",
+          }}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+## Reference
+
+<PropsTable name="form" />
