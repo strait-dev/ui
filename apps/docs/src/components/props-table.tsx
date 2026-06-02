@@ -54,9 +54,25 @@ export function PropsTable({ name }: { name: string }) {
   const inheritedRows = toRows(doc.types.flatMap((t) => t.inheritedProps));
   const htmlTags = [...new Set(doc.types.flatMap((t) => t.extendsHtml))];
   const parts = doc.parts.filter((p) => p.slot);
+  const deps = doc.dependencies;
 
   return (
     <div className="flex flex-col gap-6">
+      {deps.length > 0 && (
+        // Surfaced from the generated model so consumers know a component pulls
+        // in a heavy third-party dependency before they reach for it.
+        <p className="text-fd-muted-foreground text-sm">
+          Bundles{" "}
+          {deps.map((dep, i) => (
+            <span key={dep}>
+              {i > 0 && ", "}
+              <code>{dep}</code>
+            </span>
+          ))}
+          .
+        </p>
+      )}
+
       {variantAxes.length > 0 && (
         <section className="flex flex-col gap-2">
           <h4 className="font-medium text-sm">Variants</h4>

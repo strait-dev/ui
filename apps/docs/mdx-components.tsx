@@ -1,3 +1,4 @@
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import { ComponentPreview } from "@/src/components/component-preview";
@@ -27,6 +28,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     RadiusScale,
     ShadowScale,
     SpacingScale,
+    Tab,
+    Tabs,
     ThemeExplorer,
     TypeScale,
     ...components,
