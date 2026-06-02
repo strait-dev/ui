@@ -22,3 +22,17 @@ Pass `isDisabled` to make the field non-interactive while keeping the value visi
 ## Reference
 
 <PropsTable name="datefield-rac" />
+
+## Accessibility
+
+`DateField` and `TimeField` are built on React Aria Components and render each date/time part (year, month, day, hour, minute, AM/PM) as an individually focusable, spinnable segment inside a single input container.
+
+| Key | Action |
+|---|---|
+| `Arrow Right` / `Arrow Left` | Move focus to the next / previous segment |
+| `Arrow Up` / `Arrow Down` | Increment / decrement the focused segment value |
+| `0`–`9` | Type a numeric value into the focused segment |
+| `Backspace` | Clear the focused segment |
+| `Tab` | Move focus to the next focusable element (exits the field) |
+
+Always pair `DateField` or `TimeField` with a RAC `<Label>` — the label is automatically associated with the field's `aria-labelledby`, giving screen readers the full context ("Start date, month, 6"). Validation errors should be surfaced via a RAC `<FieldError>` or `aria-describedby`.

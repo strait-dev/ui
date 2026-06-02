@@ -28,3 +28,23 @@ Use `ContextMenuRadioGroup` + `ContextMenuRadioItem` for mutually exclusive sing
 ## Reference
 
 <PropsTable name="context-menu" />
+
+## Accessibility
+
+ContextMenu is built on Base UI's `@base-ui/react/context-menu` primitive. The menu opens at the pointer position on right-click (`contextmenu` event) and renders with `role="menu"`, with each item carrying `role="menuitem"` (or `menuitemcheckbox` / `menuitemradio`).
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Shift` + `F10` | Opens the context menu via keyboard at the focused element |
+| `Arrow Down` / `Arrow Up` | Moves focus between items |
+| `Arrow Right` | Opens a submenu when focus is on a `ContextMenuSubTrigger` |
+| `Arrow Left` / `Esc` | Closes the current submenu and returns focus to the parent item |
+| `Enter` / `Space` | Activates the focused item |
+| `Esc` | Closes the menu |
+| Printable character | Typeahead — jumps to the next item whose label starts with the typed character |
+
+### ARIA and labeling
+
+Because the context menu is triggered by pointer position rather than a named button, ensure the `ContextMenuTrigger` region has a meaningful label or surrounding context so screen-reader users understand what the right-click area represents. `ContextMenuLabel` is non-interactive and serves as a visual section header only.

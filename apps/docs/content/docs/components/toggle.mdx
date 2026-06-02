@@ -28,3 +28,19 @@ A contiguous scale from `xs` (24 px) through `xl` (40 px).
 ## Reference
 
 <PropsTable name="toggle" />
+
+## Accessibility
+
+`Toggle` is built on Base UI's Toggle primitive, which renders a `<button>` with `aria-pressed` toggling between `true` and `false` — the pressed/unpressed state is announced to screen readers without any extra markup.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Space` | Toggles the pressed state |
+| `Enter` | Toggles the pressed state |
+| `Tab` | Moves focus to the toggle (or away from it) |
+
+### ARIA and labeling
+
+Icon-only toggles must carry an `aria-label` describing the action (e.g. `aria-label="Bold"`) so screen readers can identify the control. When the toggle contains visible text, the text serves as the accessible name and no additional label is required.

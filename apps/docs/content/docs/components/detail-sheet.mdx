@@ -22,3 +22,19 @@ Use `side="left"` to anchor the panel on the left edge of the viewport instead o
 ## Reference
 
 <PropsTable name="detail-sheet" />
+
+## Accessibility
+
+DetailSheet is a structured recipe built on top of `Sheet`, which is itself backed by Base UI's `@base-ui/react/dialog` primitive. The panel renders with `role="dialog"` and `aria-modal="true"`, traps focus while open, and restores focus to the element that triggered it when it closes.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Esc` | Closes the sheet and returns focus to the trigger |
+| `Tab` | Moves focus to the next focusable element inside the sheet |
+| `Shift` + `Tab` | Moves focus to the previous focusable element inside the sheet |
+
+### ARIA and labeling
+
+The required `title` prop is rendered as a `SheetTitle`, which is associated with the dialog container via `aria-labelledby` and announced by screen readers when the panel opens. The optional `meta` prop renders as a `SheetDescription`, providing the `aria-describedby` value. The built-in close button includes a visually hidden "Close" label.

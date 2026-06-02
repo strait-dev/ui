@@ -28,3 +28,19 @@ The `size` prop on `AlertDialogContent` controls the max-width of the panel — 
 ## Reference
 
 <PropsTable name="alert-dialog" />
+
+## Accessibility
+
+AlertDialog is built on Base UI's `@base-ui/react/alert-dialog` primitive, which renders a modal with `role="alertdialog"` and `aria-modal="true"`, traps focus inside the panel, and does not close on backdrop click — the user must interact with an explicit action button.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the alert dialog when focus is on the trigger |
+| `Tab` | Moves focus to the next focusable element inside the dialog |
+| `Shift` + `Tab` | Moves focus to the previous focusable element inside the dialog |
+
+### ARIA and labeling
+
+`Esc` is intentionally disabled on `AlertDialog` — the `role="alertdialog"` pattern requires an explicit user decision, so backdrop dismissal and `Esc` are both suppressed. Always include `AlertDialogTitle` (associated via `aria-labelledby`) and `AlertDialogDescription` (associated via `aria-describedby`) so screen readers announce the purpose and consequences when the panel opens.

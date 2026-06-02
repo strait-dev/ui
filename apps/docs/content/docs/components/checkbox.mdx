@@ -34,3 +34,18 @@ Pair checkboxes with descriptive text to let users select multiple options from 
 ## Reference
 
 <PropsTable name="checkbox" />
+
+## Accessibility
+
+`Checkbox` is built on Base UI's Checkbox primitive, which renders a native-equivalent button with `role="checkbox"` and `aria-checked` managed automatically — checked, unchecked, and indeterminate states are all announced to screen readers.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Space` | Toggles the checkbox between checked and unchecked |
+| `Tab` | Moves focus to the checkbox (or away from it) |
+
+### ARIA and labeling
+
+Always pair a `Checkbox` with a visible `<Label>` whose `htmlFor` matches the checkbox's `id`. When a visible label is not possible — for example in a table row — add an `aria-label` directly on the `Checkbox`. Validation errors should be communicated via `aria-describedby` pointing to a helper or error message element alongside the control.

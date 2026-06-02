@@ -28,3 +28,16 @@ Pass `opts={{ loop: true }}` to enable infinite looping; slides wrap around when
 ## Reference
 
 <PropsTable name="carousel" />
+
+## Accessibility
+
+`Carousel` follows the WAI-ARIA APG carousel pattern: the root element carries `role="region"` and `aria-roledescription="carousel"`, and each `CarouselItem` carries `role="group"` and `aria-roledescription="slide"`.
+
+| Key | Action |
+|---|---|
+| `Arrow Left` | Scroll to the previous slide (when the carousel region is focused) |
+| `Arrow Right` | Scroll to the next slide (when the carousel region is focused) |
+| `Tab` | Move focus to the Previous / Next buttons and any focusable slide content |
+| `Enter` / `Space` | Activate the focused Previous or Next button |
+
+`CarouselPrevious` and `CarouselNext` include an `sr-only` span ("Previous slide" / "Next slide") so icon-only buttons have an accessible name. Pass a descriptive `aria-label` on the `<Carousel>` root (e.g. `aria-label="Product images"`) to name the region, and ensure any custom navigation buttons also carry a visible or `sr-only` label.

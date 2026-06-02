@@ -22,3 +22,20 @@ Use a left-side sheet to build a slide-in navigation drawer for mobile or narrow
 ## Reference
 
 <PropsTable name="sheet" />
+
+## Accessibility
+
+Sheet is built on Base UI's `@base-ui/react/dialog` primitive, so it shares the same accessibility model: the panel renders with `role="dialog"` and `aria-modal="true"`, focus is trapped inside while open, and focus returns to the trigger on close.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the sheet when focus is on the trigger |
+| `Esc` | Closes the sheet and returns focus to the trigger |
+| `Tab` | Moves focus to the next focusable element inside the sheet |
+| `Shift` + `Tab` | Moves focus to the previous focusable element inside the sheet |
+
+### ARIA and labeling
+
+Always include a `SheetTitle` — it is announced by screen readers when the panel opens. The built-in close button includes a visually hidden "Close" label; if you set `showCloseButton={false}`, ensure your footer provides an equivalent labelled dismiss action.

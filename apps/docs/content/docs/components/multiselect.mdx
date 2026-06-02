@@ -28,3 +28,22 @@ Provide a `groupBy` key to automatically bucket options under labelled headings 
 ## Reference
 
 <PropsTable name="multiselect" />
+
+## Accessibility
+
+`MultipleSelector` renders a combobox-style input backed by cmdk — the visible input carries `role="combobox"`, the suggestion list carries `role="listbox"`, and each selected value is rendered as a removable badge with an accessible "Remove" button.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| Type | Filters the suggestion list as you type |
+| `Arrow Down` | Opens the dropdown and moves focus to the next option |
+| `Arrow Up` | Moves focus to the previous option |
+| `Enter` | Selects the highlighted option and adds it as a badge |
+| `Escape` | Closes the dropdown |
+| `Backspace` | When the input is empty, removes the last selected badge |
+
+### ARIA and labeling
+
+Wrap the component with a `<Label>` and point `htmlFor` at the `MultipleSelector`'s `id` prop so screen readers announce the field name. Each badge's remove button already carries `aria-label="Remove"`, but confirm the label is meaningful in context (e.g. "Remove React") by customising it via `badgeClassName` or a wrapper pattern if needed.

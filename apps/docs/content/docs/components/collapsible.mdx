@@ -22,3 +22,15 @@ Multiple independent `Collapsible` instances can be stacked, each managing its o
 ## Reference
 
 <PropsTable name="collapsible" />
+
+## Accessibility
+
+Built on Base UI's `Collapsible` primitive, which implements the [WAI-ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/). The trigger automatically receives `aria-expanded` to reflect the open/closed state without any additional wiring.
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Toggle the collapsible open or closed |
+| `Tab` | Move focus to the next focusable element |
+| `Shift+Tab` | Move focus to the previous focusable element |
+
+**ARIA:** `CollapsibleTrigger` renders a `<button>` whose `aria-expanded` attribute is kept in sync by Base UI. Ensure the trigger has a descriptive accessible name so screen reader users understand what content will be revealed.

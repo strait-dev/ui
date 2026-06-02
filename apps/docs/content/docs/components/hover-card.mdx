@@ -28,3 +28,18 @@ Control where the panel appears with the `side` prop on `HoverCardContent`.
 ## Reference
 
 <PropsTable name="hover-card" />
+
+## Accessibility
+
+HoverCard is built on Base UI's `@base-ui/react/preview-card` primitive and is pointer-driven — it opens on hover with a short delay and closes when the pointer leaves. The panel is not keyboard-accessible on its own, so any information shown inside it must also be available through another path (link text, visible labels, or an adjacent interactive element).
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Moves focus to the trigger; the panel opens when the trigger receives focus |
+| `Esc` | Closes the panel when it is open |
+
+### ARIA and labeling
+
+The preview card panel is non-modal and does not trap focus. Because the card content is supplemental and read-only, do not place interactive elements inside `HoverCardContent`. The trigger element should already have a meaningful accessible label (e.g. visible link text or an `aria-label`) so keyboard and screen-reader users receive the essential information without needing the hover panel.

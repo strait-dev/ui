@@ -28,3 +28,14 @@ Use `BreadcrumbEllipsis` to collapse a long navigation trail and keep the bar co
 ## Reference
 
 <PropsTable name="breadcrumb" />
+
+## Accessibility
+
+The root renders a `<nav>` with `aria-label="breadcrumb"` so screen readers announce it as a navigation landmark. `BreadcrumbPage` marks the current location with `aria-current="page"` and `aria-disabled="true"` so it is identified as the final, non-interactive crumb. Separators and the ellipsis icon carry `aria-hidden="true"` to keep them out of the accessibility tree.
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus through ancestor links |
+| `Enter` | Activate the focused link |
+
+**ARIA:** The `<nav aria-label="breadcrumb">` landmark lets keyboard users jump directly to the breadcrumb via a landmark navigation shortcut. `BreadcrumbLink` accepts a `render` prop so it can be swapped for a framework router `<Link>` while keeping all ARIA attributes.

@@ -28,3 +28,18 @@ Set `captionLayout="dropdown"` with `startMonth` and `endMonth` to replace the s
 ## Reference
 
 <PropsTable name="calendar" />
+
+## Accessibility
+
+`Calendar` is built on `react-day-picker` (`DayPicker`) which renders a focusable grid of day buttons; keyboard navigation follows the ARIA grid pattern and is handled entirely by the library.
+
+| Key | Action |
+|---|---|
+| `Arrow Left` / `Arrow Right` | Move focus one day backward / forward |
+| `Arrow Up` / `Arrow Down` | Move focus one week backward / forward |
+| `Page Up` / `Page Down` | Navigate to the previous / next month |
+| `Home` | Move focus to the first day of the current week |
+| `End` | Move focus to the last day of the current week |
+| `Enter` / `Space` | Select the focused day |
+
+Each day button receives a locale-formatted `data-day` attribute used as an accessible label. Pair the calendar with an associated `<label>` or `aria-label` on the nearest container when embedding it inline.

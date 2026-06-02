@@ -28,3 +28,23 @@ The trigger button is non-interactive and dimmed when `disabled` is set.
 ## Reference
 
 <PropsTable name="select-with-search" />
+
+## Accessibility
+
+`SelectWithSearch` combines a Popover trigger with a cmdk-powered searchable list — the trigger button announces its expanded state and the search input inside the popover carries `role="combobox"` with `aria-expanded` and an associated `role="listbox"` for the virtualized option list.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Enter` / `Space` | Opens the dropdown when the trigger is focused |
+| Type | Filters the option list as you type in the search input |
+| `Arrow Down` | Moves focus to the next option |
+| `Arrow Up` | Moves focus to the previous option |
+| `Enter` | Selects the highlighted option and closes the dropdown |
+| `Escape` | Closes the dropdown without changing the selection |
+| `Tab` | Closes the dropdown and moves focus to the next focusable element |
+
+### ARIA and labeling
+
+Pass the `label` prop to render a `<Label>` above the trigger automatically. For programmatic usage without a visible label, set `aria-label` on the component. When `required` is set, a visual asterisk is added to the label; pair this with a server-side or form-library validation message so the error is also announced to screen readers.

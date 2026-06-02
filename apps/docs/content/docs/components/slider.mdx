@@ -34,3 +34,23 @@ Set `disabled` to prevent interaction; the thumb opacity is reduced automaticall
 ## Reference
 
 <PropsTable name="slider" />
+
+## Accessibility
+
+`Slider` is built on Base UI's Slider primitive, which renders each thumb as an `<input type="range">` — value, min, max, and step are reflected in native range attributes so screen readers announce the current value and permitted range automatically.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Arrow Right` / `Arrow Up` | Increases the value by one step |
+| `Arrow Left` / `Arrow Down` | Decreases the value by one step |
+| `Page Up` | Increases the value by a larger step (typically 10× the step) |
+| `Page Down` | Decreases the value by a larger step |
+| `Home` | Sets the value to the minimum |
+| `End` | Sets the value to the maximum |
+| `Tab` | Moves focus between thumbs (range slider) or to the next focusable element (single thumb) |
+
+### ARIA and labeling
+
+Pass `aria-label` at the `Slider` root to give every thumb the same accessible name (e.g. `"Volume"`). When the slider is wrapped in a Base UI `<Field>` with a `<FieldLabel>`, omit `aria-label` — Base UI wires the label association automatically. For a range slider, consider distinguishing thumbs with separate `aria-label` values via the `SliderPrimitive.Thumb` sub-parts if the default inherited label is ambiguous.

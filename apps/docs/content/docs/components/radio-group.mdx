@@ -34,3 +34,19 @@ Pass `value` and `onValueChange` to the root to drive the selection from externa
 ## Reference
 
 <PropsTable name="radio-group" />
+
+## Accessibility
+
+`RadioGroup` is built on Base UI's RadioGroup and Radio primitives, which implement the ARIA radio group pattern — the container carries `role="radiogroup"` and each item carries `role="radio"` with `aria-checked` managed automatically. Only the selected (or first, if none) item is in the tab sequence; arrow keys move and select within the group.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Tab` | Moves focus into or out of the group (lands on the selected item, or the first item if none is selected) |
+| `Arrow Down` / `Arrow Right` | Moves focus to and selects the next radio item |
+| `Arrow Up` / `Arrow Left` | Moves focus to and selects the previous radio item |
+
+### ARIA and labeling
+
+Wrap the `RadioGroup` in a `<fieldset>` with a `<legend>` (or the `FieldSet` / `FieldLegend` components) so screen readers announce the group's name. Pair each `RadioGroupItem` with a `<Label>` via `htmlFor` / `id` so individual options are announced clearly.

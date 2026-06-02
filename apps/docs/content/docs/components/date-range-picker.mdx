@@ -22,3 +22,21 @@ Initialise the picker with a `from` and `to` value to reflect an existing select
 ## Reference
 
 <PropsTable name="date-range-picker" />
+
+## Accessibility
+
+`DateRangePicker` combines two React Aria Components segment inputs (start and end date) with a calendar icon button that opens a `react-day-picker` range calendar in a popover; both halves inherit the full keyboard models of their underlying primitives.
+
+| Key | Action |
+|---|---|
+| `Arrow Right` / `Arrow Left` | Move focus to the next / previous segment within the active date input |
+| `Arrow Up` / `Arrow Down` | Increment / decrement the focused segment value |
+| `0`–`9` | Type a numeric value into the focused segment |
+| `Enter` / `Space` (on calendar icon button) | Open the calendar popover |
+| `Escape` | Close the calendar popover |
+| `Arrow Left` / `Arrow Right` (in calendar) | Move focus one day backward / forward |
+| `Arrow Up` / `Arrow Down` (in calendar) | Move focus one week backward / forward |
+| `Page Up` / `Page Down` (in calendar) | Navigate to the previous / next month |
+| `Enter` / `Space` (in calendar) | Set the range start or end on the focused day |
+
+Pass the `label` prop to render a RAC `<Label>` linked to the underlying `DateRangePicker` root so screen readers announce the field group name. Surface validation feedback via the `error` / `errorMessage` props together with an `aria-describedby` reference.

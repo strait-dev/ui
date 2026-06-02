@@ -22,3 +22,18 @@ Control which side of the trigger the tooltip appears on using the `side` prop o
 ## Reference
 
 <PropsTable name="tooltip" />
+
+## Accessibility
+
+Tooltip is built on Base UI's `@base-ui/react/tooltip` primitive. The tooltip popup has `role="tooltip"` and is linked to its trigger via `aria-describedby`, so screen readers announce the label when the trigger receives focus.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Moves focus to the trigger; the tooltip opens after the configured delay |
+| `Esc` | Closes the tooltip while focus remains on the trigger |
+
+### ARIA and labeling
+
+Never rely solely on `TooltipContent` as the only accessible label for a control — it supplements but does not replace a proper `aria-label`. Icon-only buttons that use a tooltip for their visible label must also carry an `aria-label` (or a visually hidden text child) so the label is available to screen readers and other assistive tools that do not expose tooltips. Wrap multiple tooltips in `TooltipProvider` to share a consistent open delay across the page.

@@ -22,3 +22,15 @@ Set `orientation="right"` on `NavigationRail` to anchor the rail to the trailing
 ## Reference
 
 <PropsTable name="navigation-rail" />
+
+## Accessibility
+
+`NavigationRail` is a visually icon-only nav column; each item's `label` is rendered as `sr-only` text inside the button and as a visible tooltip on focus/hover, so the accessible name is always present. The `TooltipProvider` wrapping the rail ensures tooltips appear on keyboard focus without extra setup.
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus to the next rail item |
+| `Shift+Tab` | Move focus to the previous rail item |
+| `Enter` / `Space` | Activate the focused item |
+
+**ARIA:** Each `NavigationRailItem` renders a `<button>` (or `<a>` when `href` is provided) with an `sr-only` label ensuring screen readers announce the destination. Pass `active` to visually and semantically mark the current route; wrap the rail in a `<nav aria-label="…">` at the layout level to expose it as a navigation landmark.

@@ -28,3 +28,23 @@ Nest a `DropdownMenuSub` with `DropdownMenuSubTrigger` and `DropdownMenuSubConte
 ## Reference
 
 <PropsTable name="dropdown-menu" />
+
+## Accessibility
+
+DropdownMenu is built on Base UI's `@base-ui/react/menu` primitive, which renders the popup with `role="menu"` and each item with `role="menuitem"` (or `menuitemcheckbox` / `menuitemradio`). Focus moves into the first item when the menu opens and returns to the trigger when it closes.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the menu when focus is on the trigger; activates the focused item |
+| `Arrow Down` / `Arrow Up` | Moves focus between items |
+| `Arrow Right` | Opens a submenu when focus is on a `DropdownMenuSubTrigger` |
+| `Arrow Left` / `Esc` | Closes the current submenu and returns focus to the parent item |
+| `Esc` | Closes the menu and returns focus to the trigger |
+| `Home` / `End` | Moves focus to the first / last item |
+| Printable character | Typeahead — jumps to the next item whose label starts with the typed character |
+
+### ARIA and labeling
+
+The menu popup carries `role="menu"`; each `DropdownMenuItem` carries `role="menuitem"`. If the trigger is an icon-only button, add an `aria-label` to the trigger so its purpose is announced when it receives focus. `DropdownMenuLabel` is non-interactive and does not receive a role — it functions as a visual section header only.

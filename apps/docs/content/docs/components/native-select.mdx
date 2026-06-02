@@ -28,3 +28,17 @@ Use `NativeSelectOptGroup` to label sections of related options, delegating grou
 ## Reference
 
 <PropsTable name="native-select" />
+
+## Accessibility
+
+`NativeSelect` wraps the browser's native `<select>` element, which provides full OS-level keyboard and screen-reader support out of the box without any custom ARIA required.
+
+| Key | Action |
+|---|---|
+| `Tab` / `Shift+Tab` | Move focus to / away from the select |
+| `Space` / `Enter` | Open the native OS dropdown |
+| `Arrow Up` / `Arrow Down` | Move between options (both while open and to step through options while closed) |
+| Printable character | Jump to the first option beginning with that character (typeahead) |
+| `Escape` | Close the dropdown without changing the value |
+
+The decorative chevron icon carries `aria-hidden="true"` so it is invisible to assistive technology. Always pair `NativeSelect` with a `<label>` (or equivalent) using `htmlFor` pointing at the select's `id` to give the control an accessible name.

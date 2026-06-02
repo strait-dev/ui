@@ -22,3 +22,15 @@ The `size` prop scales both the circular indicator (`size-8` for `default`, `siz
 ## Reference
 
 <PropsTable name="stepper" />
+
+## Accessibility
+
+Each `StepperTrigger` renders as a `<button>` (swappable via the `render` prop) so every step is keyboard-reachable and activatable. Completed steps show a tick icon with `aria-hidden="true"` while the step number and state are conveyed through surrounding context. Disabled steps set the native `disabled` attribute, preventing focus and interaction.
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus to the next step trigger |
+| `Shift+Tab` | Move focus to the previous step trigger |
+| `Enter` / `Space` | Navigate to the focused step |
+
+**ARIA:** `StepperItem` propagates its derived `data-state` (`active`, `completed`, `inactive`, `loading`) for styling; add an `aria-current="step"` attribute on the active `StepperTrigger` in your integration if you need to signal the current step explicitly to screen readers. Pair each step indicator with a visible `StepperTitle` so the step's purpose is announced without relying on the numeric indicator alone.

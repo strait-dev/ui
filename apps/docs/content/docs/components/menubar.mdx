@@ -22,3 +22,24 @@ Wrap items in `MenubarSub` with a `MenubarSubTrigger` and `MenubarSubContent` to
 ## Reference
 
 <PropsTable name="menubar" />
+
+## Accessibility
+
+Menubar is built on Base UI's `@base-ui/react/menubar` primitive combined with `@base-ui/react/menu`. The bar itself carries `role="menubar"`; each `MenubarTrigger` carries `role="menuitem"`; open panels use `role="menu"` with items following the standard `menuitem` / `menuitemcheckbox` / `menuitemradio` roles.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Arrow Left` / `Arrow Right` | Moves focus between triggers in the menubar |
+| `Enter` / `Space` / `Arrow Down` | Opens the menu for the focused trigger |
+| `Arrow Down` / `Arrow Up` | Moves focus between items in an open menu |
+| `Arrow Right` | Opens a submenu when focus is on a `MenubarSubTrigger` |
+| `Arrow Left` / `Esc` | Closes the current submenu and returns focus to the parent item |
+| `Esc` | Closes the open menu and returns focus to the trigger |
+| `Home` / `End` | Moves focus to the first / last item in the open menu |
+| Printable character | Typeahead — jumps to the next item whose label starts with the typed character |
+
+### ARIA and labeling
+
+The `Menubar` container has `role="menubar"`. Each `MenubarTrigger` is a `menuitem` that expands its associated panel; Base UI wires `aria-haspopup="menu"` and `aria-expanded` automatically. `MenubarLabel` is non-interactive and functions as a visual section header with no ARIA role.

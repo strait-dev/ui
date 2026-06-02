@@ -22,3 +22,17 @@ With `collapsible="offcanvas"` the sidebar slides fully off-screen when toggled,
 ## Reference
 
 <PropsTable name="sidebar" />
+
+## Accessibility
+
+`SidebarProvider` registers a global `keydown` listener for `Cmd+B` / `Ctrl+B` that toggles the sidebar, in addition to the clickable `SidebarTrigger`. On mobile the sidebar opens as a `Sheet` overlay with `role="dialog"` and `aria-modal="true"`. `SidebarMenuButton` shows a tooltip whenever the label is truncated (icon-collapse mode), so the full label is always reachable without expanding the sidebar.
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus through sidebar links and interactive controls |
+| `Shift+Tab` | Move focus backward |
+| `Enter` / `Space` | Activate the focused menu item or toggle a collapsible group |
+| `Cmd+B` / `Ctrl+B` | Toggle the sidebar open or collapsed from anywhere on the page |
+| `Escape` | Close the mobile sheet overlay |
+
+**ARIA:** `SidebarTrigger` carries `aria-label="Toggle Sidebar"`. Active menu items receive `aria-current="page"` so screen readers identify the current route. Wrap the sidebar in a `<nav>` with a meaningful `aria-label` at the layout level to expose it as a named landmark.

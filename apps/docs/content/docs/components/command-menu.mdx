@@ -22,3 +22,17 @@ Items match queries on both their visible `label` and any extra `keywords` you s
 ## Reference
 
 <PropsTable name="command-menu" />
+
+## Accessibility
+
+`CommandMenu` combines the `Command` palette with a `CommandDialog` (modal) and a global hotkey registered via `react-hotkeys-hook`. The dialog title and description are rendered `sr-only` so screen readers announce the palette on open without visual clutter.
+
+| Key | Action |
+| --- | --- |
+| `Cmd+K` / `Ctrl+K` | Open the palette from anywhere on the page (configurable via `hotkey`) |
+| `Arrow Down` | Move focus to the next item |
+| `Arrow Up` | Move focus to the previous item |
+| `Enter` | Select the focused item and close the palette |
+| `Escape` | Close the palette |
+
+**ARIA:** The underlying `CommandDialog` wraps a modal with `role="dialog"` and `aria-modal="true"`. The `title` and `description` props (defaulting to `"Command Palette"` and `"Search for a command to run..."`) are exposed as `sr-only` headings; override them to match your app's context.

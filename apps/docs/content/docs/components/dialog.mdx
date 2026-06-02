@@ -28,3 +28,20 @@ Set `accent="destructive"` on `DialogHeader` and `showCloseButton={false}` on `D
 ## Reference
 
 <PropsTable name="dialog" />
+
+## Accessibility
+
+Dialog is built on Base UI's `@base-ui/react/dialog` primitive, which renders a modal with `role="dialog"` and `aria-modal="true"`, traps focus inside the panel while open, and restores focus to the trigger when closed.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the dialog when focus is on the trigger |
+| `Esc` | Closes the dialog and returns focus to the trigger |
+| `Tab` | Moves focus to the next focusable element inside the dialog |
+| `Shift` + `Tab` | Moves focus to the previous focusable element inside the dialog |
+
+### ARIA and labeling
+
+Always include a `DialogTitle` — it is associated with the popup via `aria-labelledby` and announced by screen readers when the dialog opens. Add a `DialogDescription` for supporting context. If the title must be visually hidden, render it with a screen-reader-only class rather than omitting it entirely. Icon-only close buttons already include a `<span className="sr-only">Close</span>` in the built-in close button.

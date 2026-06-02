@@ -28,3 +28,22 @@ Pass `disabled` to dim all slots and block interaction, for example on an expire
 ## Reference
 
 <PropsTable name="input-otp" />
+
+## Accessibility
+
+`InputOTP` is built on the `input-otp` library, which renders a single hidden `<input>` element that owns focus and receives all keyboard input — the visible slots are purely decorative and read their character from context, so assistive technology interacts with one familiar text input rather than multiple individual cells.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| Type (digit / character) | Fills the active slot and advances focus to the next slot |
+| `Backspace` | Clears the current slot's character and moves focus back to the previous slot |
+| `Arrow Left` | Moves the insertion point (active slot) one position to the left |
+| `Arrow Right` | Moves the insertion point one position to the right |
+| `Paste` | Fills all slots from the pasted string, up to `maxLength` |
+| `Tab` | Moves focus into or out of the OTP input |
+
+### ARIA and labeling
+
+Pair `InputOTP` with a visible `<Label>` whose `htmlFor` points to the component's `id` so screen readers announce the field's purpose (e.g. "Verification code"). The `InputOTPSeparator` between groups is hidden from assistive technology via `aria-hidden="true"` — it is purely visual. When the code is invalid, apply `aria-invalid` to the hidden input (via a form library or directly) to trigger the destructive ring on the group.
