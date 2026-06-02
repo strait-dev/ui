@@ -36,18 +36,17 @@ export async function ComponentPreview({ name }: { name: string }) {
   );
 
   return (
-    <Tabs className="my-4" items={["Preview", "Code"]}>
+    // `not-prose` is load-bearing: the whole block renders inside Fumadocs'
+    // prose typography, which would otherwise add margins/radius to the demo's
+    // markup (Preview) and strip the code block's padding/overflow (Code),
+    // making both look broken.
+    <Tabs className="not-prose my-4" items={["Preview", "Code"]}>
       <Tab value="Preview">
-        {/*
-          `not-prose` is load-bearing: the preview renders inside Fumadocs'
-          prose typography, which would otherwise add margins/radius to the
-          demo's own markup (e.g. <img>, <p>) and make components look broken.
-        */}
-        <div className="not-prose flex min-h-48 w-full items-center justify-center rounded-lg border border-fd-border bg-fd-card p-8">
+        <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-fd-border bg-fd-card p-8">
           <Demo />
         </div>
       </Tab>
-      <Tab className="p-0" value="Code">
+      <Tab value="Code">
         <DynamicCodeBlock code={source} lang="tsx" />
       </Tab>
     </Tabs>
