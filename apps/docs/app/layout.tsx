@@ -21,8 +21,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html className="font-sans" lang="en" suppressHydrationWarning>
       <body className="flex min-h-screen flex-col">
-        <RootProvider>{children}</RootProvider>
-        <Analytics />
+        <RootProvider theme={{ defaultTheme: "light", enableSystem: false }}>
+          {children}
+        </RootProvider>
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   );
