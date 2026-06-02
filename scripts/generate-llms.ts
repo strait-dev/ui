@@ -6,9 +6,12 @@
 //   - llms-full.txt   the same skeleton expanded with full TSDoc, prop tables,
 //                     cva variants, data-slots, and heavy-dep notes.
 //   - components.json  one machine-readable entry per public component export.
+//   - props.json      slug-keyed component model consumed by the docs site's
+//                     auto-generated <PropsTable>.
 //
-// Outputs are written to packages/ui/ (shipped on npm via package.json
-// `files`) and copied to apps/storybook/public/ (served on the docs site).
+// llms/components artifacts are written to packages/ui/ (shipped on npm via
+// package.json `files`) and copied to apps/storybook/public/ (served on the
+// Storybook docs site); props.json is written to apps/docs/.generated/.
 //
 // Run: `bun scripts/generate-llms.ts` (idempotent).
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -23,6 +26,9 @@ import {
 const PKG_DIR = "packages/ui";
 const COMPONENTS_DIR = join(PKG_DIR, "src/components");
 const STORYBOOK_PUBLIC = "apps/storybook/public";
+// The docs site consumes a slug-keyed copy of the component model for its
+// auto-generated <PropsTable>. Written here and drift-gated like the rest.
+const DOCS_GENERATED = "apps/docs/.generated";
 const PKG_NAME = "@strait/ui";
 
 // Heavyweight runtime deps worth surfacing to consumers (kept in sync with
@@ -684,23 +690,50 @@ const index = renderIndex();
 const full = renderFull();
 const json = `${JSON.stringify(docs, null, 2)}\n`;
 
-const artifacts: [string, string][] = [
-  ["llms.txt", index],
-  ["llms-full.txt", full],
-  ["components.json", json],
-];
+// Slug-keyed model for the docs site: `button`, `activity-feed`, … — the same
+// slug as the component's subpath export and its docs page/demo directory.
+const propsBySlug: Record<string, ComponentDoc> = {};
+for (const doc of docs) {
+  const slug = doc.importPath.split("/").pop() ?? doc.importPath;
+  propsBySlug[slug] = doc;
+}
+const sortedPropsBySlug = Object.fromEntries(
+  Object.keys(propsBySlug)
+    .sort()
+    .map((slug) => [slug, propsBySlug[slug]])
+);
+const propsJson = `${JSON.stringify(sortedPropsBySlug, null, 2)}\n`;
 
-const targets = (file: string) => [
+const sharedTargets = (file: string) => [
   join(PKG_DIR, file),
   join(STORYBOOK_PUBLIC, file),
+];
+
+const artifacts: { file: string; content: string; targets: string[] }[] = [
+  { file: "llms.txt", content: index, targets: sharedTargets("llms.txt") },
+  {
+    file: "llms-full.txt",
+    content: full,
+    targets: sharedTargets("llms-full.txt"),
+  },
+  {
+    file: "components.json",
+    content: json,
+    targets: sharedTargets("components.json"),
+  },
+  {
+    file: "props.json",
+    content: propsJson,
+    targets: [join(DOCS_GENERATED, "props.json")],
+  },
 ];
 
 // `--check` is the CI drift gate: render in-memory and diff against the
 // committed artifacts without writing. Anything stale fails the build.
 if (process.argv.includes("--check")) {
   const drifted: string[] = [];
-  for (const [file, content] of artifacts) {
-    for (const path of targets(file)) {
+  for (const { targets, content } of artifacts) {
+    for (const path of targets) {
       let existing: string | null = null;
       try {
         existing = readFileSync(path, "utf8");
@@ -726,13 +759,14 @@ if (process.argv.includes("--check")) {
   );
 } else {
   mkdirSync(STORYBOOK_PUBLIC, { recursive: true });
-  for (const [file, content] of artifacts) {
-    for (const path of targets(file)) {
+  mkdirSync(DOCS_GENERATED, { recursive: true });
+  for (const { targets, content } of artifacts) {
+    for (const path of targets) {
       writeFileSync(path, content);
     }
   }
   console.log(
-    `✓ Generated llms.txt, llms-full.txt, components.json for ${docs.length} components ` +
-      `(${orderedCategories.length} categories) → ${PKG_DIR}/ and ${STORYBOOK_PUBLIC}/`
+    `✓ Generated llms.txt, llms-full.txt, components.json, props.json for ${docs.length} components ` +
+      `(${orderedCategories.length} categories) → ${PKG_DIR}/, ${STORYBOOK_PUBLIC}/, ${DOCS_GENERATED}/`
   );
 }

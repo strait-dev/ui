@@ -10,7 +10,8 @@
     "ignoreUnknown": true,
     "includes": [
       "!packages/ui/components.json",
-      "!apps/storybook/public/components.json"
+      "!apps/storybook/public/components.json",
+      "!apps/docs/.generated/props.json"
     ]
   },
   "formatter": {
