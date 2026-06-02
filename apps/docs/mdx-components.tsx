@@ -10,6 +10,7 @@ import {
   SpacingScale,
   TypeScale,
 } from "@/src/components/foundations";
+import { Playground } from "@/src/components/playground";
 import { PropsTable } from "@/src/components/props-table";
 import { ThemeExplorer } from "@/src/components/theme-explorer";
 
@@ -24,6 +25,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ColorSwatches,
     ComponentPreview,
     IconGallery,
+    Playground,
     PropsTable,
     RadiusScale,
     ShadowScale,
