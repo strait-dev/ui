@@ -126,7 +126,7 @@ describe("MultipleSelector", () => {
     expect(control).toBeInTheDocument();
   });
 
-  it("renders with compact size (min-h-8) when size=sm", () => {
+  it("renders with compact size (min-h-7) when size=sm", () => {
     const { container } = render(
       <MultipleSelector
         options={OPTIONS}
@@ -134,7 +134,7 @@ describe("MultipleSelector", () => {
         size="sm"
       />
     );
-    const control = container.querySelector(".min-h-8");
+    const control = container.querySelector(".min-h-7");
     expect(control).toBeInTheDocument();
   });
 
