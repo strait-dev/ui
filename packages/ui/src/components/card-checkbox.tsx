@@ -16,7 +16,7 @@ import { Checkbox } from "./checkbox";
  *   non-interactive.
  */
 const cardCheckboxVariants = cva(
-  "relative flex w-full items-start gap-2 rounded-md border border-input p-4 shadow-black/5 shadow-sm has-[[data-state=checked]]:border-ring",
+  "relative flex w-full items-start gap-2 rounded-md border border-input p-4 shadow-black/5 shadow-sm has-[[data-state=checked]]:border-ring dark:shadow-none",
   {
     variants: {
       variant: {

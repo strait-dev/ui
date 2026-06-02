@@ -42,11 +42,13 @@ import { cn } from "../utils/index";
 const bannerVariants = cva("flex items-center justify-between gap-3 text-sm", {
   variants: {
     variant: {
-      info: "border-info/30 bg-info/5 text-info-accent",
-      success: "border-success/30 bg-success/5 text-success-accent",
-      warning: "border-warning/30 bg-warning/5 text-warning-accent",
+      info: "border-info/30 bg-info/5 text-info-accent dark:bg-info/10",
+      success:
+        "border-success/30 bg-success/5 text-success-accent dark:bg-success/10",
+      warning:
+        "border-warning/30 bg-warning/5 text-warning-accent dark:bg-warning/10",
       destructive:
-        "border-destructive/30 bg-destructive/5 text-destructive-accent",
+        "border-destructive/30 bg-destructive/5 text-destructive-accent dark:bg-destructive/10",
     },
     layout: {
       inline: "rounded-lg border",
