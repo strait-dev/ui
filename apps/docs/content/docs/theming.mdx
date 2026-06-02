@@ -1,0 +1,92 @@
+---
+title: Theming
+description: Rebrand the entire system with a single token, and switch dark mode with one class.
+---
+
+Strait's appearance is driven entirely by CSS custom properties. Every colour,
+radius, and surface is a semantic token; components reference the token, never a
+raw value. Theming — including dark mode — is therefore a matter of redefining a
+handful of variables.
+
+## Rebrand with one colour
+
+`--brand` is the single source of truth for your accent. Set it to **any** colour
+— hex, `rgb()`, or `oklch()` — and the rest of the brand system derives from it
+automatically. Try it live (the preview below scopes `--brand` and `.dark` to its
+own container):
+
+<ThemeExplorer />
+
+```css
+@import "@strait/ui/css";
+
+:root {
+  --brand: #6366f1; /* that's it — derivations follow */
+}
+```
+
+Setting `--brand` re-themes everything that keys off it:
+
+- **`--brand-foreground`** — text drawn on the solid brand fill. Contrast-flips to
+  near-black or near-white based on the brand's lightness, so it stays legible
+  whether your brand is deep navy or pale yellow.
+- **`--brand-accent`** — the readable text/border colour used by the soft and
+  outline brand variants on tinted surfaces. Darkens in light mode and lightens
+  in dark mode to clear WCAG AA on the tint.
+- **`--chart-1`**, **`--sidebar-active-rail`**, and the active-row tint all follow
+  `--brand` too.
+
+The same value is used in light and dark mode. Each derived token is an ordinary
+custom property, so you can still override any of them individually as an escape
+hatch — and tweak unrelated tokens like radius the same way:
+
+```css
+:root {
+  --brand: #6366f1;
+  --brand-accent: oklch(0.45 0.2 277); /* optional: hand-tune the soft/outline text */
+  --radius: 0.5rem; /* round things a little less */
+}
+```
+
+## Token architecture
+
+Tokens live in two layers in `globals.css`:
+
+1. **`:root`** holds the light-theme values as `oklch` colours.
+2. **`.dark`** overrides the same variable names with their dark values.
+
+```css
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.216 0.006 56.043);
+  --brand: oklch(0.6696 0.222 37.42);
+  /* …surfaces, status intents, charts, radius… */
+}
+
+.dark {
+  --background: oklch(0.182 0.004 49.25);
+  --foreground: oklch(0.985 0.001 106.423);
+  /* same names, dark values */
+}
+```
+
+A Tailwind `@theme inline` block then maps each token to a utility, so
+`--primary` becomes `bg-primary`, `--muted-foreground` becomes
+`text-muted-foreground`, and so on.
+
+## Status & brand triads
+
+Brand and each status intent come as a triad so you can theme solid, soft, and
+outline emphasis consistently:
+
+- **`--<name>`** — the solid fill (e.g. a solid button background).
+- **`--<name>-foreground`** — text/icon colour drawn on top of the solid fill.
+- **`--<name>-accent`** — a readable text/border colour for soft and outline
+  variants on tinted (10%-opacity) surfaces, tuned to clear WCAG AA 4.5:1.
+
+The intents are `success`, `destructive`, `info`, and `warning`; `primary`
+follows the `base` / `-foreground` shape. When you override a status intent, keep
+its triad in sync so soft and outline variants stay legible.
+
+`brand` carries the same triad, but you only set `--brand` — its `-foreground`
+and `-accent` derive automatically.

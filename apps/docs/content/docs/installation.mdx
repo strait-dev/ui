@@ -1,0 +1,87 @@
+---
+title: Installation
+description: Add @strait/ui to your project and wire up Tailwind CSS v4.
+---
+
+`@strait/ui` is a React 19 component library built on
+[Base UI](https://base-ui.com), [Tailwind CSS v4](https://tailwindcss.com), and
+semantic `oklch` design tokens. Components ship compiled (ESM + type
+declarations) and are imported individually through subpath exports, so you only
+bundle what you use.
+
+## 1. Install the package
+
+```bash
+# bun
+bun add @strait/ui
+
+# npm
+npm install @strait/ui
+
+# pnpm
+pnpm add @strait/ui
+```
+
+### Peer dependencies
+
+You provide React yourself:
+
+```bash
+bun add react@^19 react-dom@^19
+```
+
+Everything else the components rely on (Base UI, `class-variance-authority`,
+`tailwind-merge`, Hugeicons, …) is bundled as a direct dependency.
+
+## 2. Wire up the styles
+
+The package exports its global stylesheet — Tailwind, the design tokens, and the
+keyframes — as `@strait/ui/css`. Import it once at the root of your app and point
+Tailwind's content scanner at the compiled package so the utility classes the
+components use are generated:
+
+```css
+/* app.css — your Tailwind entry point */
+@import "@strait/ui/css";
+
+/* Let Tailwind see the class names inside the shipped components */
+@source "../node_modules/@strait/ui/dist";
+```
+
+`@strait/ui/css` already includes `@import "tailwindcss"`, so you don't add it
+again. Then import the stylesheet from your app entry:
+
+```ts
+import "./app.css";
+```
+
+<Callout title="Customising the build?">
+  The package also exposes `@strait/ui/tailwind.config` and `@strait/ui/postcss`
+  if you'd rather extend its Tailwind/PostCSS config directly.
+</Callout>
+
+## 3. Import components
+
+Every component is its own subpath export, named after the file in `components/`:
+
+```tsx
+import { Button } from "@strait/ui/components/button";
+import { Dialog, DialogContent, DialogTrigger } from "@strait/ui/components/dialog";
+import { cn } from "@strait/ui/utils";
+
+export function Example() {
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button variant="brand-solid">Open</Button>} />
+      <DialogContent>Hello from Strait.</DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## React Server Components
+
+Interactive components carry the `"use client"` directive, so they work out of
+the box in the Next.js App Router and other RSC setups — import them directly
+from a server component and they establish their own client boundary. Purely
+presentational pieces (e.g. `Badge`, `Separator`) render on the server too.

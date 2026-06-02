@@ -1,0 +1,42 @@
+---
+title: Dark mode
+description: Toggle a single .dark class to re-theme every component.
+---
+
+Dark mode is a `.dark` class on (or above) the element you want themed —
+typically `<html>`. Add or remove the class to switch themes; because the tokens
+cascade, every Strait component re-themes instantly. No per-component dark
+variants, no duplicated styles.
+
+## Recommended wiring: next-themes
+
+[`next-themes`](https://github.com/pacocoursey/next-themes) handles system
+preference, persistence, and avoiding a flash of the wrong theme on load:
+
+```tsx
+import { ThemeProvider } from "next-themes";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+`attribute="class"` is the important part: it toggles the `.dark` class that
+Strait's tokens key off. Any approach that toggles the class works — `next-themes`
+just removes the boilerplate.
+
+## Manual toggle
+
+If you manage theme yourself, set the class on the document root:
+
+```ts
+document.documentElement.classList.toggle("dark");
+```
+
+Scoping the class to a subtree (rather than `<html>`) themes only that subtree —
+useful for previews and side-by-side comparisons, as the
+[Theming](/docs/theming) explorer demonstrates.
