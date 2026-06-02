@@ -5,35 +5,6 @@ description: A determinate progress bar that displays a numeric completion perce
 
 <ComponentPreview name="progress/demo" />
 
-## Usage
-
-```tsx
-import {
-  Progress,
-  ProgressLabel,
-  ProgressValue,
-} from "@strait/ui/components/progress";
-
-export default function ProgressDemo() {
-  return (
-    <div className="flex w-64 flex-col gap-4">
-      <Progress value={60}>
-        <ProgressLabel>Uploading files</ProgressLabel>
-        <ProgressValue />
-      </Progress>
-      <Progress value={40} variant="warning">
-        <ProgressLabel>Storage used</ProgressLabel>
-        <ProgressValue />
-      </Progress>
-      <Progress value={100} variant="success">
-        <ProgressLabel>Migration complete</ProgressLabel>
-        <ProgressValue />
-      </Progress>
-    </div>
-  );
-}
-```
-
 ## Reference
 
 <PropsTable name="progress" />

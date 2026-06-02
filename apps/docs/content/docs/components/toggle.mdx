@@ -5,25 +5,6 @@ description: A two-state button that can be on or off, for toolbar-style control
 
 <ComponentPreview name="toggle/demo" />
 
-## Usage
-
-```tsx
-import { TextBoldIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Toggle } from "@strait/ui/components/toggle";
-
-export function Example() {
-  return (
-    <Toggle aria-label="Toggle bold">
-      <HugeiconsIcon icon={TextBoldIcon} />
-    </Toggle>
-  );
-}
-```
-
-Icon-only toggles require an `aria-label`. Use `pressed` (controlled) or
-`defaultPressed` (uncontrolled) to manage state.
-
 ## Reference
 
 <PropsTable name="toggle" />

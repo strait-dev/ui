@@ -5,35 +5,6 @@ description: A cross-browser custom scroll container with styled overlaid scroll
 
 <ComponentPreview name="scroll-area/demo" />
 
-## Usage
-
-```tsx
-import { ScrollArea } from "@strait/ui/components/scroll-area";
-import { Separator } from "@strait/ui/components/separator";
-
-const tags = [
-  "React", "TypeScript", "Tailwind CSS", "Storybook", "Vite",
-  "Bun", "Base UI", "Biome", "Turborepo", "Vitest",
-  "Playwright", "GraphQL", "Prisma", "PostgreSQL", "Redis", "Docker",
-];
-
-export default function ScrollAreaDemo() {
-  return (
-    <ScrollArea className="h-56 w-56 rounded-lg border">
-      <div className="p-4">
-        <p className="mb-3 font-semibold text-sm">Technologies</p>
-        {tags.map((tag, i) => (
-          <div key={tag}>
-            <div className="py-1.5 text-sm">{tag}</div>
-            {i < tags.length - 1 && <Separator />}
-          </div>
-        ))}
-      </div>
-    </ScrollArea>
-  );
-}
-```
-
 ## Reference
 
 <PropsTable name="scroll-area" />

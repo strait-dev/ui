@@ -5,15 +5,47 @@ description: The primary interactive control for actions and navigation.
 
 <ComponentPreview name="button/default" />
 
-## Usage
+## Examples
 
-```tsx
-import { Button } from "@strait/ui/components/button";
+### Variants
 
-export function Example() {
-  return <Button>Button</Button>;
-}
-```
+Emphasis comes from a matrix of intent and emphasis level. A bare intent name
+(`brand`, `destructive`) is the soft style; `*-solid` is filled and `*-outline`
+is bordered.
+
+<ComponentPreview name="button/variants" />
+
+### Sizes
+
+A contiguous scale from `xs` to `xl`.
+
+<ComponentPreview name="button/sizes" />
+
+### With icons
+
+Mark a leading or trailing icon with `data-icon="inline-start"` /
+`data-icon="inline-end"` so the button tightens the adjacent padding.
+
+<ComponentPreview name="button/with-icon" />
+
+### Icon only
+
+Use an `icon*` size and always provide an `aria-label`.
+
+<ComponentPreview name="button/icon-only" />
+
+### Loading
+
+Pair a `Spinner` with `disabled` to represent a pending action.
+
+<ComponentPreview name="button/loading" />
+
+### As a link
+
+Use the `render` prop to project button styling onto another element — an
+anchor, or a framework `<Link>`.
+
+<ComponentPreview name="button/as-link" />
 
 ## Reference
 

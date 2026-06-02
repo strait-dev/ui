@@ -5,33 +5,6 @@ description: A composable field layout system that associates a label, control, 
 
 <ComponentPreview name="field/demo" />
 
-## Usage
-
-```tsx
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@strait/ui/components/field";
-import { Input } from "@strait/ui/components/input";
-
-export function Example() {
-  return (
-    <div className="w-80">
-      <Field>
-        <FieldLabel htmlFor="field-email">Email address</FieldLabel>
-        <Input
-          id="field-email"
-          placeholder="you@example.com"
-          type="email"
-        />
-        <FieldDescription>We will never share your email.</FieldDescription>
-      </Field>
-    </div>
-  );
-}
-```
-
 ## Reference
 
 <PropsTable name="field" />

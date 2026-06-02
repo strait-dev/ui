@@ -5,24 +5,6 @@ description: A compact date filter that selects by day, month, quarter, half-yea
 
 <ComponentPreview name="date-selector/demo" />
 
-## Usage
-
-```tsx
-"use client";
-
-import { useState } from "react";
-import {
-  DateSelector,
-  type DateSelectorValue,
-} from "@strait/ui/components/date-selector";
-
-export function Example() {
-  const [value, setValue] = useState<DateSelectorValue | undefined>();
-
-  return <DateSelector onChange={setValue} value={value} />;
-}
-```
-
 ## Reference
 
 <PropsTable name="date-selector" />
