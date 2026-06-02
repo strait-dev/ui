@@ -3,7 +3,9 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from "fumadocs-ui/page";
+  MarkdownCopyButton,
+  ViewOptionsPopover,
+} from "fumadocs-ui/layouts/docs/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { source } from "@/lib/source";
@@ -24,6 +26,13 @@ export default async function Page(props: {
     <DocsPage full={page.data.full} toc={page.data.toc}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
+      <div className="flex items-center gap-2 border-fd-border border-b pb-4">
+        <MarkdownCopyButton markdownUrl={`/llms.mdx${page.url}`} />
+        <ViewOptionsPopover
+          githubUrl={`https://github.com/strait-dev/ui/blob/main/apps/docs/content/docs/${page.path}`}
+          markdownUrl={`/llms.mdx${page.url}`}
+        />
+      </div>
       <DocsBody>
         <MDXContent components={getMDXComponents()} />
       </DocsBody>
