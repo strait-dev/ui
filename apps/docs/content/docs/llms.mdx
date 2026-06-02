@@ -1,0 +1,27 @@
+---
+title: For AI tools
+description: Machine-readable references for using Strait UI with LLMs and coding agents.
+---
+
+Strait UI ships machine-readable artifacts so AI coding assistants can use the
+library accurately. They are generated from the component source on every
+release, so they never drift from the real API.
+
+## Available artifacts
+
+- **[llms.txt](/llms.txt)** — a concise index ([llmstxt.org](https://llmstxt.org)
+  format): the theming model plus one line per component with its import path
+  and summary. Good for dropping into a system prompt.
+- **[llms-full.txt](/llms-full.txt)** — the full reference: every component's
+  description, props table, variants, data-slots, and heavy-dependency notes.
+- **[components.json](/components.json)** — the same data as structured JSON,
+  one entry per component (exports, prop types, variants, slots), for
+  programmatic use.
+
+## Using them with an agent
+
+Point your assistant at `llms.txt` for an overview, or paste the relevant
+section of `llms-full.txt` for a specific component. Because every component
+follows the same contract (semantic tokens, `render`-prop polymorphism,
+`data-slot` parts, a named `*Props` type), the index is usually enough for an
+agent to compose correct, idiomatic Strait UI code.

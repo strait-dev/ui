@@ -34,7 +34,7 @@
     "changeset": "changeset",
     "version-packages": "changeset version && bun install",
     "release": "changeset publish",
-    "verify": "biome check . && bun scripts/check-conventions.mjs && bun scripts/check-heavy-deps.mjs && bun scripts/check-trusted-deps.mjs && bun scripts/check-docs.mjs && bun scripts/check-changeset-format.mjs && bun scripts/generate-llms.ts --check && node --test scripts/release-notes.test.mjs && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
+    "verify": "biome check . && bun scripts/check-conventions.mjs && bun scripts/check-heavy-deps.mjs && bun scripts/check-trusted-deps.mjs && bun scripts/check-docs.mjs && bun scripts/check-docs-pages.mjs && bun scripts/check-changeset-format.mjs && bun scripts/generate-llms.ts --check && node --test scripts/release-notes.test.mjs && turbo run build && turbo run typecheck && turbo run test && turbo run build-storybook",
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {

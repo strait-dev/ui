@@ -1,0 +1,191 @@
+# Strait UI
+
+> Strait UI (@strait/ui) is a React + Tailwind v4 design system of 120+ accessible components built on Base UI primitives. Every component ships as its own tree-shakeable subpath export, is styled with semantic design tokens and class-variance-authority recipes, and exposes a named `*Props` type. Components render a polymorphic root via the Base UI `render` prop and tag their parts with `data-slot` attributes for styling and testing.
+
+## Theming
+
+All colours are semantic `oklch` CSS custom properties defined in
+`@strait/ui/css`. Components reference token-backed Tailwind utilities
+(`bg-primary`, `text-muted-foreground`, …), never raw colours, so theming is
+a matter of redefining variables after importing the stylesheet.
+
+### Set a custom brand (primary) colour
+
+`--brand` is the single source of truth for the accent. Set it to any colour
+format and the rest of the brand system derives automatically:
+
+```css
+@import "@strait/ui/css";
+
+:root {
+  --brand: #6366f1; /* hex, rgb(), or oklch() — that's the whole rebrand */
+}
+```
+
+Setting `--brand` re-themes everything keyed off it:
+- `--brand-foreground` — text on the solid brand fill; contrast-flips to
+  near-black/white by the brand's lightness.
+- `--brand-accent` — AA-legible text/border for the soft and outline brand
+  variants on tinted surfaces (darkens in light mode, lightens in dark mode).
+- `--chart-1`, `--sidebar-active-rail`, and the active-row tint follow too.
+
+The same value is used in light and dark mode. Every derived token is an
+ordinary custom property, so any of them can still be overridden individually.
+Note: `--primary` is warm ink (default buttons), distinct from `--brand`.
+
+### Dark mode
+
+Dark mode is a `.dark` class on (or above) the themed element — typically
+`<html>`. Tokens cascade, so toggling the class re-themes every component;
+`next-themes` is the recommended wiring.
+
+## Actions
+
+- [Button](@strait/ui/components/button): The primary interactive control for actions and navigation.
+- [Button Group](@strait/ui/components/button-group): A toolbar-style container that fuses a set of related controls into a single visual unit.
+- [Copy Button](@strait/ui/components/copy-button): Icon button that copies a string to the clipboard and shows a transient checkmark as confirmation.
+- [Kbd](@strait/ui/components/kbd): Renders a single keyboard key badge using the semantic `<kbd>` element.
+- [Toggle](@strait/ui/components/toggle): A two-state button that toggles between pressed and unpressed.
+- [Toggle Group](@strait/ui/components/toggle-group): A managed group of ToggleGroupItem controls, handling single or multiple selection and keyboard navigation.
+
+## Forms
+
+- [Autocomplete](@strait/ui/components/autocomplete): Optional arrow that visually connects the popup to its anchor.
+- [Calendar](@strait/ui/components/calendar): A styled date-picker calendar built on top of `react-day-picker`'s `DayPicker`.
+- [Checkbox](@strait/ui/components/checkbox): A binary toggle control that indicates a checked or unchecked state.
+- [Date Selector](@strait/ui/components/date-selector): A compact date filter that selects by day, month, quarter, half-year, or year with `is` / `before` / `after` / `between` operators. Reorders into a popover or dialog by wrapping it; the day view reuses Calendar and the coarser periods render their own grids.
+- [Field](@strait/ui/components/field): Single form field: associates a label, control, description, and error.
+- [FileUpload](@strait/ui/components/file-upload): A drag-and-drop file upload zone with a browse button and a file list, built on the headless useFileUpload hook and native File APIs.
+- [Form](@strait/ui/components/form): Root provider for a `@tanstack/react-form` managed form.
+- [Input](@strait/ui/components/input): A single-line text control for user input.
+- [Input Group](@strait/ui/components/input-group): A composite control that visually merges an input (or textarea) with leading/trailing addons, icons, buttons, or labels into a single bordered group.
+- [Label](@strait/ui/components/label): Accessible label for a form control.
+- [MultiSelect](@strait/ui/components/multiselect): A multi-value combobox that lets users select (and optionally create) multiple options from a searchable dropdown list.
+- [Native Select](@strait/ui/components/native-select): A styled wrapper around the native `<select>` element.
+- [Radio Group](@strait/ui/components/radio-group): A group of mutually exclusive radio options.
+- [Rating](@strait/ui/components/rating): A star rating input that supports controlled, uncontrolled, read-only, and disabled modes.
+- [Secret Input](@strait/ui/components/secret-input): A controlled text input purpose-built for secrets and API keys.
+- [Select](@strait/ui/components/select): Accessible single-value dropdown built on Base UI's `Select` primitive.
+- [Select Native](@strait/ui/components/select-native): Styled wrapper around the browser's native `<select>` element.
+- [Slider](@strait/ui/components/slider): A range-input control for selecting a numeric value (or range of values) by dragging one or more thumbs along a track.
+- [Switch](@strait/ui/components/switch): A toggle control that switches between on and off states.
+- [Textarea](@strait/ui/components/textarea): A multi-line text control for longer user input.
+
+## Data Display
+
+- [Activity Feed](@strait/ui/components/activity-feed): A presentational, scrollable list of timestamped activity entries with status dots and relative times.
+- [AspectRatio](@strait/ui/components/aspect-ratio): Container that enforces a fixed width-to-height ratio on its content.
+- [Avatar](@strait/ui/components/avatar): Rounded user-identity image with automatic fallback text.
+- [Badge](@strait/ui/components/badge): Small status label used to categorise, tag, or annotate content.
+- [Bar List](@strait/ui/components/bar-list): A horizontal ranked bar list — labels overlaid on value-proportional bars, with the formatted value in a trailing column.
+- [Bulk Action Bar](@strait/ui/components/bulk-action-bar): Floating toolbar that appears when one or more table / list rows are selected, exposing bulk actions and a way to clear the selection.
+- [Card](@strait/ui/components/card): A surface that groups related content and actions into a bordered container.
+- [Carousel](@strait/ui/components/carousel): Accessible, touch-friendly carousel built on Embla Carousel.
+- [Charts](@strait/ui/components/charts): Config-driven multi-series area chart.
+- [Code Block](@strait/ui/components/code-block): Read-only code display surface with Shiki-powered syntax highlighting, an optional language label, line numbers, and a clipboard copy button.
+- [Code Block Command](@strait/ui/components/code-block-command): A package-manager command block with tabs for npm, pnpm, yarn, and bun, a copy button that copies the active manager's command, and persistent manager selection via `localStorage`.
+- [Config Row](@strait/ui/components/config-row): A single label/value row for settings panels, detail drawers, and info grids.
+- [DataGrid](@strait/ui/components/data-grid): Root component for the DataGrid system.
+- [Description List](@strait/ui/components/description-list): Semantic description list root (`<dl>`). Compose with DescriptionTerm and DescriptionDetails to build accessible key–value displays.
+- [Execution Trace Bar](@strait/ui/components/execution-trace-bar): Horizontal stacked proportional bar that visualises time or value breakdown across labelled segments, with per-segment tooltips and an optional legend.
+- [Filters](@strait/ui/components/filters): A faceted filter builder modelled on corr.sh's Filters.
+- [Item](@strait/ui/components/item): Flexible row-level container for list entries, menu rows, or card-like tiles in an ItemGroup.
+- [JSON Viewer](@strait/ui/components/json-viewer): Hand-rolled recursive, collapsible, colorised JSON tree viewer.
+- [Leaderboard](@strait/ui/components/leaderboard): Root of a Leaderboard. A vertical stack of ranked rows, each with a value-proportional fill bar behind its label.
+- [Metric Card](@strait/ui/components/metric-card): Self-contained metric summary card with an optional delta indicator and sparkline.
+- [QR Code](@strait/ui/components/qr-code): Root component that renders an SVG QR code and provides context to all child sub-components.
+- [Radial Gauge](@strait/ui/components/radial-gauge): Circular radial-bar gauge that fills proportionally to a `value / max` ratio.
+- [Relative Time Card](@strait/ui/components/relative-time-card): Shows a compact, formatted timestamp that — on hover — reveals a card with the live relative time and the same instant rendered across one or more timezones (plus the viewer's local zone).
+- [Sortable](@strait/ui/components/sortable): Drag-to-reorder container built on dnd-kit. Wraps its children in a `DndContext` + `SortableContext` and renders a floating overlay that mirrors the actively dragged SortableItem.
+- [Status Badge](@strait/ui/components/status-badge): A Badge that maps an orchestration status keyword to a consistent colour, a leading status dot, and a humanised label.
+- [Table](@strait/ui/components/table): Responsive data table with a horizontally scrollable container.
+- [Tag Group](@strait/ui/components/tag-group): An accessible group container for a set of selectable or removable tags.
+- [Timeline](@strait/ui/components/timeline): Stepped progress tracker that renders a sequence of labeled events.
+- [Tracker](@strait/ui/components/tracker): A compact status timeline — a row of small colored blocks, each with an optional hover tooltip. Ideal for uptime, build history, or any per-period status strip (à la a status-page incident bar).
+- [Tree](@strait/ui/components/tree): A hierarchical tree view for displaying nested data with support for keyboard navigation, single/multiple selection, and expand/collapse.
+
+## Navigation
+
+- [Breadcrumb](@strait/ui/components/breadcrumb): Accessible navigation landmark that shows the user's location in the site hierarchy.
+- [Command](@strait/ui/components/command): A keyboard-navigable command palette built on the `cmdk` primitive.
+- [Command Menu](@strait/ui/components/command-menu): A ⌘K command palette that combines the design-system CommandDialog with a global hotkey from `react-hotkeys-hook`.
+- [Menubar](@strait/ui/components/menubar): A horizontal bar of labeled menu triggers, each opening a dropdown panel.
+- [NavigationMenu](@strait/ui/components/navigation-menu): Horizontal navigation bar with flyout content panels.
+- [NavigationRail](@strait/ui/components/navigation-rail): A fixed-width vertical nav column that holds icon-only navigation items.
+- [Pagination](@strait/ui/components/pagination): Accessible navigation landmark for moving between pages of content.
+- [Scrollspy](@strait/ui/components/scrollspy): Tracks the section currently in view and marks its corresponding navigation anchor with `data-active="true"`. Anchors opt in via `data-{dataAttribute}-anchor="<section-id>"`; clicking one smooth-scrolls to its section and (optionally) updates the URL hash.
+- [Sidebar](@strait/ui/components/sidebar): The sidebar panel itself — a collapsible column rendered inside a SidebarProvider.
+- [Stepper](@strait/ui/components/stepper): A multi-step progress indicator that tracks which step is currently active.
+- [Tabs](@strait/ui/components/tabs): Layered content panel controlled by a row (or column) of tab buttons.
+
+## Overlays
+
+- [Alert Dialog](@strait/ui/components/alert-dialog): Blocking confirmation dialog that requires the user to make a choice before continuing.
+- [Context Menu](@strait/ui/components/context-menu): Right-click (or long-press) contextual menu anchored to an arbitrary region of the page.
+- [Detail Sheet](@strait/ui/components/detail-sheet): A right-anchored (by default) detail / inspection panel built as a structured recipe over the design-system Sheet.
+- [Dialog](@strait/ui/components/dialog): Modal overlay that interrupts the user to focus on a single task or message.
+- [Drawer](@strait/ui/components/drawer): Edge-anchored panel that slides in from any side of the viewport, powered by the Vaul library.
+- [Dropdown Menu](@strait/ui/components/dropdown-menu): Floating list of actions that opens from a trigger button.
+- [Hover Card](@strait/ui/components/hover-card): Floating preview panel that appears on hover, built on Base UI's `PreviewCard` primitive.
+- [Popover](@strait/ui/components/popover): Floating panel anchored to a trigger element for rich non-modal content.
+- [Sheet](@strait/ui/components/sheet): Edge-anchored sliding panel built on Base UI's Dialog primitive.
+- [Tooltip](@strait/ui/components/tooltip): Short, non-interactive label that appears near an element on hover or focus, built on Base UI's `Tooltip` primitive.
+
+## Feedback
+
+- [Alert](@strait/ui/components/alert): Inline feedback banner for status messages, warnings, and errors.
+- [Banner](@strait/ui/components/banner): Root container for the composable Banner.
+- [Chart Empty State](@strait/ui/components/chart-empty-state): Centered empty state for charts and data panels that have no content.
+- [Empty](@strait/ui/components/empty): Centred placeholder surface shown when a list or view has no content.
+- [Feature Lock](@strait/ui/components/feature-lock): Gating overlay that visually locks content behind an upsell prompt.
+- [Notice Banner](@strait/ui/components/notice-banner): Thin re-export shim — all logic now lives in /banner.
+- [Progress](@strait/ui/components/progress): Determinate progress bar that displays a numeric completion percentage.
+- [Skeleton](@strait/ui/components/skeleton): Pulsing placeholder used while content is loading.
+- [Spinner](@strait/ui/components/spinner): Animated loading indicator built on the HugeIcons `Loading03` glyph.
+
+## Layout
+
+- [Accordion](@strait/ui/components/accordion): A vertically stacked set of collapsible sections, each with a trigger and an animated content panel.
+- [Collapsible](@strait/ui/components/collapsible): A lightweight single-panel show/hide container driven by a trigger.
+- [Frame](@strait/ui/components/frame): A bordered surface that hosts one or more FramePanel children.
+- [Resizable](@strait/ui/components/resizable): Drag handle separator between two ResizablePanel elements.
+- [Scroll Area](@strait/ui/components/scroll-area): A cross-browser custom scroll container with styled overlaid scrollbars.
+- [Separator](@strait/ui/components/separator): A thin dividing line between sections of content.
+- [Shell](@strait/ui/components/shell): Top-level page layout wrapper that applies consistent padding, gap, and flex-column structure to a page or route section.
+
+## Patterns
+
+- [Calendar RAC](@strait/ui/components/calendar-rac): Single-date calendar built on React Aria Components.
+- [Calendar With Presets](@strait/ui/components/calendar-with-presets): A day-picker calendar with a sidebar of quick-select presets.
+- [Card Checkbox](@strait/ui/components/card-checkbox): Grid wrapper that spaces a collection of CardCheckboxItem components with a consistent gap.
+- [Checkbox Tree](@strait/ui/components/checkbox-tree): A headless, renderless checkbox tree that manages tri-state (checked / unchecked / indeterminate) selection across a nested TreeNode hierarchy.
+- [Credenza](@strait/ui/components/credenza): Responsive overlay that renders as a centred Dialog on desktop (`>= 768 px`) and as a bottom Drawer on mobile.
+- [Date Field RAC](@strait/ui/components/datefield-rac): An accessible date field that renders each date part (year, month, day) as individually focusable, spinnable segments.
+- [Date Input](@strait/ui/components/date-input): A three-segment MM/DD/YYYY inline date editor with keyboard navigation.
+- [Date Picker](@strait/ui/components/date-picker): A single-date picker that reveals a calendar in a popover.
+- [Date Picker With Month Year](@strait/ui/components/date-picker-with-month-year): A date picker with dropdown selectors for month and year navigation.
+- [Date Range Picker](@strait/ui/components/date-range-picker): An inline date-range picker composed from React Aria Components primitives.
+- [Date Range Picker With Presets](@strait/ui/components/date-range-picker-with-presets): A date-range picker with a preset sidebar and an explicit apply/reset flow.
+- [ID Cell](@strait/ui/components/id-cell): Table cell that displays a truncated identifier with a copy-to-clipboard button, intended for use inside a data table column definition.
+- [Input OTP](@strait/ui/components/input-otp): One-time-password input that renders a fixed-length sequence of digit slots driven by the `input-otp` library.
+- [Input Password with Strength Indicator](@strait/ui/components/input-password-with-strength-indicator): A password field that reveals a live strength meter and per-requirement checklist after the user first focuses the input.
+- [Input with Addons](@strait/ui/components/input-with-addons): A text input flanked by optional muted addon panels for contextual prefix or suffix labels (e.g. protocol, domain extension, or unit).
+- [Input with Inline Button](@strait/ui/components/input-with-inline-button): A text input with an attached button fused to its trailing edge, suitable for search bars, coupon fields, and newsletter sign-ups.
+- [Input with Inner Tags](@strait/ui/components/input-with-inner-tags): A tag-input field that renders inline Tag badges inside the input area, letting users build a list of values within a single control.
+- [Input with Loader](@strait/ui/components/input-with-loader): A text input that swaps its leading icon for an animated loading spinner while an async operation is in progress.
+- [Input with Show/Hide Password](@strait/ui/components/input-with-show-hide-password): A minimal password field with a trailing eye-icon toggle that switches the input between masked (`"password"`) and revealed (`"text"`) mode.
+- [Input with Start Icon](@strait/ui/components/input-with-start-icon): A text input with a decorative, non-interactive icon pinned to the leading edge — the standard pattern for search bars and filtered inputs.
+- [Number Input Percentage with Chevrons](@strait/ui/components/number-input-percentage-with-chevrons): A percentage number input (0–100 %) with stacked up/down chevron buttons, formatted with React Aria's `NumberField`.
+- [Number Input with Buttons](@strait/ui/components/number-input-with-buttons): A stepper-style number input with flanking decrement (−) and increment (+) buttons rendered on the left and right edges.
+- [Number Input with Chevrons](@strait/ui/components/number-input-with-chevrons): A number input with stacked up/down chevron buttons in a trailing column, supporting arbitrary `Intl.NumberFormatOptions` formatting.
+- [Password Input](@strait/ui/components/password-input): A password field with an inline toggle button that reveals or masks the entered text.
+- [Phone Input](@strait/ui/components/phone-input): An international phone number field composed of a flag/country-code selector and a number text input that formats as the user types.
+- [Preview Card](@strait/ui/components/preview-card): A hover-activated floating card that previews rich content for a trigger element, built on Base UI's `PreviewCard` primitives.
+- [Range Calendar With Presets](@strait/ui/components/range-calendar-with-presets): A range calendar with a row of quick-select preset buttons and an optional apply/reset footer.
+- [Select With Search](@strait/ui/components/select-with-search): A searchable single-select dropdown that virtualizes its option list for large datasets and supports server-side pagination.
+- [Select With Search And Button](@strait/ui/components/select-with-search-and-button): A searchable single-select dropdown with a persistent action button pinned below the option list, typically used for inline "Add new …" creation flows.
+
+## Uncategorized
+
+- [Chart](@strait/ui/components/chart): Root wrapper for the data-driven chart components.
+- [direction](@strait/ui/components/direction): Re-exports Base UI's direction utilities for setting and reading the text directionality (`"ltr"` | `"rtl"`) of the component tree.

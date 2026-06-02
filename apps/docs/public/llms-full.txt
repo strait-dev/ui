@@ -1,0 +1,3060 @@
+# Strait UI — Full Reference
+
+> Strait UI (@strait/ui) is a React + Tailwind v4 design system of 120+ accessible components built on Base UI primitives. Every component ships as its own tree-shakeable subpath export, is styled with semantic design tokens and class-variance-authority recipes, and exposes a named `*Props` type. Components render a polymorphic root via the Base UI `render` prop and tag their parts with `data-slot` attributes for styling and testing.
+
+## Theming
+
+All colours are semantic `oklch` CSS custom properties defined in
+`@strait/ui/css`. Components reference token-backed Tailwind utilities
+(`bg-primary`, `text-muted-foreground`, …), never raw colours, so theming is
+a matter of redefining variables after importing the stylesheet.
+
+### Set a custom brand (primary) colour
+
+`--brand` is the single source of truth for the accent. Set it to any colour
+format and the rest of the brand system derives automatically:
+
+```css
+@import "@strait/ui/css";
+
+:root {
+  --brand: #6366f1; /* hex, rgb(), or oklch() — that's the whole rebrand */
+}
+```
+
+Setting `--brand` re-themes everything keyed off it:
+- `--brand-foreground` — text on the solid brand fill; contrast-flips to
+  near-black/white by the brand's lightness.
+- `--brand-accent` — AA-legible text/border for the soft and outline brand
+  variants on tinted surfaces (darkens in light mode, lightens in dark mode).
+- `--chart-1`, `--sidebar-active-rail`, and the active-row tint follow too.
+
+The same value is used in light and dark mode. Every derived token is an
+ordinary custom property, so any of them can still be overridden individually.
+Note: `--primary` is warm ink (default buttons), distinct from `--brand`.
+
+### Dark mode
+
+Dark mode is a `.dark` class on (or above) the themed element — typically
+`<html>`. Tokens cascade, so toggling the class re-themes every component;
+`next-themes` is the recommended wiring.
+
+## Actions
+
+### Button
+
+Import: `import { ... } from "@strait/ui/components/button";`
+
+The primary interactive control for actions and navigation.
+
+Exports: `Button`, `ButtonProps`, `buttonVariants`
+
+Props (`ButtonProps`):
+Extends: `ButtonPrimitive.Props`, `VariantProps<typeof buttonVariants>`
+
+Variants:
+- `variant`: `default`, `secondary`, `outline`, `brand-solid`, `brand`, `brand-outline`, `destructive-solid`, `destructive`, `destructive-outline`, `success-solid`, `success`, `success-outline`, `warning-solid`, `warning`, `warning-outline`, `info-solid`, `info`, `info-outline`, `secondary-outline`, `invert-solid`, `invert`, `invert-outline`, `ghost`, `link` (default: `default`)
+- `size`: `default`, `xs`, `sm`, `lg`, `xl`, `icon`, `icon-xs`, `icon-sm`, `icon-lg`, `icon-xl` (default: `default`)
+
+Data slots: `button`
+
+### Button Group
+
+Import: `import { ... } from "@strait/ui/components/button-group";`
+
+A toolbar-style container that fuses a set of related controls into a single visual unit.
+
+Exports: `ButtonGroup`, `ButtonGroupProps`, `ButtonGroupSeparator`, `ButtonGroupText`, `buttonGroupVariants`
+
+Props (`ButtonGroupProps`):
+Extends: `React.ComponentProps<"div">`, `VariantProps<typeof buttonGroupVariants>`
+
+Variants:
+- `orientation`: `horizontal`, `vertical` (default: `horizontal`)
+
+Data slots: `button-group`, `button-group-separator`
+
+### Copy Button
+
+Import: `import { ... } from "@strait/ui/components/copy-button";`
+
+Icon button that copies a string to the clipboard and shows a transient checkmark as confirmation.
+
+Exports: `CopyButton`, `CopyButtonProps`
+
+Props (`CopyButtonProps`):
+Extends: `React.ComponentProps<typeof Button>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `text` | `string` | yes |  | The string written to the clipboard when the button is pressed. |
+| `timeout` | `number` |  | `1500` | How long, in ms, the "copied" state persists before reverting. |
+| `onCopied` | `(text: string) => void` |  |  | Called after a successful copy, useful for analytics or toasts. |
+
+Data slots: `copy-button`
+
+### Kbd
+
+Import: `import { ... } from "@strait/ui/components/kbd";`
+
+Renders a single keyboard key badge using the semantic `<kbd>` element.
+
+Exports: `Kbd`, `KbdGroup`, `KbdProps`, `kbdVariants`
+
+Props (`KbdProps`):
+Extends: `React.ComponentProps<"kbd">`, `VariantProps<typeof kbdVariants>`
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `kbd`, `kbd-group`, `tooltip-content`
+
+### Toggle
+
+Import: `import { ... } from "@strait/ui/components/toggle";`
+
+A two-state button that toggles between pressed and unpressed.
+
+Exports: `Toggle`, `ToggleProps`, `toggleVariants`
+
+Props (`ToggleProps`):
+Extends: `TogglePrimitive.Props`, `VariantProps<typeof toggleVariants>`
+
+Variants:
+- `emphasis`: `default`, `outline` (default: `default`)
+- `size`: `xs`, `sm`, `default`, `lg`, `xl` (default: `default`)
+- `variant`: `default`, `destructive`, `success`, `info`, `warning` (default: `default`)
+
+Data slots: `toggle`
+
+### Toggle Group
+
+Import: `import { ... } from "@strait/ui/components/toggle-group";`
+
+A managed group of ToggleGroupItem controls, handling single or multiple selection and keyboard navigation.
+
+Exports: `ToggleGroup`, `ToggleGroupItem`, `ToggleGroupProps`
+
+Props (`ToggleGroupProps`):
+Extends: `ToggleGroupPrimitive.Props`, `VariantProps<typeof toggleVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `spacing` | `number` |  | `0` | Pixel gap between items, passed as `--gap` CSS custom property. When `0` (default), items are fused edge-to-edge with shared borders collapsed. |
+| `orientation` | `"horizontal" \| "vertical"` |  | `"horizontal"` | Layout direction of the group. - `"horizontal"` — items are arranged in a row (default). - `"vertical"` — items are stacked in a column. Note: `aria-orientation` is suppressed because `role="group"` does not permit that attribute. |
+
+Data slots: `toggle-group`, `toggle-group-item`
+
+## Forms
+
+### Autocomplete
+
+Import: `import { ... } from "@strait/ui/components/autocomplete";`
+
+Optional arrow that visually connects the popup to its anchor.
+
+Exports: `Autocomplete`, `AutocompleteArrow`, `AutocompleteBackdrop`, `AutocompleteClear`, `AutocompleteCollection`, `AutocompleteContent`, `AutocompleteContentProps`, `AutocompleteEmpty`, `AutocompleteGroup`, `AutocompleteGroupLabel`, `AutocompleteInput`, `AutocompleteItem`, `AutocompleteList`, `AutocompletePortal`, `AutocompletePositioner`, `AutocompleteProps`, `AutocompleteRow`, `AutocompleteSeparator`, `AutocompleteStatus`, `AutocompleteTrigger`, `AutocompleteValue`
+
+Props (`AutocompleteContentProps`):
+Extends: `React.ComponentProps<typeof AutocompletePrimitive.Popup>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `align` | `AutocompletePrimitive.Positioner.Props["align"]` |  | `"start"` | Alignment of the popup against its anchor (default `"start"`). |
+| `alignOffset` | `AutocompletePrimitive.Positioner.Props["alignOffset"]` |  | `0` | Offset in pixels along the alignment axis (default `0`). |
+| `anchor` | `AutocompletePrimitive.Positioner.Props["anchor"]` |  |  | Custom anchor element to position against instead of the input. |
+| `showBackdrop` | `boolean` |  | `false` | Render an AutocompleteBackdrop behind the popup. |
+| `side` | `AutocompletePrimitive.Positioner.Props["side"]` |  | `"bottom"` | Preferred side to place the popup (default `"bottom"`). |
+| `sideOffset` | `AutocompletePrimitive.Positioner.Props["sideOffset"]` |  | `4` | Gap in pixels between the popup and its anchor (default `4`). |
+
+Props (`AutocompleteProps`):
+Extends: `React.ComponentProps< typeof AutocompletePrimitive.Root >`
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `autocomplete-arrow`, `autocomplete-backdrop`, `autocomplete-clear`, `autocomplete-collection`, `autocomplete-empty`, `autocomplete-group`, `autocomplete-group-label`, `autocomplete-input`, `autocomplete-item`, `autocomplete-list`, `autocomplete-popup`, `autocomplete-portal`, `autocomplete-positioner`, `autocomplete-row`, `autocomplete-separator`, `autocomplete-status`, `autocomplete-trigger`, `autocomplete-value`
+
+### Calendar
+
+Import: `import { ... } from "@strait/ui/components/calendar";`
+
+A styled date-picker calendar built on top of `react-day-picker`'s `DayPicker`.
+
+Exports: `Calendar`, `CalendarDayButton`, `CalendarProps`
+
+Props (`CalendarProps`):
+Extends: `React.ComponentProps<typeof DayPicker>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `buttonVariant` | `React.ComponentProps<typeof Button>["variant"]` |  | `"ghost"` | Button `variant` applied to the previous/next navigation buttons. Defaults to `"ghost"`. |
+
+Data slots: `calendar`
+
+Heavy dependencies: `react-day-picker`
+
+### Checkbox
+
+Import: `import { ... } from "@strait/ui/components/checkbox";`
+
+A binary toggle control that indicates a checked or unchecked state.
+
+Exports: `Checkbox`, `CheckboxProps`, `checkboxVariants`
+
+Props (`CheckboxProps`):
+Extends: `Omit<CheckboxPrimitive.Root.Props, "size">`, `VariantProps<typeof checkboxVariants>`
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+- `variant`: `default`, `destructive` (default: `default`)
+
+Data slots: `checkbox`, `checkbox-indicator`
+
+### Date Selector
+
+Import: `import { ... } from "@strait/ui/components/date-selector";`
+
+A compact date filter that selects by day, month, quarter, half-year, or year with `is` / `before` / `after` / `between` operators. Reorders into a popover or dialog by wrapping it; the day view reuses Calendar and the coarser periods render their own grids.
+
+Exports: `DEFAULT_DATE_SELECTOR_I18N`, `DateSelector`, `DateSelectorFilterType`, `DateSelectorI18nConfig`, `DateSelectorPeriodType`, `DateSelectorProps`, `DateSelectorRangePoint`, `DateSelectorValue`, `formatDateValue`, `useDateSelector`, `useDateSelectorContext`
+
+Props (`DateSelectorProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allowRange` | `boolean` |  | `true` | When `true` (default), enables the `between` range operator. |
+| `baseYear` | `number` |  |  | Centre year for the generated year list. Defaults to the current year. |
+| `className` | `string` |  |  | Additional classes for the root element. |
+| `dayDateFormat` | `string` |  | `"MM/dd/yyyy"` | `date-fns` format used to render and parse day values. |
+| `dayDateFormats` | `string[]` |  |  | Extra `date-fns` formats accepted when parsing typed input. |
+| `defaultFilterType` | `DateSelectorFilterType` |  | `"is"` | The operator selected on first render. Defaults to `"is"`. |
+| `defaultPeriodType` | `DateSelectorPeriodType` |  | `"day"` | The period selected on first render. Defaults to `"day"`. |
+| `i18n` | `Partial<DateSelectorI18nConfig>` |  |  | Partial i18n overrides merged over the English defaults. |
+| `inputHint` | `string` |  |  | When set, the input becomes editable and shows this hint while focused. |
+| `label` | `string` |  |  | Optional heading rendered beside the operator tabs. |
+| `maxYear` | `number` |  | `2026` | Upper bound (inclusive) of the year list. |
+| `minYear` | `number` |  | `2015` | Lower bound (inclusive) of the year list. |
+| `onChange` | `(value: DateSelectorValue) => void` |  |  | Called whenever the selection changes. |
+| `periodTypes` | `DateSelectorPeriodType[]` |  |  | Restricts which period tabs are shown, in order. |
+| `presetMode` | `DateSelectorFilterType` |  |  | Locks the operator to a fixed value and disables the operator tabs. |
+| `showInput` | `boolean` |  | `true` | When `true` (default), renders the text input above the picker. |
+| `showTwoMonths` | `boolean` |  | `true` | When `true` (default), the day view shows two months on desktop. |
+| `value` | `DateSelectorValue` |  |  | The controlled selection. |
+| `weekStartsOn` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` |  |  | First day of the week (0 = Sunday … 6 = Saturday). |
+| `yearRange` | `number` |  | `10` | Number of years listed when `minYear`/`maxYear` are not set. |
+
+Data slots: `date-selector`, `date-selector-days`, `date-selector-input`, `date-selector-label`, `date-selector-operators`, `date-selector-periods`
+
+Heavy dependencies: `react-day-picker`
+
+### Field
+
+Import: `import { ... } from "@strait/ui/components/field";`
+
+Single form field: associates a label, control, description, and error.
+
+Exports: `Field`, `FieldContent`, `FieldDescription`, `FieldError`, `FieldGroup`, `FieldLabel`, `FieldLegend`, `FieldProps`, `FieldSeparator`, `FieldSet`, `FieldTitle`
+
+Props (`FieldProps`):
+Extends: `React.ComponentProps<"div">`, `VariantProps<typeof fieldVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Spacing size that cascades to sub-parts via `group-data-[size=…]/field` selectors. |
+
+Variants:
+- `orientation`: `vertical`, `horizontal`, `responsive` (default: `vertical`)
+
+Data slots: `field`, `field-content`, `field-description`, `field-error`, `field-group`, `field-label`, `field-legend`, `field-separator`, `field-separator-content`, `field-set`, `field-title`
+
+### FileUpload
+
+Import: `import { ... } from "@strait/ui/components/file-upload";`
+
+A drag-and-drop file upload zone with a browse button and a file list, built on the headless useFileUpload hook and native File APIs.
+
+Exports: `FileMetadata`, `FileUpload`, `FileUploadActions`, `FileUploadDropzone`, `FileUploadDropzoneProps`, `FileUploadItem`, `FileUploadItemProps`, `FileUploadList`, `FileUploadListProps`, `FileUploadOptions`, `FileUploadProps`, `FileUploadSize`, `FileUploadState`, `FileWithPreview`, `fileUploadVariants`, `formatBytes`, `useFileUpload`
+
+Props (`FileUploadDropzoneProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dragging` | `boolean` |  | `false` | Whether a drag is currently hovering — toggles the active styling. |
+| `size` | `FileUploadSize` |  | `"default"` | Density of the dropzone. |
+
+Props (`FileUploadItemProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Additional class names applied to the list item element. |
+| `file` | `FileWithPreview` | yes |  | The tracked file to display. |
+| `onRemove` | `() => void` |  |  | Called when the user clicks the remove button. |
+
+Props (`FileUploadListProps`):
+Extends: `React.ComponentProps<"ul">`
+
+Props (`FileUploadProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `accept` | `string` |  |  | Accepted MIME types and/or extensions as a comma-separated string (e.g. `"image/*,.pdf"`). When omitted every type is accepted. |
+| `className` | `string` |  |  | Additional class names applied to the outer wrapper. |
+| `defaultFiles` | `FileMetadata[]` |  |  | Files to seed the list with on mount. |
+| `disabled` | `boolean` |  | `false` | Disables the dropzone and browse button. |
+| `label` | `React.ReactNode` |  | `"Drag & drop files here, or"` | Prompt shown inside the dropzone above the browse button. |
+| `maxFiles` | `number` |  |  | Maximum number of files (only enforced when `multiple`). |
+| `maxSize` | `number` |  |  | Maximum size per file in bytes. |
+| `multiple` | `boolean` |  | `false` | Allow selecting and dropping multiple files. |
+| `onError` | `(errors: string[]) => void` |  |  | Called with human-readable messages when files are rejected. |
+| `onValueChange` | `(files: FileWithPreview[]) => void` |  |  | Called with the full list whenever it changes. |
+| `size` | `FileUploadSize` |  | `"default"` | Density of the dropzone. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `file-upload`, `file-upload-dropzone`, `file-upload-error`, `file-upload-item`, `file-upload-list`
+
+### Form
+
+Import: `import { ... } from "@strait/ui/components/form";`
+
+Root provider for a `@tanstack/react-form` managed form.
+
+Exports: `Form`, `FormControl`, `FormDescription`, `FormField`, `FormFieldProps`, `FormItem`, `FormLabel`, `FormMessage`, `FormProps`, `useFormField`
+
+Props (`FormFieldProps`):
+Extends: `Omit<TanStackFieldProps, "form" | "name" | "children">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `name` | `string` | yes |  | Dot-path of the field within the form's values. |
+| `render` | `(api: FormFieldRenderApi) => React.ReactNode` |  |  | Render the control. Receives the TanStack `field` API. |
+| `children` | `React.ReactNode \| ((api: FormFieldRenderApi) => React.ReactNode)` |  |  | Alternative to `render`: a node or a render function. |
+
+Props (`FormProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `form` | `AnyFormApi` | yes |  | The instance returned by `useForm()`. |
+| `children` | `React.ReactNode` | yes |  | Form content — typically a `<form>` element containing FormFields. |
+
+Data slots: `form-description`, `form-item`, `form-label`, `form-message`
+
+### Input
+
+Import: `import { ... } from "@strait/ui/components/input";`
+
+A single-line text control for user input.
+
+Exports: `Input`, `InputProps`, `inputVariants`
+
+Props (`InputProps`):
+Extends: `Omit<React.ComponentProps<"input">, "size">`, `VariantProps<typeof inputVariants>`
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `input`
+
+### Input Group
+
+Import: `import { ... } from "@strait/ui/components/input-group";`
+
+A composite control that visually merges an input (or textarea) with leading/trailing addons, icons, buttons, or labels into a single bordered group.
+
+Exports: `InputGroup`, `InputGroupAddon`, `InputGroupButton`, `InputGroupInput`, `InputGroupProps`, `InputGroupText`, `InputGroupTextarea`
+
+Props (`InputGroupProps`):
+Extends: `React.ComponentProps<"div">`
+
+Variants:
+- `align`: `inline-start`, `inline-end`, `block-start`, `block-end` (default: `inline-start`)
+
+Data slots: `input-group`, `input-group-addon`, `input-group-control`
+
+### Label
+
+Import: `import { ... } from "@strait/ui/components/label";`
+
+Accessible label for a form control.
+
+Exports: `Label`, `LabelProps`
+
+Props (`LabelProps`):
+Extends: `React.ComponentProps<"label">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Text size of the label. - `sm` — `text-xs` - `default` — `text-sm` (unchanged) - `lg` — `text-base` |
+| `required` | `boolean` |  | `false` | When `true`, appends an `aria-hidden` red asterisk after the label text to signal that the associated control is required. |
+
+Data slots: `label`
+
+### MultiSelect
+
+Import: `import { ... } from "@strait/ui/components/multiselect";`
+
+A multi-value combobox that lets users select (and optionally create) multiple options from a searchable dropdown list.
+
+Exports: `MultipleSelector (default)`, `MultipleSelectorProps`, `MultipleSelectorRef`, `MultipleSelectorSize`, `Option`, `useDebounce`
+
+Props (`MultipleSelectorProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `Option[]` |  |  | Controlled selection; keep in sync via onChange. |
+| `defaultOptions` | `Option[]` |  |  | Initial options shown in the dropdown before any search. |
+| `options` | `Option[]` |  |  | manually controlled options |
+| `placeholder` | `string` |  |  | Input placeholder text shown when no options are selected. |
+| `loadingIndicator` | `React.ReactNode` |  |  | Loading component. |
+| `emptyIndicator` | `React.ReactNode` |  |  | Empty component. |
+| `delay` | `number` |  |  | Debounce time for async search. Only work with `onSearch`. |
+| `triggerSearchOnFocus` | `boolean` |  | `false` | Only work with `onSearch` prop. Trigger search when `onFocus`. For example, when user click on the input, it will trigger the search to get initial options. |
+| `onSearch` | `(value: string) => Promise<Option[]>` |  |  | async search |
+| `onSearchSync` | `(value: string) => Option[]` |  |  | sync search. This search will not showing loadingIndicator. The rest props are the same as async search. i.e.: creatable, groupBy, delay. |
+| `onChange` | `(options: Option[]) => void` |  |  | Called with the full updated selection whenever options are added or removed. |
+| `maxSelected` | `number` |  | `Number.MAX_SAFE_INTEGER` | Limit the maximum number of selected options. |
+| `onMaxSelected` | `(maxLimit: number) => void` |  |  | When the number of selected options exceeds the limit, the onMaxSelected will be called. |
+| `showPlaceholderWhenSelected` | `boolean` |  | `true` | Show the placeholder when there are options selected. |
+| `disabled` | `boolean` |  |  | Disables the control; pointer events are blocked and opacity is reduced. |
+| `groupBy` | `string` |  |  | Group the options base on provided key. |
+| `className` | `string` |  |  | Extra classes merged onto the outer input wrapper element. |
+| `badgeClassName` | `string` |  |  | Extra classes merged onto each selected-option badge chip. |
+| `selectFirstItem` | `boolean` |  | `true` | First item selected is a default behavior by cmdk. That is why the default is true. This is a workaround solution by add a dummy item. |
+| `creatable` | `boolean` |  | `false` | Allow user to create option when there is no option matched. |
+| `commandProps` | `React.ComponentPropsWithoutRef<typeof Command>` |  |  | Props of `Command` |
+| `inputProps` | `Omit< React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>, "value" \| "placeholder" \| "disabled" >` |  |  | Props of `CommandInput` |
+| `showClearAllButton` | `boolean` |  | `true` | show the clear all button. |
+| `size` | `MultipleSelectorSize` |  | `"default"` | Size axis controlling control height and chip size. |
+
+Data slots: `empty`
+
+### Native Select
+
+Import: `import { ... } from "@strait/ui/components/native-select";`
+
+A styled wrapper around the native `<select>` element.
+
+Exports: `NativeSelect`, `NativeSelectOptGroup`, `NativeSelectOption`, `NativeSelectProps`
+
+Props (`NativeSelectProps`):
+Extends: `Omit<React.ComponentProps<"select">, "size">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 36 px tall, slightly larger text. |
+
+Data slots: `native-select`, `native-select-icon`, `native-select-optgroup`, `native-select-option`, `native-select-wrapper`
+
+### Radio Group
+
+Import: `import { ... } from "@strait/ui/components/radio-group";`
+
+A group of mutually exclusive radio options.
+
+Exports: `RadioGroup`, `RadioGroupItem`, `RadioGroupProps`
+
+Props (`RadioGroupProps`):
+Extends: `RadioGroupPrimitive.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Size of each radio circle. Cascades to all nested RadioGroupItems via `group-data-[size=…]/radio-group` selectors. |
+
+Data slots: `radio-group`, `radio-group-indicator`, `radio-group-item`
+
+### Rating
+
+Import: `import { ... } from "@strait/ui/components/rating";`
+
+A star rating input that supports controlled, uncontrolled, read-only, and disabled modes.
+
+Exports: `Rating`, `RatingProps`, `ratingVariants`
+
+Props (`RatingProps`):
+Extends: `VariantProps<typeof ratingVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `aria-label` | `string` |  |  | Accessible name for the root element (`role="radiogroup"` or `role="img"`). |
+| `className` | `string` |  |  | Additional CSS classes forwarded to the root element. |
+| `defaultValue` | `number` |  | `0` | Initial rating value for uncontrolled usage. |
+| `disabled` | `boolean` |  | `false` | When `true` the component is non-interactive and visually dimmed. |
+| `max` | `number` |  | `5` | Total number of stars rendered. |
+| `onValueChange` | `(value: number) => void` |  |  | Callback fired whenever the selected rating changes. Receives the newly selected star index (1‥max). |
+| `readOnly` | `boolean` |  | `false` | When `true` the component renders as a non-interactive display element with `role="img"`. |
+| `value` | `number` |  |  | Controlled current rating value. When provided the component is fully controlled; pair with `onValueChange` to track changes. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `rating`, `rating-star`
+
+### Secret Input
+
+Import: `import { ... } from "@strait/ui/components/secret-input";`
+
+A controlled text input purpose-built for secrets and API keys.
+
+Exports: `SecretInput`, `SecretInputProps`
+
+Props (`SecretInputProps`):
+Extends: `Omit<React.ComponentProps<typeof Input>, "type">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | The controlled secret value written to the input. |
+| `revealable` | `boolean` |  | `true` | When `true` (default), a ghost icon button on the trailing edge lets the user flip between masked and plain-text display. |
+| `copyable` | `boolean` |  | `true` | When `true` (default), a CopyButton is rendered on the trailing edge so the user can copy the secret without revealing it. |
+
+Data slots: `secret-input`
+
+### Select
+
+Import: `import { ... } from "@strait/ui/components/select";`
+
+Accessible single-value dropdown built on Base UI's `Select` primitive.
+
+Exports: `Select`, `SelectContent`, `SelectGroup`, `SelectItem`, `SelectLabel`, `SelectScrollDownButton`, `SelectScrollUpButton`, `SelectSeparator`, `SelectSize`, `SelectTrigger`, `SelectTriggerProps`, `SelectValue`
+
+Props (`SelectTriggerProps`):
+Extends: `SelectPrimitive.Trigger.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `SelectSize` |  |  | Height / border-radius scale of the trigger button. |
+
+Data slots: `select-content`, `select-group`, `select-item`, `select-label`, `select-scroll-down-button`, `select-scroll-up-button`, `select-separator`, `select-trigger`, `select-value`
+
+### Select Native
+
+Import: `import { ... } from "@strait/ui/components/select-native";`
+
+Styled wrapper around the browser's native `<select>` element.
+
+Exports: `SelectNative`, `SelectNativeProps`
+
+Props (`SelectNativeProps`):
+Extends: `React.ComponentProps<"select">`
+
+Data slots: `select-native`
+
+### Slider
+
+Import: `import { ... } from "@strait/ui/components/slider";`
+
+A range-input control for selecting a numeric value (or range of values) by dragging one or more thumbs along a track.
+
+Exports: `Slider`, `SliderProps`, `sliderRangeVariants`, `sliderThumbVariants`, `sliderTrackVariants`
+
+Props (`SliderProps`):
+Extends: `SliderPrimitive.Root.Props`, `VariantProps<typeof sliderTrackVariants>`, `VariantProps<typeof sliderRangeVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `aria-label` | `string` |  |  | Accessible name forwarded to every thumb input. Omit when the slider is associated with a `<FieldLabel>` via Base UI's `Field` context. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `slider`, `slider-range`, `slider-thumb`, `slider-track`
+
+### Switch
+
+Import: `import { ... } from "@strait/ui/components/switch";`
+
+A toggle control that switches between on and off states.
+
+Exports: `Switch`, `SwitchProps`
+
+Props (`SwitchProps`):
+Extends: `SwitchPrimitive.Root.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Physical size of the switch track and thumb. |
+| `intent` | `"default" \| "destructive"` |  | `"default"` | Colour intent of the checked track. - `"default"` — uses the `primary` token (unchanged from before). - `"destructive"` — uses `bg-destructive` when checked. |
+
+Data slots: `switch`, `switch-thumb`
+
+### Textarea
+
+Import: `import { ... } from "@strait/ui/components/textarea";`
+
+A multi-line text control for longer user input.
+
+Exports: `Textarea`, `TextareaProps`, `textareaVariants`
+
+Props (`TextareaProps`):
+Extends: `React.ComponentProps<"textarea">`, `VariantProps<typeof textareaVariants>`
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+- `resize`: `none`, `vertical`, `auto` (default: `vertical`)
+
+Data slots: `textarea`
+
+## Data Display
+
+### Activity Feed
+
+Import: `import { ... } from "@strait/ui/components/activity-feed";`
+
+A presentational, scrollable list of timestamped activity entries with status dots and relative times.
+
+Exports: `ActivityFeed`, `ActivityFeedProps`, `ActivityItem`
+
+Props (`ActivityFeedProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `items` | `ActivityItem[]` | yes |  | Ordered list of activity entries to display. |
+| `height` | `number \| string` |  | `320` | Height of the scrollable viewport. Accepts any CSS value (`"320px"`, `"100%"`, …) or a bare number treated as pixels. Defaults to `320`. |
+| `emptyState` | `React.ReactNode` |  |  | Node rendered when `items` is empty. Defaults to a centred muted "No activity yet" message. |
+| `renderItem` | `(item: ActivityItem) => React.ReactNode` |  |  | Escape hatch for full row customisation. When provided, it replaces the default row renderer entirely; `data-slot="activity-feed-item"` is still your responsibility inside the returned node. |
+| `className` | `string` |  |  | Extra classes merged onto the root `ScrollArea`. |
+
+Data slots: `activity-feed`, `activity-feed-item`
+
+### AspectRatio
+
+Import: `import { ... } from "@strait/ui/components/aspect-ratio";`
+
+Container that enforces a fixed width-to-height ratio on its content.
+
+Exports: `AspectRatio`, `AspectRatioProps`
+
+Props (`AspectRatioProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `ratio` | `number` | yes |  | Width-to-height ratio as a plain number (e.g. `16 / 9`, `4 / 3`, `1`). Passed to the `--ratio` CSS custom property consumed by `aspect-(--ratio)`. |
+
+Data slots: `aspect-ratio`
+
+### Avatar
+
+Import: `import { ... } from "@strait/ui/components/avatar";`
+
+Rounded user-identity image with automatic fallback text.
+
+Exports: `Avatar`, `AvatarBadge`, `AvatarFallback`, `AvatarGroup`, `AvatarGroupCount`, `AvatarImage`, `AvatarProps`, `avatarBadgeVariants`
+
+Props (`AvatarProps`):
+Extends: `AvatarPrimitive.Root.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `"xs" \| "default" \| "sm" \| "lg" \| "xl"` |  | `"default"` | Size preset that cascades to every sub-part via `data-size`. Controls the avatar's width/height: `"xs"` (20px) · `"sm"` (24px) · `"default"` (32px) · `"lg"` (40px) · `"xl"` (48px). |
+
+Variants:
+- `status`: `online`, `busy`, `away`, `offline`
+
+Data slots: `avatar`, `avatar-badge`, `avatar-fallback`, `avatar-group`, `avatar-group-count`, `avatar-image`
+
+### Badge
+
+Import: `import { ... } from "@strait/ui/components/badge";`
+
+Small status label used to categorise, tag, or annotate content.
+
+Exports: `Badge`, `BadgeProps`, `badgeVariants`
+
+Props (`BadgeProps`):
+Extends: `useRender.ComponentProps<"span">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dismissible` | `boolean` |  |  | When `true`, appends a dismiss `<button>` containing Cancel01Icon. |
+| `dot` | `boolean` |  |  | When `true`, prepends a small leading dot before children (and before `iconLeft`). The dot colour tracks `currentColor` (`bg-current`) so it inherits the variant's text colour automatically. |
+| `dotClassName` | `string` |  |  | Extra Tailwind classes merged onto the leading dot `<span>`. |
+| `iconLeft` | `IconSvgElement` |  |  | Icon rendered immediately before children. |
+| `iconRight` | `IconSvgElement` |  |  | Icon rendered immediately after children. |
+| `mono` | `boolean` |  |  | When `true`, applies `font-mono uppercase tracking-wide` for monospaced label styling — useful for version numbers, codes, or IDs. |
+| `onDismiss` | `() => void` |  |  | Called when the dismiss button is clicked. |
+| `radius` | `VariantProps<typeof badgeVariants>["radius"]` |  |  | Corner radius preset applied via badgeVariants. `"lg"` (default, rounded-lg) · `"pill"` (full-pill opt-in) · `"md"` (rounded-md) · `"sm"` (subtle 4 px). Use `"md"` for tag-style chips inside data tables; use `"pill"` for fully circular badges. |
+| `size` | `VariantProps<typeof badgeVariants>["size"]` |  |  | Size preset applied via badgeVariants. `"xs"` through `"xl"`; controls height, padding, and font size. |
+| `variant` | `VariantProps<typeof badgeVariants>["variant"]` |  |  | Colour and emphasis style applied via badgeVariants. Includes solid fills, tinted `*-light` fills, bordered `*-outline` variants, `ghost`, and `link`. |
+
+Variants:
+- `radius`: `lg`, `pill`, `md`, `sm` (default: `lg`)
+- `variant`: `default`, `outline`, `secondary`, `info`, `success`, `warning`, `destructive`, `invert`, `primary-light`, `warning-light`, `success-light`, `info-light`, `destructive-light`, `invert-light`, `secondary-light`, `primary-outline`, `warning-outline`, `success-outline`, `info-outline`, `destructive-outline`, `invert-outline`, `secondary-outline`, `ghost`, `link` (default: `default`)
+- `size`: `xs`, `sm`, `default`, `lg`, `xl` (default: `default`)
+
+Data slots: `badge`, `badge-dismiss`, `badge-dot`
+
+### Bar List
+
+Import: `import { ... } from "@strait/ui/components/bar-list";`
+
+A horizontal ranked bar list — labels overlaid on value-proportional bars, with the formatted value in a trailing column.
+
+Exports: `BarList`, `BarListItem`, `BarListProps`
+
+Props (`BarListProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `data` | `BarListItem<T>[]` | yes | `[]` | Rows to render. |
+| `onValueChange` | `(payload: BarListItem<T>) => void` |  |  | Makes rows interactive and fires with the clicked row. |
+| `sortOrder` | `"ascending" \| "descending" \| "none"` |  | `"descending"` | Sort direction by value. Defaults to `"descending"`. |
+| `valueFormatter` | `(value: number) => string` |  | `(value) => value.toString()` | Formats the trailing value. |
+
+Data slots: `bar-list`
+
+### Bulk Action Bar
+
+Import: `import { ... } from "@strait/ui/components/bulk-action-bar";`
+
+Floating toolbar that appears when one or more table / list rows are selected, exposing bulk actions and a way to clear the selection.
+
+Exports: `BulkAction`, `BulkActionBar`, `BulkActionBarProps`
+
+Props (`BulkActionBarProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `selectedCount` | `number` | yes |  | Number of currently-selected items, shown as `"N selected"`. |
+| `onClearSelection` | `() => void` | yes |  | Called when the user presses the clear-selection (×) button. |
+| `actions` | `BulkAction[]` | yes |  | Action buttons rendered in the toolbar. |
+| `position` | `"fixed" \| "static"` |  | `"static"` | Positioning strategy. |
+| `className` | `string` |  |  | Additional class names merged onto the root element. |
+| `children` | `React.ReactNode` |  |  | Extra content rendered between the selected-count label and the action buttons. Use this slot for supplementary controls (e.g. a "Select all" checkbox). |
+
+Data slots: `bulk-action-bar`
+
+### Card
+
+Import: `import { ... } from "@strait/ui/components/card";`
+
+A surface that groups related content and actions into a bordered container.
+
+Exports: `Card`, `CardAction`, `CardContent`, `CardDescription`, `CardFooter`, `CardHeader`, `CardProps`, `CardTitle`, `cardVariants`
+
+Props (`CardProps`):
+Extends: `React.ComponentProps<"div">`, `CardVariantProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `"default" \| "sm" \| "lg"` |  | `"default"` | Spacing preset that cascades to all sub-parts via `data-size`. - `"sm"` — gap-3 / py-3; header/content `px-3`; footer `px-3 py-2`. - `"default"` — gap-4 / py-4; header/content `px-4`; footer `px-4 py-2.5`. - `"lg"` — gap-6 / py-6; header/content `px-6`; footer `px-6 py-3.5`. |
+
+Variants:
+- `variant`: `default`, `outline`, `ghost` (default: `default`)
+
+Data slots: `card`, `card-action`, `card-content`, `card-description`, `card-footer`, `card-header`, `card-title`
+
+### Carousel
+
+Import: `import { ... } from "@strait/ui/components/carousel";`
+
+Accessible, touch-friendly carousel built on Embla Carousel.
+
+Exports: `Carousel`, `CarouselApi`, `CarouselContent`, `CarouselItem`, `CarouselNext`, `CarouselPrevious`, `CarouselProps`, `useCarousel`
+
+Props (`CarouselProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `opts` | `CarouselOptions` |  |  | Embla options forwarded directly to `useEmblaCarousel`. |
+| `plugins` | `CarouselPlugin` |  |  | Embla plugins (e.g. autoplay, wheel gestures). |
+| `orientation` | `"horizontal" \| "vertical"` |  | `"horizontal"` | Scroll axis — `"horizontal"` (default) or `"vertical"`. |
+| `setApi` | `(api: CarouselApi) => void` |  |  | Callback that receives the Embla API instance once it is ready. Use this to call imperative methods (e.g. `api.scrollTo(index)`). |
+
+Data slots: `carousel`, `carousel-content`, `carousel-item`, `carousel-next`, `carousel-previous`
+
+Heavy dependencies: `embla-carousel-react`
+
+### Charts
+
+Import: `import { ... } from "@strait/ui/components/charts";`
+
+Config-driven multi-series area chart.
+
+Exports: `AreaChart`, `AreaChartProps`, `BarChart`, `BarChartProps`, `DonutChart`, `LineChart`, `LineChartProps`, `PieChart`, `PieChartProps`
+
+Props (`AreaChartProps`):
+Extends: `BaseChartProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `areaProps` | `Partial<ComponentProps<typeof Area>>` |  |  | Props forwarded to the underlying recharts `<Area>`. |
+| `chartProps` | `Omit< ComponentProps<typeof AreaChartPrimitive>, "data" \| "stackOffset" >` |  |  | Props forwarded to the underlying recharts `<AreaChart>`. |
+| `connectNulls` | `boolean` |  | `false` | Join across null gaps instead of breaking the area. |
+| `fillType` | `"gradient" \| "solid" \| "none"` |  | `"gradient"` | Fill treatment beneath each area. Defaults to `"gradient"`. |
+
+Props (`BarChartProps`):
+Extends: `BaseChartProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `barCategoryGap` | `number` |  | `5` | Gap between bar groups (categories) in pixels. |
+| `barGap` | `number` |  |  | Gap between individual bars within a group in pixels. |
+| `barProps` | `Partial<ComponentProps<typeof Bar>>` |  |  | Props forwarded to the underlying recharts `<Bar>`. |
+| `barRadius` | `number` |  |  | Border-radius applied to the top corners of each bar. |
+| `barSize` | `number` |  |  | Fixed width in pixels for each bar. |
+| `chartProps` | `Omit< ComponentProps<typeof BarChartPrimitive>, "data" \| "stackOffset" >` |  |  | Props forwarded to the underlying recharts `<BarChart>`. |
+
+Props (`LineChartProps`):
+Extends: `BaseChartProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `chartProps` | `Omit< ComponentProps<typeof LineChartPrimitive>, "data" \| "stackOffset" >` |  |  | Props forwarded to the underlying recharts `<LineChart>`. |
+| `connectNulls` | `boolean` |  | `false` | Join across null gaps instead of breaking the line. |
+| `lineProps` | `Partial<LineProps>` |  |  | Props forwarded to the underlying recharts `<Line>`. |
+
+Props (`PieChartProps`):
+Extends: `Omit< BaseChartProps, | "showGridLines" | "showXAxis" | "showYAxis" | "xAxisProps" | "yAxisProps" | "displayEdgeLabelsOnly" | "legend" | "legendProps" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `chartProps` | `Omit< ComponentProps<typeof PieChartPrimitive>, "data" \| "stackOffset" >` |  |  | Props forwarded to the underlying recharts `<PieChart>`. |
+| `label` | `string` |  |  | Centre label text for the donut variant. Defaults to the value sum. |
+| `nameKey` | `string` |  |  | Data key used as the slice name (maps rows to `config` entries). |
+| `pieProps` | `Omit<ComponentProps<typeof Pie>, "data" \| "dataKey" \| "name">` |  |  | Props forwarded to the underlying recharts `<Pie>`. |
+| `showLabel` | `boolean` |  |  | Show the centre label (donut variant only). |
+| `variant` | `"pie" \| "donut"` |  | `"pie"` | `"pie"` (solid) or `"donut"` (hollow centre). Defaults to `"pie"`. |
+
+Data slots: `label`
+
+Heavy dependencies: `recharts`
+
+### Code Block
+
+Import: `import { ... } from "@strait/ui/components/code-block";`
+
+Read-only code display surface with Shiki-powered syntax highlighting, an optional language label, line numbers, and a clipboard copy button.
+
+Exports: `CodeBlock`, `CodeBlockProps`, `codeBlockVariants`
+
+Props (`CodeBlockProps`):
+Extends: `VariantProps<typeof codeBlockVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Additional class names applied to the root element. |
+| `code` | `string` | yes |  | The source code string to display. |
+| `copyable` | `boolean` |  | `true` | When `true` (the default) a CopyButton appears in the top bar. Pass `false` to suppress it. |
+| `language` | `string` |  |  | Language used both for the top-bar label and Shiki syntax highlighting (e.g. `"tsx"`, `"ruby"`, `"go"`, `"bash"`). Unknown languages fall back to plain text. Omit to render unhighlighted text. |
+| `maxHeight` | `number \| string` |  |  | Constrains the code body height. Accepts any CSS `max-height` value (e.g. `400`, `"50vh"`). A numeric value is treated as pixels. |
+| `showLineNumbers` | `boolean` |  | `false` | When `true`, a numbered gutter is rendered to the left of each line. |
+| `wrap` | `boolean` |  | `false` | When `true`, long lines wrap and break at word boundaries instead of scrolling horizontally. |
+
+Variants:
+- `variant`: `default`, `dark`, `transparent` (default: `default`)
+
+Data slots: `code-block`, `code-block-content`
+
+Heavy dependencies: `shiki`
+
+### Code Block Command
+
+Import: `import { ... } from "@strait/ui/components/code-block-command";`
+
+A package-manager command block with tabs for npm, pnpm, yarn, and bun, a copy button that copies the active manager's command, and persistent manager selection via `localStorage`.
+
+Exports: `CodeBlockCommand`, `CodeBlockCommandProps`, `PackageManager`, `PackageManagerCommands`, `convertNpmCommand`
+
+Props (`CodeBlockCommandProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `bun` | `string` |  |  | Explicit bun command — overrides the derived value when `npm` is also provided. |
+| `className` | `string` |  |  | Extra classes merged onto the outermost element. |
+| `npm` | `string` |  |  | The npm command (used as-is for the `npm` tab and as the derivation source). |
+| `onCopySuccess` | `() => void` |  |  | Called after the active command has been written to the clipboard. |
+| `pnpm` | `string` |  |  | Explicit pnpm command — overrides the derived value when `npm` is also provided. |
+| `prompt` | `string` |  |  | An AI-assistant instruction shown in an extra "AI" tab. |
+| `storageKey` | `string` |  | `"package-manager"` | `localStorage` key used to persist the user's package-manager preference. |
+| `yarn` | `string` |  |  | Explicit yarn command — overrides the derived value when `npm` is also provided. |
+
+Data slots: `code-block-command`
+
+### Config Row
+
+Import: `import { ... } from "@strait/ui/components/config-row";`
+
+A single label/value row for settings panels, detail drawers, and info grids.
+
+Exports: `ConfigRow`, `ConfigRowProps`
+
+Props (`ConfigRowProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `IconSvgElement` |  |  | Optional leading icon rendered at size 14 in `text-muted-foreground`. |
+| `label` | `React.ReactNode` | yes |  | Muted label displayed on the left side of the row. |
+| `value` | `React.ReactNode` |  |  | The value shown on the right side, rendered in `font-mono text-xs` by default. Ignored when `children` is provided. |
+| `description` | `React.ReactNode` |  |  | Optional second muted line rendered below `label` in a smaller size. |
+| `action` | `React.ReactNode` |  |  | Optional trailing action node (e.g. a CopyButton or Button) pinned to the far right of the row. |
+| `className` | `string` |  |  | Additional classes merged onto the root `div` element. |
+| `children` | `React.ReactNode` |  |  | When provided, used as the value content in place of the `value` prop. Rendered identically — wrapped in a `font-mono text-xs` span. |
+
+Data slots: `config-row`
+
+### DataGrid
+
+Import: `import { ... } from "@strait/ui/components/data-grid";`
+
+Root component for the DataGrid system.
+
+Exports: `DataGrid`, `DataGridApiFetchParams`, `DataGridApiResponse`, `DataGridColumnFilter`, `DataGridColumnFilterProps`, `DataGridColumnHeader`, `DataGridColumnHeaderProps`, `DataGridColumnVisibility`, `DataGridContainer`, `DataGridContextProps`, `DataGridPagination`, `DataGridPaginationProps`, `DataGridProps`, `DataGridProvider`, `DataGridRequestParams`, `DataGridScrollArea`, `DataGridScrollAreaProps`, `DataGridSelectionBar`, `DataGridSelectionBarProps`, `DataGridTable`, `DataGridTableClassNames`, `DataGridTableDnd`, `DataGridTableDndRowHandle`, `DataGridTableDndRows`, `DataGridTableEmpty`, `DataGridTableFoot`, `DataGridTableFootRow`, `DataGridTableFootRowCell`, `DataGridTableHeadRowCellResize`, `DataGridTableLayout`, `DataGridTableLoader`, `DataGridTableRowActions`, `DataGridTableRowActionsProps`, `DataGridTableRowPin`, `DataGridTableRowSelect`, `DataGridTableRowSelectAll`, `DataGridTableVirtual`, `DataGridTableVirtualProps`, `DataGridTableVirtualScrollElements`, `DataGridTableVirtualizerOptions`, `getColumnHeaderLabel`, `useDataGrid`
+
+Props (`DataGridColumnFilterProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `column` | `Column<TData, TValue>` |  |  | The TanStack Table column to filter. |
+| `options` | `{ /** Display label. */ label: string; /** Filter value matched against `getFacetedUniqueValues`. */ value: string; /** Optional icon component. */ icon?: React.ComponentType<{ className?: string }>; }[]` | yes |  | List of filterable option values. |
+| `title` | `string` |  |  | Display title for the trigger button and search input placeholder. |
+
+Props (`DataGridColumnHeaderProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `column` | `Column<TData, TValue>` | yes |  | The TanStack Table column instance. |
+| `filter` | `React.ReactNode` |  |  | Optional filter node rendered as the first item in the column dropdown. |
+| `icon` | `React.ReactNode` |  |  | Optional icon rendered before the title. |
+| `pinnable` | `boolean` |  |  | Whether pinning is supported (passed through; read from tableLayout). |
+| `title` | `string` |  |  | Display title; falls back to `meta.headerTitle`, string header, or `column.id`. |
+| `visibility` | `boolean` |  |  | Whether to include a Columns visibility submenu. Default `false`. |
+
+Props (`DataGridContextProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `isLoading` | `boolean` | yes |  | Whether the grid is in a loading state. |
+| `props` | `DataGridProps<TData>` | yes |  | The resolved merged props passed to DataGrid. |
+| `recordCount` | `number` | yes |  | Total record count (drives pagination info and empty-state checks). |
+| `table` | `Table<TData>` | yes |  | The TanStack Table instance. |
+
+Props (`DataGridPaginationProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Extra class names on the root element. |
+| `ellipsisText` | `string` |  |  | Ellipsis text. Default `"..."`. |
+| `info` | `string` |  |  | Pagination info template string. Default `"{from} - {to} of {count}"`. |
+| `infoSkeleton` | `React.ReactNode` |  |  | Skeleton shown for the info section while loading. |
+| `more` | `boolean` |  |  | Whether to render grouped ellipsis page buttons. Default `false`. |
+| `moreLimit` | `number` |  |  | Number of page buttons per group. Default `5`. |
+| `nextPageLabel` | `string` |  |  | Aria-label for the next-page button. Default `"Go to next page"`. |
+| `previousPageLabel` | `string` |  |  | Aria-label for the previous-page button. Default `"Go to previous page"`. |
+| `rowsPerPageLabel` | `string` |  |  | Label for the rows-per-page control. Default `"Rows per page"`. |
+| `sizes` | `number[]` |  |  | Available page-size options. Default `[5, 10, 25, 50, 100]`. |
+| `sizesDescription` | `string` |  |  | Label after the page-size select. Default `"per page"`. |
+| `sizesInfo` | `string` |  |  | Extra info shown next to the sizes select. |
+| `sizesLabel` | `string` |  |  | Label before the page-size select. Default `"Show"`. |
+| `sizesSkeleton` | `React.ReactNode` |  |  | Skeleton shown for the sizes section while loading. |
+
+Props (`DataGridProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allRowsLoadedMessage` | `React.ReactNode \| string` |  |  | Message shown in the virtual infinite-scroll footer once all rows are loaded. |
+| `children` | `React.ReactNode` |  |  | Content rendered inside the provider (all sub-components). |
+| `className` | `string` |  |  | Extra class names on the outermost container (when using DataGridContainer). |
+| `emptyMessage` | `React.ReactNode \| string` |  |  | Message shown in the empty-state row when there is no data. |
+| `fetchingMoreMessage` | `React.ReactNode \| string` |  |  | Message shown in the virtual infinite-scroll footer while fetching more rows. |
+| `loading` | `boolean` |  |  | When `true`, the grid is in a loading state. |
+| `loadingMessage` | `React.ReactNode \| string` |  |  | Custom content shown in the spinner overlay. |
+| `loadingMode` | `"skeleton" \| "spinner"` |  |  | Controls whether loading renders skeleton rows (`"skeleton"`) or a centred spinner (`"spinner"`). |
+| `onRowClick` | `(row: TData) => void` |  |  | Called when a body row is clicked. |
+| `recordCount` | `number` | yes |  | Total number of records — used by pagination and empty-state checks. |
+| `table` | `Table<TData>` |  |  | The TanStack Table instance created by `useReactTable`. |
+| `tableClassNames` | `DataGridTableClassNames` |  |  | Class-name overrides for individual structural elements. |
+| `tableLayout` | `DataGridTableLayout` |  |  | Feature-flag bag that controls layout and interactive column/row features. |
+
+Props (`DataGridScrollAreaProps`):
+Extends: `Omit< ScrollAreaPrimitive.Root.Props, "children" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` | yes |  | Content rendered inside the scroll area. |
+| `orientation` | `"horizontal" \| "vertical" \| "both"` |  | `"both"` | Which scroll axes to enable. Default `"both"`. |
+
+Props (`DataGridSelectionBarProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `actions` | `BulkAction[]` | yes |  | Bulk action buttons rendered inside the toolbar. Each action's `onClick` is responsible for resetting selection if desired — the clear (×) button handles selection reset automatically. |
+| `className` | `string` |  |  | Additional class names forwarded to BulkActionBar. |
+| `children` | `React.ReactNode` |  |  | Extra content rendered between the count label and the action buttons (forwarded to BulkActionBar's `children` slot). |
+
+Props (`DataGridTableRowActionsProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `row` | `Row<TData>` | yes |  | The TanStack row whose actions are being exposed. Passed through to children via the `data-row-id` attribute for test selectors; the row itself is available to consumers via the surrounding closure. |
+| `children` | `React.ReactNode` | yes |  | DropdownMenuItem children rendered inside the menu. Compose `DropdownMenuItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, etc. |
+| `label` | `string` |  | `"Row actions"` | Accessible label for the trigger button. Defaults to `"Row actions"`. |
+| `className` | `string` |  |  | Additional class names merged onto the trigger button. |
+
+Props (`DataGridTableVirtualProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `estimateSize` | `number` |  |  | Estimated row height in px. Default `48`. |
+| `fetchingMore` | `boolean` |  | `false` | Whether a fetch is in progress (disables duplicate fetches). Default `false`. |
+| `fetchMoreOffset` | `number` |  | `0` | Number of items from the end to trigger `onFetchMore`. Default `0`. |
+| `footerContent` | `React.ReactNode` |  |  | Footer content. |
+| `height` | `number \| string` |  |  | Fixed height for a self-contained scroll container. |
+| `moreAvailable` | `boolean` |  |  | `false` = all loaded; `true` / `undefined` = more available. |
+| `onFetchMore` | `() => void` |  |  | If provided, enables infinite scroll mode. |
+| `overscan` | `number` |  | `10` | Number of rows to render outside the visible area. Default `10`. |
+| `renderHeader` | `boolean` |  | `true` | Whether to render the header. Default `true`. |
+| `virtualizerOptions` | `DataGridTableVirtualizerOptions<TData>` |  |  | Advanced virtualizer options. |
+
+Variants:
+- `dense`: `true`, `false` (default: `false`)
+
+Data slots: `data-grid`, `data-grid-column-header`, `data-grid-pagination`, `data-grid-row-actions`, `data-grid-row-pin`, `data-grid-row-select-all`, `data-grid-row-select-checkbox`, `data-grid-row-select-indicator`, `data-grid-row-spacer`, `data-grid-scroll-area`, `data-grid-scrollbar`, `data-grid-table`, `data-grid-table-body`, `data-grid-table-body-cell`, `data-grid-table-body-cell-skeleton`, `data-grid-table-body-row`, `data-grid-table-body-row-expanded`, `data-grid-table-body-row-skeleton`, `data-grid-table-empty`, `data-grid-table-foot`, `data-grid-table-foot-cell`, `data-grid-table-foot-row`, `data-grid-table-head`, `data-grid-table-head-cell`, `data-grid-table-head-cell-resize`, `data-grid-table-head-row`, `data-grid-table-loader`, `data-grid-table-viewport`, `data-grid-thumb`, `data-grid-virtual-spacer-bottom`, `data-grid-virtual-spacer-top`, `data-grid-virtual-status-complete`, `data-grid-virtual-status-loading`, `scroll-area-content`, `scroll-area-viewport`
+
+Heavy dependencies: `@tanstack/react-table`
+
+### Description List
+
+Import: `import { ... } from "@strait/ui/components/description-list";`
+
+Semantic description list root (`<dl>`). Compose with DescriptionTerm and DescriptionDetails to build accessible key–value displays.
+
+Exports: `DescriptionDetails`, `DescriptionDetailsProps`, `DescriptionList`, `DescriptionListProps`, `DescriptionTerm`, `DescriptionTermProps`, `descriptionListVariants`
+
+Props (`DescriptionDetailsProps`):
+Extends: `React.ComponentProps<"dd">`
+
+Props (`DescriptionListProps`):
+Extends: `React.ComponentProps<"dl">`, `DescriptionListVariantProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `divided` | `boolean` |  | `false` | Adds a subtle bottom border between rows (horizontal orientation only). |
+
+Props (`DescriptionTermProps`):
+Extends: `React.ComponentProps<"dt">`
+
+Variants:
+- `orientation`: `vertical`, `horizontal` (default: `vertical`)
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `description-details`, `description-list`, `description-term`
+
+### Execution Trace Bar
+
+Import: `import { ... } from "@strait/ui/components/execution-trace-bar";`
+
+Horizontal stacked proportional bar that visualises time or value breakdown across labelled segments, with per-segment tooltips and an optional legend.
+
+Exports: `ExecutionTraceBar`, `ExecutionTraceBarProps`, `TraceSegment`
+
+Props (`ExecutionTraceBarProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `segments` | `TraceSegment[]` | yes |  | Ordered list of segments to display in the bar. |
+| `total` | `number` |  |  | Denominator for percentage calculations. Defaults to the sum of all segment values. |
+| `showLegend` | `boolean` |  | `true` | Whether to render the segment legend below the bar. |
+| `formatValue` | `(n: number) => string` |  | `(n) => String(n)` | Formats a raw numeric value for display in tooltips and the legend. |
+| `size` | `VariantProps<typeof executionTraceBarVariants>["size"]` |  | `"default"` | Controls the height of the stacked bar track. |
+| `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `div`. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `execution-trace-bar`, `execution-trace-bar-legend`, `execution-trace-bar-segment`
+
+### Filters
+
+Import: `import { ... } from "@strait/ui/components/filters";`
+
+A faceted filter builder modelled on corr.sh's Filters.
+
+Exports: `CustomRendererProps`, `DEFAULT_I18N`, `DEFAULT_OPERATORS`, `Filter`, `FilterFieldConfig`, `FilterFieldGroup`, `FilterFieldType`, `FilterFieldsConfig`, `FilterGroup`, `FilterI18nConfig`, `FilterI18nOperators`, `FilterOperator`, `FilterOption`, `Filters`, `FiltersContent`, `FiltersContentProps`, `FiltersProps`, `createFilter`, `createFilterGroup`
+
+Props (`CustomRendererProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `field` | `FilterFieldConfig` | yes |  | The FilterFieldConfig whose value is being edited. |
+| `onChange` | `(values: string[]) => void` | yes |  | Callback to commit a new set of selected values for this filter. |
+| `operator` | `string` | yes |  | The operator value currently applied to the filter chip. |
+| `values` | `string[]` | yes |  | Currently selected values for this filter. |
+
+Props (`FiltersContentProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fields` | `FilterFieldsConfig` | yes |  | Field definitions (flat list or grouped) used to resolve chip labels. |
+| `filters` | `Filter[]` | yes |  | Controlled list of active Filter chips to render. |
+| `onChange` | `(filters: Filter[]) => void` | yes |  | Called with the updated filter list whenever a chip is changed or removed. |
+
+Props (`FiltersProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allowMultiple` | `boolean` |  | `true` | Allow the same field to be filtered more than once. |
+| `className` | `string` |  |  | Extra classes merged onto the root container `<div>`. |
+| `enableShortcut` | `boolean` |  | `false` | Bind a keyboard shortcut that opens the add-filter menu. |
+| `fields` | `FilterFieldsConfig` | yes |  | Field definitions (flat list or grouped). |
+| `filters` | `Filter[]` | yes |  | Controlled list of active filters. |
+| `i18n` | `Partial< Omit< FilterI18nConfig, "operators" \| "placeholders" \| "helpers" \| "validation" > > & { operators?: Partial<FilterI18nOperators>; placeholders?: Partial<FilterI18nConfig["placeholders"]>; helpers?: Partial<FilterI18nConfig["helpers"]>; validation?: Partial<FilterI18nConfig["validation"]>; }` |  |  | Partial i18n overrides merged over DEFAULT_I18N. |
+| `onChange` | `(filters: Filter[]) => void` | yes |  | Called whenever the filter list changes. |
+| `radius` | `"default" \| "full"` |  | `"default"` | Chip corner style. |
+| `shortcutKey` | `string` |  | `"f"` | Key for the shortcut. |
+| `shortcutLabel` | `string` |  | `"F"` | Label shown in the trigger's `Kbd` hint. |
+| `showSearchInput` | `boolean` |  | `true` | Show the search box at the top of the field picker. |
+| `size` | `FilterSize` |  | `"default"` | Control density. |
+| `trigger` | `React.ReactElement` |  |  | Replace the default "Add filter" trigger element. |
+| `variant` | `"solid" \| "default"` |  | `"default"` | Reserved spacing style. |
+
+Variants:
+- `variant`: `solid`, `default` (default: `default`)
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `filter`, `filter-add`, `filter-chip`, `filter-operator`, `filter-remove`, `filter-value`
+
+### Item
+
+Import: `import { ... } from "@strait/ui/components/item";`
+
+Flexible row-level container for list entries, menu rows, or card-like tiles in an ItemGroup.
+
+Exports: `Item`, `ItemActions`, `ItemContent`, `ItemDescription`, `ItemFooter`, `ItemGroup`, `ItemHeader`, `ItemMedia`, `ItemProps`, `ItemSeparator`, `ItemTitle`
+
+Props (`ItemProps`):
+Extends: `useRender.ComponentProps<"div">`, `VariantProps<typeof itemVariants>`
+
+Variants:
+- `variant`: `default`, `outline`, `muted`, `ghost` (default: `default`)
+- `size`: `default`, `sm`, `xs`, `xl` (default: `default`)
+
+Data slots: `item-actions`, `item-content`, `item-description`, `item-footer`, `item-group`, `item-header`, `item-media`, `item-separator`, `item-title`
+
+### JSON Viewer
+
+Import: `import { ... } from "@strait/ui/components/json-viewer";`
+
+Hand-rolled recursive, collapsible, colorised JSON tree viewer.
+
+Exports: `JsonViewer`, `JsonViewerProps`
+
+Props (`JsonViewerProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Additional class names applied to the root element. |
+| `copyable` | `boolean` |  | `false` | When `true`, a CopyButton is shown in the top-right corner. |
+| `data` | `unknown` | yes |  | The JSON-serialisable value to display. |
+| `defaultExpanded` | `boolean \| number` |  | `1` | Controls how deep the tree is initially expanded. - `true` — expand all nodes. - `false` — collapse all nodes. - `number` — expand nodes whose depth is less than this value (root = 0). |
+| `maxHeight` | `number \| string` |  |  | Constrains the viewer height. Accepts any CSS `max-height` value or a pixel number. |
+| `rootLabel` | `React.ReactNode` |  |  | Optional label rendered at the top-left of the root node. |
+
+Data slots: `json-viewer`
+
+### Leaderboard
+
+Import: `import { ... } from "@strait/ui/components/leaderboard";`
+
+Root of a Leaderboard. A vertical stack of ranked rows, each with a value-proportional fill bar behind its label.
+
+Exports: `Leaderboard`, `LeaderboardAction`, `LeaderboardContent`, `LeaderboardEnd`, `LeaderboardHeader`, `LeaderboardItem`, `LeaderboardItemProps`, `LeaderboardProps`, `LeaderboardStart`, `LeaderboardTitle`
+
+Props (`LeaderboardItemProps`):
+Extends: `Omit<React.ComponentProps<"li">, "children">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `\| React.ReactNode \| ((values: LeaderboardItemRenderProps) => React.ReactNode)` |  |  | Row content, or a render-prop receiving `{ value, percentage }`. |
+| `maxValue` | `number` |  | `100` | Upper bound of the scale. Defaults to `100`. |
+| `minValue` | `number` |  | `0` | Lower bound of the scale. Defaults to `0`. |
+| `onAction` | `() => void` |  |  | Makes the row a button and fires on click/Enter/Space. |
+| `value` | `number` | yes |  | The row's value, used to size the fill bar. |
+
+Props (`LeaderboardProps`):
+Extends: `React.ComponentProps<"div">`
+
+Data slots: `leaderboard`, `leaderboard-action`, `leaderboard-content`, `leaderboard-end`, `leaderboard-header`, `leaderboard-item`, `leaderboard-start`, `leaderboard-title`
+
+### Metric Card
+
+Import: `import { ... } from "@strait/ui/components/metric-card";`
+
+Self-contained metric summary card with an optional delta indicator and sparkline.
+
+Exports: `MetricCard`, `MetricCardDelta`, `MetricCardHeader`, `MetricCardProps`, `MetricCardSparkline`, `MetricCardValue`
+
+Props (`MetricCardProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `title` | `React.ReactNode` | yes |  | Card heading text. |
+| `value` | `React.ReactNode` | yes |  | The primary numeric or text value to highlight. |
+| `delta` | `{ value: number; label?: string; direction?: "up" \| "down" \| "neutral"; }` |  |  | Optional delta / change indicator. `direction` defaults to `"up"` when `value >= 0` and `"down"` otherwise. Pass `"neutral"` for flat trends. |
+| `icon` | `IconSvgElement` |  |  | Trailing icon rendered in the header beside `title`. |
+| `description` | `React.ReactNode` |  |  | Muted description line below the delta. |
+| `data` | `number[]` |  |  | Numeric series rendered as a mini sparkline at the bottom of the card. |
+| `color` | `string` |  | `"var(--chart-1)"` | Sparkline bar fill color. Defaults to `var(--chart-1)`. |
+| `size` | `"default" \| "sm"` |  | `"default"` | Layout size of the card. |
+| `className` | `string` |  |  | Extra classes merged onto the root `<Card>` element. |
+| `children` | `React.ReactNode` |  |  | Additional content rendered after the description line, before the sparkline. |
+
+Data slots: `metric-card`, `metric-card-delta`, `metric-card-header`, `metric-card-sparkline`, `metric-card-value`
+
+Heavy dependencies: `recharts`
+
+### QR Code
+
+Import: `import { ... } from "@strait/ui/components/qr-code";`
+
+Root component that renders an SVG QR code and provides context to all child sub-components.
+
+Exports: `QRCode`, `QRCodeDownload`, `QRCodeDownloadProps`, `QRCodeOverlay`, `QRCodeOverlayProps`, `QRCodeProps`, `QRCodeSkeleton`, `QRCodeSkeletonProps`
+
+Props (`QRCodeDownloadProps`):
+Extends: `React.ComponentProps<typeof Button>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `filename` | `string` |  | `"qrcode"` | Base filename (without extension) for the downloaded file. |
+| `format` | `"svg" \| "png"` |  | `"svg"` | Export format. - `"svg"` — lossless vector, works in all environments. - `"png"` — rasterised at the QR code's native `size`. |
+
+Props (`QRCodeOverlayProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` |  |  | Logo, icon, or any content to display centred over the QR code. |
+
+Props (`QRCodeProps`):
+Extends: `Omit< React.ComponentProps<"div">, "children" | "className" | "style" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `bgColor` | `string` |  |  | Background colour for the QR code modules. Defaults to the library default (`#ffffff`). |
+| `children` | `React.ReactNode` |  |  | Nested content — typically QRCodeOverlay and/or QRCodeDownload. |
+| `className` | `string` |  |  | Additional CSS classes applied to the wrapper `<div>`. |
+| `fgColor` | `string` |  |  | Foreground colour for the QR code modules. Defaults to the library default (`#000000`). |
+| `level` | `"L" \| "M" \| "Q" \| "H"` |  | `"M"` | Reed–Solomon error-correction level. - `"L"` — 7 % correction (highest data density) - `"M"` — 15 % correction (default) - `"Q"` — 25 % correction - `"H"` — 30 % correction (lowest data density — required when using QRCodeOverlay) |
+| `margin` | `number` |  | `0` | Quiet-zone margin expressed in QR *modules* (not pixels). |
+| `size` | `number` |  | `160` | Pixel size of the rendered QR code square. |
+| `style` | `React.CSSProperties` |  |  | Inline style overrides for the wrapper `<div>`. |
+| `title` | `string` |  |  | Accessible name for the QR code `<svg>` (rendered as an SVG `<title>`). A QR code is meaningful content a screen reader cannot otherwise convey, so it always carries an accessible name. |
+| `value` | `string` | yes |  | The data to encode into the QR code (e.g. a URL or plain text). |
+
+Props (`QRCodeSkeletonProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `number` |  | `160` | Pixel size of the skeleton square — should match the intended QRCode `size`. |
+
+Data slots: `qr-code`, `qr-code-overlay`, `qr-code-skeleton`
+
+### Radial Gauge
+
+Import: `import { ... } from "@strait/ui/components/radial-gauge";`
+
+Circular radial-bar gauge that fills proportionally to a `value / max` ratio.
+
+Exports: `RadialGauge`, `RadialGaugeProps`, `RadialGaugeThresholds`
+
+Props (`RadialGaugeProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `number` | yes |  | Current value to display. |
+| `max` | `number` |  | `100` | Maximum possible value. Defaults to `100`. |
+| `label` | `React.ReactNode` |  |  | Optional label rendered beneath the center percentage. |
+| `centerLabel` | `React.ReactNode` |  |  | Replaces the default `"N%"` text rendered in the center of the gauge. |
+| `color` | `string` |  |  | Explicit fill color; overrides threshold-based color selection. |
+| `thresholds` | `RadialGaugeThresholds` |  |  | Thresholds used to pick warning/danger colors automatically. |
+| `className` | `string` |  |  | Additional class names merged onto the outermost gauge wrapper div. |
+
+Data slots: `radial-gauge`
+
+Heavy dependencies: `recharts`
+
+### Relative Time Card
+
+Import: `import { ... } from "@strait/ui/components/relative-time-card";`
+
+Shows a compact, formatted timestamp that — on hover — reveals a card with the live relative time and the same instant rendered across one or more timezones (plus the viewer's local zone).
+
+Exports: `RelativeTimeCard`, `RelativeTimeCardProps`
+
+Props (`RelativeTimeCardProps`):
+Extends: `Omit<React.ComponentProps<"button">, "children">`, `VariantProps<typeof triggerVariants>`, `Pick< React.ComponentProps<typeof HoverCard>, "open" | "defaultOpen" | "onOpenChange" >`, `Pick<React.ComponentProps<typeof HoverCardTrigger>, "delay" | "closeDelay">`, `Pick< React.ComponentProps<typeof HoverCardContent>, "side" | "align" | "sideOffset" | "alignOffset" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `date` | `Date \| string \| number` | yes |  | The date to display. Accepts a `Date`, an ISO string, or a numeric epoch timestamp — all are normalised via `new Date(date)`. |
+| `timezones` | `string[]` |  | `["UTC"]` | IANA time-zone identifiers shown as rows in the card. The viewer's local timezone is always appended as a final row. |
+| `updateInterval` | `number` |  | `1000` | How often (ms) the relative-time string in the card refreshes. |
+| `children` | `React.ReactNode` |  |  | Custom trigger label. When omitted, the trigger shows the formatted absolute timestamp (e.g. "Jun 1, 2024, 12:00 PM"). |
+
+Variants:
+- `variant`: `default`, `muted`, `ghost` (default: `default`)
+
+Data slots: `relative-time-card-content`, `relative-time-card-trigger`
+
+### Sortable
+
+Import: `import { ... } from "@strait/ui/components/sortable";`
+
+Drag-to-reorder container built on dnd-kit. Wraps its children in a `DndContext` + `SortableContext` and renders a floating overlay that mirrors the actively dragged SortableItem.
+
+Exports: `Sortable`, `SortableItem`, `SortableItemHandle`, `SortableItemHandleProps`, `SortableItemProps`, `SortableProps`
+
+Props (`SortableItemHandleProps`):
+Extends: `ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `cursor` | `boolean` |  | `true` | When `true` (default), applies `cursor-grab` / `cursor-grabbing` to signal draggability. Set `false` to manage the cursor yourself. |
+
+Props (`SortableItemProps`):
+Extends: `ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `boolean` |  | `false` | When `true`, the item cannot be dragged and is dimmed. |
+| `value` | `string` | yes |  | Stable id for this item; must equal `getItemValue(item)` on the parent Sortable. |
+
+Props (`SortableProps`):
+Extends: `Omit<ComponentProps<"div">, "onDragStart" | "onDragEnd">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `getItemValue` | `(item: T) => string` | yes |  | Derives the stable string id for an item. Must match the `value` passed to the corresponding SortableItem. |
+| `modifiers` | `Modifiers` |  |  | dnd-kit modifiers applied to both the drag and the overlay. |
+| `onDragEnd` | `(event: DragEndEvent) => void` |  |  | Forwarded to dnd-kit's `DndContext` `onDragEnd` (fires before reorder). |
+| `onDragStart` | `(event: DragStartEvent) => void` |  |  | Forwarded to dnd-kit's `DndContext` `onDragStart`. |
+| `onMove` | `(event: { event: DragEndEvent; activeIndex: number; overIndex: number; }) => void` |  |  | Escape hatch invoked instead of the built-in `arrayMove`. Receives the raw drag event plus the resolved source/target indices, letting you run a custom reorder (e.g. server-synced). When provided, `onValueChange` is **not** called automatically. |
+| `onValueChange` | `(value: T[]) => void` | yes |  | Called with the reordered list after a successful drag. |
+| `strategy` | `SortableStrategy` |  | `"vertical"` | Layout strategy used for measuring/reflowing during a drag. `"vertical"` (default) for stacked lists, `"horizontal"` for rows, and `"grid"` for wrapped two-dimensional grids. |
+| `value` | `T[]` | yes |  | The ordered list of items rendered as SortableItems. |
+
+Data slots: `sortable`, `sortable-item`, `sortable-item-handle`
+
+### Status Badge
+
+Import: `import { ... } from "@strait/ui/components/status-badge";`
+
+A Badge that maps an orchestration status keyword to a consistent colour, a leading status dot, and a humanised label.
+
+Exports: `DEFAULT_STATUS_CONFIG`, `STATUS_CONFIG`, `StatusBadge`, `StatusBadgeProps`, `StatusConfig`, `formatStatusLabel`, `getStatusConfig`
+
+Props (`StatusBadgeProps`):
+Extends: `Omit<BadgeProps, "children">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `status` | `string` | yes |  | The status keyword, e.g. `"running"`, `"failed"`, `"timed_out"`. |
+| `showDot` | `boolean` |  | `true` | Show the leading coloured dot. Defaults to `true`. |
+| `label` | `React.ReactNode` |  |  | Override the rendered text; defaults to a humanised `status`. |
+| `pulse` | `boolean` |  |  | When `true`, renders an `animate-ping` ring behind the dot to signal a "live" or real-time state. |
+| `dotOnly` | `boolean` |  |  | When `true`, renders only the dot with no visible text label. |
+
+Data slots: `status-badge`, `status-badge-dot`
+
+### Table
+
+Import: `import { ... } from "@strait/ui/components/table";`
+
+Responsive data table with a horizontally scrollable container.
+
+Exports: `Table`, `TableBody`, `TableCaption`, `TableCell`, `TableFooter`, `TableHead`, `TableHeader`, `TableProps`, `TableRow`, `tableVariants`
+
+Props (`TableProps`):
+Extends: `React.ComponentProps<"table">`, `TableVariantProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Controls cell height and padding for all TableHead and TableCell elements via a `data-size` attribute on the container div. - `sm` — `h-6 px-1.5 text-xs` (compact) - `default` — `h-7 px-2 text-sm` (unchanged) - `lg` — `h-9 px-3 text-sm` (spacious) |
+
+Variants:
+- `variant`: `default`, `striped`, `bordered` (default: `default`)
+
+Data slots: `table`, `table-body`, `table-caption`, `table-cell`, `table-container`, `table-footer`, `table-head`, `table-header`, `table-row`
+
+### Tag Group
+
+Import: `import { ... } from "@strait/ui/components/tag-group";`
+
+An accessible group container for a set of selectable or removable tags.
+
+Exports: `Tag`, `TagGroup`, `TagGroupProps`, `TagList`, `TagListProps`, `TagProps`, `tagVariants`
+
+Props (`TagGroupProps`):
+Extends: `TagGroupPropsRac`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Additional Tailwind classes merged onto the wrapper `<div>`. |
+| `label` | `React.ReactNode` |  |  | Optional label text or element rendered above the tag list. |
+
+Props (`TagListProps`):
+Extends: `TagListPropsRac<T>`
+
+Props (`TagProps`):
+Extends: `TagPropsRac`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Additional Tailwind classes merged onto the tag element. |
+| `variant` | `VariantProps<typeof tagVariants>["variant"]` |  |  | Visual style variant. Defaults to `"default"`. |
+
+Variants:
+- `variant`: `default`, `secondary`, `outline` (default: `default`)
+
+Data slots: `tag`, `tag-group`, `tag-list`
+
+### Timeline
+
+Import: `import { ... } from "@strait/ui/components/timeline";`
+
+Stepped progress tracker that renders a sequence of labeled events.
+
+Exports: `Timeline`, `TimelineContent`, `TimelineContextValue`, `TimelineDate`, `TimelineHeader`, `TimelineIndicator`, `TimelineIndicatorProps`, `TimelineItem`, `TimelineItemProps`, `TimelineProps`, `TimelineSeparator`, `TimelineTitle`, `TimelineVariant`
+
+Props (`TimelineIndicatorProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `IconSvgElement` |  |  | Optional Hugeicons icon rendered centered inside the indicator bubble. When present, the indicator automatically becomes a flex-center container. Takes precedence over `children` in render order (rendered first). |
+
+Props (`TimelineItemProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `step` | `number` | yes |  | 1-based index of this step; compared against the active step to set `data-completed`. |
+
+Props (`TimelineProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `defaultValue` | `number` |  | `1` | Initial active step index (uncontrolled). Defaults to `1`. |
+| `value` | `number` |  |  | Active step index (controlled). |
+| `onValueChange` | `(value: number) => void` |  |  | Called when the active step changes. |
+| `orientation` | `"horizontal" \| "vertical"` |  | `"vertical"` | Direction of the step track. Defaults to `"vertical"`. |
+| `line` | `"solid" \| "dotted"` |  | `"solid"` | Connector line rendering style. - `"solid"` (default) — filled bar using `bg-*` classes. - `"dotted"` — dashed border line drawn via `border-*` + `border-dashed`. |
+| `variant` | `TimelineVariant` |  | `"primary"` | Colour variant applied to completed-step indicators and separators. Defaults to `"primary"`. |
+| `size` | `"sm" \| "default"` |  | `"default"` | Size preset for indicators, gaps, and text. - `"default"` — existing proportions (no change). - `"sm"` — smaller indicator (`size-4`), tighter gaps, smaller text. |
+
+Data slots: `timeline`, `timeline-content`, `timeline-header`, `timeline-indicator`, `timeline-item`, `timeline-separator`, `timeline-title`
+
+### Tracker
+
+Import: `import { ... } from "@strait/ui/components/tracker";`
+
+A compact status timeline — a row of small colored blocks, each with an optional hover tooltip. Ideal for uptime, build history, or any per-period status strip (à la a status-page incident bar).
+
+Exports: `Tracker`, `TrackerBlockProps`, `TrackerProps`
+
+Props (`TrackerBlockProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `color` | `string` |  |  | Tailwind background class for this block (e.g. `"bg-success"`). |
+| `defaultBackgroundColor` | `string` |  |  | Background class used when `color` is omitted. |
+| `disabledTooltip` | `boolean` |  |  | Skip the tooltip entirely for this block. |
+| `key` | `string \| number` |  |  | Stable React key when the data has no natural id. |
+| `tooltip` | `string` |  |  | Tooltip label shown on hover/focus. |
+
+Props (`TrackerProps`):
+Extends: `React.ComponentProps<"div">`, `Pick<TrackerBlockProps, "disabledTooltip">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `data` | `TrackerBlockProps[]` | yes | `[]` | Ordered list of blocks to render left-to-right. |
+| `defaultBackgroundColor` | `string` |  |  | Background class for blocks that omit their own `color`. |
+
+Data slots: `tracker`, `tracker-block`
+
+### Tree
+
+Import: `import { ... } from "@strait/ui/components/tree";`
+
+A hierarchical tree view for displaying nested data with support for keyboard navigation, single/multiple selection, and expand/collapse.
+
+Exports: `Tree`, `TreeItem`, `TreeItemProps`, `TreeProps`
+
+Props (`TreeItemProps`):
+Extends: `Omit<TreeItemPropsRac<T>, "textValue" | "children">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` |  |  | Nested `<TreeItem>` elements that form the item's children. |
+| `icon` | `IconSvgElement` |  |  | Optional leading icon rendered before the label. |
+| `textValue` | `string` |  |  | Typeahead / accessibility string for the row. |
+| `title` | `React.ReactNode` | yes |  | The visible label for the row. |
+
+Data slots: `tree`, `tree-item`
+
+## Navigation
+
+### Breadcrumb
+
+Import: `import { ... } from "@strait/ui/components/breadcrumb";`
+
+Accessible navigation landmark that shows the user's location in the site hierarchy.
+
+Exports: `Breadcrumb`, `BreadcrumbEllipsis`, `BreadcrumbItem`, `BreadcrumbLink`, `BreadcrumbList`, `BreadcrumbPage`, `BreadcrumbProps`, `BreadcrumbSeparator`
+
+Props (`BreadcrumbProps`):
+Extends: `React.ComponentProps<"nav">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `BreadcrumbSize` |  | `"default"` | Controls text size and gap across all descendant breadcrumb parts. |
+| `separator` | `React.ReactNode` |  |  | Default separator node rendered between every BreadcrumbItem when the caller omits explicit `<BreadcrumbSeparator>` elements. Forwarded via React context so each `BreadcrumbSeparator` can fall back to it. |
+
+Data slots: `breadcrumb`, `breadcrumb-ellipsis`, `breadcrumb-item`, `breadcrumb-list`, `breadcrumb-page`, `breadcrumb-separator`
+
+### Command
+
+Import: `import { ... } from "@strait/ui/components/command";`
+
+A keyboard-navigable command palette built on the `cmdk` primitive.
+
+Exports: `Command`, `CommandDialog`, `CommandEmpty`, `CommandGroup`, `CommandInput`, `CommandItem`, `CommandList`, `CommandListSize`, `CommandProps`, `CommandSeparator`, `CommandShortcut`
+
+Props (`CommandProps`):
+Extends: `React.ComponentProps<typeof CommandPrimitive>`
+
+Data slots: `command`, `command-empty`, `command-group`, `command-input`, `command-input-wrapper`, `command-item`, `command-list`, `command-separator`, `command-shortcut`
+
+### Command Menu
+
+Import: `import { ... } from "@strait/ui/components/command-menu";`
+
+A ⌘K command palette that combines the design-system CommandDialog with a global hotkey from `react-hotkeys-hook`.
+
+Exports: `CommandMenu`, `CommandMenuGroup`, `CommandMenuItem`, `CommandMenuProps`
+
+Props (`CommandMenuProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `groups` | `CommandMenuGroup[]` | yes |  | Groups of items rendered inside the palette. |
+| `open` | `boolean` |  |  | Controlled open state; when provided alongside `onOpenChange` the parent fully owns open/close. |
+| `onOpenChange` | `(open: boolean) => void` |  |  | Called when the palette requests an open-state change. |
+| `placeholder` | `string` |  | `"Type a command or search..."` | Placeholder text shown in the search input. |
+| `hotkey` | `string` |  | `"mod+k"` | Global hotkey that toggles the palette. Uses `react-hotkeys-hook` notation — `"mod"` maps to `⌘` on macOS and `Ctrl` on Windows/Linux. |
+| `trigger` | `React.ReactNode` |  |  | Optional element rendered outside the dialog; clicking it opens the palette. Typically a `<Button>` or an `<kbd>` hint. |
+| `emptyMessage` | `string` |  | `"No results found."` | Message shown by CommandEmpty when no items match the current query. |
+
+Data slots: `command-menu`, `command-menu-trigger`
+
+### Menubar
+
+Import: `import { ... } from "@strait/ui/components/menubar";`
+
+A horizontal bar of labeled menu triggers, each opening a dropdown panel.
+
+Exports: `Menubar`, `MenubarCheckboxItem`, `MenubarContent`, `MenubarGroup`, `MenubarItem`, `MenubarLabel`, `MenubarMenu`, `MenubarPortal`, `MenubarProps`, `MenubarRadioGroup`, `MenubarRadioItem`, `MenubarSeparator`, `MenubarShortcut`, `MenubarSub`, `MenubarSubContent`, `MenubarSubTrigger`, `MenubarTrigger`
+
+Props (`MenubarProps`):
+Extends: `MenubarPrimitive.Props`
+
+Data slots: `menubar`, `menubar-checkbox-item`, `menubar-content`, `menubar-group`, `menubar-item`, `menubar-label`, `menubar-menu`, `menubar-portal`, `menubar-radio-group`, `menubar-radio-item`, `menubar-separator`, `menubar-shortcut`, `menubar-sub`, `menubar-sub-content`, `menubar-sub-trigger`, `menubar-trigger`
+
+### NavigationMenu
+
+Import: `import { ... } from "@strait/ui/components/navigation-menu";`
+
+Horizontal navigation bar with flyout content panels.
+
+Exports: `NavigationMenu`, `NavigationMenuContent`, `NavigationMenuIndicator`, `NavigationMenuItem`, `NavigationMenuLink`, `NavigationMenuList`, `NavigationMenuPositioner`, `NavigationMenuProps`, `NavigationMenuTrigger`, `navigationMenuTriggerStyle`
+
+Props (`NavigationMenuProps`):
+Extends: `NavigationMenuPrimitive.Root.Props`, `Pick<NavigationMenuPrimitive.Positioner.Props, "align">`
+
+Data slots: `navigation-menu`, `navigation-menu-content`, `navigation-menu-indicator`, `navigation-menu-item`, `navigation-menu-link`, `navigation-menu-list`, `navigation-menu-trigger`
+
+### NavigationRail
+
+Import: `import { ... } from "@strait/ui/components/navigation-rail";`
+
+A fixed-width vertical nav column that holds icon-only navigation items.
+
+Exports: `NavigationRail`, `NavigationRailFooter`, `NavigationRailFooterProps`, `NavigationRailHeader`, `NavigationRailHeaderProps`, `NavigationRailItem`, `NavigationRailItemProps`, `NavigationRailProps`, `NavigationRailSection`, `NavigationRailSectionProps`
+
+Props (`NavigationRailFooterProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` | yes |  | Content rendered inside the footer (typically a profile item). |
+| `className` | `string` |  |  | Additional class names merged onto the footer wrapper. |
+
+Props (`NavigationRailHeaderProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` | yes |  | Content rendered inside the header (typically a logo or app icon). |
+| `className` | `string` |  |  | Additional class names merged onto the header wrapper. |
+
+Props (`NavigationRailItemProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `IconSvgElement` | yes |  | Hugeicons SVG element rendered as the button icon. |
+| `label` | `string` | yes |  | Accessible text shown in the tooltip and as `sr-only` content. |
+| `href` | `string` |  |  | Optional URL; pass when the item should behave as an anchor. |
+| `onClick` | `() => void` |  |  | Click handler for the icon button. |
+| `active` | `boolean` |  |  | Marks the item as the currently active route. |
+| `disabled` | `boolean` |  |  | Disables pointer events and reduces opacity when `true`. |
+| `badge` | `React.ReactNode` |  |  | Optional indicator node (e.g. `<Ping>`) absolutely positioned at the top-right corner of the button. |
+
+Props (`NavigationRailProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `orientation` | `"left" \| "right"` |  | `"left"` | Side of the layout the rail is anchored to; flips border and order. |
+
+Props (`NavigationRailSectionProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` | yes |  | NavigationRailItem elements to render in this group. |
+| `className` | `string` |  |  | Additional class names merged onto the section wrapper. |
+
+Data slots: `navigation-rail`, `navigation-rail-footer`, `navigation-rail-header`, `navigation-rail-item`, `navigation-rail-section`
+
+### Pagination
+
+Import: `import { ... } from "@strait/ui/components/pagination";`
+
+Accessible navigation landmark for moving between pages of content.
+
+Exports: `Pagination`, `PaginationContent`, `PaginationEllipsis`, `PaginationItem`, `PaginationLink`, `PaginationNext`, `PaginationPrevious`, `PaginationProps`
+
+Props (`PaginationProps`):
+Extends: `React.ComponentProps<"nav">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | `PaginationSize` |  | `"default"` | Scales all page-button controls uniformly. |
+
+Data slots: `pagination`, `pagination-content`, `pagination-ellipsis`, `pagination-item`, `pagination-link`
+
+### Scrollspy
+
+Import: `import { ... } from "@strait/ui/components/scrollspy";`
+
+Tracks the section currently in view and marks its corresponding navigation anchor with `data-active="true"`. Anchors opt in via `data-{dataAttribute}-anchor="<section-id>"`; clicking one smooth-scrolls to its section and (optionally) updates the URL hash.
+
+Exports: `Scrollspy`, `ScrollspyProps`
+
+Props (`ScrollspyProps`):
+Extends: `Omit<ComponentProps<"div">, "children">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `ReactNode` | yes |  | The navigation links to track; anchors carry `data-{dataAttribute}-anchor`. |
+| `dataAttribute` | `string` |  | `"scrollspy"` | The data-attribute namespace used to find anchors and apply offsets, e.g. `"scrollspy"` looks for `data-scrollspy-anchor`. Defaults to `"scrollspy"`. |
+| `history` | `boolean` |  | `true` | When `true` (default), the active section id is synced to the URL hash. |
+| `offset` | `number` |  | `0` | Pixels subtracted from each section's offset before comparing against the scroll position. Override per anchor with `data-{dataAttribute}-offset`. |
+| `onUpdate` | `(id: string) => void` |  |  | Called with the active section id whenever the active anchor changes. |
+| `smooth` | `boolean` |  | `true` | When `true` (default), click-to-scroll uses smooth scrolling. |
+| `targetRef` | `RefObject<HTMLElement \| Document \| null \| undefined>` |  |  | The scroll container to observe. Defaults to the document/window when omitted. Pass a ref to a scrollable element (or one wrapping a `data-slot="scroll-area-viewport"`) to spy inside it. |
+
+Data slots: `scroll-area-viewport`, `scrollspy`
+
+### Sidebar
+
+Import: `import { ... } from "@strait/ui/components/sidebar";`
+
+The sidebar panel itself — a collapsible column rendered inside a SidebarProvider.
+
+Exports: `Sidebar`, `SidebarCard`, `SidebarCardContent`, `SidebarCardDescription`, `SidebarCardFooter`, `SidebarCardHeader`, `SidebarCardProps`, `SidebarCardTitle`, `SidebarContent`, `SidebarFooter`, `SidebarGroup`, `SidebarGroupAction`, `SidebarGroupContent`, `SidebarGroupLabel`, `SidebarGroupProps`, `SidebarHeader`, `SidebarInput`, `SidebarInset`, `SidebarMenu`, `SidebarMenuAction`, `SidebarMenuBadge`, `SidebarMenuButton`, `SidebarMenuButtonProps`, `SidebarMenuDragHandle`, `SidebarMenuFlyout`, `SidebarMenuItem`, `SidebarMenuItemProps`, `SidebarMenuProps`, `SidebarMenuSkeleton`, `SidebarMenuSub`, `SidebarMenuSubButton`, `SidebarMenuSubItem`, `SidebarMenuSubProps`, `SidebarPanel`, `SidebarPanelProps`, `SidebarProps`, `SidebarProvider`, `SidebarProviderProps`, `SidebarRail`, `SidebarRailButton`, `SidebarRailButtonProps`, `SidebarSearchButton`, `SidebarSearchButtonProps`, `SidebarSeparator`, `SidebarSwitcher`, `SidebarSwitcherCurrent`, `SidebarSwitcherItem`, `SidebarSwitcherItemProps`, `SidebarSwitcherProps`, `SidebarToggleRail`, `SidebarTrigger`, `SidebarUserButton`, `SidebarUserButtonProps`, `useSidebar`
+
+Props (`SidebarCardProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `showOnCollapse` | `boolean` |  | `false` | Show the card when the sidebar is collapsed to icon width. Defaults to `false` — most upgrade / onboarding prompts only make sense when there's room for the headline copy. |
+
+Props (`SidebarGroupProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `collapsible` | `string` |  |  | Persistence key for the group's open/closed state. When set, the group becomes a Base UI `Collapsible` and its SidebarGroupLabel promotes itself to a disclosure trigger with a rotating chevron. |
+| `defaultOpen` | `boolean` |  | `true` | Initial open state when uncontrolled. Defaults to `true`. |
+| `onOpenChange` | `(open: boolean) => void` |  |  | Called when the group's open state changes in controlled mode. |
+| `open` | `boolean` |  |  | Controlled openness; pair with onOpenChange. |
+| `pinned` | `boolean` |  |  | When `true`, the group floats to the bottom of SidebarContent via `margin-top: auto` — handy for "Settings" / "Help" rows that should always sit at the foot of the nav list. |
+
+Props (`SidebarMenuButtonProps`):
+Extends: `useRender.ComponentProps<"button">`, `React.ComponentProps<"button">`, `VariantProps<typeof sidebarMenuButtonVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `active` | `boolean` |  | `false` | Whether this row represents the current page. Sets `data-active` and `aria-current="page"`. |
+| `tooltip` | `string \| React.ComponentProps<typeof TooltipContent>` |  |  | Tooltip shown when the sidebar is collapsed to icon or when the label is truncated. |
+| `subMenu` | `boolean` |  |  | When `true`, promotes this button into a Base UI `Collapsible.Trigger` for the enclosing SidebarMenuItem's sub-menu and appends a rotating chevron at the trailing edge. |
+
+Props (`SidebarMenuItemProps`):
+Extends: `React.ComponentProps<"li">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` |  |  | Persistence key shared by this item's hasSubMenu button and its SidebarMenuSub. Required when the item contains a sub-menu; otherwise leave unset and the item behaves like a plain `<li>`. |
+
+Props (`SidebarMenuProps`):
+Extends: `React.ComponentProps<"ul">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `items` | `string[]` |  |  | Ordered list of stable item ids. Required when `reorderable`. |
+| `onReorder` | `(items: string[]) => void` |  |  | Fired with the reshuffled list after a successful drag. |
+| `reorderable` | `boolean` |  |  | Opt into drag-to-reorder. When `true`, pair with `items` + `onReorder` and give each child SidebarMenuItem a `value` matching one of the `items` entries. The menu renders as a `role="list"` div so the dnd-kit wrappers can sit inside without breaking HTML semantics. |
+
+Props (`SidebarMenuSubProps`):
+Extends: `React.ComponentProps<"ul">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | Persistence key — must match the enclosing SidebarMenuItem's `value`. Required: the sub-menu cannot animate open/closed without it. |
+
+Props (`SidebarPanelProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | Stable id matched against `activeRailItem` to decide visibility. |
+
+Props (`SidebarProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `side` | `"left" \| "right"` |  | `"left"` | Viewport edge the panel anchors to; `"left"` (default) or `"right"`. |
+| `variant` | `"sidebar" \| "floating" \| "inset"` |  | `"sidebar"` | Visual treatment of the sidebar surface. - `"sidebar"` — flat panel flush with the viewport edge (default). - `"floating"` — rounded corners and a shadow ring. - `"inset"` — makes the content area (SidebarInset) appear nested inside the sidebar colour. |
+| `collapsible` | `"offcanvas" \| "icon" \| "rail" \| "none"` |  | `"offcanvas"` | Collapse mode when the sidebar is toggled closed. - `"offcanvas"` — slides the panel fully off-screen (default). - `"icon"` — shrinks to icon width, hiding labels. - `"rail"` — dual-panel mode: a narrow icon column (SidebarRail) stays fixed while a wider secondary panel (SidebarPanel) slides in / out based on which SidebarRailButton is active. - `"none"` — disables collapsing; the panel is always visible. |
+
+Props (`SidebarProviderProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `defaultOpen` | `boolean` |  | `true` | Initial open state when uncontrolled; defaults to `true`. |
+| `open` | `boolean` |  |  | Controlled open state; pair with onOpenChange. |
+| `onOpenChange` | `(open: boolean) => void` |  |  | Called when the sidebar's open state changes in controlled mode. |
+
+Props (`SidebarRailButtonProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title" | "value">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `React.ReactNode` | yes |  | Icon node rendered as the button's content. |
+| `tooltip` | `string` |  |  | Optional accessible name / hover tooltip. |
+| `value` | `string` | yes |  | Stable id selecting which SidebarPanel this button opens. |
+
+Props (`SidebarSearchButtonProps`):
+Extends: `React.ComponentProps<"button">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `onTrigger` | `() => void` |  |  | Fires on click and on the registered keyboard shortcut. |
+| `placeholder` | `string` |  | `"Search…"` | Placeholder text shown in the row. Defaults to `"Search…"`. |
+| `shortcut` | `string \| null` |  | `"⌘K"` | Keyboard hint glyph displayed at the trailing edge (e.g. `"⌘K"`). Pass `null` to hide the hint while still wiring the shortcut handler. |
+| `shortcutKey` | `string` |  | `"k"` | Character key that triggers the shortcut combo with Cmd/Ctrl. Defaults to `"k"`. |
+
+Props (`SidebarSwitcherItemProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `logo` | `React.ReactNode` |  |  | Optional logo / avatar node rendered before the name. |
+| `meta` | `string` |  |  | Optional secondary metadata line (e.g. plan, role). Rendered underneath the name in muted text. |
+| `name` | `string` | yes |  | Display name of the workspace. |
+| `selected` | `boolean` |  |  | When `true`, the item is rendered as the active selection and shows a trailing check glyph. Surfaces as `data-selected="true"` on the DOM node for styling hooks. |
+
+Props (`SidebarSwitcherProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `children` | `React.ReactNode` |  |  | Popover body — typically a list of SidebarSwitcherItems plus any auxiliary actions (e.g. "Create workspace"). |
+| `current` | `SidebarSwitcherCurrent` | yes |  | The currently selected workspace; controls the trigger row. |
+
+Props (`SidebarUserButtonProps`):
+Extends: `Omit<React.ComponentProps<"button">, "title">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `avatar` | `React.ReactNode` |  |  | Avatar element rendered to the leading edge (typically an `<Avatar>` or `<img>`). Sized down to fit the row at `size-7`. |
+| `email` | `string` |  |  | Optional secondary line — often the user's email. |
+| `menu` | `React.ReactNode` |  |  | Menu body — Base UI `MenuPrimitive.Item` and friends. When omitted, the button still renders the chevron unless static is set; clicks fall through to the consumer's `onClick`. |
+| `name` | `string` | yes |  | Primary display name. |
+| `static` | `boolean` |  |  | When `true`, the row is a plain account chip with no menu wrapper and no chevron — handy when the surrounding shell already provides the account dropdown elsewhere. |
+
+Variants:
+- `variant`: `default`, `outline` (default: `default`)
+- `size`: `default`, `sm`, `lg` (default: `default`)
+
+Data slots: `sidebar`, `sidebar-card`, `sidebar-card-content`, `sidebar-card-description`, `sidebar-card-footer`, `sidebar-card-header`, `sidebar-card-title`, `sidebar-container`, `sidebar-content`, `sidebar-footer`, `sidebar-gap`, `sidebar-group`, `sidebar-group-content`, `sidebar-group-label-chevron`, `sidebar-header`, `sidebar-inner`, `sidebar-input`, `sidebar-inset`, `sidebar-menu`, `sidebar-menu-badge`, `sidebar-menu-button-chevron`, `sidebar-menu-drag-handle`, `sidebar-menu-flyout`, `sidebar-menu-item`, `sidebar-menu-skeleton`, `sidebar-menu-sub`, `sidebar-menu-sub-item`, `sidebar-menu-sub-panel`, `sidebar-panel`, `sidebar-rail`, `sidebar-rail-button`, `sidebar-rail-column`, `sidebar-rail-panel-wrap`, `sidebar-search-button`, `sidebar-separator`, `sidebar-switcher`, `sidebar-switcher-body`, `sidebar-switcher-chevron`, `sidebar-switcher-item`, `sidebar-switcher-item-check`, `sidebar-switcher-item-logo`, `sidebar-switcher-logo`, `sidebar-switcher-popover`, `sidebar-toggle-rail`, `sidebar-toggle-rail-glyph`, `sidebar-trigger`, `sidebar-user-button`, `sidebar-user-button-avatar`, `sidebar-user-button-body`, `sidebar-user-button-chevron`, `sidebar-user-button-menu`, `sidebar-wrapper`
+
+### Stepper
+
+Import: `import { ... } from "@strait/ui/components/stepper";`
+
+A multi-step progress indicator that tracks which step is currently active.
+
+Exports: `Stepper`, `StepperDescription`, `StepperIndicator`, `StepperItem`, `StepperProps`, `StepperSeparator`, `StepperTitle`, `StepperTrigger`
+
+Props (`StepperProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `defaultValue` | `number` |  | `0` | Initial active step index used in uncontrolled mode; ignored when value is provided. |
+| `value` | `number` |  |  | Controlled active step index; when set the component skips internal state and defers all updates to `onValueChange`. |
+| `onValueChange` | `(value: number) => void` |  |  | Called with the new step index whenever a StepperTrigger is clicked or `setActiveStep` is invoked programmatically. |
+| `orientation` | `"horizontal" \| "vertical"` |  | `"horizontal"` | Layout direction; cascades to all sub-components via `data-orientation`. |
+| `size` | `"sm" \| "default"` |  | `"default"` | Scaling preset that controls indicator size and label text. - `"default"` — `size-8` indicator, `text-sm` labels (existing behaviour). - `"sm"` — `size-6` indicator, `text-xs` labels. |
+| `compact` | `boolean` |  | `false` | When `true`, applies tighter gap between items and a shorter connector (`h-8` vertical / `h-px` horizontal) for space-constrained layouts. |
+
+Data slots: `stepper`, `stepper-description`, `stepper-indicator`, `stepper-item`, `stepper-separator`, `stepper-title`
+
+### Tabs
+
+Import: `import { ... } from "@strait/ui/components/tabs";`
+
+Layered content panel controlled by a row (or column) of tab buttons.
+
+Exports: `Tabs`, `TabsContent`, `TabsList`, `TabsProps`, `TabsTrigger`, `tabsListVariants`
+
+Props (`TabsProps`):
+Extends: `TabsPrimitive.Root.Props`
+
+Variants:
+- `variant`: `default`, `line`, `underline` (default: `default`)
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `tabs`, `tabs-content`, `tabs-list`, `tabs-trigger`
+
+## Overlays
+
+### Alert Dialog
+
+Import: `import { ... } from "@strait/ui/components/alert-dialog";`
+
+Blocking confirmation dialog that requires the user to make a choice before continuing.
+
+Exports: `AlertDialog`, `AlertDialogAction`, `AlertDialogCancel`, `AlertDialogContent`, `AlertDialogDescription`, `AlertDialogFooter`, `AlertDialogHeader`, `AlertDialogMedia`, `AlertDialogOverlay`, `AlertDialogPortal`, `AlertDialogProps`, `AlertDialogTitle`, `AlertDialogTrigger`, `alertDialogContentVariants`
+
+Props (`AlertDialogProps`):
+Extends: `AlertDialogPrimitive.Root.Props`
+
+Variants:
+- `size`: `sm`, `default`, `lg`, `xl`, `full` (default: `default`)
+
+Data slots: `alert-dialog`, `alert-dialog-action`, `alert-dialog-cancel`, `alert-dialog-content`, `alert-dialog-description`, `alert-dialog-footer`, `alert-dialog-header`, `alert-dialog-media`, `alert-dialog-overlay`, `alert-dialog-portal`, `alert-dialog-title`, `alert-dialog-trigger`
+
+### Context Menu
+
+Import: `import { ... } from "@strait/ui/components/context-menu";`
+
+Right-click (or long-press) contextual menu anchored to an arbitrary region of the page.
+
+Exports: `ContextMenu`, `ContextMenuCheckboxItem`, `ContextMenuContent`, `ContextMenuGroup`, `ContextMenuItem`, `ContextMenuLabel`, `ContextMenuPortal`, `ContextMenuProps`, `ContextMenuRadioGroup`, `ContextMenuRadioItem`, `ContextMenuSeparator`, `ContextMenuShortcut`, `ContextMenuSub`, `ContextMenuSubContent`, `ContextMenuSubTrigger`, `ContextMenuTrigger`
+
+Props (`ContextMenuProps`):
+Extends: `ContextMenuPrimitive.Root.Props`
+
+Data slots: `context-menu`, `context-menu-checkbox-item`, `context-menu-content`, `context-menu-group`, `context-menu-item`, `context-menu-label`, `context-menu-portal`, `context-menu-radio-group`, `context-menu-radio-item`, `context-menu-separator`, `context-menu-shortcut`, `context-menu-sub`, `context-menu-sub-content`, `context-menu-sub-trigger`, `context-menu-trigger`
+
+### Detail Sheet
+
+Import: `import { ... } from "@strait/ui/components/detail-sheet";`
+
+A right-anchored (by default) detail / inspection panel built as a structured recipe over the design-system Sheet.
+
+Exports: `DetailSheet`, `DetailSheetProps`, `DetailSheetRow`, `DetailSheetRowProps`, `DetailSheetSection`, `DetailSheetSectionProps`
+
+Props (`DetailSheetProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `open` | `boolean` | yes |  | Whether the sheet is currently open. |
+| `onOpenChange` | `(open: boolean) => void` | yes |  | Callback invoked whenever the sheet requests an open-state change. The first argument is the requested `open` value; forward it to your state setter to keep the sheet controlled. |
+| `title` | `React.ReactNode` | yes |  | Main heading rendered in a SheetTitle. |
+| `meta` | `React.ReactNode` |  |  | Optional muted subtitle rendered beneath the title (e.g. a record ID or status chip). Mapped to `SheetDescription` so it doubles as the accessible description for screen readers. |
+| `footer` | `React.ReactNode` |  |  | Optional sticky footer rendered via SheetFooter. Typically holds a primary action and a cancel/close control. |
+| `children` | `React.ReactNode` | yes |  | The scrollable body of the sheet. Typically composed of DetailSheetSection blocks each containing DetailSheetRow pairs. |
+| `side` | `"left" \| "right" \| "top" \| "bottom"` |  | `"right"` | Which screen edge the sheet slides in from. Forwarded directly to `SheetContent`'s `side` prop. |
+| `className` | `string` |  |  | Additional classes merged onto the `SheetContent` element. |
+
+Props (`DetailSheetRowProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `React.ReactNode` | yes |  | Muted descriptor rendered on the left side of the row. |
+| `children` | `React.ReactNode` | yes |  | The value displayed on the right side, wrapped in `font-mono text-xs` styling by default. Pass a pre-styled node to override the wrapper. |
+| `className` | `string` |  |  | Additional classes merged onto the row's `flex` wrapper `<div>`. |
+
+Props (`DetailSheetSectionProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `heading` | `React.ReactNode` | yes |  | Section heading rendered as an uppercase muted `<h4>`. Keep it short — one or two words. |
+| `children` | `React.ReactNode` | yes |  | The section body; typically one or more DetailSheetRows. |
+| `className` | `string` |  |  | Additional classes merged onto the `<section>` element. |
+
+Data slots: `detail-sheet`, `detail-sheet-row`, `detail-sheet-section`
+
+### Dialog
+
+Import: `import { ... } from "@strait/ui/components/dialog";`
+
+Modal overlay that interrupts the user to focus on a single task or message.
+
+Exports: `Dialog`, `DialogClose`, `DialogContent`, `DialogDescription`, `DialogFooter`, `DialogHeader`, `DialogOverlay`, `DialogPortal`, `DialogProps`, `DialogTitle`, `DialogTrigger`, `dialogContentVariants`
+
+Props (`DialogProps`):
+Extends: `DialogPrimitive.Root.Props`
+
+Variants:
+- `size`: `sm`, `default`, `lg`, `xl`, `full` (default: `default`)
+
+Data slots: `dialog`, `dialog-close`, `dialog-content`, `dialog-description`, `dialog-footer`, `dialog-header`, `dialog-overlay`, `dialog-portal`, `dialog-title`, `dialog-trigger`
+
+### Drawer
+
+Import: `import { ... } from "@strait/ui/components/drawer";`
+
+Edge-anchored panel that slides in from any side of the viewport, powered by the Vaul library.
+
+Exports: `Drawer`, `DrawerClose`, `DrawerContent`, `DrawerDescription`, `DrawerFooter`, `DrawerHeader`, `DrawerOverlay`, `DrawerPortal`, `DrawerProps`, `DrawerTitle`, `DrawerTrigger`
+
+Props (`DrawerProps`):
+Extends: `React.ComponentProps<typeof DrawerPrimitive.Root>`
+
+Data slots: `drawer`, `drawer-close`, `drawer-content`, `drawer-description`, `drawer-footer`, `drawer-header`, `drawer-overlay`, `drawer-portal`, `drawer-title`, `drawer-trigger`
+
+Heavy dependencies: `vaul`
+
+### Dropdown Menu
+
+Import: `import { ... } from "@strait/ui/components/dropdown-menu";`
+
+Floating list of actions that opens from a trigger button.
+
+Exports: `DropdownMenu`, `DropdownMenuCheckboxItem`, `DropdownMenuContent`, `DropdownMenuGroup`, `DropdownMenuItem`, `DropdownMenuLabel`, `DropdownMenuPortal`, `DropdownMenuProps`, `DropdownMenuRadioGroup`, `DropdownMenuRadioItem`, `DropdownMenuSeparator`, `DropdownMenuShortcut`, `DropdownMenuSub`, `DropdownMenuSubContent`, `DropdownMenuSubTrigger`, `DropdownMenuTrigger`
+
+Props (`DropdownMenuProps`):
+Extends: `MenuPrimitive.Root.Props`
+
+Data slots: `dropdown-menu`, `dropdown-menu-checkbox-item`, `dropdown-menu-checkbox-item-indicator`, `dropdown-menu-content`, `dropdown-menu-group`, `dropdown-menu-item`, `dropdown-menu-label`, `dropdown-menu-portal`, `dropdown-menu-radio-group`, `dropdown-menu-radio-item`, `dropdown-menu-radio-item-indicator`, `dropdown-menu-separator`, `dropdown-menu-shortcut`, `dropdown-menu-sub`, `dropdown-menu-sub-content`, `dropdown-menu-sub-trigger`, `dropdown-menu-trigger`
+
+### Hover Card
+
+Import: `import { ... } from "@strait/ui/components/hover-card";`
+
+Floating preview panel that appears on hover, built on Base UI's `PreviewCard` primitive.
+
+Exports: `HoverCard`, `HoverCardContent`, `HoverCardProps`, `HoverCardTrigger`
+
+Props (`HoverCardProps`):
+Extends: `PreviewCardPrimitive.Root.Props`
+
+Data slots: `hover-card`, `hover-card-content`, `hover-card-portal`, `hover-card-trigger`
+
+### Popover
+
+Import: `import { ... } from "@strait/ui/components/popover";`
+
+Floating panel anchored to a trigger element for rich non-modal content.
+
+Exports: `Popover`, `PopoverContent`, `PopoverDescription`, `PopoverHeader`, `PopoverProps`, `PopoverTitle`, `PopoverTrigger`
+
+Props (`PopoverProps`):
+Extends: `PopoverPrimitive.Root.Props`
+
+Data slots: `popover`, `popover-content`, `popover-description`, `popover-header`, `popover-title`, `popover-trigger`
+
+### Sheet
+
+Import: `import { ... } from "@strait/ui/components/sheet";`
+
+Edge-anchored sliding panel built on Base UI's Dialog primitive.
+
+Exports: `Sheet`, `SheetClose`, `SheetContent`, `SheetDescription`, `SheetFooter`, `SheetHeader`, `SheetProps`, `SheetTitle`, `SheetTrigger`
+
+Props (`SheetProps`):
+Extends: `SheetPrimitive.Root.Props`
+
+Data slots: `sheet`, `sheet-close`, `sheet-content`, `sheet-description`, `sheet-footer`, `sheet-header`, `sheet-overlay`, `sheet-portal`, `sheet-title`, `sheet-trigger`
+
+### Tooltip
+
+Import: `import { ... } from "@strait/ui/components/tooltip";`
+
+Short, non-interactive label that appears near an element on hover or focus, built on Base UI's `Tooltip` primitive.
+
+Exports: `Tooltip`, `TooltipContent`, `TooltipContentProps`, `TooltipProps`, `TooltipProvider`, `TooltipTrigger`, `tooltipContentVariants`
+
+Props (`TooltipContentProps`):
+Extends: `TooltipPrimitive.Popup.Props`, `Pick< TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" >`, `VariantProps<typeof tooltipContentVariants>`
+
+Props (`TooltipProps`):
+Extends: `TooltipPrimitive.Root.Props`
+
+Variants:
+- `variant`: `default`, `light` (default: `default`)
+- `size`: `sm`, `default` (default: `default`)
+
+Data slots: `kbd`, `tooltip`, `tooltip-content`, `tooltip-provider`, `tooltip-trigger`
+
+## Feedback
+
+### Alert
+
+Import: `import { ... } from "@strait/ui/components/alert";`
+
+Inline feedback banner for status messages, warnings, and errors.
+
+Exports: `Alert`, `AlertAction`, `AlertDescription`, `AlertProps`, `AlertTitle`
+
+Props (`AlertProps`):
+Extends: `React.ComponentProps<"div">`, `VariantProps<typeof alertVariants>`
+
+Variants:
+- `variant`: `default`, `info`, `success`, `warning`, `destructive`, `invert` (default: `default`)
+
+Data slots: `alert`, `alert-action`, `alert-description`, `alert-title`
+
+### Banner
+
+Import: `import { ... } from "@strait/ui/components/banner";`
+
+Root container for the composable Banner.
+
+Exports: `Banner`, `BannerActions`, `BannerClose`, `BannerContent`, `BannerDescription`, `BannerIcon`, `BannerProps`, `BannerTitle`, `NoticeBanner`, `NoticeBannerAction`, `NoticeBannerVariants`, `bannerVariants`, `noticeBannerVariants`
+
+Props (`BannerProps`):
+Extends: `React.ComponentProps<"div">`, `VariantProps<typeof bannerVariants>`
+
+Variants:
+- `variant`: `info`, `success`, `warning`, `destructive` (default: `info`)
+- `layout`: `inline`, `full-width` (default: `inline`)
+- `size`: `sm`, `default` (default: `default`)
+
+Data slots: `banner`, `banner-actions`, `banner-close`, `banner-content`, `banner-description`, `banner-icon`, `banner-title`, `notice-banner`
+
+### Chart Empty State
+
+Import: `import { ... } from "@strait/ui/components/chart-empty-state";`
+
+Centered empty state for charts and data panels that have no content.
+
+Exports: `ChartEmptyState`, `ChartEmptyStateProps`
+
+Props (`ChartEmptyStateProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `IconSvgElement` |  | `ChartLineData01Icon` | Hugeicons icon value rendered in the icon tile. |
+| `title` | `React.ReactNode` |  |  | Optional bold-ish heading rendered above the message. |
+| `message` | `string` | yes |  | Required muted body copy that explains why no data is available. |
+| `action` | `React.ReactNode` |  |  | Optional call-to-action rendered below the message. |
+| `size` | `VariantProps<typeof chartEmptyStateVariants>["size"]` |  | `"default"` | Controls the overall visual scale of the empty state. |
+| `className` | `string` |  |  | Additional Tailwind class names merged onto the root element. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `chart-empty-state`
+
+### Empty
+
+Import: `import { ... } from "@strait/ui/components/empty";`
+
+Centred placeholder surface shown when a list or view has no content.
+
+Exports: `Empty`, `EmptyContent`, `EmptyDescription`, `EmptyHeader`, `EmptyMedia`, `EmptyProps`, `EmptyTitle`, `emptyMediaVariants`
+
+Props (`EmptyProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `border` | `boolean` |  | `true` | When `true` (the default) the root renders a `border border-dashed` outline, signalling the absence of real content. Pass `false` to suppress the border — useful when the empty state lives inside a card that already provides a boundary. |
+
+Variants:
+- `media`: `default`, `icon` (default: `default`)
+- `size`: `sm`, `default`, `lg` (default: `default`)
+- `variant`: `muted`, `info`, `success`, `warning`, `destructive` (default: `muted`)
+
+Data slots: `empty`, `empty-content`, `empty-description`, `empty-header`, `empty-icon`, `empty-title`
+
+### Feature Lock
+
+Import: `import { ... } from "@strait/ui/components/feature-lock";`
+
+Gating overlay that visually locks content behind an upsell prompt.
+
+Exports: `FeatureBadge`, `FeatureBadgeProps`, `FeatureLock`, `FeatureLockProps`
+
+Props (`FeatureBadgeProps`):
+Extends: `BadgeProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `plan` | `string` | yes |  | The plan name displayed inside the badge, e.g. `"Pro"` or `"Enterprise"`. |
+
+Props (`FeatureLockProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `locked` | `boolean` | yes |  | When `true` the gating overlay is shown and children are visually obscured. When `false` children are rendered unchanged with no wrapper. |
+| `children` | `React.ReactNode` | yes |  | The content to gate — rendered normally when unlocked. |
+| `title` | `React.ReactNode` |  |  | Heading shown in the overlay, e.g. `"Upgrade to Pro"`. Accepts any renderable content. |
+| `description` | `React.ReactNode` |  |  | Supporting body copy shown below the title in the overlay. Accepts any renderable content. |
+| `planLabel` | `string` |  |  | When provided, a FeatureBadge with this plan name is rendered above the title in the overlay. |
+| `action` | `React.ReactNode` |  |  | CTA slot — typically an upgrade Button. Rendered below the description inside the overlay. |
+| `blur` | `boolean` |  | `true` | When `true` (default) a `blur-sm` class is applied to the gated content so it is obscured but still hinted at. Set to `false` to skip blurring (e.g. when the content itself is already a placeholder). |
+| `className` | `string` |  |  | Extra classes applied to the outermost wrapper `<div>`. |
+
+Data slots: `feature-badge`, `feature-lock`
+
+### Notice Banner
+
+Import: `import { ... } from "@strait/ui/components/notice-banner";`
+
+Thin re-export shim — all logic now lives in /banner.
+
+Exports: `Banner`, `BannerActions`, `BannerClose`, `BannerContent`, `BannerDescription`, `BannerIcon`, `BannerProps`, `BannerTitle`, `NoticeBanner`, `NoticeBannerAction`, `NoticeBannerProps`, `NoticeBannerVariants`, `bannerVariants`, `noticeBannerVariants`
+
+Props (`NoticeBannerProps`):
+Extends: `React.ComponentProps<typeof NoticeBanner>`
+
+### Progress
+
+Import: `import { ... } from "@strait/ui/components/progress";`
+
+Determinate progress bar that displays a numeric completion percentage.
+
+Exports: `Progress`, `ProgressIndicator`, `ProgressLabel`, `ProgressProps`, `ProgressTrack`, `ProgressValue`, `progressIndicatorVariants`, `progressTrackVariants`
+
+Props (`ProgressProps`):
+Extends: `ProgressPrimitive.Root.Props`, `VariantProps<typeof progressTrackVariants>`, `VariantProps<typeof progressIndicatorVariants>`
+
+Variants:
+- `size`: `xs`, `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `progress`, `progress-indicator`, `progress-label`, `progress-track`, `progress-value`
+
+### Skeleton
+
+Import: `import { ... } from "@strait/ui/components/skeleton";`
+
+Pulsing placeholder used while content is loading.
+
+Exports: `Skeleton`, `SkeletonProps`
+
+Props (`SkeletonProps`):
+Extends: `React.ComponentProps<"div">`
+
+Data slots: `skeleton`
+
+### Spinner
+
+Import: `import { ... } from "@strait/ui/components/spinner";`
+
+Animated loading indicator built on the HugeIcons `Loading03` glyph.
+
+Exports: `Spinner`, `SpinnerProps`, `spinnerVariants`
+
+Props (`SpinnerProps`):
+Extends: `React.ComponentProps<"svg">`, `VariantProps<typeof spinnerVariants>`
+
+Variants:
+- `size`: `xs`, `sm`, `default`, `lg`, `xl` (default: `default`)
+
+Data slots: `spinner`
+
+## Layout
+
+### Accordion
+
+Import: `import { ... } from "@strait/ui/components/accordion";`
+
+A vertically stacked set of collapsible sections, each with a trigger and an animated content panel.
+
+Exports: `Accordion`, `AccordionContent`, `AccordionItem`, `AccordionItemProps`, `AccordionProps`, `AccordionTrigger`, `AccordionTriggerIndicator`, `AccordionTriggerProps`, `AccordionVariant`, `accordionItemVariants`
+
+Props (`AccordionItemProps`):
+Extends: `AccordionPrimitive.Item.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `variant` | `AccordionVariant` |  |  | Visual style for this item. Overrides the variant inherited from the parent Accordion when set. |
+
+Props (`AccordionProps`):
+Extends: `AccordionPrimitive.Root.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `variant` | `AccordionVariant` |  | `"default"` | Visual style applied to every item. Each AccordionItem can override it locally with its own `variant`. Defaults to `"default"`. |
+
+Props (`AccordionTriggerProps`):
+Extends: `AccordionPrimitive.Trigger.Props`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `indicator` | `AccordionTriggerIndicator` |  | `"chevron"` | Built-in collapse/expand indicator placement. - `"chevron"` (default) — down arrow when collapsed, up arrow when open. - `"plus-minus"` — plus glyph when collapsed, minus when open. - `"none"` — suppress the built-in indicator; supply your own as the last child of the trigger (tag it `data-slot="accordion-trigger-icon"` to inherit sizing). |
+
+Variants:
+- `variant`: `default`, `outline`, `solid` (default: `default`)
+
+Data slots: `accordion`, `accordion-content`, `accordion-item`, `accordion-trigger`, `accordion-trigger-icon`
+
+### Collapsible
+
+Import: `import { ... } from "@strait/ui/components/collapsible";`
+
+A lightweight single-panel show/hide container driven by a trigger.
+
+Exports: `Collapsible`, `CollapsibleContent`, `CollapsibleProps`, `CollapsibleTrigger`
+
+Props (`CollapsibleProps`):
+Extends: `CollapsiblePrimitive.Root.Props`
+
+Data slots: `collapsible`, `collapsible-content`, `collapsible-trigger`
+
+### Frame
+
+Import: `import { ... } from "@strait/ui/components/frame";`
+
+A bordered surface that hosts one or more FramePanel children.
+
+Exports: `Frame`, `FrameDescription`, `FrameFooter`, `FrameHeader`, `FramePanel`, `FrameProps`, `FrameTitle`, `frameVariants`
+
+Props (`FrameProps`):
+Extends: `React.ComponentProps<"div">`, `FrameVariantProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dense` | `boolean` |  | `false` | When `true`, FramePanels drop their inner padding. Useful when the panel's content owns its own padding (e.g. a `<DataGrid>`). Default `false`. |
+| `stacked` | `boolean` |  | `false` | When `true`, sibling FramePanels are joined edge-to-edge with shared borders (no gap, no inner radius between them). Only the first and last panels keep rounded corners. Default `false`. |
+
+Variants:
+- `variant`: `default`, `ghost` (default: `default`)
+- `spacing`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `frame`, `frame-description`, `frame-footer`, `frame-header`, `frame-panel`, `frame-title`
+
+### Resizable
+
+Import: `import { ... } from "@strait/ui/components/resizable";`
+
+Drag handle separator between two ResizablePanel elements.
+
+Exports: `ResizableHandle`, `ResizablePanel`, `ResizablePanelGroup`, `ResizablePanelGroupProps`
+
+Props (`ResizablePanelGroupProps`):
+Extends: `ResizablePrimitive.GroupProps`
+
+Data slots: `resizable-handle`, `resizable-panel`, `resizable-panel-group`
+
+### Scroll Area
+
+Import: `import { ... } from "@strait/ui/components/scroll-area";`
+
+A cross-browser custom scroll container with styled overlaid scrollbars.
+
+Exports: `ScrollArea`, `ScrollAreaProps`, `ScrollBar`
+
+Props (`ScrollAreaProps`):
+Extends: `ScrollAreaPrimitive.Root.Props`
+
+Data slots: `scroll-area`, `scroll-area-scrollbar`, `scroll-area-thumb`, `scroll-area-viewport`
+
+### Separator
+
+Import: `import { ... } from "@strait/ui/components/separator";`
+
+A thin dividing line between sections of content.
+
+Exports: `Separator`, `SeparatorProps`
+
+Props (`SeparatorProps`):
+Extends: `SeparatorPrimitive.Props`
+
+Data slots: `separator`
+
+### Shell
+
+Import: `import { ... } from "@strait/ui/components/shell";`
+
+Top-level page layout wrapper that applies consistent padding, gap, and flex-column structure to a page or route section.
+
+Exports: `Shell`, `ShellProps`
+
+Props (`ShellProps`):
+Extends: `React.ComponentProps<"div">`, `VariantProps<typeof shellVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Additional CSS classes merged onto the wrapper `<div>`. |
+| `variant` | `"default" \| "centered" \| "fluid"` |  |  | Layout preset applied via shellVariants. - `"default"` — full-width with responsive horizontal padding. - `"centered"` — adds `items-center` to horizontally centre children. - `"fluid"` — identical to `"default"` for unrestricted-width layouts. |
+
+Variants:
+- `variant`: `default`, `centered`, `fluid` (default: `default`)
+
+Data slots: `shell`
+
+## Patterns
+
+### Calendar RAC
+
+Import: `import { ... } from "@strait/ui/components/calendar-rac";`
+
+Single-date calendar built on React Aria Components.
+
+Exports: `Calendar`, `CalendarProps`, `RangeCalendar`
+
+Props (`CalendarProps`):
+Extends: `ComponentProps<typeof CalendarRac>`, `BaseCalendarProps`
+
+Data slots: `calendar`, `range-calendar`
+
+### Calendar With Presets
+
+Import: `import { ... } from "@strait/ui/components/calendar-with-presets";`
+
+A day-picker calendar with a sidebar of quick-select presets.
+
+Exports: `CalendarWithPresets`, `CalendarWithPresetsProps`
+
+Props (`CalendarWithPresetsProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `mode` | `"single" \| "range"` |  | `"single"` | The mode of the calendar. |
+| `selected` | `Date \| DateRange \| undefined` |  |  | The selected date or date range. |
+| `onSelect` | `\| ((date: Date \| undefined) => void) \| ((range: DateRange \| undefined) => void)` |  |  | Callback fired when the date or date range changes. |
+| `className` | `string` |  |  | The class name for the root element. |
+| `presets` | `CalendarPreset[]` |  |  | Custom presets to show in the sidebar. If not provided, default presets will be used. |
+| `disableFutureDates` | `boolean` |  | `true` | Whether to disable future dates. |
+
+Data slots: `calendar-with-presets`
+
+Heavy dependencies: `react-day-picker`
+
+### Card Checkbox
+
+Import: `import { ... } from "@strait/ui/components/card-checkbox";`
+
+Grid wrapper that spaces a collection of CardCheckboxItem components with a consistent gap.
+
+Exports: `CardCheckboxGroup`, `CardCheckboxItem`, `CardCheckboxItemProps`
+
+Props (`CardCheckboxItemProps`):
+Extends: `Omit< React.ComponentPropsWithoutRef<typeof Checkbox>, "variant" >`, `VariantProps<typeof cardCheckboxVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `React.ReactNode` |  |  | Optional icon rendered to the left of the label and description; dimmed via `text-muted-foreground` when the item is disabled. |
+| `label` | `React.ReactNode` | yes |  | Primary text for the card; rendered as a `<span>` linked to the checkbox via `aria-labelledby`. |
+| `description` | `React.ReactNode` |  |  | Supporting text rendered below the label; also linked to the checkbox via `aria-describedby` when `id` is provided. |
+| `disabled` | `boolean` |  |  | Disables the Checkbox and applies `cursor-not-allowed` styling to the card via the CVA `disabled` variant. |
+
+Variants:
+- `variant`: `default`, `compact` (default: `default`)
+- `layout`: `default`, `start` (default: `default`)
+- `disabled`: `true`, `false` (default: `false`)
+
+Data slots: `card-checkbox-group`, `card-checkbox-item`
+
+### Checkbox Tree
+
+Import: `import { ... } from "@strait/ui/components/checkbox-tree";`
+
+A headless, renderless checkbox tree that manages tri-state (checked / unchecked / indeterminate) selection across a nested TreeNode hierarchy.
+
+Exports: `CheckboxTree`, `CheckboxTreeProps`
+
+Props (`CheckboxTreeProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `tree` | `TreeNode` | yes |  | Root TreeNode whose entire hierarchy is rendered and managed. |
+| `renderNode` | `(props: { node: TreeNode; checked: boolean \| "indeterminate"; onCheckedChange: () => void; children: React.ReactNode; }) => React.ReactNode` | yes |  | Render-prop called for every node in the tree. |
+
+### Credenza
+
+Import: `import { ... } from "@strait/ui/components/credenza";`
+
+Responsive overlay that renders as a centred Dialog on desktop (`>= 768 px`) and as a bottom Drawer on mobile.
+
+Exports: `Credenza`, `CredenzaBody`, `CredenzaClose`, `CredenzaContent`, `CredenzaDescription`, `CredenzaFooter`, `CredenzaHeader`, `CredenzaProps`, `CredenzaTitle`, `CredenzaTrigger`
+
+Props (`CredenzaProps`):
+Extends: `BaseProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `open` | `boolean` |  |  | Controlled open state; pair with onOpenChange. |
+| `onOpenChange` | `(open: boolean) => void` |  |  | Called when the overlay requests an open/close transition. |
+
+Data slots: `credenza`, `credenza-body`, `credenza-close`, `credenza-content`, `credenza-description`, `credenza-footer`, `credenza-header`, `credenza-title`, `credenza-trigger`
+
+### Date Field RAC
+
+Import: `import { ... } from "@strait/ui/components/datefield-rac";`
+
+An accessible date field that renders each date part (year, month, day) as individually focusable, spinnable segments.
+
+Exports: `DateField`, `DateFieldProps`, `DateInput`, `DateInputProps`, `DateSegment`, `TimeField`, `dateInputStyle`
+
+Props (`DateFieldProps`):
+Extends: `DateFieldPropsRac<T>`
+
+Props (`DateInputProps`):
+Extends: `DateInputPropsRac`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Additional classes merged onto the React Aria `DateInput` element via `composeRenderProps`; appended after the default dateInputStyle classes (or all classes when `unstyled` is `true`). |
+| `unstyled` | `boolean` |  | `false` | When `true`, suppresses the default dateInputStyle base classes so the container can be fully re-styled by the caller. |
+
+Data slots: `date-field`, `date-input`, `date-segment`, `time-field`
+
+### Date Input
+
+Import: `import { ... } from "@strait/ui/components/date-input";`
+
+A three-segment MM/DD/YYYY inline date editor with keyboard navigation.
+
+Exports: `DateInput`, `DateInputProps`
+
+Props (`DateInputProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `Date` |  |  | Currently selected date; the component mirrors this into its internal segment state on each render cycle. |
+| `onChange` | `(date: Date) => void` | yes |  | Called with a fully valid `Date` whenever the user commits a change; not fired for partial or out-of-range inputs. |
+| `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `<div>` that provides the border, background, and flex layout. |
+
+Data slots: `date-input`
+
+### Date Picker
+
+Import: `import { ... } from "@strait/ui/components/date-picker";`
+
+A single-date picker that reveals a calendar in a popover.
+
+Exports: `DatePicker`, `DatePickerProps`
+
+Props (`DatePickerProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `Date` |  |  | Currently selected date; pass `undefined` to show the placeholder. |
+| `onChange` | `(date: Date \| undefined) => void` |  |  | Called with the selected `Date` (or `undefined`) when the user picks a day or clears the selection via the calendar. |
+| `disabled` | `boolean` |  |  | Disables the trigger button, preventing the calendar from opening. |
+| `required` | `boolean` |  |  | When `true`, appends a red asterisk to the label text. |
+| `label` | `string` |  |  | Optional `<label>` rendered above the trigger button; linked via `htmlFor` to the button's generated id. |
+| `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `<div>`. |
+| `error` | `boolean` |  |  | When `true`, applies a destructive border to the trigger button. |
+
+Data slots: `date-picker`
+
+### Date Picker With Month Year
+
+Import: `import { ... } from "@strait/ui/components/date-picker-with-month-year";`
+
+A date picker with dropdown selectors for month and year navigation.
+
+Exports: `DatePickerWithMonthYear`, `DatePickerWithMonthYearProps`
+
+Props (`DatePickerWithMonthYearProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `Date` |  |  | The current value (controlled). |
+| `onChange` | `(value: Date \| undefined) => void` |  |  | Handler that is called when the value changes. |
+| `defaultValue` | `Date` |  |  | The default value (uncontrolled). |
+| `disabled` | `boolean` |  |  | Whether the date picker is disabled. |
+| `className` | `string` |  |  | Additional CSS class name for the container. |
+| `error` | `boolean` |  |  | Error state for validation styling. |
+| `minValue` | `Date` |  |  | Minimum selectable date. |
+| `maxValue` | `Date` |  |  | Maximum selectable date. |
+| `placeholder` | `string` |  | `"Selecione uma data"` | Placeholder text when no date is selected |
+
+Data slots: `calendar`, `date-picker-content`, `date-picker-trigger`, `date-picker-with-month-year`, `dropdown`, `dropdown-content`, `dropdown-item`, `dropdown-nav`, `dropdown-trigger`
+
+Heavy dependencies: `react-day-picker`
+
+### Date Range Picker
+
+Import: `import { ... } from "@strait/ui/components/date-range-picker";`
+
+An inline date-range picker composed from React Aria Components primitives.
+
+Exports: `DateRangePicker`, `DateRangePickerProps`
+
+Props (`DateRangePickerProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `DateRange` |  |  | The selected date range. |
+| `onChange` | `(value: DateRange \| undefined) => void` |  |  | Callback fired when the date range changes. |
+| `label` | `string` |  |  | The label text for the date range picker. |
+| `className` | `string` |  |  | The class name for the root element. |
+| `error` | `boolean` |  |  | Indicates if the input has an error. |
+| `errorMessage` | `string` |  |  | The error message to display when the input has an error. |
+| `disabled` | `boolean` |  |  | Indicates if the input is disabled. |
+
+Data slots: `date-range-picker`
+
+Heavy dependencies: `react-day-picker`
+
+### Date Range Picker With Presets
+
+Import: `import { ... } from "@strait/ui/components/date-range-picker-with-presets";`
+
+A date-range picker with a preset sidebar and an explicit apply/reset flow.
+
+Exports: `DateRangePickerWithPresets`, `DateRangePickerWithPresetsProps`
+
+Props (`DateRangePickerWithPresetsProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `DateRange` |  |  | The current value of the date range picker. |
+| `defaultValue` | `DateRange` |  |  | The default date range. |
+| `onChange` | `(value: DateRange \| undefined) => void` |  |  | Handler that is called when the value changes. |
+| `label` | `string` |  |  | The label for the date range picker. |
+| `className` | `string` |  |  | Additional CSS class name for the container. |
+
+Data slots: `date-range-picker-with-presets`
+
+Heavy dependencies: `react-day-picker`
+
+### ID Cell
+
+Import: `import { ... } from "@strait/ui/components/id-cell";`
+
+Table cell that displays a truncated identifier with a copy-to-clipboard button, intended for use inside a data table column definition.
+
+Exports: `IdCell`, `IdCellProps`
+
+Props (`IdCellProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `div`. |
+| `id` | `string` | yes |  | Full identifier string to display and copy. |
+| `length` | `number` |  | `6` | Number of characters to show before the trailing ellipsis. |
+
+Data slots: `id-cell`
+
+Heavy dependencies: `motion`
+
+### Input OTP
+
+Import: `import { ... } from "@strait/ui/components/input-otp";`
+
+One-time-password input that renders a fixed-length sequence of digit slots driven by the `input-otp` library.
+
+Exports: `InputOTP`, `InputOTPGroup`, `InputOTPProps`, `InputOTPSeparator`, `InputOTPSlot`
+
+Props (`InputOTPProps`):
+Extends: `React.ComponentProps<typeof OTPInput>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `containerClassName` | `string` |  |  | Extra classes merged onto the `OTPInput` container `<div>`. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `input-otp`, `input-otp-group`, `input-otp-separator`, `input-otp-slot`
+
+### Input Password with Strength Indicator
+
+Import: `import { ... } from "@strait/ui/components/input-password-with-strength-indicator";`
+
+A password field that reveals a live strength meter and per-requirement checklist after the user first focuses the input.
+
+Exports: `InputPasswordWithStrengthIndicator`, `InputPasswordWithStrengthIndicatorProps`
+
+Props (`InputPasswordWithStrengthIndicatorProps`):
+Extends: `Omit< React.ComponentProps<"input">, "type" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `string` |  |  | Optional `<Label>` rendered above the input; linked via `htmlFor={id}`. Requires `id` to be set on the component for the association to work. |
+| `error` | `boolean` |  |  | When `true`, applies a destructive border and forces `aria-invalid` regardless of the computed strength score. |
+| `showStrengthIndicator` | `boolean` |  | `true` | When `false`, hides the strength progress bar and requirements checklist, rendering the field as a plain show/hide password input. |
+
+Data slots: `input`, `input-container`, `input-password-with-strength-indicator`, `label`, `strength-indicator`, `strength-progress`, `strength-progress-bar`, `strength-requirement`, `strength-requirement-text`, `strength-requirements`, `strength-requirements-list`, `strength-text`, `visibility-toggle`
+
+### Input with Addons
+
+Import: `import { ... } from "@strait/ui/components/input-with-addons";`
+
+A text input flanked by optional muted addon panels for contextual prefix or suffix labels (e.g. protocol, domain extension, or unit).
+
+Exports: `InputWithAddons`, `InputWithAddonsProps`
+
+Props (`InputWithAddonsProps`):
+Extends: `React.ComponentProps<"input">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `leading` | `React.ReactNode` |  |  | Content rendered in the muted panel before the input (e.g. `"https://"` or a currency symbol). Omit to suppress the leading addon. |
+| `trailing` | `React.ReactNode` |  |  | Content rendered in the muted panel after the input (e.g. `".com"` or a unit label). Omit to suppress the trailing addon. |
+| `containerClassName` | `string` |  |  | Additional classes merged onto the outer bordered wrapper `<div>`. |
+
+Data slots: `input`, `input-with-addons`, `leading-addon`, `trailing-addon`
+
+### Input with Inline Button
+
+Import: `import { ... } from "@strait/ui/components/input-with-inline-button";`
+
+A text input with an attached button fused to its trailing edge, suitable for search bars, coupon fields, and newsletter sign-ups.
+
+Exports: `InputWithInlineButton`, `InputWithInlineButtonProps`
+
+Props (`InputWithInlineButtonProps`):
+Extends: `InputProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `button` | `React.ReactNode` |  |  | Custom element rendered instead of the built-in Button. |
+| `buttonText` | `string` |  |  | Label text rendered inside the built-in Button. |
+| `onButtonClick` | `() => void` |  |  | Click handler forwarded to the built-in Button. |
+| `buttonClassName` | `string` |  |  | Extra classes merged onto the button or its container element. |
+| `buttonAriaLabel` | `string` |  |  | `aria-label` for the built-in Button when `buttonText` is insufficient. |
+| `wrapperClassName` | `string` |  |  | Extra classes merged onto the outer flex wrapper `<div>`. |
+| `buttonType` | `"button" \| "submit" \| "reset"` |  | `"submit"` | HTML `type` attribute of the built-in Button. |
+
+Data slots: `button`, `button-container`, `input`, `input-with-inline-button`
+
+### Input with Inner Tags
+
+Import: `import { ... } from "@strait/ui/components/input-with-inner-tags";`
+
+A tag-input field that renders inline Tag badges inside the input area, letting users build a list of values within a single control.
+
+Exports: `InputWithInnerTags`, `InputWithInnerTagsProps`, `Tag`
+
+Props (`InputWithInnerTagsProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `id` | `string` |  |  | `id` forwarded to the inner `<Input>` for external `<label htmlFor>`. |
+| `placeholder` | `string` |  | `"Add a tag"` | Placeholder text shown in the inner `<Input>` when no value is typed. |
+| `tags` | `Tag[]` | yes |  | Controlled list of current tags; update via onTagsChange. |
+| `onTagsChange` | `(newTags: Tag[]) => void` | yes |  | Called with the full updated tag list after every add or remove action. |
+| `disabled` | `boolean` |  | `false` | Disables the inner `<Input>` and all remove buttons. |
+| `className` | `string` |  |  | Extra classes merged onto the inner `<Input>` element. |
+| `containerClassName` | `string` |  |  | Extra classes merged onto the outermost container `<div>`. |
+
+Data slots: `input-with-inner-tags`
+
+### Input with Loader
+
+Import: `import { ... } from "@strait/ui/components/input-with-loader";`
+
+A text input that swaps its leading icon for an animated loading spinner while an async operation is in progress.
+
+Exports: `InputWithLoader`, `InputWithLoaderProps`
+
+Props (`InputWithLoaderProps`):
+Extends: `InputProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `loading` | `boolean` |  | `false` | When `true`, replaces the icon slot with an animated spinner. |
+| `icon` | `React.ReactNode` |  |  | Decorative node rendered at the leading edge; replaced by the spinner while `loading` is `true`. |
+| `endIcon` | `React.ReactNode` |  |  | Node rendered as a clickable button at the trailing edge of the input (e.g. a clear or submit icon). Requires endIconAriaLabel. |
+| `onEndIconClick` | `() => void` |  |  | Click handler forwarded to the trailing-edge button wrapping endIcon. |
+| `endIconAriaLabel` | `string` |  |  | Accessible label for the trailing-edge endIcon button; required by screen readers when using an icon-only affordance. |
+
+Data slots: `end-icon`, `input`, `input-with-loader`, `start-icon`
+
+### Input with Show/Hide Password
+
+Import: `import { ... } from "@strait/ui/components/input-with-show-hide-password";`
+
+A minimal password field with a trailing eye-icon toggle that switches the input between masked (`"password"`) and revealed (`"text"`) mode.
+
+Exports: `InputWithShowHidePassword`, `InputWithShowHidePasswordProps`
+
+Props (`InputWithShowHidePasswordProps`):
+Extends: `Omit<InputProps, "type">`
+
+Data slots: `input-with-show-hide-password`
+
+### Input with Start Icon
+
+Import: `import { ... } from "@strait/ui/components/input-with-start-icon";`
+
+A text input with a decorative, non-interactive icon pinned to the leading edge — the standard pattern for search bars and filtered inputs.
+
+Exports: `InputWithStartIcon`, `InputWithStartIconProps`
+
+Props (`InputWithStartIconProps`):
+Extends: `InputProps`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `React.ReactNode` |  |  | Decorative node overlaid at the leading edge of the input; rendered `pointer-events-none` so it never intercepts clicks or focus. |
+| `label` | `string` |  |  | Optional `<label>` text rendered above the input and linked via `htmlFor={props.id}`; requires `id` to be set for the association. |
+| `containerClassName` | `string` |  |  | Additional classes merged onto the relative wrapper `<div>` that contains the input and the icon overlay. |
+
+Data slots: `icon`, `input`, `input-container`, `input-with-start-icon`, `label`
+
+### Number Input Percentage with Chevrons
+
+Import: `import { ... } from "@strait/ui/components/number-input-percentage-with-chevrons";`
+
+A percentage number input (0–100 %) with stacked up/down chevron buttons, formatted with React Aria's `NumberField`.
+
+Exports: `NumberInputPercentageWithChevrons`, `NumberInputPercentageWithChevronsProps`
+
+Props (`NumberInputPercentageWithChevronsProps`):
+Extends: `Omit< React.ComponentProps<"input">, "value" | "onChange" | "defaultValue" | "size" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `defaultValue` | `number` |  | `0` | Initial percentage value (0–100) used when the input is uncontrolled. |
+| `name` | `string` | yes |  | `aria-label` base and `name` attribute forwarded to the inner `Input`. |
+| `value` | `number` |  |  | Controlled percentage value (0–100); converted to 0–1 internally. |
+| `onChange` | `(value: number) => void` |  |  | Called with the new integer percentage (0–100) on every change. |
+| `disabled` | `boolean` |  |  | Disables the entire `NumberField` including the chevron buttons. |
+| `label` | `string` |  |  | Accessible label text applied to the `NumberField` and inner `Input`. |
+| `containerClassName` | `string` |  |  | Extra classes applied to the outer `Group` container element. |
+| `size` | `VariantProps<typeof numberInputGroupVariants>["size"]` |  | `"default"` | Controls the height of the input group. Defaults to `"default"` (h-8). |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `chevrons-container`, `decrement-button`, `increment-button`, `input`, `input-group`, `number-input-percentage-with-chevrons`
+
+### Number Input with Buttons
+
+Import: `import { ... } from "@strait/ui/components/number-input-with-buttons";`
+
+A stepper-style number input with flanking decrement (−) and increment (+) buttons rendered on the left and right edges.
+
+Exports: `NumberInputWithButtons`, `NumberInputWithButtonsProps`
+
+Props (`NumberInputWithButtonsProps`):
+Extends: `Omit< React.ComponentProps<"input">, "value" | "onChange" | "defaultValue" | "size" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `defaultValue` | `number` |  |  | Uncontrolled initial value passed to the underlying `NumberField`. |
+| `name` | `string` | yes |  | `name` attribute of the hidden input; also used as the aria-label base. |
+| `value` | `number` |  |  | Controlled value passed to the underlying `NumberField`. |
+| `onChange` | `(value: number) => void` |  |  | Called with the new numeric value whenever it changes. |
+| `min` | `number` |  |  | Minimum allowed value; forwarded to `NumberField` as `minValue`. |
+| `max` | `number` |  |  | Maximum allowed value; forwarded to `NumberField` as `maxValue`. |
+| `step` | `number` |  | `1` | Amount to increment/decrement per step. Defaults to `1`. |
+| `disabled` | `boolean` |  |  | Disables the entire field when `true`. |
+| `label` | `string` |  |  | Accessible label; used as `aria-label` on both the field and the input. |
+| `className` | `string` |  |  | Extra classes merged onto the inner `<Input>` element. |
+| `containerClassName` | `string` |  |  | Extra classes merged onto the `<Group>` wrapper element. |
+| `size` | `VariantProps<typeof numberInputGroupVariants>["size"]` |  | `"default"` | Controls the height of the input group. Defaults to `"default"` (h-8). |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `decrement-button`, `increment-button`, `input`, `input-group`, `number-input-with-buttons`
+
+### Number Input with Chevrons
+
+Import: `import { ... } from "@strait/ui/components/number-input-with-chevrons";`
+
+A number input with stacked up/down chevron buttons in a trailing column, supporting arbitrary `Intl.NumberFormatOptions` formatting.
+
+Exports: `NumberInputWithChevrons`, `NumberInputWithChevronsProps`
+
+Props (`NumberInputWithChevronsProps`):
+Extends: `Omit< React.ComponentProps<"input">, "value" | "onChange" | "defaultValue" | "size" >`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `defaultValue` | `number` |  |  | Uncontrolled initial value passed to the underlying `NumberField`. |
+| `name` | `string` | yes |  | `name` attribute of the hidden input; also used as the aria-label base. |
+| `value` | `number` |  |  | Controlled value passed to the underlying `NumberField`. |
+| `onChange` | `(value: number) => void` |  |  | Called with the new numeric value whenever it changes. |
+| `min` | `number` |  |  | Minimum allowed value; forwarded to `NumberField` as `minValue`. |
+| `max` | `number` |  |  | Maximum allowed value; forwarded to `NumberField` as `maxValue`. |
+| `step` | `number` |  | `1` | Amount to increment/decrement per step. Defaults to `1`. |
+| `disabled` | `boolean` |  |  | Disables the entire field when `true`. |
+| `label` | `string` |  |  | Accessible label; used as `aria-label` on both the field and the input. |
+| `formatOptions` | `Intl.NumberFormatOptions` |  |  | `Intl.NumberFormatOptions` forwarded to React Aria's formatter (e.g. `{ style: "currency", currency: "USD" }`). |
+| `containerClassName` | `string` |  |  | Extra classes merged onto the `<Group>` wrapper element. |
+| `size` | `VariantProps<typeof numberInputGroupVariants>["size"]` |  | `"default"` | Controls the height of the input group. Defaults to `"default"` (h-8). |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `chevrons-container`, `decrement-button`, `increment-button`, `input`, `input-group`, `number-input-with-chevrons`
+
+### Password Input
+
+Import: `import { ... } from "@strait/ui/components/password-input";`
+
+A password field with an inline toggle button that reveals or masks the entered text.
+
+Exports: `PasswordInput`, `PasswordInputProps`
+
+Props (`PasswordInputProps`):
+Extends: `Omit< React.ComponentProps<"input">, "type" | "size" >`, `Pick<InputProps, "size">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `string` |  |  | Optional `<label>` text rendered above the input and linked via `htmlFor={props.id}`; requires `id` to be set. |
+| `showPasswordLabel` | `string` |  | `"Show password"` | `aria-label` for the toggle button when password is currently visible; announcing the action to screen readers. |
+| `hidePasswordLabel` | `string` |  | `"Hide password"` | `aria-label` for the toggle button when password is currently hidden; announcing the action to screen readers. |
+| `containerClassName` | `string` |  |  | Additional classes merged onto the relative wrapper `<div>` that contains the input and the visibility-toggle button. |
+
+Data slots: `input`, `input-container`, `label`, `password-input`, `visibility-toggle`
+
+### Phone Input
+
+Import: `import { ... } from "@strait/ui/components/phone-input";`
+
+An international phone number field composed of a flag/country-code selector and a number text input that formats as the user types.
+
+Exports: `PhoneInput`, `PhoneInputProps`, `PhoneInputVariant`
+
+Props (`PhoneInputProps`):
+Extends: `Omit< React.ComponentProps<"input">, "onChange" | "value" | "ref" | "size" >`, `Omit<React.ComponentProps<typeof RPNInput>, "onChange" | "size">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `onChange` | `(value: Value) => void` |  |  | Called with the formatted E.164 phone number string as the user types; receives an empty string instead of `undefined` for partial inputs. |
+| `onCountryChange` | `(country: Country) => void` |  |  | Called whenever the user selects a different country in the CountrySelect popover. |
+| `variant` | `PhoneInputVariant` |  | `"default"` | Height of the field and country button — `"sm"` \| `"default"` \| `"lg"` (default `"default"`). |
+| `popupClassName` | `string` |  |  | Extra classes merged onto the country-selector popover content. |
+
+Data slots: `phone-input`
+
+Heavy dependencies: `react-phone-number-input`
+
+### Preview Card
+
+Import: `import { ... } from "@strait/ui/components/preview-card";`
+
+A hover-activated floating card that previews rich content for a trigger element, built on Base UI's `PreviewCard` primitives.
+
+Exports: `PreviewCard`, `PreviewCardArrow`, `PreviewCardBackdrop`, `PreviewCardPopup`, `PreviewCardPortal`, `PreviewCardPositioner`, `PreviewCardProps`, `PreviewCardTrigger`
+
+Props (`PreviewCardProps`):
+Extends: `React.ComponentProps< typeof PreviewCardPrimitive.Root >`
+
+Data slots: `preview-card`, `preview-card-arrow`, `preview-card-backdrop`, `preview-card-popup`, `preview-card-portal`, `preview-card-positioner`, `preview-card-trigger`
+
+### Range Calendar With Presets
+
+Import: `import { ... } from "@strait/ui/components/range-calendar-with-presets";`
+
+A range calendar with a row of quick-select preset buttons and an optional apply/reset footer.
+
+Exports: `RangeCalendarWithPresets`, `RangeCalendarWithPresetsProps`
+
+Props (`RangeCalendarWithPresetsProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `selected` | `DateRange` |  |  | The selected date range. |
+| `_defaultRange` | `DateRange` |  |  | The default date range. |
+| `onSelect` | `(range: DateRange \| undefined) => void` |  |  | Callback fired when the date range changes. |
+| `className` | `string` |  |  | The class name for the root element. |
+| `presets` | `RangePreset[]` |  |  | Custom presets to show in the sidebar. If not provided, default presets will be used. |
+| `disableFutureDates` | `boolean` |  |  | Whether to disable future dates. |
+| `onApply` | `() => void` |  |  | Callback fired when the apply button is clicked. |
+| `onReset` | `() => void` |  |  | Callback fired when the reset button is clicked. |
+| `showFooter` | `boolean` |  | `false` | Whether to show the apply and reset buttons. |
+| `numberOfMonths` | `number` |  | `2` | The number of months to display in the calendar. |
+| `showOutsideDays` | `boolean` |  | `true` | Whether to show outside days in the calendar. |
+
+Data slots: `range-calendar-with-presets`
+
+Heavy dependencies: `react-day-picker`
+
+### Select With Search
+
+Import: `import { ... } from "@strait/ui/components/select-with-search";`
+
+A searchable single-select dropdown that virtualizes its option list for large datasets and supports server-side pagination.
+
+Exports: `SelectOption`, `SelectWithSearch`, `SelectWithSearchProps`
+
+Props (`SelectWithSearchProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `options` | `SelectOption[]` | yes |  | List of options to render in the virtualized dropdown list. |
+| `value` | `string` |  |  | Currently selected value; drives controlled mode. |
+| `onValueChange` | `(value: string) => void` |  |  | Called with the new value when the user selects an option. |
+| `placeholder` | `string` |  | `"Select an option"` | Text shown in the trigger button when no option is selected. |
+| `label` | `string` |  |  | Accessible label rendered above the trigger via Label. |
+| `searchPlaceholder` | `string` |  | `"Search..."` | Placeholder inside the search CommandInput. |
+| `noResultsText` | `string` |  | `"No results found."` | Message shown by CommandEmpty when the option list is empty. |
+| `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `div`. |
+| `disabled` | `boolean` |  | `false` | When `true`, the trigger button is disabled and non-interactive. |
+| `error` | `boolean` |  | `false` | When `true`, renders the trigger border in `destructive` color. |
+| `required` | `boolean` |  | `false` | When `true`, appends a red asterisk to the label. |
+| `name` | `string` |  |  | Native `name` attribute forwarded to the trigger button element. |
+| `onSearchChange` | `(search: string) => void` |  |  | Called with the current search string on every keystroke. |
+| `id` | `string` |  |  | `id` forwarded to the trigger button; falls back to `name`. |
+| `onOpenChange` | `(open: boolean) => void` |  |  | Called with the new open state whenever the popover opens or closes. |
+| `onEndReached` | `() => void` |  |  | Called by `Virtuoso` when the user scrolls to the bottom of the list. |
+| `renderOption` | `(option: SelectOption, selected: boolean) => React.ReactNode` |  |  | Custom renderer for each option row; receives the option and selection state. |
+| `renderSelectedOption` | `(option: SelectOption) => React.ReactNode` |  |  | Custom renderer for the selected value shown inside the trigger button. |
+| `renderLoading` | `() => React.ReactNode` |  |  | Renders a loading indicator used both for initial load and next-page fetches. |
+| `renderEmpty` | `() => React.ReactNode` |  |  | Renders empty-state content when `options` is empty and not loading. |
+| `loading` | `boolean` |  | `false` | When `true`, shows `renderLoading` instead of the option list. |
+| `fetchingNextPage` | `boolean` |  | `false` | When `true`, appends the `renderLoading` footer below the virtualized list. |
+| `size` | `"default" \| "sm" \| "lg" \| "icon"` |  | `"default"` | Controls the size variant passed to the trigger Button. |
+
+Data slots: `select-with-search`
+
+### Select With Search And Button
+
+Import: `import { ... } from "@strait/ui/components/select-with-search-and-button";`
+
+A searchable single-select dropdown with a persistent action button pinned below the option list, typically used for inline "Add new …" creation flows.
+
+Exports: `SelectOptionWithSearchAndButton`, `SelectWithSearchAndButton`, `SelectWithSearchAndButtonProps`
+
+Props (`SelectWithSearchAndButtonProps`):
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `options` | `SelectOptionWithSearchAndButton[]` | yes |  | List of options to display in the searchable dropdown. |
+| `value` | `string` |  |  | Currently selected value; drives controlled mode. |
+| `onValueChange` | `(value: string) => void` |  |  | Called with the new value when the user selects or deselects an option. |
+| `placeholder` | `string` |  | `"Select an option"` | Text shown in the trigger button when no option is selected. |
+| `label` | `string` |  |  | Accessible label rendered above the trigger via Label. |
+| `searchPlaceholder` | `string` |  | `"Search..."` | Placeholder inside the search CommandInput. |
+| `noResultsText` | `string` |  | `"No results found."` | Message shown by CommandEmpty when no options match the search. |
+| `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `div`. |
+| `disabled` | `boolean` |  | `false` | When `true`, the trigger button is disabled and non-interactive. |
+| `error` | `boolean` |  | `false` | When `true`, renders the trigger border in `destructive` color. |
+| `required` | `boolean` |  | `false` | When `true`, appends a red asterisk to the label. |
+| `name` | `string` |  |  | `name` / `id` forwarded to the trigger button element. |
+| `buttonText` | `string` |  | `"Add new"` | Label text rendered inside the action button below the option list. |
+| `onButtonClick` | `() => void` |  |  | Called when the user clicks the action button; also closes the dropdown. |
+| `buttonIcon` | `React.ReactNode` |  | `(
+    <HugeiconsIcon
+      aria-hidden="true"
+      className="-ms-2 me-2 size-4 opacity-60"
+      icon={Add01Icon}
+    />
+  )` | Icon node rendered to the left of `buttonText` inside the action button. |
+
+Data slots: `select-with-search-and-button`
+
+## Uncategorized
+
+### Chart
+
+Import: `import { ... } from "@strait/ui/components/chart";`
+
+Root wrapper for the data-driven chart components.
+
+Exports: `BaseChartProps`, `CHART_COLORS`, `CartesianGrid`, `Chart`, `ChartColorKeys`, `ChartConfig`, `ChartContainer`, `ChartDatum`, `ChartLayout`, `ChartLegend`, `ChartLegendContent`, `ChartLegendContentProps`, `ChartLegendProps`, `ChartSeriesSelector`, `ChartSeriesSelectorProps`, `ChartStyle`, `ChartTooltip`, `ChartTooltipContent`, `ChartTooltipProps`, `ChartType`, `DEFAULT_COLORS`, `IntervalType`, `XAxis`, `XAxisProps`, `YAxis`, `constructCategoryColors`, `getColorValue`, `getPayloadConfigFromPayload`, `useChart`, `valueToPercent`
+
+Props (`BaseChartProps`):
+Extends: `React.ComponentProps<"div">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `cartesianGridProps` | `CartesianGridProps` |  |  | Props forwarded to the recharts `CartesianGrid` element. |
+| `colors` | `readonly ChartColorKeys[]` |  |  | Ordered palette; cycles when shorter than the number of series. |
+| `config` | `ChartConfig` | yes |  | Per-series ChartConfig; series are derived from its keys. |
+| `containerHeight` | `number` |  |  | Pixel height of the chart canvas. Defaults to 200 (mobile) / 370. |
+| `data` | `ChartDatum[]` | yes |  | Array of data rows. |
+| `dataKey` | `string` | yes |  | Field used for the category axis labels. |
+| `defaultSelectedSeries` | `string \| null` |  |  | Uncontrolled initial selected series. Defaults to `null`. |
+| `displayEdgeLabelsOnly` | `boolean` |  |  | Render only the first and last X-axis labels. |
+| `intervalType` | `IntervalType` |  |  | Axis tick interval strategy. |
+| `layout` | `ChartLayout` |  |  | Chart orientation — see ChartLayout. |
+| `legend` | `LegendContentType \| boolean` |  |  | `true` for the default interactive legend, or custom recharts content. |
+| `legendProps` | `Omit< React.ComponentProps<typeof LegendPrimitive>, "content" \| "ref" >` |  |  | Extra props forwarded to the recharts `Legend` element. |
+| `onSelectedSeriesChange` | `(value: string \| null) => void` |  |  | Fires when the selection changes (legend click, bar click, or selector). |
+| `selectedSeries` | `string \| null` |  |  | Controlled selected series (the isolated/highlighted one, or `null`). Share this with a ChartSeriesSelector `value` so a header selector and the in-chart interactive legend stay in sync. |
+| `showGridLines` | `boolean` |  |  | Shows the CartesianGrid when `true`. |
+| `showXAxis` | `boolean` |  |  | Shows the XAxis when `true`. |
+| `showYAxis` | `boolean` |  |  | Shows the YAxis when `true`. |
+| `tooltip` | `TooltipContentType<ValueType, NameType> \| boolean` |  |  | `true` for the default styled tooltip, or a custom recharts content. |
+| `tooltipProps` | `Omit<TooltipProps, "content"> & { showLabel?: boolean; labelSeparator?: boolean; showIndicator?: boolean; indicator?: "line" \| "dot" \| "dashed"; nameKey?: string; labelKey?: string; }` |  |  | Extra props forwarded to the recharts `Tooltip` element. |
+| `type` | `ChartType` |  |  | Stacking behaviour — see ChartType. |
+| `valueFormatter` | `(value: number) => string` |  |  | Formats numeric value-axis ticks and tooltip values. |
+| `xAxisProps` | `XAxisPrimitiveProps` |  |  | Extra props forwarded to the recharts `XAxis` element. |
+| `yAxisProps` | `YAxisPrimitiveProps` |  |  | Extra props forwarded to the recharts `YAxis` element. |
+
+Props (`ChartLegendContentProps`):
+Extends: `React.ComponentProps<"div">`, `Pick<LegendProps, "align" | "verticalAlign">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `payload` | `readonly LegendPayload[]` |  |  | Recharts legend payload injected automatically by the `Legend` wrapper. |
+| `showIcon` | `boolean` |  | `true` | When `true`, shows the color icon/dot for each legend entry. |
+| `nameKey` | `string` |  |  | Data key used to look up the series label in ChartConfig. |
+
+Props (`ChartLegendProps`):
+Extends: `Omit< React.ComponentProps<typeof LegendPrimitive>, "ref" >`
+
+Props (`ChartSeriesSelectorProps`):
+Extends: `Omit<React.ComponentProps<"div">, "onChange" | "defaultValue">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allowDeselect` | `boolean` |  | `true` | Clicking the active series clears the selection. Defaults to `true`. |
+| `colors` | `readonly ChartColorKeys[]` |  | `DEFAULT_COLORS` | Palette for the color dots; cycles when shorter than the series count. |
+| `config` | `ChartConfig` | yes |  | Per-series ChartConfig; one toggle is rendered per key. |
+| `data` | `ChartDatum[]` |  |  | Data rows used to compute each series' total when `showTotal`. |
+| `defaultValue` | `string \| null` |  | `null` | Uncontrolled initial selection. Defaults to `null`. |
+| `onValueChange` | `(value: string \| null) => void` |  |  | Fires with the new selection (or `null` when cleared). |
+| `series` | `string[]` |  |  | Restrict and order the rendered series. Defaults to `Object.keys(config)`. |
+| `showTotal` | `boolean` |  | `false` | Render each series' summed total beneath its label (dashboard style). |
+| `value` | `string \| null` |  |  | Controlled selected series key, or `null` for none. |
+| `valueFormatter` | `(value: number) => string` |  | `defaultTotalFormatter` | Formats the per-series total. Defaults to `toLocaleString`. |
+
+Props (`ChartTooltipProps`):
+Extends: `TooltipProps<ValueType, NameType>`
+
+Props (`XAxisProps`):
+Extends: `Omit<XAxisPrimitiveProps, "ref">`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `displayEdgeLabelsOnly` | `boolean` |  |  | Render only the first and last tick labels, hiding all intermediate ones. |
+| `intervalType` | `IntervalType` |  | `"preserveStartEnd"` | Recharts tick interval strategy forwarded to the `XAxis` primitive. |
+
+Data slots: `chart`, `chart-series-selector`, `chart-series-selector-item`
+
+Heavy dependencies: `recharts`
+
+### direction
+
+Import: `import { ... } from "@strait/ui/components/direction";`
+
+Re-exports Base UI's direction utilities for setting and reading the text directionality (`"ltr"` | `"rtl"`) of the component tree.
+
+Exports: `DirectionProvider`, `useDirection`

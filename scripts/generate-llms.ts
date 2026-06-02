@@ -26,8 +26,9 @@ import {
 const PKG_DIR = "packages/ui";
 const COMPONENTS_DIR = join(PKG_DIR, "src/components");
 const STORYBOOK_PUBLIC = "apps/storybook/public";
-// The docs site consumes a slug-keyed copy of the component model for its
-// auto-generated <PropsTable>. Written here and drift-gated like the rest.
+// The docs site serves the llms/components artifacts as static files and
+// consumes a slug-keyed model for its auto-generated <PropsTable>.
+const DOCS_PUBLIC = "apps/docs/public";
 const DOCS_GENERATED = "apps/docs/.generated";
 const PKG_NAME = "@strait/ui";
 
@@ -707,6 +708,7 @@ const propsJson = `${JSON.stringify(sortedPropsBySlug, null, 2)}\n`;
 const sharedTargets = (file: string) => [
   join(PKG_DIR, file),
   join(STORYBOOK_PUBLIC, file),
+  join(DOCS_PUBLIC, file),
 ];
 
 const artifacts: { file: string; content: string; targets: string[] }[] = [
@@ -759,6 +761,7 @@ if (process.argv.includes("--check")) {
   );
 } else {
   mkdirSync(STORYBOOK_PUBLIC, { recursive: true });
+  mkdirSync(DOCS_PUBLIC, { recursive: true });
   mkdirSync(DOCS_GENERATED, { recursive: true });
   for (const { targets, content } of artifacts) {
     for (const path of targets) {

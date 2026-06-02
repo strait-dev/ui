@@ -42,7 +42,7 @@ export const Playground: Story = {
         <div className="flex flex-col items-center gap-3">
           <Calendar
             aria-label="Select a date"
-            onChange={setDate}
+            onChange={(value) => setDate(value as DateValue)}
             value={date}
           />
           <p className="text-muted-foreground text-sm">

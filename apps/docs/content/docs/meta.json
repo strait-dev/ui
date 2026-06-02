@@ -6,6 +6,8 @@
     "theming",
     "dark-mode",
     "components",
+    "blocks",
+    "llms",
     "changelog"
   ]
 }
