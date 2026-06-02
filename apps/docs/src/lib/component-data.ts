@@ -9,11 +9,22 @@ export type PropDoc = {
   description?: string;
 };
 
-/** One exported `*Props` type: its inline members plus the types it extends. */
+/** One exported `*Props` type: inline members, extends, and resolved inherited props. */
 export type TypeDoc = {
   name: string;
   props: PropDoc[];
   extends: string[];
+  /** Meaningful props inherited from extended types (HTML globals filtered). */
+  inheritedProps: PropDoc[];
+  /** Native HTML tags whose attributes this type accepts (e.g. `["div"]`). */
+  extendsHtml: string[];
+};
+
+/** A compound component's sub-part: an exported sub-component + its data-slot. */
+export type PartDoc = {
+  name: string;
+  slot?: string;
+  description?: string;
 };
 
 /**
@@ -30,6 +41,7 @@ export type ComponentDoc = {
   variants: Record<string, string[]>;
   defaultVariants: Record<string, string>;
   slots: string[];
+  parts: PartDoc[];
   dependencies: string[];
 };
 

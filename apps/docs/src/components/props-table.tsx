@@ -1,6 +1,6 @@
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import type { ReactNode } from "react";
-import { getComponentDoc } from "@/src/lib/component-data";
+import { getComponentDoc, type PropDoc } from "@/src/lib/component-data";
 
 type TypeNode = {
   type: ReactNode;
@@ -9,10 +9,25 @@ type TypeNode = {
   required?: boolean;
 };
 
+function toRows(props: PropDoc[]): Record<string, TypeNode> {
+  const rows: Record<string, TypeNode> = {};
+  for (const prop of props) {
+    rows[prop.name] = {
+      type: prop.type,
+      description: prop.description,
+      default: prop.default,
+      required: !prop.optional,
+    };
+  }
+  return rows;
+}
+
 /**
- * Auto-generated reference for a component, driven by `.generated/props.json`
- * (itself produced from the component's TSDoc and cva recipes). Renders the
- * `variant`/`size` axes, the inline props, and a note for inherited props.
+ * Auto-generated reference for a component, driven by `.generated/props.json`.
+ * Renders the variant axes, inline props, type-checker-resolved inherited props
+ * (HTML globals filtered to a note), and the compound-component anatomy — all
+ * from the generated model, so every component page gets a complete reference
+ * with no per-page authoring.
  */
 export function PropsTable({ name }: { name: string }) {
   const doc = getComponentDoc(name);
@@ -35,19 +50,10 @@ export function PropsTable({ name }: { name: string }) {
     };
   }
 
-  const propRows: Record<string, TypeNode> = {};
-  for (const type of doc.types) {
-    for (const prop of type.props) {
-      propRows[prop.name] = {
-        type: prop.type,
-        description: prop.description,
-        default: prop.default,
-        required: !prop.optional,
-      };
-    }
-  }
-
-  const extendsList = [...new Set(doc.types.flatMap((t) => t.extends))];
+  const inlineRows = toRows(doc.types.flatMap((t) => t.props));
+  const inheritedRows = toRows(doc.types.flatMap((t) => t.inheritedProps));
+  const htmlTags = [...new Set(doc.types.flatMap((t) => t.extendsHtml))];
+  const parts = doc.parts.filter((p) => p.slot);
 
   return (
     <div className="flex flex-col gap-6">
@@ -58,24 +64,59 @@ export function PropsTable({ name }: { name: string }) {
         </section>
       )}
 
-      {Object.keys(propRows).length > 0 && (
+      {Object.keys(inlineRows).length > 0 && (
         <section className="flex flex-col gap-2">
           <h4 className="font-medium text-sm">Props</h4>
-          <TypeTable type={propRows} />
+          <TypeTable type={inlineRows} />
         </section>
       )}
 
-      {extendsList.length > 0 && (
+      {Object.keys(inheritedRows).length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h4 className="font-medium text-sm">Inherited props</h4>
+          <TypeTable type={inheritedRows} />
+        </section>
+      )}
+
+      {htmlTags.length > 0 && (
         <p className="text-fd-muted-foreground text-sm">
-          Also accepts all props of{" "}
-          {extendsList.map((ext, i) => (
-            <span key={ext}>
+          Also accepts all native{" "}
+          {htmlTags.map((tag, i) => (
+            <span key={tag}>
               {i > 0 && ", "}
-              <code>{ext}</code>
+              <code>&lt;{tag}&gt;</code>
             </span>
-          ))}
-          .
+          ))}{" "}
+          attributes.
         </p>
+      )}
+
+      {parts.length > 1 && (
+        <section className="flex flex-col gap-2">
+          <h4 className="font-medium text-sm">Anatomy</h4>
+          <table className="text-sm">
+            <thead>
+              <tr>
+                <th className="text-left">Part</th>
+                <th className="text-left">Data slot</th>
+                <th className="text-left">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {parts.map((part) => (
+                <tr key={part.name}>
+                  <td>
+                    <code>{part.name}</code>
+                  </td>
+                  <td>
+                    <code>{part.slot}</code>
+                  </td>
+                  <td>{part.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
       )}
     </div>
   );

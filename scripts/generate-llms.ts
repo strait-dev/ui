@@ -122,6 +122,21 @@ type TypeDoc = {
   props: PropDoc[];
   /** Types it intersects/extends whose members we can't statically expand. */
   extends: string[];
+  /**
+   * Props inherited from extended/intersected types (Base UI primitives,
+   * controlled props, …), resolved via the type checker with HTML/ARIA global
+   * attributes filtered out. Empty if resolution failed.
+   */
+  inheritedProps: PropDoc[];
+  /** Native HTML tags whose attributes this type accepts (e.g. `["div"]`). */
+  extendsHtml: string[];
+};
+
+/** A compound component's sub-part: an exported sub-component + its data-slot. */
+type PartDoc = {
+  name: string;
+  slot?: string;
+  description?: string;
 };
 
 type ComponentDoc = {
@@ -135,6 +150,8 @@ type ComponentDoc = {
   variants: Record<string, string[]>;
   defaultVariants: Record<string, string>;
   slots: string[];
+  /** Sub-component parts (anatomy) for compound components. */
+  parts: PartDoc[];
   dependencies: string[];
 };
 
@@ -445,6 +462,112 @@ for (const file of files) {
   project.addSourceFileAtPath(join(COMPONENTS_DIR, file));
 }
 
+// A second project loaded with full dependency resolution, so the type checker
+// can expand props inherited from Base UI primitives, React, and local types.
+// Wrapped defensively: if it can't load, inherited-prop expansion is skipped.
+let typeProject: Project | null = null;
+try {
+  typeProject = new Project({
+    tsConfigFilePath: join(PKG_DIR, "tsconfig.json"),
+  });
+} catch {
+  typeProject = null;
+}
+
+/**
+ * Names of every native HTML/SVG/ARIA/DOM attribute, derived by resolving
+ * `ComponentProps<"…">` for representative tags. Used to filter the noise out
+ * of inherited props (we surface a "accepts all native <tag> attributes" note
+ * instead of listing 200+ globals).
+ */
+function buildDomGlobals(p: Project): Set<string> {
+  const names = new Set<string>();
+  try {
+    const probe = p.createSourceFile(
+      join(COMPONENTS_DIR, "__strait_dom_probe__.ts"),
+      `import type { ComponentProps } from "react";
+export type Probe = ComponentProps<"div"> & ComponentProps<"button"> &
+  ComponentProps<"input"> & ComponentProps<"a"> & ComponentProps<"span"> &
+  ComponentProps<"ul"> & ComponentProps<"nav"> & ComponentProps<"svg">;`,
+      { overwrite: true }
+    );
+    for (const sym of probe
+      .getTypeAliasOrThrow("Probe")
+      .getType()
+      .getProperties()) {
+      names.add(sym.getName());
+    }
+    p.removeSourceFile(probe);
+  } catch {
+    // leave empty — inherited props simply won't be filtered
+  }
+  return names;
+}
+
+const domGlobals = typeProject
+  ? buildDomGlobals(typeProject)
+  : new Set<string>();
+
+/**
+ * Resolve the full prop set of a `*Props` type via the checker, returning only
+ * the meaningful inherited props: excludes the type's own inline props, the
+ * cva variant axes (`exclude`), props declared in the component's own file, and
+ * the HTML/ARIA globals.
+ */
+function resolveInheritedProps(
+  typeName: string,
+  filePath: string,
+  exclude: Set<string>
+): PropDoc[] {
+  if (!typeProject) {
+    return [];
+  }
+  try {
+    const sf = typeProject.getSourceFile(filePath);
+    const decl = sf?.getTypeAlias(typeName) ?? sf?.getInterface(typeName);
+    if (!decl) {
+      return [];
+    }
+    const out: PropDoc[] = [];
+    for (const sym of decl.getType().getProperties()) {
+      const propName = sym.getName();
+      if (exclude.has(propName) || domGlobals.has(propName)) {
+        continue;
+      }
+      const d = sym.getDeclarations()[0];
+      if (!d || d.getSourceFile().getFilePath() === filePath) {
+        continue;
+      }
+      let typeText = "unknown";
+      let optional = true;
+      let description: string | undefined;
+      if (Node.isPropertySignature(d)) {
+        typeText = d.getTypeNode()?.getText().replace(/\s+/g, " ") ?? "unknown";
+        optional = d.hasQuestionToken();
+        description = firstParagraph(jsDocText(d)) || undefined;
+      } else {
+        typeText = sym.getTypeAtLocation(d).getText(d).replace(/\s+/g, " ");
+      }
+      out.push({ name: propName, type: typeText, optional, description });
+    }
+    return out.sort((a, b) => a.name.localeCompare(b.name));
+  } catch {
+    return [];
+  }
+}
+
+const HTML_EXTENDS_RE = /ComponentProps(?:WithoutRef|WithRef)?<\s*"(\w+)"/;
+function extendsHtmlTags(extendsList: string[]): string[] {
+  const tags = new Set<string>();
+  for (const e of extendsList) {
+    const m = e.match(HTML_EXTENDS_RE);
+    if (m) {
+      tags.add(m[1]);
+    }
+  }
+  return [...tags].sort();
+}
+
 const docs: ComponentDoc[] = [];
 
 for (const file of files) {
@@ -538,17 +661,35 @@ for (const file of files) {
   // from the destructured params of its own component.
   const componentByName = new Map(localComponents.map((c) => [c.name, c.decl]));
 
+  const { variants, defaultVariants } = extractCva(sourceFile, name);
+  const variantAxes = Object.keys(variants);
+
   const types: TypeDoc[] = propsTypes
     .map(({ name: typeName, decl }) => {
       const ownerName = typeName.replace(/Props$/, "");
       const ownerDecl = componentByName.get(ownerName);
       const defaults = ownerDecl ? extractDefaults(ownerDecl) : {};
       const { props, extendsList } = extractProps(decl, defaults);
-      return { name: typeName, props, extends: extendsList };
+      const exclude = new Set([...props.map((p) => p.name), ...variantAxes]);
+      return {
+        name: typeName,
+        props,
+        extends: extendsList,
+        inheritedProps: resolveInheritedProps(typeName, filePath, exclude),
+        extendsHtml: extendsHtmlTags(extendsList),
+      };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const { variants, defaultVariants } = extractCva(sourceFile, name);
+  const slots = extractSlots(src);
+  const slotByNorm = new Map(slots.map((s) => [normalize(s), s]));
+  const parts: PartDoc[] = localComponents
+    .map((c) => ({
+      name: c.name,
+      slot: slotByNorm.get(normalize(c.name)),
+      description: firstParagraph(jsDocText(c.decl)) || undefined,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   docs.push({
     name: displayName,
@@ -559,7 +700,8 @@ for (const file of files) {
     types,
     variants,
     defaultVariants,
-    slots: extractSlots(src),
+    slots,
+    parts,
     dependencies: extractHeavyDeps(src),
   });
 }
