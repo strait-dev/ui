@@ -5,6 +5,26 @@ description: A modal overlay that interrupts the user to focus on a single task 
 
 <ComponentPreview name="dialog/demo" />
 
+## Examples
+
+### With form
+
+Use `size="lg"` on `DialogContent` to give a form-based dialog more horizontal room, and wire the footer's `showCloseButton` for a built-in cancel action.
+
+<ComponentPreview name="dialog/with-form" />
+
+### Alert style
+
+Set `accent="destructive"` on `DialogHeader` and `showCloseButton={false}` on `DialogContent` to create a confirmation dialog that signals danger and cannot be dismissed without an explicit action.
+
+<ComponentPreview name="dialog/alert-style" />
+
+### Sizes
+
+`DialogContent` accepts a `size` prop (`sm`, `default`, `lg`, `xl`, `full`) to control the maximum width of the panel.
+
+<ComponentPreview name="dialog/sizes" />
+
 ## Reference
 
 <PropsTable name="dialog" />
