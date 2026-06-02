@@ -38,7 +38,12 @@ export async function ComponentPreview({ name }: { name: string }) {
   return (
     <Tabs className="my-4" items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-fd-border bg-fd-card p-8">
+        {/*
+          `not-prose` is load-bearing: the preview renders inside Fumadocs'
+          prose typography, which would otherwise add margins/radius to the
+          demo's own markup (e.g. <img>, <p>) and make components look broken.
+        */}
+        <div className="not-prose flex min-h-48 w-full items-center justify-center rounded-lg border border-fd-border bg-fd-card p-8">
           <Demo />
         </div>
       </Tab>
