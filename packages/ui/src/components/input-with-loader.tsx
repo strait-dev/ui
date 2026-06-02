@@ -70,6 +70,7 @@ function InputWithLoader({
   return (
     <div className="relative" data-slot="input-with-loader">
       <Input
+        aria-busy={loading}
         className={cn(endIcon ? "pe-9" : "", icon ? "ps-9" : "", className)}
         data-slot="input"
         {...props}

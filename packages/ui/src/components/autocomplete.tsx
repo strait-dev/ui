@@ -359,6 +359,7 @@ function AutocompleteClear({
 }: React.ComponentProps<typeof AutocompletePrimitive.Clear>) {
   return (
     <AutocompletePrimitive.Clear
+      aria-label="Clear"
       className={cn(
         "absolute top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground/70 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none data-disabled:pointer-events-none",
         className
@@ -366,7 +367,12 @@ function AutocompleteClear({
       data-slot="autocomplete-clear"
       {...props}
     >
-      <HugeiconsIcon className="size-4" icon={Cancel01Icon} strokeWidth={2} />
+      <HugeiconsIcon
+        aria-hidden="true"
+        className="size-4"
+        icon={Cancel01Icon}
+        strokeWidth={2}
+      />
     </AutocompletePrimitive.Clear>
   );
 }
@@ -382,6 +388,7 @@ function AutocompleteTrigger({
 }: React.ComponentProps<typeof AutocompletePrimitive.Trigger>) {
   return (
     <AutocompletePrimitive.Trigger
+      aria-label="Show options"
       className={cn(
         "absolute top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground/70 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none has-[+[data-slot=autocomplete-clear]]:hidden data-disabled:pointer-events-none",
         className
@@ -389,7 +396,12 @@ function AutocompleteTrigger({
       data-slot="autocomplete-trigger"
       {...props}
     >
-      <HugeiconsIcon className="size-4" icon={UnfoldMoreIcon} strokeWidth={2} />
+      <HugeiconsIcon
+        aria-hidden="true"
+        className="size-4"
+        icon={UnfoldMoreIcon}
+        strokeWidth={2}
+      />
     </AutocompletePrimitive.Trigger>
   );
 }

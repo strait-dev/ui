@@ -26,6 +26,15 @@ describe("InputWithInnerTags", () => {
     expect(screen.getByPlaceholderText("Add a tag")).toBeInTheDocument();
   });
 
+  it("gives the add-tag button an accessible name once typing begins", async () => {
+    render(<InputWithInnerTags onTagsChange={vi.fn()} tags={[]} />);
+    expect(
+      screen.queryByRole("button", { name: "Add tag" })
+    ).not.toBeInTheDocument();
+    await userEvent.type(screen.getByPlaceholderText("Add a tag"), "React");
+    expect(screen.getByRole("button", { name: "Add tag" })).toBeInTheDocument();
+  });
+
   it("renders a custom placeholder", () => {
     render(
       <InputWithInnerTags

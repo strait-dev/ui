@@ -182,12 +182,14 @@ function AccordionTrigger({
         {indicator === "chevron" && (
           <>
             <HugeiconsIcon
+              aria-hidden="true"
               className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
               data-slot="accordion-trigger-icon"
               icon={ArrowDown01Icon}
               strokeWidth={2}
             />
             <HugeiconsIcon
+              aria-hidden="true"
               className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
               data-slot="accordion-trigger-icon"
               icon={ArrowUp01Icon}
@@ -198,12 +200,14 @@ function AccordionTrigger({
         {indicator === "plus-minus" && (
           <>
             <HugeiconsIcon
+              aria-hidden="true"
               className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
               data-slot="accordion-trigger-icon"
               icon={PlusSignIcon}
               strokeWidth={2}
             />
             <HugeiconsIcon
+              aria-hidden="true"
               className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
               data-slot="accordion-trigger-icon"
               icon={MinusSignIcon}

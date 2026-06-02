@@ -236,11 +236,14 @@ function Tag({ children, className, variant, ...props }: TagProps) {
         <>
           {resolvedChildren}
           {allowsRemoving ? (
+            // RAC labels this button via aria-labelledby (its built-in "Remove"
+            // text + the tag), so no aria-label is needed; the icon is purely
+            // decorative.
             <Button
               className="ml-0.5 inline-flex size-3.5 items-center justify-center rounded-sm opacity-60 outline-hidden hover:opacity-100 data-focus-visible:ring-3 data-focus-visible:ring-ring/50"
               slot="remove"
             >
-              <HugeiconsIcon icon={Cancel01Icon} size={12} />
+              <HugeiconsIcon aria-hidden="true" icon={Cancel01Icon} size={12} />
             </Button>
           ) : null}
         </>

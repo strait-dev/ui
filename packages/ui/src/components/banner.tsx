@@ -191,7 +191,11 @@ function BannerIcon({
       data-slot="banner-icon"
       {...props}
     >
-      <HugeiconsIcon className="size-4 shrink-0" icon={resolvedIcon} />
+      <HugeiconsIcon
+        aria-hidden="true"
+        className="size-4 shrink-0"
+        icon={resolvedIcon}
+      />
     </span>
   );
 }
