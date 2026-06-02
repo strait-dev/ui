@@ -1,0 +1,21 @@
+/*
+ * Single stylesheet for the docs app.
+ *
+ * `@strait/ui/css` is the design system's raw source globals.css; it performs
+ * `@import "tailwindcss"`, pulls the Strait `@config`, and defines every
+ * semantic token (`--background`, `--brand`, ...). Fumadocs UI ships its own
+ * theme on top, namespaced with an `fd-` prefix (`--color-fd-background`), so
+ * the docs chrome and the rendered Strait components never collide. Both honour
+ * the same `.dark` class, so a single theme toggle drives the whole page.
+ */
+@import "@strait/ui/css";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/* Preserve the built component class names when the site is bundled. */
+@source "../node_modules/@strait/ui/dist";
+/* Scan the docs app's own components, demos, and content. */
+@source "./**/*.{ts,tsx}";
+@source "../src/**/*.{ts,tsx}";
+@source "../demos/**/*.{ts,tsx}";
+@source "../content/**/*.{md,mdx}";
