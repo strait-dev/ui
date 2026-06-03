@@ -78,8 +78,9 @@ format and the rest of the brand system derives automatically:
 \`\`\`
 
 Setting \`--brand\` re-themes everything keyed off it:
-- \`--brand-foreground\` — text on the solid brand fill; contrast-flips to
-  near-black/white by the brand's lightness.
+- \`--brand-foreground\` — text on the solid brand fill; defaults to white (a
+  deliberate brand choice). Override it if you rebrand to a light colour that
+  needs dark text.
 - \`--brand-accent\` — AA-legible text/border for the soft and outline brand
   variants on tinted surfaces (darkens in light mode, lightens in dark mode).
 - \`--chart-1\`, \`--sidebar-active-rail\`, and the active-row tint follow too.

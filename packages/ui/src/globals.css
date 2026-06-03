@@ -22,13 +22,14 @@
   --primary: oklch(0.216 0.006 56.043);
   --primary-foreground: oklch(0.985 0.001 106.423);
   /* --brand is the single rebrand input — set it to any colour (hex/rgb/oklch)
-     and the tokens below derive from it. --brand-foreground contrast-flips to
-     near-black/white by brand lightness; --brand-accent darkens for AA-legible
-     text/border on the soft (/10) + outline variants. Both stay overridable. */
+     and the tokens below derive from it. --brand-foreground is white by a
+     deliberate brand-identity choice: on the #FF4F00 brand, white text is
+     3.16:1 (below WCAG AA) — the brand-solid contrast is a documented exception
+     (see scripts/a11y-scan.mjs ALLOWLIST). Override --brand-foreground if you
+     rebrand to a lighter colour that needs dark text. --brand-accent darkens
+     for AA-legible text/border on the soft (/10) + outline variants. */
   --brand: oklch(0.6696 0.222 37.42);
-  --brand-foreground: oklch(
-    from var(--brand) clamp(0, (0.62 - l) * 1000, 1) 0 h
-  );
+  --brand-foreground: oklch(0.985 0.001 106.423);
   --brand-accent: oklch(from var(--brand) min(l, 0.5) c h);
   --secondary: oklch(0.97 0.001 106.424);
   --secondary-foreground: oklch(0.216 0.006 56.043);
@@ -91,9 +92,8 @@
   --primary: oklch(0.97 0.001 106.424);
   --primary-foreground: oklch(0.216 0.006 56.043);
   --brand: oklch(0.6696 0.222 37.42);
-  --brand-foreground: oklch(
-    from var(--brand) clamp(0, (0.62 - l) * 1000, 1) 0 h
-  );
+  /* White brand text by deliberate choice (see :root note). */
+  --brand-foreground: oklch(0.985 0.001 106.423);
   /* Soft/outline tint sits on a dark surface here, so lighten for AA legibility. */
   --brand-accent: oklch(from var(--brand) max(l, 0.72) c h);
   --secondary: oklch(0.268 0.007 34.298);
