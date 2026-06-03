@@ -8,6 +8,7 @@
     "foundations",
     "components",
     "blocks",
+    "accessibility",
     "llms",
     "changelog"
   ]
