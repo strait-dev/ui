@@ -13,8 +13,10 @@ single stylesheet.
 
 The repo is a [Bun](https://bun.sh) + [Turborepo](https://turbo.build) monorepo.
 
-📖 **Live docs:** [strait-dev.github.io/ui](https://strait-dev.github.io/ui/) — the
-Storybook site, published from `main` (see [Documentation site](#documentation-site)).
+📖 **Live docs:** the Strait UI documentation site — a Next.js + Fumadocs app
+(`apps/docs`) with live previews, copyable code, and auto-generated props tables,
+deployed on Vercel (see [Documentation site](#documentation-site)). Storybook is
+kept as the internal reference for visual and interaction testing.
 
 ---
 
@@ -312,16 +314,19 @@ Run it locally against your project with
 
 ## Documentation site
 
-Every push to `main` can publish the static Storybook to GitHub Pages via the
-`Deploy docs` workflow, serving the live docs at
-[strait-dev.github.io/ui](https://strait-dev.github.io/ui/). To turn it on:
+The public documentation site is a Next.js (App Router) + [Fumadocs](https://fumadocs.dev)
+app in `apps/docs`. It renders every component with live previews and a props
+table generated from the component source, plus theming, blocks, and an
+LLM-friendly reference. Run it locally with:
 
-1. In **Settings → Pages**, set **Source** to **GitHub Actions**.
-2. Add a repository **variable** `PAGES_ENABLED` set to `true` to switch the
-   `Deploy docs` workflow on.
+```bash
+bun run docs:dev   # http://localhost:3000
+```
 
-The job builds Storybook and deploys it with the official Pages actions; the live URL
-appears on the workflow's `github-pages` environment after the first run.
+It deploys on **Vercel** via the repo's Git integration (build
+`turbo run build --filter=@strait/docs`, configured in `vercel.json`). No GitHub
+Actions deploy is involved; Storybook is no longer published publicly but still
+builds in CI for Chromatic and interaction tests.
 
 ## License
 

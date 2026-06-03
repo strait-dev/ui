@@ -1,0 +1,47 @@
+---
+title: Drawer
+description: An edge-anchored panel that slides in from any side of the viewport, powered by the Vaul library.
+---
+
+<ComponentPreview name="drawer/demo" />
+
+## Examples
+
+### Directions
+
+Pass `direction` to the `Drawer` root to slide in from `bottom`, `right`, `left`, or `top`.
+
+<ComponentPreview name="drawer/directions" />
+
+### Right panel
+
+A `direction="right"` drawer works well for settings panels and secondary flows on desktop.
+
+<ComponentPreview name="drawer/right-panel" />
+
+### With form
+
+Compose a form inside a bottom drawer for mobile-style creation flows.
+
+<ComponentPreview name="drawer/with-form" />
+
+## Reference
+
+<PropsTable name="drawer" />
+
+## Accessibility
+
+Drawer is powered by the Vaul library, which wraps its content in a dialog-like overlay. The panel traps focus while open and restores focus to the trigger on close. Always include a `DrawerTitle` so screen readers announce the panel purpose when it opens.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the drawer when focus is on the trigger |
+| `Esc` | Closes the drawer and returns focus to the trigger |
+| `Tab` | Moves focus to the next focusable element inside the drawer |
+| `Shift` + `Tab` | Moves focus to the previous focusable element inside the drawer |
+
+### ARIA and labeling
+
+`DrawerTitle` and `DrawerDescription` map to Vaul's accessible title/description slots, which are associated with the dialog container via `aria-labelledby` and `aria-describedby`. The drag handle on `direction="bottom"` drawers is decorative; it does not require a label.

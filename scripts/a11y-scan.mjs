@@ -52,6 +52,30 @@ console.log(
 
 const browser = await chromium.launch();
 
+// Documented, deliberate a11y exceptions. Findings whose individual nodes match
+// an entry here are dropped from the pass/fail set (and logged separately for
+// transparency). Keep this list tiny and justified — every entry is a conscious
+// trade-off, not a way to silence real issues.
+const ALLOWLIST = [
+  {
+    rule: "color-contrast",
+    // The brand-solid Button renders white text on the #FF4F00 brand colour
+    // (3.16:1, below WCAG AA). This is a deliberate brand-identity decision;
+    // see packages/ui/src/globals.css (--brand-foreground note). Matched on the
+    // computed selector because axe truncates the class list in node.html.
+    targetIncludes: ".bg-brand",
+    reason: "brand-solid: white-on-#FF4F00 is a deliberate brand exception",
+  },
+];
+
+function allowlistMatch(rule, node) {
+  const target = (node?.target ?? []).join(" ");
+  return ALLOWLIST.find(
+    (a) => a.rule === rule && target.includes(a.targetIncludes)
+  );
+}
+
+const allowlisted = []; // {id, title, rule, reason, count}
 const findings = []; // {id, title, rule, impact, count, sampleTarget, sampleHtml}
 
 for (const s of targets) {
@@ -116,13 +140,36 @@ for (const s of targets) {
       if (v.impact !== "serious" && v.impact !== "critical") {
         continue;
       }
-      const node = v.nodes[0];
+      // Drop only the individual nodes covered by a documented exception, so
+      // every other node of the same rule still fails the build.
+      const exempt = [];
+      const nodes = v.nodes.filter((n) => {
+        const hit = allowlistMatch(v.id, n);
+        if (hit) {
+          exempt.push(hit);
+          return false;
+        }
+        return true;
+      });
+      if (exempt.length > 0) {
+        allowlisted.push({
+          id: s.id,
+          title: s.title,
+          rule: v.id,
+          reason: exempt[0].reason,
+          count: exempt.length,
+        });
+      }
+      if (nodes.length === 0) {
+        continue;
+      }
+      const node = nodes[0];
       findings.push({
         id: s.id,
         title: s.title,
         rule: v.id,
         impact: v.impact,
-        count: v.nodes.length,
+        count: nodes.length,
         sampleTarget: node?.target?.join(" ") ?? "",
         sampleHtml: (node?.html ?? "").slice(0, 160),
         message: node?.failureSummary?.split("\n").slice(0, 2).join(" ") ?? "",
@@ -169,6 +216,13 @@ for (const [rule, info] of rows) {
     console.log(`    - ${t}`);
   }
 }
+if (allowlisted.length > 0) {
+  console.log("\n=== Allowlisted (documented exceptions, not counted) ===");
+  for (const a of allowlisted) {
+    console.log(`${a.rule} on ${a.title} (${a.count}) — ${a.reason}`);
+  }
+}
+
 console.log(
   `\nFull report: scripts/a11y-report.json (${findings.length} findings)`
 );

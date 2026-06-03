@@ -1,0 +1,49 @@
+---
+title: Accessibility
+description: How Strait UI is built and tested for accessibility, and the guarantees you can rely on.
+---
+
+Accessibility is a build gate in Strait UI, not an afterthought. Components are
+built on accessible primitives ([Base UI](https://base-ui.com) and
+[React Aria](https://react-spectrum.adobe.com/react-aria/)), and the design
+system is verified on every change.
+
+## What we guarantee
+
+- **WCAG 2.1 AA contrast.** Text and essential UI meet AA contrast in both light
+  and dark themes. A single, documented exception is called out below.
+- **Automated axe scans.** Every component is scanned with
+  [axe-core](https://github.com/dequelabs/axe-core) in **both light and dark**
+  modes in CI; serious or critical violations fail the build.
+- **A consistent focus ring.** Every focusable control uses the same
+  `focus-visible` ring (a 3px ring plus a tinted border) — never removed, never
+  offset. Focus is always visible and never trapped unexpectedly.
+- **Keyboard support.** Interactive components are fully operable by keyboard,
+  with the expected arrow/Escape/Enter/Space behaviour from their underlying
+  primitive. Component pages document the specific keys under **Accessibility**.
+- **Semantic markup and labelling.** Components expose correct roles and ARIA
+  wiring; icon-only controls require an accessible name, and decorative icons are
+  hidden from assistive technology.
+
+## Testing
+
+The library is checked on every pull request:
+
+- **axe** — accessibility scan across all components, light and dark.
+- **Contrast** — AA contrast enforced as part of the scan.
+- **Unit + interaction tests** — behaviour (including keyboard interaction) is
+  covered by unit tests and Storybook interaction tests.
+
+## The one documented exception
+
+The **brand-solid** button renders white text on the `#FF4F00` brand colour
+(3.16:1, below AA). This is a deliberate brand-identity decision, isolated as a
+single allowlisted exception so that every other contrast check stays strictly
+enforced. If you need an AA-compliant high-emphasis action, use the default
+(`primary`) or `invert` variant, or override `--brand-foreground` / `--brand`.
+
+## Reporting an issue
+
+Found an accessibility problem? Please
+[open an issue](https://github.com/strait-dev/ui/issues) — accessibility
+regressions are treated as bugs.

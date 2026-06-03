@@ -1,0 +1,45 @@
+---
+title: Switch
+description: A toggle control that switches between on and off states, built on Base UI's Switch primitive.
+---
+
+<ComponentPreview name="switch/demo" />
+
+## Examples
+
+### States
+
+The switch renders off, on, disabled off, and disabled on states driven by Base UI's data attributes — no extra classes needed.
+
+<ComponentPreview name="switch/states" />
+
+### Sizes
+
+Set `size` on the root to scale both the track and the thumb together: `sm` (24 × 14 px), `default` (32 × 18 px), `lg` (44 × 24 px).
+
+<ComponentPreview name="switch/sizes" />
+
+### Settings list
+
+A common composition: place each switch at the end of a row with a label and short description on the left.
+
+<ComponentPreview name="switch/settings-list" />
+
+## Reference
+
+<PropsTable name="switch" />
+
+## Accessibility
+
+`Switch` is built on Base UI's Switch primitive, which renders a button with `role="switch"` and `aria-checked` toggling between `true` and `false` automatically — the on/off state is announced to screen readers without any extra markup.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Space` | Toggles the switch between on and off |
+| `Tab` | Moves focus to the switch (or away from it) |
+
+### ARIA and labeling
+
+Pair the `Switch` with a visible `<Label>` whose `htmlFor` matches the switch's `id`. When used in a settings-list layout where the label is a separate block element, use `aria-labelledby` pointing at the heading text element. For icon-only or ambiguous contexts, provide an `aria-label` directly on the `Switch`.

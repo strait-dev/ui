@@ -1,0 +1,37 @@
+---
+title: Navigation Menu
+description: A horizontal navigation bar with animated flyout content panels for rich dropdown navigation.
+---
+
+<ComponentPreview name="navigation-menu/demo" />
+
+## Examples
+
+### Plain links
+
+Use `NavigationMenuLink` with `navigationMenuTriggerStyle()` to render a flat nav bar of direct links without dropdown panels; pass `active` to highlight the current page.
+
+<ComponentPreview name="navigation-menu/plain-links" />
+
+### Rich dropdown panel
+
+Combine `NavigationMenuTrigger` with a `NavigationMenuContent` containing icon-annotated `NavigationMenuLink` items to build a "mega-menu" with descriptions.
+
+<ComponentPreview name="navigation-menu/rich-panel" />
+
+## Reference
+
+<PropsTable name="navigation-menu" />
+
+## Accessibility
+
+Built on Base UI's `NavigationMenu` primitive, which implements the [WAI-ARIA Navigation Menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/). Trigger buttons manage `aria-expanded` when their flyout panel is open. The chevron icon inside `NavigationMenuTrigger` is `aria-hidden` so it is not read by screen readers.
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus through triggers and links in document order |
+| `Shift+Tab` | Move focus backward |
+| `Enter` / `Space` | Open or close the flyout panel of a focused trigger |
+| `Escape` | Close the open flyout panel and return focus to its trigger |
+
+**ARIA:** Wrap the entire component in a `<nav>` with an `aria-label` (e.g. `aria-label="Main"`) to expose it as a named navigation landmark. Pass `active` on `NavigationMenuLink` to set `aria-current` on the current page link.

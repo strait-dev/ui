@@ -1,0 +1,44 @@
+---
+title: Tabs
+description: Switches between related panels of content in the same context.
+---
+
+<ComponentPreview name="tabs/demo" />
+
+## Examples
+
+### Variants
+
+`TabsList` supports three visual styles: `default` (filled pill bar), `line` (borderless with an underline indicator), and `underline` (plain text with a full-width bottom border).
+
+<ComponentPreview name="tabs/variants" />
+
+### With icons
+
+Place a `HugeiconsIcon` before the label inside `TabsTrigger` — the trigger's gap and icon sizing are handled automatically.
+
+<ComponentPreview name="tabs/with-icons" />
+
+### Vertical orientation
+
+Set `orientation="vertical"` on `Tabs` to rotate the list into a column with full-width, left-aligned triggers.
+
+<ComponentPreview name="tabs/vertical" />
+
+## Reference
+
+<PropsTable name="tabs" />
+
+## Accessibility
+
+Built on Base UI's `Tabs` primitive, which implements the [WAI-ARIA Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/). The `TabsList` renders with `role="tablist"`, each `TabsTrigger` renders with `role="tab"`, and each `TabsContent` renders with `role="tabpanel"`. Arrow key navigation between triggers is handled by Base UI automatically.
+
+| Key | Action |
+| --- | --- |
+| `Arrow Right` / `Arrow Down` | Move focus to the next tab trigger (horizontal / vertical orientation) |
+| `Arrow Left` / `Arrow Up` | Move focus to the previous tab trigger (horizontal / vertical orientation) |
+| `Home` | Move focus to the first tab trigger |
+| `End` | Move focus to the last tab trigger |
+| `Tab` | Move focus from the active trigger into the active panel |
+
+**ARIA:** Each trigger is linked to its panel via `aria-controls` and the active trigger carries `aria-selected="true"`, both managed by Base UI. Tab activation follows automatic selection (focus moves to a trigger and its panel activates immediately); no separate `Enter` press is needed.

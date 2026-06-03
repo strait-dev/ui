@@ -1,0 +1,30 @@
+---
+title: Feature Lock
+description: A gating overlay that visually locks content behind an upsell prompt when a feature requires a paid plan.
+---
+
+<ComponentPreview name="feature-lock/demo" />
+
+## Examples
+
+### Locked with upsell overlay
+
+When `locked={true}`, children are blurred and made non-interactive while a centred overlay shows a `FeatureBadge`, title, description, and CTA.
+
+<ComponentPreview name="feature-lock/locked" />
+
+### Without blur
+
+Set `blur={false}` when the gated content is already a skeleton or placeholder — content is hidden from interaction but not blurred.
+
+<ComponentPreview name="feature-lock/no-blur" />
+
+### FeatureBadge standalone
+
+`FeatureBadge` can be used on its own in headers, empty states, or pricing tables to signal a paid feature at a glance.
+
+<ComponentPreview name="feature-lock/badge" />
+
+## Reference
+
+<PropsTable name="feature-lock" />

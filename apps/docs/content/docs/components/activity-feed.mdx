@@ -1,0 +1,30 @@
+---
+title: Activity Feed
+description: A presentational, scrollable list of timestamped activity entries with status dots and relative times.
+---
+
+<ComponentPreview name="activity-feed/demo" />
+
+## Examples
+
+### Status dots
+
+Each item's `status` field maps to a coloured dot using the same vocabulary as `StatusBadge` — `"completed"`, `"running"`, `"failed"`, `"pending"`, `"delayed"`, and more.
+
+<ComponentPreview name="activity-feed/statuses" />
+
+### Custom empty state
+
+Pass an `emptyState` node to replace the default "No activity yet" message when `items` is empty.
+
+<ComponentPreview name="activity-feed/empty-state" />
+
+### Custom row renderer
+
+Use `renderItem` for full row control while keeping the `ScrollArea` viewport and empty-state behaviour.
+
+<ComponentPreview name="activity-feed/custom-render" />
+
+## Reference
+
+<PropsTable name="activity-feed" />

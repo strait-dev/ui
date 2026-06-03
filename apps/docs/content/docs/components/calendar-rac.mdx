@@ -1,0 +1,39 @@
+---
+title: Calendar Rac
+description: Single-date and range-selection calendars built on React Aria Components with accessible keyboard navigation and a today dot indicator.
+---
+
+<ComponentPreview name="calendar-rac/demo" />
+
+## Examples
+
+### Range Selection
+
+Use the `RangeCalendar` export to let users select a start and end date with highlighted interior cells.
+
+<ComponentPreview name="calendar-rac/range-select" />
+
+### Disabled
+
+Pass `isDisabled` to prevent interaction while keeping the calendar visible.
+
+<ComponentPreview name="calendar-rac/disabled" />
+
+## Reference
+
+<PropsTable name="calendar-rac" />
+
+## Accessibility
+
+`Calendar` and `RangeCalendar` are built on React Aria Components, which fully manage ARIA roles, focus, and keyboard navigation in accordance with the ARIA grid/calendar pattern.
+
+| Key | Action |
+|---|---|
+| `Arrow Left` / `Arrow Right` | Move focus one day backward / forward |
+| `Arrow Up` / `Arrow Down` | Move focus one week backward / forward |
+| `Page Up` / `Page Down` | Navigate to the previous / next month |
+| `Home` | Move focus to the first day of the current month |
+| `End` | Move focus to the last day of the current month |
+| `Enter` / `Space` | Select the focused day (or set the range start/end) |
+
+The root element receives `role="application"` with an `aria-label` derived from the visible heading. Use the `aria-label` or `aria-labelledby` prop on the `Calendar` / `RangeCalendar` component to provide a meaningful name when the heading alone is insufficient.

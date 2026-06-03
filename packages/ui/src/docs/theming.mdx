@@ -74,9 +74,9 @@ automatically:
 
 Setting `--brand` re-themes everything that keys off it:
 
-- **`--brand-foreground`** — text drawn on the solid brand fill. Contrast-flips to
-  near-black or near-white based on the brand's lightness, so it stays legible
-  whether your brand is deep navy or pale yellow.
+- **`--brand-foreground`** — text drawn on the solid brand fill. Defaults to white
+  as a deliberate brand-identity choice. If you rebrand to a light colour that needs
+  dark text, override this token.
 - **`--brand-accent`** — the readable text/border colour used by the soft and outline
   brand variants on tinted surfaces. Darkens in light mode and lightens in dark mode
   to clear WCAG AA on the tint.

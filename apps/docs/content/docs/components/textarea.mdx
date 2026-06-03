@@ -1,0 +1,42 @@
+---
+title: Textarea
+description: A multi-line text control for longer user input, with auto-sizing via field-sizing-content and resize variants.
+---
+
+<ComponentPreview name="textarea/demo" />
+
+## Playground
+
+Adjust the props live and copy the generated code.
+
+<Playground name="textarea" />
+
+## Examples
+
+### States
+
+The textarea reflects default, disabled, and invalid states through CSS — set `disabled` or `aria-invalid` directly as props.
+
+<ComponentPreview name="textarea/states" />
+
+### Sizes
+
+The `size` prop controls the minimum height: `sm` and `default` share `min-h-16`, while `lg` expands to `min-h-32`.
+
+<ComponentPreview name="textarea/sizes" />
+
+### Resize behaviour
+
+The `resize` prop maps to the CSS `resize` property: `none` locks the size, `vertical` allows vertical dragging, and `auto` allows free resize.
+
+<ComponentPreview name="textarea/resize" />
+
+### With label and helper text
+
+Always pair a `Textarea` with a `Label` via `htmlFor`/`id`; add a helper paragraph for guidance such as character limits.
+
+<ComponentPreview name="textarea/with-label" />
+
+## Reference
+
+<PropsTable name="textarea" />

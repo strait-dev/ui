@@ -1,0 +1,42 @@
+---
+title: Input
+description: A single-line text control for user input, with support for size variants, disabled, and validation states.
+---
+
+<ComponentPreview name="input/demo" />
+
+## Playground
+
+Adjust the props live and copy the generated code.
+
+<Playground name="input" />
+
+## Examples
+
+### Sizes
+
+Three height variants — `sm` (`h-7`), `default` (`h-8`), and `lg` (`h-9`) — let you match the input to its surrounding context.
+
+<ComponentPreview name="input/sizes" />
+
+### States
+
+The input reflects default, disabled, and invalid states through CSS — no extra props are needed beyond `disabled` and `aria-invalid`.
+
+<ComponentPreview name="input/states" />
+
+### With icon
+
+Compose a leading icon inside a relative wrapper and add a left-padding offset to the input to keep text clear of the icon.
+
+<ComponentPreview name="input/with-icon" />
+
+### With label and helper text
+
+Always pair an `Input` with a `Label` via `htmlFor`/`id`; add a helper paragraph below for guidance or character-count hints.
+
+<ComponentPreview name="input/with-label" />
+
+## Reference
+
+<PropsTable name="input" />

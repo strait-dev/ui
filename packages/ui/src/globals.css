@@ -22,13 +22,14 @@
   --primary: oklch(0.216 0.006 56.043);
   --primary-foreground: oklch(0.985 0.001 106.423);
   /* --brand is the single rebrand input — set it to any colour (hex/rgb/oklch)
-     and the tokens below derive from it. --brand-foreground contrast-flips to
-     near-black/white by brand lightness; --brand-accent darkens for AA-legible
-     text/border on the soft (/10) + outline variants. Both stay overridable. */
+     and the tokens below derive from it. --brand-foreground is white by a
+     deliberate brand-identity choice: on the #FF4F00 brand, white text is
+     3.16:1 (below WCAG AA) — the brand-solid contrast is a documented exception
+     (see scripts/a11y-scan.mjs ALLOWLIST). Override --brand-foreground if you
+     rebrand to a lighter colour that needs dark text. --brand-accent darkens
+     for AA-legible text/border on the soft (/10) + outline variants. */
   --brand: oklch(0.6696 0.222 37.42);
-  --brand-foreground: oklch(
-    from var(--brand) clamp(0, (0.62 - l) * 1000, 1) 0 h
-  );
+  --brand-foreground: oklch(0.985 0.001 106.423);
   --brand-accent: oklch(from var(--brand) min(l, 0.5) c h);
   --secondary: oklch(0.97 0.001 106.424);
   --secondary-foreground: oklch(0.216 0.006 56.043);
@@ -39,7 +40,8 @@
   --accent-foreground: oklch(0.216 0.006 56.043);
   /* Status intents: base = solid fill, -foreground = text on solid,
      -accent = readable text/border for soft + outline emphasis */
-  --success: oklch(0.58 0.145 150);
+  /* Deepened from 0.58 so white solid text clears WCAG AA (4.64:1). */
+  --success: oklch(0.535 0.145 150);
   --success-foreground: oklch(0.985 0.001 106.423);
   /* -accent values darkened so soft/outline text clears AA 4.5:1 on /10 tints */
   --success-accent: oklch(0.48 0.13 150);
@@ -91,9 +93,8 @@
   --primary: oklch(0.97 0.001 106.424);
   --primary-foreground: oklch(0.216 0.006 56.043);
   --brand: oklch(0.6696 0.222 37.42);
-  --brand-foreground: oklch(
-    from var(--brand) clamp(0, (0.62 - l) * 1000, 1) 0 h
-  );
+  /* White brand text by deliberate choice (see :root note). */
+  --brand-foreground: oklch(0.985 0.001 106.423);
   /* Soft/outline tint sits on a dark surface here, so lighten for AA legibility. */
   --brand-accent: oklch(from var(--brand) max(l, 0.72) c h);
   --secondary: oklch(0.268 0.007 34.298);
@@ -106,10 +107,12 @@
   --success-foreground: oklch(0.182 0.004 49.25);
   --success-accent: oklch(0.77 0.15 150);
   --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0.001 106.423);
+  /* Dark ink on the bright dark-mode fill (6.5:1) — matches success/warning so
+     all dark-mode solid intents use dark text on a vivid fill. */
+  --destructive-foreground: oklch(0.182 0.004 49.25);
   --destructive-accent: oklch(0.77 0.16 22.216);
   --info: oklch(0.62 0.17 255);
-  --info-foreground: oklch(0.985 0.001 106.423);
+  --info-foreground: oklch(0.182 0.004 49.25);
   --info-accent: oklch(0.75 0.15 255);
   --warning: oklch(0.79 0.155 80);
   --warning-foreground: oklch(0.3 0.07 80);

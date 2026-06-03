@@ -1,0 +1,44 @@
+---
+title: Native Select
+description: A styled wrapper around the native select element, with a decorative chevron icon and size variants.
+---
+
+<ComponentPreview name="native-select/demo" />
+
+## Examples
+
+### Sizes
+
+The `size` prop (`sm`, `default`, `lg`) adjusts height and border radius — it does not map to the HTML `size` attribute.
+
+<ComponentPreview name="native-select/sizes" />
+
+### States
+
+Disabled and invalid states apply the full contract: `opacity-50` for disabled, and `aria-invalid` ring for invalid.
+
+<ComponentPreview name="native-select/states" />
+
+### With option groups
+
+Use `NativeSelectOptGroup` to label sections of related options, delegating grouping to the native OS picker.
+
+<ComponentPreview name="native-select/with-groups" />
+
+## Reference
+
+<PropsTable name="native-select" />
+
+## Accessibility
+
+`NativeSelect` wraps the browser's native `<select>` element, which provides full OS-level keyboard and screen-reader support out of the box without any custom ARIA required.
+
+| Key | Action |
+|---|---|
+| `Tab` / `Shift+Tab` | Move focus to / away from the select |
+| `Space` / `Enter` | Open the native OS dropdown |
+| `Arrow Up` / `Arrow Down` | Move between options (both while open and to step through options while closed) |
+| Printable character | Jump to the first option beginning with that character (typeahead) |
+| `Escape` | Close the dropdown without changing the value |
+
+The decorative chevron icon carries `aria-hidden="true"` so it is invisible to assistive technology. Always pair `NativeSelect` with a `<label>` (or equivalent) using `htmlFor` pointing at the select's `id` to give the control an accessible name.

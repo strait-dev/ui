@@ -1,0 +1,21 @@
+---
+title: Icons
+description: How Strait UI uses the Hugeicons set.
+---
+
+Strait UI uses [Hugeicons](https://hugeicons.com) via `@hugeicons/react` and the
+free icon set in `@hugeicons/core-free-icons`. Icons are passed as data, never
+as loose SVG — render them with `HugeiconsIcon`:
+
+```tsx
+import { Settings01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+<HugeiconsIcon icon={Settings01Icon} />
+```
+
+Icons inherit `currentColor` and size from their context. Inside controls like
+`Button`, mark a leading/trailing icon with `data-icon="inline-start"` /
+`data-icon="inline-end"` so spacing adjusts automatically. A sample of the set:
+
+<IconGallery />

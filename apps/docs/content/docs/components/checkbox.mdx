@@ -1,0 +1,57 @@
+---
+title: Checkbox
+description: A binary toggle control that indicates a checked or unchecked state, built on Base UI's Checkbox primitive.
+---
+
+<ComponentPreview name="checkbox/demo" />
+
+## Playground
+
+Adjust the props live and copy the generated code.
+
+<Playground name="checkbox" />
+
+## Examples
+
+### States
+
+The checkbox renders unchecked, checked, disabled, and invalid states through CSS data attributes — no extra styling required.
+
+<ComponentPreview name="checkbox/states" />
+
+### Sizes
+
+The `size` prop scales both the outer box and the inner check icon: `sm` (14 px), `default` (16 px), `lg` (20 px).
+
+<ComponentPreview name="checkbox/sizes" />
+
+### Variants
+
+The `variant` prop tints the border and checked background: `default` uses the primary token, `destructive` uses the destructive token.
+
+<ComponentPreview name="checkbox/variants" />
+
+### Checkbox group
+
+Pair checkboxes with descriptive text to let users select multiple options from a labelled list.
+
+<ComponentPreview name="checkbox/group" />
+
+## Reference
+
+<PropsTable name="checkbox" />
+
+## Accessibility
+
+`Checkbox` is built on Base UI's Checkbox primitive, which renders a native-equivalent button with `role="checkbox"` and `aria-checked` managed automatically — checked, unchecked, and indeterminate states are all announced to screen readers.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Space` | Toggles the checkbox between checked and unchecked |
+| `Tab` | Moves focus to the checkbox (or away from it) |
+
+### ARIA and labeling
+
+Always pair a `Checkbox` with a visible `<Label>` whose `htmlFor` matches the checkbox's `id`. When a visible label is not possible — for example in a table row — add an `aria-label` directly on the `Checkbox`. Validation errors should be communicated via `aria-describedby` pointing to a helper or error message element alongside the control.

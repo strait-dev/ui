@@ -28,3 +28,4 @@ bun-debug.log*
 # generated artifacts
 *.tsbuildinfo
 scripts/a11y-report.json
+.gstack/

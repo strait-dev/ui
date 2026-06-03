@@ -952,8 +952,9 @@ function MultipleSelector({
       ? !onSearch
       : commandProps.shouldFilter;
 
-  // Derive size-dependent classes
-  const controlMinH = size === "sm" ? "min-h-8" : "min-h-8";
+  // Derive size-dependent classes. The control grows with selected chips, so
+  // this only sets the empty-state baseline — sm matches Input's h-7.
+  const controlMinH = size === "sm" ? "min-h-7" : "min-h-8";
 
   return (
     <Command

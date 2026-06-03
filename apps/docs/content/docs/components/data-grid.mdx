@@ -1,0 +1,30 @@
+---
+title: Data Grid
+description: A TanStack Table-powered grid with sorting, column visibility, pagination, row selection, and bulk actions.
+---
+
+<ComponentPreview name="data-grid/demo" />
+
+## Examples
+
+### Sortable with pagination
+
+A standard grid wired to `getSortedRowModel` and `getPaginationRowModel` — click column headers to sort, use the pagination bar to page through records.
+
+<ComponentPreview name="data-grid/basic" />
+
+### Striped rows
+
+Pass `tableLayout={{ stripped: true, rowBorder: false }}` for a zebra-striped layout — useful for dense tabular data without row borders.
+
+<ComponentPreview name="data-grid/striped" />
+
+### Dense layout
+
+Use `tableLayout={{ dense: true }}` to reduce row height and padding, ideal for log viewers or other compact data.
+
+<ComponentPreview name="data-grid/dense" />
+
+## Reference
+
+<PropsTable name="data-grid" />

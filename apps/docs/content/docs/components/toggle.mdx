@@ -1,0 +1,52 @@
+---
+title: Toggle
+description: A two-state button that can be on or off, for toolbar-style controls.
+---
+
+<ComponentPreview name="toggle/demo" />
+
+## Playground
+
+Adjust the props live and copy the generated code.
+
+<Playground name="toggle" />
+
+## Examples
+
+### Emphasis
+
+`default` renders a transparent button that fills on press; `outline` adds a border, making the boundary visible at rest.
+
+<ComponentPreview name="toggle/emphasis" />
+
+### Variants
+
+Five semantic colour treatments for the pressed state: `default`, `destructive`, `success`, `info`, and `warning`.
+
+<ComponentPreview name="toggle/variants" />
+
+### Sizes
+
+A contiguous scale from `xs` (24 px) through `xl` (40 px).
+
+<ComponentPreview name="toggle/sizes" />
+
+## Reference
+
+<PropsTable name="toggle" />
+
+## Accessibility
+
+`Toggle` is built on Base UI's Toggle primitive, which renders a `<button>` with `aria-pressed` toggling between `true` and `false` — the pressed/unpressed state is announced to screen readers without any extra markup.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Space` | Toggles the pressed state |
+| `Enter` | Toggles the pressed state |
+| `Tab` | Moves focus to the toggle (or away from it) |
+
+### ARIA and labeling
+
+Icon-only toggles must carry an `aria-label` describing the action (e.g. `aria-label="Bold"`) so screen readers can identify the control. When the toggle contains visible text, the text serves as the accessible name and no additional label is required.

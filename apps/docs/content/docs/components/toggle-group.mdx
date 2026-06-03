@@ -1,0 +1,47 @@
+---
+title: Toggle Group
+description: A set of toggles where one or more options can be active at once.
+---
+
+<ComponentPreview name="toggle-group/demo" />
+
+## Examples
+
+### Sizes
+
+Pass `size` once on the group and every item inherits it — from `xs` to `xl`.
+
+<ComponentPreview name="toggle-group/sizes" />
+
+### Multiple selection
+
+Set `multiple` to allow any combination of items to be active simultaneously, for toolbar formatting controls.
+
+<ComponentPreview name="toggle-group/multiple" />
+
+### Vertical orientation
+
+Set `orientation="vertical"` to stack items in a column with the same border-collapsing treatment.
+
+<ComponentPreview name="toggle-group/vertical" />
+
+## Reference
+
+<PropsTable name="toggle-group" />
+
+## Accessibility
+
+`ToggleGroup` is built on Base UI's ToggleGroup primitive, which renders a `role="group"` container with composite keyboard navigation — arrow keys move focus between items and each item's `aria-pressed` state is managed automatically.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Arrow Right` / `Arrow Down` | Moves focus to the next item in the group |
+| `Arrow Left` / `Arrow Up` | Moves focus to the previous item in the group |
+| `Space` / `Enter` | Toggles the focused item's pressed state |
+| `Tab` | Moves focus into the group (lands on the active or first item), then out of the group |
+
+### ARIA and labeling
+
+Icon-only `ToggleGroupItem` elements must carry an `aria-label` (e.g. `aria-label="Bold"`) so screen readers identify each item. When the group represents a distinct toolbar or control set, wrap it in a `<div role="toolbar" aria-label="…">` to give the region a name. Note that `aria-orientation` is intentionally suppressed on the group because `role="group"` does not permit that attribute.

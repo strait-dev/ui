@@ -1,0 +1,37 @@
+---
+title: Command
+description: A keyboard-navigable command palette for fast search and action execution.
+---
+
+<ComponentPreview name="command/demo" />
+
+## Examples
+
+### With groups
+
+Organise items into labelled sections with `CommandGroup` and insert dividers between groups using `CommandSeparator`.
+
+<ComponentPreview name="command/with-groups" />
+
+### With keyboard shortcuts
+
+Add a `CommandShortcut` as the last child of a `CommandItem` to display a visual keyboard hint alongside each action.
+
+<ComponentPreview name="command/with-shortcuts" />
+
+## Reference
+
+<PropsTable name="command" />
+
+## Accessibility
+
+Built on the `cmdk` library, which implements a fully keyboard-navigable command palette. All filtering, item focus management, and selection are handled internally; no extra wiring is needed. When used inside `CommandDialog`, the dialog title and description are rendered `sr-only` so screen readers announce the palette on open.
+
+| Key | Action |
+| --- | --- |
+| `Arrow Down` | Move focus to the next item |
+| `Arrow Up` | Move focus to the previous item |
+| `Enter` | Select the focused item |
+| `Escape` | Close the dialog (when used as `CommandDialog`) |
+
+**ARIA:** The `CommandInput` is a combobox-role input; `cmdk` manages `aria-activedescendant` and live region announcements automatically. Give `CommandDialog` meaningful `title` and `description` props so screen reader users understand the palette's purpose when it opens.

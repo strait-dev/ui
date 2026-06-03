@@ -87,6 +87,13 @@ describe("Autocomplete", () => {
     ).toBeInTheDocument();
   });
 
+  it("gives the trigger button an accessible name", () => {
+    render(<Fixture showTrigger />);
+    expect(
+      screen.getByRole("button", { name: "Show options" })
+    ).toBeInTheDocument();
+  });
+
   it("renders the clear button once the field has a value", async () => {
     const user = userEvent.setup();
     render(<Fixture showClear />);

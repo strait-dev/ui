@@ -1,0 +1,163 @@
+---
+title: Installation
+description: Add @strait/ui to your project and wire up Tailwind CSS v4.
+---
+
+`@strait/ui` is a React 19 component library built on
+[Base UI](https://base-ui.com), [Tailwind CSS v4](https://tailwindcss.com), and
+semantic `oklch` design tokens. Components ship compiled (ESM + type
+declarations) and are imported individually through subpath exports, so you only
+bundle what you use.
+
+## 1. Install the package
+
+```package-install
+@strait/ui
+```
+
+### Peer dependencies
+
+You provide React yourself:
+
+```package-install
+react@^19 react-dom@^19
+```
+
+Everything else the components rely on (Base UI, `class-variance-authority`,
+`tailwind-merge`, Hugeicons, …) is bundled as a direct dependency.
+
+## 2. Wire up the styles
+
+The package exports its global stylesheet — Tailwind, the design tokens, and the
+keyframes — as `@strait/ui/css`. Import it once at the root of your app and point
+Tailwind's content scanner at the compiled package so the utility classes the
+components use are generated.
+
+`@strait/ui/css` already includes `@import "tailwindcss"`, so you don't add it
+again. The exact wiring depends on your framework:
+
+<Tabs items={["Next.js (App Router)", "Vite"]}>
+
+<Tab value="Next.js (App Router)">
+
+Tailwind v4 runs through PostCSS in Next.js. Install the PostCSS plugin:
+
+```package-install
+tailwindcss @tailwindcss/postcss
+```
+
+Register it in `postcss.config.mjs`:
+
+```js title="postcss.config.mjs"
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+Create your global stylesheet and point Tailwind at the compiled package so it
+generates the utility classes the components use:
+
+```css title="app/globals.css"
+@import "@strait/ui/css";
+
+/* Let Tailwind see the class names inside the shipped components */
+@source "../node_modules/@strait/ui/dist";
+```
+
+Import it once in the root layout, and add a theme provider so dark mode and the
+`sonner` toasts follow the active theme:
+
+```tsx title="app/layout.tsx"
+import { ThemeProvider } from "next-themes";
+import "./globals.css";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+</Tab>
+
+<Tab value="Vite">
+
+Tailwind v4 ships a first-party Vite plugin. Install it:
+
+```package-install
+tailwindcss @tailwindcss/vite
+```
+
+Add it to `vite.config.ts`:
+
+```ts title="vite.config.ts"
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
+```
+
+Create your stylesheet and point Tailwind at the compiled package:
+
+```css title="src/app.css"
+@import "@strait/ui/css";
+
+/* Let Tailwind see the class names inside the shipped components */
+@source "../node_modules/@strait/ui/dist";
+```
+
+Import it once from your app entry:
+
+```ts title="src/main.tsx"
+import "./app.css";
+```
+
+</Tab>
+
+</Tabs>
+
+<Callout title="Customising the build?">
+  The package also exposes `@strait/ui/tailwind.config` and `@strait/ui/postcss`
+  if you'd rather extend its Tailwind/PostCSS config directly.
+</Callout>
+
+## 3. Import components
+
+Every component is its own subpath export, named after the file in `components/`:
+
+```tsx
+import { Button } from "@strait/ui/components/button";
+import { Dialog, DialogContent, DialogTrigger } from "@strait/ui/components/dialog";
+import { cn } from "@strait/ui/utils";
+
+export function Example() {
+  return (
+    <Dialog>
+      <DialogTrigger render={<Button variant="brand-solid">Open</Button>} />
+      <DialogContent>Hello from Strait.</DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## React Server Components
+
+Interactive components carry the `"use client"` directive, so they work out of
+the box in the Next.js App Router and other RSC setups — import them directly
+from a server component and they establish their own client boundary. Purely
+presentational pieces (e.g. `Badge`, `Separator`) render on the server too.

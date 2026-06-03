@@ -1,0 +1,49 @@
+---
+title: Autocomplete
+description: A free-text input with a filtered suggestion list, built on the Base UI Autocomplete primitive.
+---
+
+<ComponentPreview name="autocomplete/demo" />
+
+## Examples
+
+### With trigger and clear
+
+Use `showTrigger` to add a chevron that opens the list, and `showClear` to add a button that resets the value. When both are present the clear button replaces the trigger once the field has a value.
+
+<ComponentPreview name="autocomplete/with-trigger-and-clear" />
+
+### Grouped suggestions
+
+Pass an array of `{ value, items }` as `items` and render each group with `AutocompleteGroup` and `AutocompleteGroupLabel`.
+
+<ComponentPreview name="autocomplete/groups" />
+
+### Sizes
+
+Three height variants — `sm`, `default`, and `lg` — mirror the `Input` scale so autocompletes align with other form controls.
+
+<ComponentPreview name="autocomplete/sizes" />
+
+## Reference
+
+<PropsTable name="autocomplete" />
+
+## Accessibility
+
+`Autocomplete` is built on Base UI's Autocomplete primitive, which implements the ARIA combobox pattern — the input carries `role="combobox"` with `aria-expanded` and `aria-activedescendant` managed automatically, and the suggestion list carries `role="listbox"`.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| Type | Filters the suggestion list in real time |
+| `Arrow Down` | Opens the suggestion list; moves focus to the next option |
+| `Arrow Up` | Moves focus to the previous option |
+| `Enter` | Selects the highlighted option and closes the list |
+| `Escape` | Dismisses the suggestion list and retains the current input value |
+| `Tab` | Accepts an inline completion (when `mode="inline"` or `"both"`) and moves to the next field |
+
+### ARIA and labeling
+
+Associate the `AutocompleteInput` with a visible `<Label>` via `htmlFor` / `id`. When `showTrigger` renders a chevron-only icon button, the built-in trigger already carries an accessible label; when you render a custom trigger, supply an `aria-label`.

@@ -1,0 +1,41 @@
+---
+title: Date Picker
+description: A single-date picker that reveals a calendar in a popover, with optional label, required asterisk, disabled, and error states.
+---
+
+<ComponentPreview name="date-picker/demo" />
+
+## Examples
+
+### With label and required
+
+Pass `label` to render an associated label above the trigger and `required` to append a red asterisk.
+
+<ComponentPreview name="date-picker/with-label" />
+
+### Error and disabled states
+
+Use `error` to apply a destructive border when validation fails, and `disabled` to prevent interaction.
+
+<ComponentPreview name="date-picker/with-error" />
+
+## Reference
+
+<PropsTable name="date-picker" />
+
+## Accessibility
+
+`DatePicker` composes a trigger `<Button>` with a `Popover` containing a `Calendar`; the trigger is linked to an optional `<label>` via a generated `id` so screen readers announce the field name.
+
+| Key | Action |
+|---|---|
+| `Enter` / `Space` | Open the calendar popover |
+| `Escape` | Close the calendar popover |
+| `Arrow Left` / `Arrow Right` | Move focus one day backward / forward (inside the calendar) |
+| `Arrow Up` / `Arrow Down` | Move focus one week backward / forward (inside the calendar) |
+| `Page Up` / `Page Down` | Navigate to the previous / next month (inside the calendar) |
+| `Home` | Move focus to the first day of the current week (inside the calendar) |
+| `End` | Move focus to the last day of the current week (inside the calendar) |
+| `Enter` / `Space` | Select the focused day and close the popover |
+
+Pass the `label` prop to render a visible `<label>` linked to the trigger; add `required` to append the mandatory indicator. When the field is invalid, set `error` to surface the destructive border alongside an external error message associated via `aria-describedby`.

@@ -1,0 +1,36 @@
+---
+title: Code Block
+description: Read-only code display surface with Shiki-powered syntax highlighting, an optional language label, line numbers, and a clipboard copy button.
+---
+
+<ComponentPreview name="code-block/demo" />
+
+## Playground
+
+Adjust the props live and copy the generated code.
+
+<Playground name="code-block" />
+
+## Examples
+
+### Multiple languages
+
+Pass any Shiki-supported `language` — `tsx`, `bash`, `go`, `python`, `sql`, and more — to get accurate syntax highlighting.
+
+<ComponentPreview name="code-block/languages" />
+
+### Variants
+
+The `variant` prop controls the surface: `"default"` is a muted bordered box; `"dark"` forces a dark terminal-style surface regardless of the active colour scheme.
+
+<ComponentPreview name="code-block/variants" />
+
+### Line numbers
+
+Set `showLineNumbers` to render a numbered gutter, useful for code that is referenced by line in surrounding prose.
+
+<ComponentPreview name="code-block/line-numbers" />
+
+## Reference
+
+<PropsTable name="code-block" />

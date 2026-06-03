@@ -1,0 +1,52 @@
+---
+title: Radio Group
+description: A group of mutually exclusive radio options built on Base UI's RadioGroup and Radio primitives.
+---
+
+<ComponentPreview name="radio-group/demo" />
+
+## Examples
+
+### Sizes
+
+Set `size` once on `RadioGroup` and it cascades to the circle diameter and inter-item spacing for all child items.
+
+<ComponentPreview name="radio-group/sizes" />
+
+### States
+
+The group handles default selection, a fully disabled group, and individual disabled items without additional styling.
+
+<ComponentPreview name="radio-group/states" />
+
+### With descriptions
+
+Pair each `RadioGroupItem` with a label and a short description paragraph to give users more context per option.
+
+<ComponentPreview name="radio-group/with-descriptions" />
+
+### Controlled
+
+Pass `value` and `onValueChange` to the root to drive the selection from external state and react to changes.
+
+<ComponentPreview name="radio-group/controlled" />
+
+## Reference
+
+<PropsTable name="radio-group" />
+
+## Accessibility
+
+`RadioGroup` is built on Base UI's RadioGroup and Radio primitives, which implement the ARIA radio group pattern — the container carries `role="radiogroup"` and each item carries `role="radio"` with `aria-checked` managed automatically. Only the selected (or first, if none) item is in the tab sequence; arrow keys move and select within the group.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Tab` | Moves focus into or out of the group (lands on the selected item, or the first item if none is selected) |
+| `Arrow Down` / `Arrow Right` | Moves focus to and selects the next radio item |
+| `Arrow Up` / `Arrow Left` | Moves focus to and selects the previous radio item |
+
+### ARIA and labeling
+
+Wrap the `RadioGroup` in a `<fieldset>` with a `<legend>` (or the `FieldSet` / `FieldLegend` components) so screen readers announce the group's name. Pair each `RadioGroupItem` with a `<Label>` via `htmlFor` / `id` so individual options are announced clearly.

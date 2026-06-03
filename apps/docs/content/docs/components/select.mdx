@@ -1,0 +1,55 @@
+---
+title: Select
+description: An accessible single-value dropdown built on Base UI's Select primitive, with grouped options and size variants.
+---
+
+<ComponentPreview name="select/demo" />
+
+## Examples
+
+### Sizes
+
+Set `size` once on the `Select` root — it cascades automatically to the trigger, popup, and every item via context.
+
+<ComponentPreview name="select/sizes" />
+
+### States
+
+The trigger reflects an empty placeholder, a pre-selected value, and a disabled state without any extra styling.
+
+<ComponentPreview name="select/states" />
+
+### Grouped options
+
+Use `SelectGroup`, `SelectLabel`, and `SelectSeparator` to organise a long option list into labelled sections.
+
+<ComponentPreview name="select/grouped" />
+
+### Controlled
+
+Pass `value` and `onValueChange` to the root to drive the selection from external state.
+
+<ComponentPreview name="select/controlled" />
+
+## Reference
+
+<PropsTable name="select" />
+
+## Accessibility
+
+`Select` is built on Base UI's Select primitive, which implements the ARIA listbox pattern — the trigger carries `role="combobox"` and the popup carries `role="listbox"` with `aria-expanded` managed automatically.
+
+### Keyboard interactions
+
+| Key | Action |
+|-----|--------|
+| `Enter` / `Space` | Opens the dropdown when the trigger is focused; selects the highlighted option when the list is open |
+| `Arrow Down` | Opens the dropdown; moves focus to the next option |
+| `Arrow Up` | Moves focus to the previous option |
+| `Escape` | Closes the dropdown without changing the selection |
+| Printable characters | Advances focus to the next option whose label starts with the typed character (typeahead) |
+| `Tab` | Closes the dropdown and moves focus to the next focusable element |
+
+### ARIA and labeling
+
+Pair the `SelectTrigger` with a `<Label>` by pointing `htmlFor` at the trigger's `id`. When the trigger contains only an icon, add an `aria-label` directly on `SelectTrigger` so screen readers announce the control's purpose.

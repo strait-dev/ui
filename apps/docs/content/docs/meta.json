@@ -1,0 +1,15 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "installation",
+    "theming",
+    "dark-mode",
+    "foundations",
+    "components",
+    "blocks",
+    "accessibility",
+    "llms",
+    "changelog"
+  ]
+}

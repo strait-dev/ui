@@ -1,0 +1,53 @@
+import { Settings01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+import { Button } from "@strait/ui/components/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@strait/ui/components/popover";
+
+export default function PopoverDemo() {
+  return (
+    <Popover>
+      <PopoverTrigger
+        render={
+          <Button aria-label="Open settings" size="icon" variant="outline">
+            <HugeiconsIcon icon={Settings01Icon} />
+          </Button>
+        }
+      />
+      <PopoverContent align="start" side="bottom">
+        <PopoverHeader>
+          <PopoverTitle>Workspace settings</PopoverTitle>
+          <PopoverDescription>
+            Manage your workspace preferences.
+          </PopoverDescription>
+        </PopoverHeader>
+        <div className="flex flex-col gap-2">
+          {[
+            { label: "Email notifications", checked: true },
+            { label: "Weekly digest", checked: false },
+          ].map((item) => (
+            <label
+              className="flex cursor-pointer items-center justify-between gap-4 text-sm"
+              key={item.label}
+            >
+              <span>{item.label}</span>
+              <input
+                aria-label={item.label}
+                className="size-4"
+                defaultChecked={item.checked}
+                type="checkbox"
+              />
+            </label>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}

@@ -156,7 +156,11 @@ export function InputWithInnerTags({
               type="button"
               variant="ghost"
             >
-              <HugeiconsIcon className="size-3" icon={Cancel01Icon} />
+              <HugeiconsIcon
+                aria-hidden="true"
+                className="size-3"
+                icon={Cancel01Icon}
+              />
             </Button>
           </Badge>
         ))}
@@ -177,6 +181,7 @@ export function InputWithInnerTags({
           />
           {inputValue.trim() && (
             <Button
+              aria-label="Add tag"
               className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
               disabled={disabled}
               onClick={handleAddTag}
@@ -184,7 +189,11 @@ export function InputWithInnerTags({
               type="button"
               variant="ghost"
             >
-              <HugeiconsIcon className="size-3.5" icon={Add01Icon} />
+              <HugeiconsIcon
+                aria-hidden="true"
+                className="size-3.5"
+                icon={Add01Icon}
+              />
             </Button>
           )}
         </div>

@@ -1,0 +1,45 @@
+---
+title: Hover Card
+description: A floating preview panel that appears on hover to surface supplemental read-only information about a link or element.
+---
+
+<ComponentPreview name="hover-card/demo" />
+
+## Examples
+
+### User mention
+
+The primary use case — hover a `@mention` to see a user profile card without leaving the current context.
+
+<ComponentPreview name="hover-card/user-mention" />
+
+### Link preview
+
+Surface metadata about a link destination on hover to help users decide before navigating.
+
+<ComponentPreview name="hover-card/link-preview" />
+
+### Placements
+
+Control where the panel appears with the `side` prop on `HoverCardContent`.
+
+<ComponentPreview name="hover-card/placements" />
+
+## Reference
+
+<PropsTable name="hover-card" />
+
+## Accessibility
+
+HoverCard is built on Base UI's `@base-ui/react/preview-card` primitive and is pointer-driven — it opens on hover with a short delay and closes when the pointer leaves. The panel is not keyboard-accessible on its own, so any information shown inside it must also be available through another path (link text, visible labels, or an adjacent interactive element).
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Moves focus to the trigger; the panel opens when the trigger receives focus |
+| `Esc` | Closes the panel when it is open |
+
+### ARIA and labeling
+
+The preview card panel is non-modal and does not trap focus. Because the card content is supplemental and read-only, do not place interactive elements inside `HoverCardContent`. The trigger element should already have a meaningful accessible label (e.g. visible link text or an `aria-label`) so keyboard and screen-reader users receive the essential information without needing the hover panel.

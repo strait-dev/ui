@@ -106,6 +106,25 @@ describe("TagGroup", () => {
     expect(onRemove).toHaveBeenCalled();
   });
 
+  it("marks each remove-button icon as decorative (aria-hidden)", () => {
+    render(
+      <TagGroup onRemove={vi.fn()}>
+        <TagList>
+          {items.map((t) => (
+            <Tag id={t} key={t} textValue={t}>
+              {t}
+            </Tag>
+          ))}
+        </TagList>
+      </TagGroup>
+    );
+    const removeBtn = document.querySelector("button[slot='remove']");
+    expect(removeBtn?.querySelector("svg")).toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
+  });
+
   it("applies variant classes to the tag element", () => {
     const { container } = render(
       <TagGroup>

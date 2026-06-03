@@ -1,0 +1,42 @@
+---
+title: Accordion
+description: A vertically stacked set of collapsible sections, each with a trigger and an animated content panel.
+---
+
+<ComponentPreview name="accordion/demo" />
+
+## Examples
+
+### Variants
+
+Three visual styles are available: `default` (flush dividers), `outline` (bordered card per item), and `solid` (filled muted card per item).
+
+<ComponentPreview name="accordion/variants" />
+
+### Multiple open items
+
+Set `type="multiple"` to allow several sections to be open simultaneously; pass an array to `defaultValue` to pre-open them.
+
+<ComponentPreview name="accordion/multiple" />
+
+### Indicators
+
+Switch the collapse/expand glyph between `chevron` (default) and `plus-minus` via the `indicator` prop on `AccordionTrigger`.
+
+<ComponentPreview name="accordion/indicators" />
+
+## Reference
+
+<PropsTable name="accordion" />
+
+## Accessibility
+
+Built on Base UI's `Accordion` primitive, which implements the [WAI-ARIA Accordion pattern](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/). Each trigger renders inside an `<h3>` via `AccordionPrimitive.Header`, so the disclosure hierarchy is correctly conveyed to assistive technology.
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Toggle the focused trigger open or closed |
+| `Tab` | Move focus to the next focusable element |
+| `Shift+Tab` | Move focus to the previous focusable element |
+
+**ARIA:** Each trigger carries `aria-expanded` (managed by Base UI) to reflect open/closed state. Use unique, descriptive trigger text so screen readers can identify each section without needing surrounding context.

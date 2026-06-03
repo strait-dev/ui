@@ -1,0 +1,45 @@
+---
+title: Calendar
+description: A styled date-picker calendar built on react-day-picker, supporting single-date, range, and multi-date selection modes.
+---
+
+<ComponentPreview name="calendar/demo" />
+
+## Examples
+
+### Range selection
+
+Pass `mode="range"` and a `DateRange` state to let the user pick a start and end date.
+
+<ComponentPreview name="calendar/range" />
+
+### Multiple selection
+
+Pass `mode="multiple"` to allow picking any number of non-contiguous dates.
+
+<ComponentPreview name="calendar/multiple" />
+
+### Dropdown caption
+
+Set `captionLayout="dropdown"` with `startMonth` and `endMonth` to replace the static header with month and year selects.
+
+<ComponentPreview name="calendar/with-dropdown" />
+
+## Reference
+
+<PropsTable name="calendar" />
+
+## Accessibility
+
+`Calendar` is built on `react-day-picker` (`DayPicker`) which renders a focusable grid of day buttons; keyboard navigation follows the ARIA grid pattern and is handled entirely by the library.
+
+| Key | Action |
+|---|---|
+| `Arrow Left` / `Arrow Right` | Move focus one day backward / forward |
+| `Arrow Up` / `Arrow Down` | Move focus one week backward / forward |
+| `Page Up` / `Page Down` | Navigate to the previous / next month |
+| `Home` | Move focus to the first day of the current week |
+| `End` | Move focus to the last day of the current week |
+| `Enter` / `Space` | Select the focused day |
+
+Each day button receives a locale-formatted `data-day` attribute used as an accessible label. Pair the calendar with an associated `<label>` or `aria-label` on the nearest container when embedding it inline.

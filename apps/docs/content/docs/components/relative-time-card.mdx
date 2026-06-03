@@ -1,0 +1,36 @@
+---
+title: Relative Time Card
+description: Compact timestamp trigger that reveals a hover card with the live relative time and the same instant across one or more timezones.
+---
+
+<ComponentPreview name="relative-time-card/demo" />
+
+## Playground
+
+Adjust the props live and copy the generated code.
+
+<Playground name="relative-time-card" />
+
+## Examples
+
+### Trigger variants
+
+`variant` controls the trigger style: `default`, `muted` (dimmer), and `ghost` (underline on hover).
+
+<ComponentPreview name="relative-time-card/variants" />
+
+### Multiple timezones
+
+Pass an array of IANA timezone identifiers to `timezones`; the viewer's local zone is always appended as the last row.
+
+<ComponentPreview name="relative-time-card/multi-timezone" />
+
+### In a feed
+
+Embed the trigger inline in a list of events to surface relative timestamps without taking up layout space.
+
+<ComponentPreview name="relative-time-card/feed" />
+
+## Reference
+
+<PropsTable name="relative-time-card" />

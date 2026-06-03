@@ -1,0 +1,41 @@
+---
+title: Popover
+description: A non-modal floating panel anchored to a trigger element for rich interactive content.
+---
+
+<ComponentPreview name="popover/demo" />
+
+## Examples
+
+### With form
+
+Embed a small form inside `PopoverContent` to collect user input without opening a full modal.
+
+<ComponentPreview name="popover/with-form" />
+
+### Sizes
+
+`PopoverContent` accepts a `size` prop (`sm`, `default`, `lg`) to control the panel's padding and text density.
+
+<ComponentPreview name="popover/sizes" />
+
+## Reference
+
+<PropsTable name="popover" />
+
+## Accessibility
+
+Popover is built on Base UI's `@base-ui/react/popover` primitive, which renders a non-modal floating panel with `role="dialog"`. Focus moves into the panel when it opens and returns to the trigger when it closes; because the popover is non-modal, keyboard users can Tab out of it to reach background content.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the popover when focus is on the trigger |
+| `Esc` | Closes the popover and returns focus to the trigger |
+| `Tab` | Moves focus to the next focusable element (including out of the popover) |
+| `Shift` + `Tab` | Moves focus to the previous focusable element |
+
+### ARIA and labeling
+
+Use `PopoverTitle` to provide an accessible label for the panel — it is associated via `aria-labelledby`. If the popover trigger is an icon-only button, add an `aria-label` to the trigger so its purpose is announced independently of the popover content.

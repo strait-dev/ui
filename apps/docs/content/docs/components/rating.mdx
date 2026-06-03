@@ -1,0 +1,50 @@
+---
+title: Rating
+description: A star rating input that supports controlled, uncontrolled, read-only, and disabled states with full keyboard navigation.
+---
+
+<ComponentPreview name="rating/demo" />
+
+## Playground
+
+Adjust the props live and copy the generated code.
+
+<Playground name="rating" />
+
+## Examples
+
+### Sizes
+
+Three star sizes — `sm`, `default`, and `lg` — control both the star pixel size and the gap between stars.
+
+<ComponentPreview name="rating/sizes" />
+
+### Read-only
+
+Pass `readOnly` to render a non-interactive display element (`role="img"`) — useful for showing review scores.
+
+<ComponentPreview name="rating/read-only" />
+
+### Controlled
+
+Pass `value` and `onValueChange` to manage the selected rating from the parent component.
+
+<ComponentPreview name="rating/controlled" />
+
+## Reference
+
+<PropsTable name="rating" />
+
+## Accessibility
+
+In interactive mode `Rating` renders a `role="radiogroup"` containing one `<input type="radio">` per star, each with an individual `aria-label` (e.g. "3 stars"); in read-only or disabled mode it renders a single `role="img"` span instead.
+
+| Key | Action |
+|---|---|
+| `Arrow Right` / `Arrow Up` | Increment the rating by one star (clamped to `max`) |
+| `Arrow Left` / `Arrow Down` | Decrement the rating by one star (clamped to 1) |
+| `Home` | Set the rating to 1 (minimum) |
+| `End` | Set the rating to `max` (maximum) |
+| `Tab` | Move focus into / out of the radio group |
+
+Always pass the `aria-label` prop (e.g. `"Rate this product"`) on the interactive component; without it the group falls back to the default label "Rating". For read-only display, `aria-label` defaults to `"Rated {value} out of {max}"` when not supplied explicitly.

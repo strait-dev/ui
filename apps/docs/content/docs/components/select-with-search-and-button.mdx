@@ -1,0 +1,30 @@
+---
+title: Select With Search And Button
+description: A searchable single-select dropdown with a persistent action button pinned below the option list, typically used for inline creation flows.
+---
+
+<ComponentPreview name="select-with-search-and-button/demo" />
+
+## Examples
+
+### Inline creation
+
+Wire `onButtonClick` to dynamically add a new option — the list expands immediately without leaving the dropdown.
+
+<ComponentPreview name="select-with-search-and-button/with-action" />
+
+### Error state
+
+Combine `error` and `required` with a helper message to communicate validation failures clearly.
+
+<ComponentPreview name="select-with-search-and-button/error" />
+
+### Disabled
+
+The trigger is non-interactive and dimmed when `disabled` is set; the action button also becomes unavailable.
+
+<ComponentPreview name="select-with-search-and-button/disabled" />
+
+## Reference
+
+<PropsTable name="select-with-search-and-button" />

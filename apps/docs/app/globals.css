@@ -1,0 +1,34 @@
+/*
+ * Single stylesheet for the docs app.
+ *
+ * `@strait/ui/css` is the design system's raw source globals.css; it performs
+ * `@import "tailwindcss"`, pulls the Strait `@config`, and defines every
+ * semantic token (`--background`, `--brand`, ...).
+ *
+ * `fumadocs-ui/css/shadcn.css` maps Fumadocs' `fd-` chrome tokens onto those
+ * exact shadcn-style token names, so the docs shell (nav, sidebar, search, TOC,
+ * prose, code blocks) is themed by the Strait design system itself rather than
+ * Fumadocs' default neutral palette — including the sidebar tokens. One `.dark`
+ * class drives the whole page.
+ */
+@import "@strait/ui/css";
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
+
+/*
+ * Use the Strait brand as the docs accent (active nav, links, focus rings)
+ * instead of the neutral ink default, so the chrome is unmistakably branded.
+ */
+:root,
+.dark {
+  --color-fd-primary: var(--brand);
+  --color-fd-primary-foreground: var(--brand-foreground);
+}
+
+/* Preserve the built component class names when the site is bundled. */
+@source "../node_modules/@strait/ui/dist";
+/* Scan the docs app's own components, demos, and content. */
+@source "./**/*.{ts,tsx}";
+@source "../src/**/*.{ts,tsx}";
+@source "../demos/**/*.{ts,tsx}";
+@source "../content/**/*.{md,mdx}";

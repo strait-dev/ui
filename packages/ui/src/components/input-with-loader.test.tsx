@@ -98,4 +98,19 @@ describe("InputWithLoader", () => {
     await userEvent.type(input, "hello");
     expect(input).toHaveValue("hello");
   });
+
+  it("marks the input aria-busy while loading", () => {
+    const { rerender } = render(
+      <InputWithLoader loading={false} placeholder="Search" />
+    );
+    expect(screen.getByPlaceholderText("Search")).toHaveAttribute(
+      "aria-busy",
+      "false"
+    );
+    rerender(<InputWithLoader loading placeholder="Search" />);
+    expect(screen.getByPlaceholderText("Search")).toHaveAttribute(
+      "aria-busy",
+      "true"
+    );
+  });
 });

@@ -6,9 +6,12 @@
 //   - llms-full.txt   the same skeleton expanded with full TSDoc, prop tables,
 //                     cva variants, data-slots, and heavy-dep notes.
 //   - components.json  one machine-readable entry per public component export.
+//   - props.json      slug-keyed component model consumed by the docs site's
+//                     auto-generated <PropsTable>.
 //
-// Outputs are written to packages/ui/ (shipped on npm via package.json
-// `files`) and copied to apps/storybook/public/ (served on the docs site).
+// llms/components artifacts are written to packages/ui/ (shipped on npm via
+// package.json `files`) and copied to apps/storybook/public/ (served on the
+// Storybook docs site); props.json is written to apps/docs/.generated/.
 //
 // Run: `bun scripts/generate-llms.ts` (idempotent).
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -23,6 +26,10 @@ import {
 const PKG_DIR = "packages/ui";
 const COMPONENTS_DIR = join(PKG_DIR, "src/components");
 const STORYBOOK_PUBLIC = "apps/storybook/public";
+// The docs site serves the llms/components artifacts as static files and
+// consumes a slug-keyed model for its auto-generated <PropsTable>.
+const DOCS_PUBLIC = "apps/docs/public";
+const DOCS_GENERATED = "apps/docs/.generated";
 const PKG_NAME = "@strait/ui";
 
 // Heavyweight runtime deps worth surfacing to consumers (kept in sync with
@@ -71,8 +78,9 @@ format and the rest of the brand system derives automatically:
 \`\`\`
 
 Setting \`--brand\` re-themes everything keyed off it:
-- \`--brand-foreground\` — text on the solid brand fill; contrast-flips to
-  near-black/white by the brand's lightness.
+- \`--brand-foreground\` — text on the solid brand fill; defaults to white (a
+  deliberate brand choice). Override it if you rebrand to a light colour that
+  needs dark text.
 - \`--brand-accent\` — AA-legible text/border for the soft and outline brand
   variants on tinted surfaces (darkens in light mode, lightens in dark mode).
 - \`--chart-1\`, \`--sidebar-active-rail\`, and the active-row tint follow too.
@@ -115,6 +123,21 @@ type TypeDoc = {
   props: PropDoc[];
   /** Types it intersects/extends whose members we can't statically expand. */
   extends: string[];
+  /**
+   * Props inherited from extended/intersected types (Base UI primitives,
+   * controlled props, …), resolved via the type checker with HTML/ARIA global
+   * attributes filtered out. Empty if resolution failed.
+   */
+  inheritedProps: PropDoc[];
+  /** Native HTML tags whose attributes this type accepts (e.g. `["div"]`). */
+  extendsHtml: string[];
+};
+
+/** A compound component's sub-part: an exported sub-component + its data-slot. */
+type PartDoc = {
+  name: string;
+  slot?: string;
+  description?: string;
 };
 
 type ComponentDoc = {
@@ -128,6 +151,8 @@ type ComponentDoc = {
   variants: Record<string, string[]>;
   defaultVariants: Record<string, string>;
   slots: string[];
+  /** Sub-component parts (anatomy) for compound components. */
+  parts: PartDoc[];
   dependencies: string[];
 };
 
@@ -438,6 +463,112 @@ for (const file of files) {
   project.addSourceFileAtPath(join(COMPONENTS_DIR, file));
 }
 
+// A second project loaded with full dependency resolution, so the type checker
+// can expand props inherited from Base UI primitives, React, and local types.
+// Wrapped defensively: if it can't load, inherited-prop expansion is skipped.
+let typeProject: Project | null = null;
+try {
+  typeProject = new Project({
+    tsConfigFilePath: join(PKG_DIR, "tsconfig.json"),
+  });
+} catch {
+  typeProject = null;
+}
+
+/**
+ * Names of every native HTML/SVG/ARIA/DOM attribute, derived by resolving
+ * `ComponentProps<"…">` for representative tags. Used to filter the noise out
+ * of inherited props (we surface a "accepts all native <tag> attributes" note
+ * instead of listing 200+ globals).
+ */
+function buildDomGlobals(p: Project): Set<string> {
+  const names = new Set<string>();
+  try {
+    const probe = p.createSourceFile(
+      join(COMPONENTS_DIR, "__strait_dom_probe__.ts"),
+      `import type { ComponentProps } from "react";
+export type Probe = ComponentProps<"div"> & ComponentProps<"button"> &
+  ComponentProps<"input"> & ComponentProps<"a"> & ComponentProps<"span"> &
+  ComponentProps<"ul"> & ComponentProps<"nav"> & ComponentProps<"svg">;`,
+      { overwrite: true }
+    );
+    for (const sym of probe
+      .getTypeAliasOrThrow("Probe")
+      .getType()
+      .getProperties()) {
+      names.add(sym.getName());
+    }
+    p.removeSourceFile(probe);
+  } catch {
+    // leave empty — inherited props simply won't be filtered
+  }
+  return names;
+}
+
+const domGlobals = typeProject
+  ? buildDomGlobals(typeProject)
+  : new Set<string>();
+
+/**
+ * Resolve the full prop set of a `*Props` type via the checker, returning only
+ * the meaningful inherited props: excludes the type's own inline props, the
+ * cva variant axes (`exclude`), props declared in the component's own file, and
+ * the HTML/ARIA globals.
+ */
+function resolveInheritedProps(
+  typeName: string,
+  filePath: string,
+  exclude: Set<string>
+): PropDoc[] {
+  if (!typeProject) {
+    return [];
+  }
+  try {
+    const sf = typeProject.getSourceFile(filePath);
+    const decl = sf?.getTypeAlias(typeName) ?? sf?.getInterface(typeName);
+    if (!decl) {
+      return [];
+    }
+    const out: PropDoc[] = [];
+    for (const sym of decl.getType().getProperties()) {
+      const propName = sym.getName();
+      if (exclude.has(propName) || domGlobals.has(propName)) {
+        continue;
+      }
+      const d = sym.getDeclarations()[0];
+      if (!d || d.getSourceFile().getFilePath() === filePath) {
+        continue;
+      }
+      let typeText = "unknown";
+      let optional = true;
+      let description: string | undefined;
+      if (Node.isPropertySignature(d)) {
+        typeText = d.getTypeNode()?.getText().replace(/\s+/g, " ") ?? "unknown";
+        optional = d.hasQuestionToken();
+        description = firstParagraph(jsDocText(d)) || undefined;
+      } else {
+        typeText = sym.getTypeAtLocation(d).getText(d).replace(/\s+/g, " ");
+      }
+      out.push({ name: propName, type: typeText, optional, description });
+    }
+    return out.sort((a, b) => a.name.localeCompare(b.name));
+  } catch {
+    return [];
+  }
+}
+
+const HTML_EXTENDS_RE = /ComponentProps(?:WithoutRef|WithRef)?<\s*"(\w+)"/;
+function extendsHtmlTags(extendsList: string[]): string[] {
+  const tags = new Set<string>();
+  for (const e of extendsList) {
+    const m = e.match(HTML_EXTENDS_RE);
+    if (m) {
+      tags.add(m[1]);
+    }
+  }
+  return [...tags].sort();
+}
+
 const docs: ComponentDoc[] = [];
 
 for (const file of files) {
@@ -531,17 +662,35 @@ for (const file of files) {
   // from the destructured params of its own component.
   const componentByName = new Map(localComponents.map((c) => [c.name, c.decl]));
 
+  const { variants, defaultVariants } = extractCva(sourceFile, name);
+  const variantAxes = Object.keys(variants);
+
   const types: TypeDoc[] = propsTypes
     .map(({ name: typeName, decl }) => {
       const ownerName = typeName.replace(/Props$/, "");
       const ownerDecl = componentByName.get(ownerName);
       const defaults = ownerDecl ? extractDefaults(ownerDecl) : {};
       const { props, extendsList } = extractProps(decl, defaults);
-      return { name: typeName, props, extends: extendsList };
+      const exclude = new Set([...props.map((p) => p.name), ...variantAxes]);
+      return {
+        name: typeName,
+        props,
+        extends: extendsList,
+        inheritedProps: resolveInheritedProps(typeName, filePath, exclude),
+        extendsHtml: extendsHtmlTags(extendsList),
+      };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const { variants, defaultVariants } = extractCva(sourceFile, name);
+  const slots = extractSlots(src);
+  const slotByNorm = new Map(slots.map((s) => [normalize(s), s]));
+  const parts: PartDoc[] = localComponents
+    .map((c) => ({
+      name: c.name,
+      slot: slotByNorm.get(normalize(c.name)),
+      description: firstParagraph(jsDocText(c.decl)) || undefined,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   docs.push({
     name: displayName,
@@ -552,7 +701,8 @@ for (const file of files) {
     types,
     variants,
     defaultVariants,
-    slots: extractSlots(src),
+    slots,
+    parts,
     dependencies: extractHeavyDeps(src),
   });
 }
@@ -684,23 +834,51 @@ const index = renderIndex();
 const full = renderFull();
 const json = `${JSON.stringify(docs, null, 2)}\n`;
 
-const artifacts: [string, string][] = [
-  ["llms.txt", index],
-  ["llms-full.txt", full],
-  ["components.json", json],
-];
+// Slug-keyed model for the docs site: `button`, `activity-feed`, … — the same
+// slug as the component's subpath export and its docs page/demo directory.
+const propsBySlug: Record<string, ComponentDoc> = {};
+for (const doc of docs) {
+  const slug = doc.importPath.split("/").pop() ?? doc.importPath;
+  propsBySlug[slug] = doc;
+}
+const sortedPropsBySlug = Object.fromEntries(
+  Object.keys(propsBySlug)
+    .sort()
+    .map((slug) => [slug, propsBySlug[slug]])
+);
+const propsJson = `${JSON.stringify(sortedPropsBySlug, null, 2)}\n`;
 
-const targets = (file: string) => [
+const sharedTargets = (file: string) => [
   join(PKG_DIR, file),
   join(STORYBOOK_PUBLIC, file),
+  join(DOCS_PUBLIC, file),
+];
+
+const artifacts: { file: string; content: string; targets: string[] }[] = [
+  { file: "llms.txt", content: index, targets: sharedTargets("llms.txt") },
+  {
+    file: "llms-full.txt",
+    content: full,
+    targets: sharedTargets("llms-full.txt"),
+  },
+  {
+    file: "components.json",
+    content: json,
+    targets: sharedTargets("components.json"),
+  },
+  {
+    file: "props.json",
+    content: propsJson,
+    targets: [join(DOCS_GENERATED, "props.json")],
+  },
 ];
 
 // `--check` is the CI drift gate: render in-memory and diff against the
 // committed artifacts without writing. Anything stale fails the build.
 if (process.argv.includes("--check")) {
   const drifted: string[] = [];
-  for (const [file, content] of artifacts) {
-    for (const path of targets(file)) {
+  for (const { targets, content } of artifacts) {
+    for (const path of targets) {
       let existing: string | null = null;
       try {
         existing = readFileSync(path, "utf8");
@@ -726,13 +904,15 @@ if (process.argv.includes("--check")) {
   );
 } else {
   mkdirSync(STORYBOOK_PUBLIC, { recursive: true });
-  for (const [file, content] of artifacts) {
-    for (const path of targets(file)) {
+  mkdirSync(DOCS_PUBLIC, { recursive: true });
+  mkdirSync(DOCS_GENERATED, { recursive: true });
+  for (const { targets, content } of artifacts) {
+    for (const path of targets) {
       writeFileSync(path, content);
     }
   }
   console.log(
-    `✓ Generated llms.txt, llms-full.txt, components.json for ${docs.length} components ` +
-      `(${orderedCategories.length} categories) → ${PKG_DIR}/ and ${STORYBOOK_PUBLIC}/`
+    `✓ Generated llms.txt, llms-full.txt, components.json, props.json for ${docs.length} components ` +
+      `(${orderedCategories.length} categories) → ${PKG_DIR}/, ${STORYBOOK_PUBLIC}/, ${DOCS_GENERATED}/`
   );
 }

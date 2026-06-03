@@ -1,0 +1,30 @@
+---
+title: Date Selector
+description: A compact date filter that selects by day, month, quarter, half-year, or year with is, before, after, and between operators.
+---
+
+<ComponentPreview name="date-selector/demo" />
+
+## Examples
+
+### In a popover
+
+Wrap the selector in a `Popover` and display the formatted value as the trigger label — the canonical date-filter pattern.
+
+<ComponentPreview name="date-selector/with-popover" />
+
+### Limited period types
+
+Pass `periodTypes` to restrict the available granularity tabs, and `defaultPeriodType` to set the initial view.
+
+<ComponentPreview name="date-selector/limited-periods" />
+
+### Preset operator
+
+Use `presetMode` to lock the operator (e.g. `"between"`) and hide the operator tabs from the UI.
+
+<ComponentPreview name="date-selector/preset-between" />
+
+## Reference
+
+<PropsTable name="date-selector" />

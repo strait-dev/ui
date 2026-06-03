@@ -1,0 +1,41 @@
+---
+title: Credenza
+description: A responsive overlay that renders as a centered dialog on desktop and as a bottom drawer on mobile, switching automatically based on viewport width.
+---
+
+<ComponentPreview name="credenza/demo" />
+
+## Examples
+
+### Destructive Action
+
+Use a destructive trigger and confirm button to present irreversible actions such as account deletion.
+
+<ComponentPreview name="credenza/destructive" />
+
+### With Form Body
+
+Place a form inside `CredenzaBody` to collect input within the responsive overlay.
+
+<ComponentPreview name="credenza/with-form" />
+
+## Reference
+
+<PropsTable name="credenza" />
+
+## Accessibility
+
+Credenza switches between `Dialog` (Base UI `@base-ui/react/dialog`) on desktop and `Drawer` (Vaul) on mobile. Both primitives render a modal overlay that traps focus, assigns `role="dialog"` and `aria-modal="true"`, and restores focus to the trigger on close. On mobile, `autoFocus` is forced on the Drawer root so focus enters the panel immediately after it slides in.
+
+### Keyboard interactions
+
+| Key | Action |
+| --- | --- |
+| `Enter` / `Space` | Opens the credenza when focus is on the trigger |
+| `Esc` | Closes the panel and returns focus to the trigger |
+| `Tab` | Moves focus to the next focusable element inside the panel |
+| `Shift` + `Tab` | Moves focus to the previous focusable element inside the panel |
+
+### ARIA and labeling
+
+Always include a `CredenzaTitle` — it maps to `DialogTitle` on desktop and `DrawerTitle` on mobile, and is associated with the panel via `aria-labelledby` for screen readers. Add a `CredenzaDescription` for supporting context. Because the underlying primitive changes at the `768 px` breakpoint, both title slots must be present to ensure screen readers announce correctly on all viewport sizes.

@@ -1,0 +1,41 @@
+---
+title: Breadcrumb
+description: Accessible navigation landmark that shows the user's location within the site hierarchy.
+---
+
+<ComponentPreview name="breadcrumb/demo" />
+
+## Examples
+
+### With icons
+
+Use a home icon as the root link and file-type icons on each crumb to communicate the type of node at a glance.
+
+<ComponentPreview name="breadcrumb/with-icons" />
+
+### With dropdown
+
+Drop a `DropdownMenu` into a `BreadcrumbItem` to expose sibling pages from the trail without leaving the current view.
+
+<ComponentPreview name="breadcrumb/with-dropdown" />
+
+### With ellipsis
+
+Use `BreadcrumbEllipsis` to collapse a long navigation trail and keep the bar compact.
+
+<ComponentPreview name="breadcrumb/with-ellipsis" />
+
+## Reference
+
+<PropsTable name="breadcrumb" />
+
+## Accessibility
+
+The root renders a `<nav>` with `aria-label="breadcrumb"` so screen readers announce it as a navigation landmark. `BreadcrumbPage` marks the current location with `aria-current="page"` and `aria-disabled="true"` so it is identified as the final, non-interactive crumb. Separators and the ellipsis icon carry `aria-hidden="true"` to keep them out of the accessibility tree.
+
+| Key | Action |
+| --- | --- |
+| `Tab` | Move focus through ancestor links |
+| `Enter` | Activate the focused link |
+
+**ARIA:** The `<nav aria-label="breadcrumb">` landmark lets keyboard users jump directly to the breadcrumb via a landmark navigation shortcut. `BreadcrumbLink` accepts a `render` prop so it can be swapped for a framework router `<Link>` while keeping all ARIA attributes.

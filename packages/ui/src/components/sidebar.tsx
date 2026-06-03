@@ -1442,7 +1442,11 @@ function SidebarMenuDragHandle({
       data-slot="sidebar-menu-drag-handle"
       {...props}
     >
-      <HugeiconsIcon icon={DragDropHorizontalIcon} strokeWidth={2} />
+      <HugeiconsIcon
+        aria-hidden="true"
+        icon={DragDropHorizontalIcon}
+        strokeWidth={2}
+      />
     </SortableItemHandle>
   );
 }

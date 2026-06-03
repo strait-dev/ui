@@ -491,7 +491,7 @@ function SelectScrollUpButton({
       data-slot="select-scroll-up-button"
       {...props}
     >
-      <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} />
+      <HugeiconsIcon aria-hidden="true" icon={ArrowUp01Icon} strokeWidth={2} />
     </SelectPrimitive.ScrollUpArrow>
   );
 }
@@ -513,7 +513,11 @@ function SelectScrollDownButton({
       data-slot="select-scroll-down-button"
       {...props}
     >
-      <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} />
+      <HugeiconsIcon
+        aria-hidden="true"
+        icon={ArrowDown01Icon}
+        strokeWidth={2}
+      />
     </SelectPrimitive.ScrollDownArrow>
   );
 }

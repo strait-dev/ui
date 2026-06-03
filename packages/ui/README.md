@@ -9,9 +9,11 @@ Strait's design system — **120+ accessible, composable React components** buil
 [Tailwind CSS v4](https://tailwindcss.com) and [Base UI](https://base-ui.com), themeable
 through a single stylesheet and shipped as one tree-shakeable module per component.
 
-📖 **Docs & live playground:** [strait-dev.github.io/ui](https://strait-dev.github.io/ui/)
-🤖 **For LLMs:** [llms.txt](https://strait-dev.github.io/ui/llms.txt) ·
-[llms-full.txt](https://strait-dev.github.io/ui/llms-full.txt)
+📖 **Docs & live previews:** the Strait UI documentation site (Next.js + Fumadocs),
+deployed on Vercel.
+🤖 **For LLMs:** [llms.txt](https://github.com/strait-dev/ui/blob/main/packages/ui/llms.txt) ·
+[llms-full.txt](https://github.com/strait-dev/ui/blob/main/packages/ui/llms-full.txt)
+(also published inside this package).
 
 ## Install
 
@@ -100,8 +102,8 @@ PostCSS setup:
 
 ## Documentation
 
-The full component catalog, props, variants, and live examples live in the Storybook site:
-**[strait-dev.github.io/ui](https://strait-dev.github.io/ui/)**.
+The full component catalog, props, variants, and live examples live on the
+documentation site (Next.js + Fumadocs, deployed on Vercel).
 
 ## License
 
