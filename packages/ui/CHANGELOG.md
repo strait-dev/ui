@@ -1,5 +1,37 @@
 # @strait/ui
 
+## 0.1.5
+
+### Patch Changes
+
+- [#14](https://github.com/strait-dev/ui/pull/14) [`440980c`](https://github.com/strait-dev/ui/commit/440980c30bf0c12a2b6a7e4e164d1e42f4308fde) Thanks [@leonardomso](https://github.com/leonardomso)! - fix: close accessibility gaps on icon-only controls and decorative icons
+  - Mark purely decorative icons `aria-hidden` so screen readers don't double-announce state already conveyed by ARIA: Accordion trigger chevron/plus-minus, Banner status icon, Select scroll up/down arrows, Sidebar drag handle, and the Tag remove-button icon.
+  - Give built-in icon-only controls an accessible name: Autocomplete clear (`Clear`) and trigger (`Show options`) buttons, and the InputWithInnerTags add-tag button (`Add tag`). All remain overridable via props.
+  - InputWithLoader now sets `aria-busy` on the input while `loading`, so assistive tech is notified when the spinner swaps in.
+
+- [#14](https://github.com/strait-dev/ui/pull/14) [`79856eb`](https://github.com/strait-dev/ui/commit/79856eb28f0adcf61f65ee6ee49a4fb29c8205ce) Thanks [@leonardomso](https://github.com/leonardomso)! - fix: use white text on the brand-solid button
+
+  The brand-solid Button now renders white text on the `#FF4F00` brand fill instead of black, matching the intended brand look. `--brand-foreground` is now white by default (previously it auto-contrast-flipped to black on this light-ish orange).
+
+  Note: white on `#FF4F00` is 3.16:1, below WCAG AA — this is a deliberate brand-identity decision, recorded as a documented exception in the a11y scan (`scripts/a11y-scan.mjs`) and in the `--brand-foreground` token comment. If you rebrand to a lighter colour that needs dark text, override `--brand-foreground`.
+
+- [#14](https://github.com/strait-dev/ui/pull/14) [`5a3d34a`](https://github.com/strait-dev/ui/commit/5a3d34ae929f9e4119e01a31c8633eca37566ff0) Thanks [@leonardomso](https://github.com/leonardomso)! - fix: honor the compact size on MultipleSelector and align Menubar indicators
+  - `MultipleSelector` with `size="sm"` now renders the documented compact control (`min-h-7`, matching Input's small height). Previously both size branches resolved to the same `min-h-8`, so `sm` had no effect.
+  - Menubar checkbox/radio indicator slots drop a redundant explicit `size-4` on the wrapper span, matching the DropdownMenu/ContextMenu markup; icon sizing is unchanged (handled by the item-level rule).
+
+- [#14](https://github.com/strait-dev/ui/pull/14) [`0c3bf4d`](https://github.com/strait-dev/ui/commit/0c3bf4dafdf25de98c8cde8c933ff3b1aed13412) Thanks [@leonardomso](https://github.com/leonardomso)! - fix: restore dark-mode legibility for overlays, tinted alerts/banners, and card-checkbox elevation
+  - Modal backdrops (Dialog, AlertDialog, Drawer, Sheet) now use the semantic `bg-overlay` token instead of `bg-black/10`, which resolved to fully transparent and left no scrim. The overlay now dims correctly (0.1 light, 0.4 dark).
+  - Alert and Banner intent tints (info/success/warning/destructive) add a `dark:` bump so the soft `/5` fill remains visible against the dark surface.
+  - CardCheckbox drops its black drop shadow in dark mode (`dark:shadow-none`) where it was invisible and added nothing; the border carries the structure.
+
+- [#14](https://github.com/strait-dev/ui/pull/14) [`daedb0e`](https://github.com/strait-dev/ui/commit/daedb0e67a4bc46b610f641d30df3a4eb00a3226) Thanks [@leonardomso](https://github.com/leonardomso)! - fix: bring all solid intent variants to WCAG AA
+
+  Solid intent fills (Button/Badge/Toggle) now clear AA contrast with their text in both themes:
+  - `--success` (light) deepened `0.58 → 0.535` so white solid text reaches 4.64:1 (was 3.85).
+  - `--destructive-foreground` and `--info-foreground` (dark) switched to dark ink, matching the existing dark success/warning treatment, so the vivid dark-mode fills pass with dark text (6.5:1 / 5.1:1) — the soft/outline tints keep their vibrancy.
+
+  Soft, outline, and accent treatments are unchanged. The only sub-AA solid that remains is the brand-solid button (white on `#FF4F00`), which is the deliberate, documented brand exception.
+
 ## 0.1.4
 
 ### Patch Changes
@@ -12,7 +44,6 @@
   affected components.
 
   Renames:
-
   - `isRequired` → `required` (DatePicker)
   - `isLoading` → `loading` (DataGrid, SelectWithSearch)
   - `isActive` → `active` (NavigationRail, Pagination, Sidebar menu buttons)
@@ -24,7 +55,6 @@
     `isSelected` → `selected` (SelectWithSearch `renderOption`)
 
   Inverted `hide*` → `show*` (default flips to `true`; behavior preserved):
-
   - Chart: `hideGridLines`/`hideXAxis`/`hideYAxis`/`hideLabel`/`hideIndicator`/
     `hideIcon` → `showGridLines`/`showXAxis`/`showYAxis`/`showLabel`/
     `showIndicator`/`showIcon`
@@ -39,7 +69,6 @@
 - [#11](https://github.com/strait-dev/ui/pull/11) [`24672df`](https://github.com/strait-dev/ui/commit/24672dfaad3c883dff99cb722f0dbec16aa9195d) Thanks [@leonardomso](https://github.com/leonardomso)! - fix: resolve design-system consistency issues across components
 
   Audit-driven consistency pass:
-
   - **Focus rings** now follow the contract everywhere — `resizable`, `tree`,
     `input-with-inner-tags`, and the date-range pickers had divergent
     `ring-1`/`ring-2`/`ring-offset` focus treatments; all normalized to the
@@ -63,7 +92,6 @@
   Completes the `intent` → `variant` convergence (Timeline was the last straggler).
   Timeline already had a `variant` prop for the connector line style, so that axis
   is renamed to `line` to free `variant` for the semantic colour axis:
-
   - `intent` → `variant` (`primary | success | info | warning | destructive`);
     the `TimelineIntent` type is now `TimelineVariant`, and the `data-intent`
     attribute is now `data-variant`.
@@ -78,7 +106,6 @@
   Non-circular components now share one outer-box radius (`rounded-lg`, the
   existing `--radius` token) so buttons, inputs, and containers read as the same
   shape. Notable visual changes:
-
   - **Button** is no longer a full pill — it now uses `rounded-lg` to match inputs.
   - **Badge** defaults to `rounded-lg` (the `radius="pill"` option is still
     available for the old pill look).
@@ -119,7 +146,6 @@
   The colour axis is now consistently named `variant` across the library, matching
   Button, Badge, Alert, and the rest. Six components had used `intent` (or, for
   Avatar, a misnamed presence axis); they have been migrated:
-
   - **Checkbox**, **Progress**, **Slider** — `intent` → `variant`.
   - **Avatar** (`AvatarBadge`) — `intent` → `status` (its `online | busy | away |
 offline` values are presence state, not a colour intent).
@@ -233,7 +259,6 @@ offline` values are presence state, not a colour intent).
 - [#7](https://github.com/strait-dev/ui/pull/7) [`9d25bc6`](https://github.com/strait-dev/ui/commit/9d25bc61b1ff44c352d7affa584f65a75fb571af) Thanks [@leonardomso](https://github.com/leonardomso)! - feat(ui): add DataGridTableRowActions and DataGridSelectionBar
 
   Two additive helpers for `DataGrid`:
-
   - `DataGridTableRowActions<TData>` — drop-in cell helper that renders an
     ellipsis trigger and a `DropdownMenu` shell; consumers supply
     `DropdownMenuItem` children (Edit / Delete / …) for per-row commands.
@@ -255,7 +280,6 @@ offline` values are presence state, not a colour intent).
   `FrameDescription`, `FrameFooter`.
 
   Props on `Frame`:
-
   - `variant: "default" | "ghost"` — outer border vs. transparent shell.
   - `spacing: "sm" | "default" | "lg"` — gap between non-stacked panels.
   - `stacked` — join panels edge-to-edge with shared borders.
@@ -344,7 +368,6 @@ offline` values are presence state, not a colour intent).
   footer pattern.
 
   **Breaking changes**
-
   - `SidebarMenuSub` now requires a `value: string` prop; pair it with
     its parent `SidebarMenuItem`'s `value`.
   - The old `SidebarRail` (drag handle) has been renamed
