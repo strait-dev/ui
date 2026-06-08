@@ -113,7 +113,21 @@ one exists.)
 
 ---
 
-### 5. `className` merging via `cn()`
+### 5. Motion and overlay tokens
+
+Transitions target only the properties that visually change. Avoid
+`transition-all`; use utilities such as `transition-colors`,
+`transition-opacity`, `transition-transform`, or an explicit arbitrary property
+list (`transition-[width,background-color]`).
+
+Overlay scrims use the themeable `--overlay` token via `bg-overlay`, never a
+hard-coded `bg-black/*` value. This lets the scrim deepen in dark mode and stay
+rebrandable.
+
+✅ `bg-overlay transition-opacity`
+❌ `bg-black/10 transition-all`
+
+### 6. `className` merging via `cn()`
 
 Every component accepts a `className` prop and merges it with `cn(...)` from
 `../utils/index` (clsx + tailwind-merge). Never string-concatenate or
@@ -124,7 +138,7 @@ template-literal class names — that breaks Tailwind conflict resolution.
 
 ---
 
-### 6. `data-slot`
+### 7. `data-slot`
 
 The root element carries `data-slot="<kebab-name>"`, and each named sub-part
 carries its own (`data-slot="card-header"`, `data-slot="navigation-rail-item"`).
@@ -136,7 +150,7 @@ This is the stable hook for cross-component CSS targeting (`has-[...]`,
 
 ---
 
-### 7. `"use client"`
+### 8. `"use client"`
 
 Present **iff** the file uses hooks/state/refs/event handlers, or renders an
 interactive client-only primitive that needs it. A server-safe presentational
@@ -153,7 +167,7 @@ component (pure markup, no hooks) must **not** carry the directive.
 
 ---
 
-### 8. Prop typing
+### 9. Prop typing
 
 Type props with `React.ComponentProps<"x">` (or the primitive's exported
 `.Props` / `useRender.ComponentProps<...>`), not the legacy `HTMLAttributes`
@@ -165,7 +179,7 @@ families. `ComponentProps` includes `ref` and `key` correctly. Always spread
 
 ---
 
-### 9. Form-control height & radius
+### 10. Form-control height & radius
 
 Form controls match the `Input` baseline: **`h-8`** and **`rounded-lg`** on their
 outer box. The broader radius rule applies to all non-circular component outer
@@ -193,7 +207,7 @@ Don't introduce `h-9`/`rounded-md` for new form controls.
 
 ---
 
-### 10. Size scale
+### 11. Size scale
 
 Components with a `size` axis expose a **contiguous subset** of the canonical
 scale, always written in this order:
@@ -215,7 +229,7 @@ xs · sm · default · lg · xl
 
 ---
 
-### 11. Variant axis naming
+### 12. Variant axis naming
 
 The semantic axis a component varies on is named **`variant`** — not `intent`.
 A flattened colour×fill enum (Button's `brand-solid | brand | brand-outline | …`)
@@ -233,7 +247,7 @@ rather than overloading `variant`/`intent`:
 
 ---
 
-### 12. Boolean prop naming
+### 13. Boolean prop naming
 
 Boolean props are **unprefixed and positively phrased**.
 
@@ -251,7 +265,7 @@ internal flags alike) so the vocabulary stays uniform.
 
 ---
 
-### 13. Named props type
+### 14. Named props type
 
 Every component exports a named `*Props` type/interface (e.g. `ButtonProps`) so
 consumers can import and extend it. Exempt: provider re-exports and pure
@@ -263,7 +277,7 @@ render-prop components that declare no props of their own (`direction`,
 
 ---
 
-### 14. Polymorphism via `render`
+### 15. Polymorphism via `render`
 
 Components that can render as a different element use Base UI's `render` prop,
 never Radix-style `asChild`.
@@ -278,22 +292,23 @@ never Radix-style `asChild`.
 | Rule | Check id in `check-conventions.mjs` |
 | --- | --- |
 | Raw colors (§4) | `rawColor` |
+| Motion and overlay tokens (§5) | `transitionAll`, `overlayToken` |
 | Focus ring (§1) | `focusRing` |
 | Invalid ring width (§3) | `ariaInvalid` |
-| `cn()` usage (§5) | `cn` |
-| `"use client"` (§7) | `useClient` |
-| `data-slot` (§6) | `dataSlot` |
-| Prop typing (§8) | `propTyping` |
-| Outer-box radius (§9) | `radius` |
-| Variant axis name (§11) | `intentAxis` |
-| Boolean naming (§12) | `boolNaming` |
-| Named props type (§13) | `namedProps` |
-| Polymorphism (§14) | `asChild` |
+| `cn()` usage (§6) | `cn` |
+| `"use client"` (§8) | `useClient` |
+| `data-slot` (§7) | `dataSlot` |
+| Prop typing (§9) | `propTyping` |
+| Outer-box radius (§10) | `radius` |
+| Variant axis name (§12) | `intentAxis` |
+| Boolean naming (§13) | `boolNaming` |
+| Named props type (§14) | `namedProps` |
+| Polymorphism (§15) | `asChild` |
 
-Rules §10–§14 were added during the API-consistency convergence
+Rules §11–§15 were added during the API-consistency convergence
 (`docs/api-consistency-audit.md`). The pre-existing violators are grandfathered
 in the `EXEMPT` map so the rules fail only on **new** drift; each grandfather set
-shrinks to empty as components are migrated. (§10 size scale is documented but
+shrinks to empty as components are migrated. (§11 size scale is documented but
 not yet machine-checked — it needs cva-axis value parsing, tracked for a later
 slice.)
 

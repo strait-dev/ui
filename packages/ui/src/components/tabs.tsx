@@ -139,7 +139,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
     <TabsPrimitive.Tab
       className={cn(
         // Base layout — size axis via group-data-[size=…]/tabs-list
-        "relative inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent font-medium text-foreground/70 transition-all hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "relative inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent font-medium text-foreground/70 transition-colors hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         // ── size: sm ──
         "group-data-[size=sm]/tabs-list:h-[calc(100%-1px)] group-data-[size=sm]/tabs-list:px-1 group-data-[size=sm]/tabs-list:py-px group-data-[size=sm]/tabs-list:text-xs",
         // ── size: default ──

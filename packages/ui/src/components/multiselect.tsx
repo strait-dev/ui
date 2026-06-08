@@ -48,7 +48,7 @@ const SelectedBadge: React.FC<SelectedBadgeProps> = ({
 }) => (
   <div
     className={cn(
-      "relative inline-flex animate-fadeIn cursor-default items-center rounded-md border bg-background font-medium text-secondary-foreground transition-all hover:bg-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 data-fixed:pe-3",
+      "relative inline-flex animate-fadeIn cursor-default items-center rounded-md border bg-background font-medium text-secondary-foreground transition-colors hover:bg-background disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 data-fixed:pe-3",
       // size variants for the chip
       size === "sm"
         ? "h-6 ps-2 pe-6 pl-2 text-xs"

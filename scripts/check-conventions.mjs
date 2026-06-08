@@ -145,6 +145,32 @@ for (const file of files) {
     });
   }
 
+  // Rule: broad transitions are too easy to over-animate. Components should
+  // transition the specific properties they visually change.
+  lines.forEach((ln, i) => {
+    if (/\btransition-all\b/.test(ln)) {
+      add(
+        file,
+        "transitionAll",
+        `:${i + 1} transition-all (use explicit transition-* utilities)`
+      );
+    }
+  });
+
+  // Rule: overlay scrims use the themeable overlay token, not hard-coded black.
+  lines.forEach((ln, i) => {
+    if (
+      /data-slot="[\w-]*overlay"|[\w-]*overlay/.test(src) &&
+      /\bbg-black\//.test(ln)
+    ) {
+      add(
+        file,
+        "overlayToken",
+        `:${i + 1} overlay scrim uses bg-black/* (use bg-overlay)`
+      );
+    }
+  });
+
   // Rule: focus ring must be ring-3 (not ring-1, ring-2, ring-4+).
   // Only flags *focus* rings: focus-visible:ring-N, data-[focus-visible]:ring-N,
   // focus-within:ring-offset. Plain surface frames like ring-1 ring-foreground/10

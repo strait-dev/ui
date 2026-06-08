@@ -465,22 +465,22 @@ export const AvatarChip: Story = {
 };
 
 /**
- * Flag chip — a leading emoji or icon prefixes a country/region tag.
+ * Region chip — a leading icon or code prefixes a country/region tag.
  */
-export const WithFlag: Story = {
+export const WithRegionCode: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
       <Badge iconLeft={GlobeIcon} radius="md" variant="secondary-light">
         Global
       </Badge>
       <Badge radius="md" variant="secondary-light">
-        🇺🇸 US
+        US
       </Badge>
       <Badge radius="md" variant="secondary-light">
-        🇧🇷 Brazil
+        Brazil
       </Badge>
       <Badge radius="md" variant="secondary-light">
-        🇪🇺 EU
+        EU
       </Badge>
     </div>
   ),

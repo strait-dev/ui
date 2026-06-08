@@ -251,7 +251,11 @@
     @apply bg-background text-foreground;
   }
   html {
+    color-scheme: light;
     @apply font-sans;
+  }
+  .dark {
+    color-scheme: dark;
   }
 }
 

@@ -15780,7 +15780,8 @@
     "exports": [
       "Tracker",
       "TrackerBlockProps",
-      "TrackerProps"
+      "TrackerProps",
+      "TrackerStatus"
     ],
     "types": [
       {
@@ -15790,13 +15791,19 @@
             "name": "color",
             "type": "string",
             "optional": true,
-            "description": "Tailwind background class for this block (e.g. `\"bg-success\"`)."
+            "description": "Custom Tailwind background class escape hatch for this block."
           },
           {
             "name": "defaultBackgroundColor",
             "type": "string",
             "optional": true,
-            "description": "Background class used when `color` is omitted."
+            "description": "Background class used when `status`, `color`, and `defaultStatus` are omitted."
+          },
+          {
+            "name": "defaultStatus",
+            "type": "TrackerStatus",
+            "optional": true,
+            "description": "Semantic background used when `status` and `color` are omitted."
           },
           {
             "name": "disabledTooltip",
@@ -15809,6 +15816,12 @@
             "type": "string | number",
             "optional": true,
             "description": "Stable React key when the data has no natural id."
+          },
+          {
+            "name": "status",
+            "type": "TrackerStatus",
+            "optional": true,
+            "description": "Semantic colour for this block. Prefer this over `color`."
           },
           {
             "name": "tooltip",
@@ -15835,7 +15848,14 @@
             "name": "defaultBackgroundColor",
             "type": "string",
             "optional": true,
-            "description": "Background class for blocks that omit their own `color`."
+            "description": "Background class escape hatch for blocks that omit `status`, `color`, and `defaultStatus`."
+          },
+          {
+            "name": "defaultStatus",
+            "type": "TrackerStatus",
+            "optional": true,
+            "default": "\"muted\"",
+            "description": "Semantic background used when a block omits `status` and `color`."
           }
         ],
         "extends": [

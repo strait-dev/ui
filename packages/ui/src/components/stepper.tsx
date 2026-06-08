@@ -361,18 +361,18 @@ function StepperIndicator({
       {children ?? (
         <>
           {/* Step number — scales out when completed or loading */}
-          <span className="transition-all group-data-[state=completed]/step:scale-0 group-data-loading/step:scale-0 group-data-[state=completed]/step:opacity-0 group-data-loading/step:opacity-0 group-data-loading/step:transition-none">
+          <span className="transition-[opacity,transform] group-data-[state=completed]/step:scale-0 group-data-loading/step:scale-0 group-data-[state=completed]/step:opacity-0 group-data-loading/step:opacity-0 group-data-loading/step:transition-none">
             {step}
           </span>
           {/* Tick icon — scales in when step is completed */}
           <HugeiconsIcon
             aria-hidden="true"
-            className="absolute size-5 scale-0 opacity-0 transition-all group-data-[size=sm]/stepper:size-3.5 group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100"
+            className="absolute size-5 scale-0 opacity-0 transition-[opacity,transform] group-data-[size=sm]/stepper:size-3.5 group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100"
             icon={Tick02Icon}
           />
           {/* Spinning loader — shown only while isLoading */}
           {isLoading ? (
-            <span className="absolute transition-all">
+            <span className="absolute transition-opacity">
               <HugeiconsIcon
                 aria-hidden="true"
                 className="size-4 animate-spin group-data-[size=sm]/stepper:size-3"

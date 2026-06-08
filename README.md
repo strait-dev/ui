@@ -187,27 +187,28 @@ predictable:
 ### Data Display
 `activity-feed` · `aspect-ratio` · `avatar` · `badge` · `bar-list` · `bulk-action-bar` ·
 `card` · `carousel` · `chart` · `charts` · `code-block` · `code-block-command` ·
-`config-row` · `data-table` · `description-list` · `execution-trace-bar` · `filter` ·
+`config-row` · `data-grid` · `description-list` · `execution-trace-bar` · `filters` ·
 `item` · `json-viewer` · `leaderboard` · `metric-card` · `qr-code` ·
-`radial-gauge` · `relative-time-card` · `status-badge` · `table` · `tag-group` ·
-`timeline` · `tracker` · `tree`
+`radial-gauge` · `relative-time-card` · `sortable` · `status-badge` · `table` ·
+`tag-group` · `timeline` · `tracker` · `tree`
 
 ### Feedback
 `alert` · `banner` · `chart-empty-state` · `empty` · `feature-lock` · `notice-banner` ·
 `progress` · `skeleton` · `spinner` · `toast`
 
 ### Forms
-`calendar` · `checkbox` · `combobox` · `field` · `file-upload` · `form` · `input` ·
-`input-group` · `label` · `multiselect` · `native-select` · `radio-group` · `rating` ·
-`secret-input` · `select` · `select-native` · `slider` · `switch` · `textarea`
+`autocomplete` · `calendar` · `checkbox` · `date-selector` · `field` · `file-upload` ·
+`form` · `input` · `input-group` · `label` · `multiselect` · `native-select` ·
+`radio-group` · `rating` · `secret-input` · `select` · `select-native` · `slider` ·
+`switch` · `textarea`
 
 ### Layout
-`accordion` · `collapsible` · `direction` · `resizable` · `scroll-area` · `separator` ·
-`shell`
+`accordion` · `collapsible` · `direction` · `frame` · `resizable` · `scroll-area` ·
+`separator` · `shell`
 
 ### Navigation
 `breadcrumb` · `command` · `command-menu` · `menubar` · `navigation-menu` ·
-`navigation-rail` · `pagination` · `sidebar` · `stepper` · `tabs`
+`navigation-rail` · `pagination` · `scrollspy` · `sidebar` · `stepper` · `tabs`
 
 ### Overlays
 `alert-dialog` · `context-menu` · `detail-sheet` · `dialog` · `drawer` · `dropdown-menu` ·
