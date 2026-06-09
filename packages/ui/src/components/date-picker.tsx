@@ -27,6 +27,12 @@ type DatePickerProps = {
   className?: string;
   /** When `true`, applies a destructive border to the trigger button. */
   error?: boolean;
+  /** Inline message rendered below the trigger when validation fails. */
+  errorMessage?: React.ReactNode;
+  /** Placeholder shown when no date is selected. Defaults to `"Select a date"`. */
+  placeholder?: React.ReactNode;
+  /** Formats the selected date. Defaults to `Intl.DateTimeFormat`. */
+  formatDate?: (date: Date) => React.ReactNode;
 };
 
 /**
@@ -39,7 +45,10 @@ type DatePickerProps = {
  * @remarks
  * - An optional `label` renders above the trigger with an associated `htmlFor`
  *   link; pass `required` to append a red asterisk.
- * - `error=true` applies a destructive border to the trigger.
+ * - `error=true` applies destructive border/ring styling and `errorMessage`
+ *   renders inline guidance below the trigger.
+ * - Use `placeholder` and `formatDate` to localize display without wrapping the
+ *   component or forking date-picker variants.
  * - The component is purely controlled — manage `value` and `onChange` in the
  *   parent. To clear the selection pass `undefined` to `onChange`.
  *
@@ -63,6 +72,9 @@ function DatePicker({
   label,
   className,
   error,
+  errorMessage,
+  placeholder = "Select a date",
+  formatDate = (date) => new Intl.DateTimeFormat().format(date),
 }: DatePickerProps) {
   const datePickerId = useId();
   return (
@@ -86,7 +98,9 @@ function DatePicker({
               className={cn(
                 "h-8 w-full justify-start rounded-lg! bg-transparent px-3 text-left font-normal text-sm shadow-xs hover:bg-transparent",
                 !value && "text-muted-foreground/70",
-                error ? "border-destructive" : null
+                error
+                  ? "border-destructive ring-3 ring-destructive/20 dark:ring-destructive/40"
+                  : null
               )}
               disabled={disabled}
               id={datePickerId}
@@ -99,9 +113,9 @@ function DatePicker({
             icon={Calendar03Icon}
           />
           {value ? (
-            value.toLocaleDateString()
+            formatDate(value)
           ) : (
-            <span className="font-normal">Select a date</span>
+            <span className="font-normal">{placeholder}</span>
           )}
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
@@ -113,6 +127,11 @@ function DatePicker({
           />
         </PopoverContent>
       </Popover>
+      {errorMessage ? (
+        <p className="text-destructive text-sm" data-slot="date-picker-error">
+          {errorMessage}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -1722,22 +1722,10 @@
             "description": "Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection."
           },
           {
-            "name": "selectionMode",
-            "type": "M",
-            "optional": true,
-            "description": "Whether single or multiple selection is enabled."
-          },
-          {
             "name": "visibleDuration",
             "type": "DateDuration",
             "optional": true,
             "description": "The amount of days that will be displayed at once. This affects how pagination works."
-          },
-          {
-            "name": "weeksInMonth",
-            "type": "number",
-            "optional": true,
-            "description": "The number of weeks in a month. This overrides the default set by the locale."
           }
         ],
         "extendsHtml": []
@@ -5819,104 +5807,6 @@
     "dependencies": []
   },
   {
-    "name": "Date Picker With Month Year",
-    "importPath": "@strait/ui/components/date-picker-with-month-year",
-    "category": "Patterns",
-    "description": "A date picker with dropdown selectors for month and year navigation.",
-    "exports": [
-      "DatePickerWithMonthYear",
-      "DatePickerWithMonthYearProps"
-    ],
-    "types": [
-      {
-        "name": "DatePickerWithMonthYearProps",
-        "props": [
-          {
-            "name": "value",
-            "type": "Date",
-            "optional": true,
-            "description": "The current value (controlled)."
-          },
-          {
-            "name": "onChange",
-            "type": "(value: Date | undefined) => void",
-            "optional": true,
-            "description": "Handler that is called when the value changes."
-          },
-          {
-            "name": "defaultValue",
-            "type": "Date",
-            "optional": true,
-            "description": "The default value (uncontrolled)."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "optional": true,
-            "description": "Whether the date picker is disabled."
-          },
-          {
-            "name": "className",
-            "type": "string",
-            "optional": true,
-            "description": "Additional CSS class name for the container."
-          },
-          {
-            "name": "error",
-            "type": "boolean",
-            "optional": true,
-            "description": "Error state for validation styling."
-          },
-          {
-            "name": "minValue",
-            "type": "Date",
-            "optional": true,
-            "description": "Minimum selectable date."
-          },
-          {
-            "name": "maxValue",
-            "type": "Date",
-            "optional": true,
-            "description": "Maximum selectable date."
-          },
-          {
-            "name": "placeholder",
-            "type": "string",
-            "optional": true,
-            "default": "\"Selecione uma data\"",
-            "description": "Placeholder text when no date is selected"
-          }
-        ],
-        "extends": [],
-        "inheritedProps": [],
-        "extendsHtml": []
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "calendar",
-      "date-picker-content",
-      "date-picker-trigger",
-      "date-picker-with-month-year",
-      "dropdown",
-      "dropdown-content",
-      "dropdown-item",
-      "dropdown-nav",
-      "dropdown-trigger"
-    ],
-    "parts": [
-      {
-        "name": "DatePickerWithMonthYear",
-        "slot": "date-picker-with-month-year",
-        "description": "A date picker with dropdown selectors for month and year navigation."
-      }
-    ],
-    "dependencies": [
-      "react-day-picker"
-    ]
-  },
-  {
     "name": "Date Picker",
     "importPath": "@strait/ui/components/date-picker",
     "category": "Patterns",
@@ -5970,6 +5860,26 @@
             "type": "boolean",
             "optional": true,
             "description": "When `true`, applies a destructive border to the trigger button."
+          },
+          {
+            "name": "errorMessage",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Inline message rendered below the trigger when validation fails."
+          },
+          {
+            "name": "placeholder",
+            "type": "React.ReactNode",
+            "optional": true,
+            "default": "\"Select a date\"",
+            "description": "Placeholder shown when no date is selected. Defaults to `\"Select a date\"`."
+          },
+          {
+            "name": "formatDate",
+            "type": "(date: Date) => React.ReactNode",
+            "optional": true,
+            "default": "(date) => new Intl.DateTimeFormat().format(date)",
+            "description": "Formats the selected date. Defaults to `Intl.DateTimeFormat`."
           }
         ],
         "extends": [],
@@ -5980,7 +5890,8 @@
     "variants": {},
     "defaultVariants": {},
     "slots": [
-      "date-picker"
+      "date-picker",
+      "date-picker-error"
     ],
     "parts": [
       {
@@ -5990,71 +5901,6 @@
       }
     ],
     "dependencies": []
-  },
-  {
-    "name": "Date Range Picker With Presets",
-    "importPath": "@strait/ui/components/date-range-picker-with-presets",
-    "category": "Patterns",
-    "description": "A date-range picker with a preset sidebar and an explicit apply/reset flow.",
-    "exports": [
-      "DateRangePickerWithPresets",
-      "DateRangePickerWithPresetsProps"
-    ],
-    "types": [
-      {
-        "name": "DateRangePickerWithPresetsProps",
-        "props": [
-          {
-            "name": "value",
-            "type": "DateRange",
-            "optional": true,
-            "description": "The current value of the date range picker."
-          },
-          {
-            "name": "defaultValue",
-            "type": "DateRange",
-            "optional": true,
-            "description": "The default date range."
-          },
-          {
-            "name": "onChange",
-            "type": "(value: DateRange | undefined) => void",
-            "optional": true,
-            "description": "Handler that is called when the value changes."
-          },
-          {
-            "name": "label",
-            "type": "string",
-            "optional": true,
-            "description": "The label for the date range picker."
-          },
-          {
-            "name": "className",
-            "type": "string",
-            "optional": true,
-            "description": "Additional CSS class name for the container."
-          }
-        ],
-        "extends": [],
-        "inheritedProps": [],
-        "extendsHtml": []
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "date-range-picker-with-presets"
-    ],
-    "parts": [
-      {
-        "name": "DateRangePickerWithPresets",
-        "slot": "date-range-picker-with-presets",
-        "description": "A date-range picker with a preset sidebar and an explicit apply/reset flow."
-      }
-    ],
-    "dependencies": [
-      "react-day-picker"
-    ]
   },
   {
     "name": "Date Range Picker",
@@ -6110,6 +5956,13 @@
             "type": "boolean",
             "optional": true,
             "description": "Indicates if the input is disabled."
+          },
+          {
+            "name": "locale",
+            "type": "string",
+            "optional": true,
+            "default": "\"en-US\"",
+            "description": "Locale passed to React Aria's date range field. Defaults to `\"en-US\"`."
           }
         ],
         "extends": [],
@@ -6120,7 +5973,8 @@
     "variants": {},
     "defaultVariants": {},
     "slots": [
-      "date-range-picker"
+      "date-range-picker",
+      "date-range-picker-error"
     ],
     "parts": [
       {
@@ -8320,7 +8174,7 @@
           },
           {
             "name": "defaultMeta",
-            "type": "Partial<FieldLikeMeta<TParentData, TName, TData, TOnMount, TOnChange, TOnChangeAsync, TOnBlur, TOnBlurAsync, TOnSubmit, TOnSubmitAsync, TOnDynamic, TOnDynamicAsync, any, any, any, any, any, any, any, any, any>>",
+            "type": "Partial<FieldMeta<TParentData, TName, TData, TOnMount, TOnChange, TOnChangeAsync, TOnBlur, TOnBlurAsync, TOnSubmit, TOnSubmitAsync, TOnDynamic, TOnDynamicAsync, any, any, any, any, any, any, any, any, any>>",
             "optional": true,
             "description": "An optional object with default metadata for the field."
           },
@@ -9187,40 +9041,6 @@
         "name": "InputWithLoader",
         "slot": "input-with-loader",
         "description": "A text input that swaps its leading icon for an animated loading spinner while an async operation is in progress."
-      }
-    ],
-    "dependencies": []
-  },
-  {
-    "name": "Input with Show/Hide Password",
-    "importPath": "@strait/ui/components/input-with-show-hide-password",
-    "category": "Patterns",
-    "description": "A minimal password field with a trailing eye-icon toggle that switches the input between masked (`\"password\"`) and revealed (`\"text\"`) mode.",
-    "exports": [
-      "InputWithShowHidePassword",
-      "InputWithShowHidePasswordProps"
-    ],
-    "types": [
-      {
-        "name": "InputWithShowHidePasswordProps",
-        "props": [],
-        "extends": [
-          "Omit<InputProps, \"type\">"
-        ],
-        "inheritedProps": [],
-        "extendsHtml": []
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "input-with-show-hide-password"
-    ],
-    "parts": [
-      {
-        "name": "InputWithShowHidePassword",
-        "slot": "input-with-show-hide-password",
-        "description": "A minimal password field with a trailing eye-icon toggle that switches the input between masked (`\"password\"`) and revealed (`\"text\"`) mode."
       }
     ],
     "dependencies": []
@@ -12549,42 +12369,6 @@
         "name": "SecretInput",
         "slot": "secret-input",
         "description": "A controlled text input purpose-built for secrets and API keys."
-      }
-    ],
-    "dependencies": []
-  },
-  {
-    "name": "Select Native",
-    "importPath": "@strait/ui/components/select-native",
-    "category": "Forms",
-    "description": "Styled wrapper around the browser's native `<select>` element.",
-    "exports": [
-      "SelectNative",
-      "SelectNativeProps"
-    ],
-    "types": [
-      {
-        "name": "SelectNativeProps",
-        "props": [],
-        "extends": [
-          "React.ComponentProps<\"select\">"
-        ],
-        "inheritedProps": [],
-        "extendsHtml": [
-          "select"
-        ]
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "select-native"
-    ],
-    "parts": [
-      {
-        "name": "SelectNative",
-        "slot": "select-native",
-        "description": "Styled wrapper around the browser's native `<select>` element."
       }
     ],
     "dependencies": []

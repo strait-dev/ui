@@ -85,10 +85,12 @@ const meta: Meta<typeof Sidebar> = {
     docs: {
       description: {
         component: [
-          "A collapsible application sidebar with full keyboard-shortcut support (`⌘B`).",
+          "A collapsible application sidebar with keyboard-shortcut support (`Cmd/Ctrl+B`), mobile sheet behavior, rail mode, nested groups, search, and sortable menu affordances.",
           "",
-          "Wrap every story in `SidebarProvider` and a fixed-height container so",
-          "the sidebar does not overflow the Storybook canvas.",
+          "Use Sidebar for product shells where navigation is persistent and stateful. For short page-local navigation, prefer Tabs, Navigation Rail, or Breadcrumb instead.",
+          "",
+          "Wrap every story in `SidebarProvider` and a fixed-height container so the sidebar does not overflow the Storybook canvas.",
+          "Keep icon-only rail buttons labelled, make active states explicit, and verify long labels truncate with tooltip fallback.",
         ].join("\n"),
       },
     },

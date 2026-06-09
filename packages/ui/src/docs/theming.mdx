@@ -95,6 +95,22 @@ hatch — and tweak unrelated tokens like radius the same way:
 }
 ```
 
+## Surface tokens
+
+Reusable surfaces are tokenized too, so elevated cards, nested toolbars, and
+terminal/code surfaces can be re-themed without chasing component classes:
+
+- **`--surface-raised`** — elevated or floating containers that should separate
+  from the page background while staying theme-aware.
+- **`--surface-subtle`** — nested panels, toolbar wells, and low-emphasis
+  sections inside cards.
+- **`--surface-terminal`** and **`--surface-terminal-foreground`** — forced dark
+  terminal/code surfaces used by `CodeBlock variant="dark"`.
+- **`--overlay`** — modal scrims behind dialogs, drawers, and sheets.
+
+Override these alongside your brand when your product needs a flatter, higher
+contrast, or more dimensional visual language.
+
 ## Status & brand triads
 
 Brand and each status intent come as a triad so you can theme solid, soft, and

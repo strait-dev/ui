@@ -93,11 +93,11 @@ describe("CodeBlock", () => {
     expect(root).toHaveClass("border");
   });
 
-  it("dark variant applies bg-neutral-950 to root", () => {
+  it("dark variant applies terminal surface tokens to root", () => {
     render(<CodeBlock code={SAMPLE_CODE} variant="dark" />);
     const root = document.querySelector("[data-slot='code-block']");
-    expect(root).toHaveClass("bg-neutral-950");
-    expect(root).toHaveClass("text-neutral-50");
+    expect(root).toHaveClass("bg-surface-terminal");
+    expect(root).toHaveClass("text-surface-terminal-foreground");
     expect(root).not.toHaveClass("bg-muted");
   });
 
@@ -114,7 +114,7 @@ describe("CodeBlock", () => {
       <CodeBlock className="my-custom" code={SAMPLE_CODE} variant="dark" />
     );
     const root = document.querySelector("[data-slot='code-block']");
-    expect(root).toHaveClass("bg-neutral-950");
+    expect(root).toHaveClass("bg-surface-terminal");
     expect(root).toHaveClass("my-custom");
   });
 });

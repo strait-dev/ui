@@ -18,11 +18,12 @@ const blocks: TrackerBlockProps[] = [
 ];
 
 describe("Tracker", () => {
-  it("renders the tracker root", () => {
-    const { container } = render(<Tracker data={blocks} />);
+  it("renders the tracker root with an accessible status-history label", () => {
+    const { container, getByRole } = render(<Tracker data={blocks} />);
     expect(
       container.querySelector("[data-slot='tracker']")
     ).toBeInTheDocument();
+    expect(getByRole("img", { name: "Status history" })).toBeInTheDocument();
   });
 
   it("renders one block per data entry", () => {
@@ -62,6 +63,15 @@ describe("Tracker", () => {
     expect(() =>
       render(<Tracker data={blocks} disabledTooltip />)
     ).not.toThrow();
+  });
+
+  it("allows a custom accessible label", () => {
+    const { getByRole } = render(
+      <Tracker aria-label="Deployment history" data={blocks} />
+    );
+    expect(
+      getByRole("img", { name: "Deployment history" })
+    ).toBeInTheDocument();
   });
 
   it("forwards className to the root", () => {

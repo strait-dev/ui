@@ -19,8 +19,10 @@ const meta: Meta<typeof DateRangePicker> = {
           "A hybrid date-range picker that combines **react-aria-components** `DateRangePicker` (for the inline date inputs + popover trigger) with our `Calendar` (react-day-picker v9) rendered inside a RAC `Popover`/`Dialog`.",
           "",
           "- Shows two `DateInput` segment fields (start / end) with a calendar icon button that opens a two-month calendar.",
-          "- Locale is fixed to `pt-BR` via RAC's `I18nProvider`.",
+          "- Locale is configurable via `locale` and defaults to `en-US`.",
+          "- Supports disabled and invalid states with inline `errorMessage`.",
           "- Controlled via `value: DateRange | undefined` + `onChange`.",
+          "- Compose quick-select preset buttons around this base component instead of using a separate preset export.",
         ].join("\n"),
       },
     },
@@ -43,11 +45,23 @@ type Story = StoryObj<typeof meta>;
 function ControlledRangePicker(props: {
   label?: string;
   initialValue?: DateRange;
+  disabled?: boolean;
+  error?: boolean;
+  errorMessage?: string;
+  locale?: string;
 }) {
   const [range, setRange] = useState<DateRange | undefined>(props.initialValue);
   return (
     <div className="w-80">
-      <DateRangePicker label={props.label} onChange={setRange} value={range} />
+      <DateRangePicker
+        disabled={props.disabled}
+        error={props.error}
+        errorMessage={props.errorMessage}
+        label={props.label}
+        locale={props.locale}
+        onChange={setRange}
+        value={range}
+      />
       <p className="mt-2 text-muted-foreground text-sm">
         {range?.from ? range.from.toDateString() : "—"} →{" "}
         {range?.to ? range.to.toDateString() : "—"}
@@ -84,6 +98,45 @@ export const WithPreselectedRange: Story = {
       <ControlledRangePicker
         initialValue={{ from: FIXED_FROM, to: FIXED_TO }}
         label="Billing period"
+      />
+    </div>
+  ),
+};
+
+/** Disabled state. */
+export const Disabled: Story = {
+  render: () => (
+    <div className="w-80">
+      <ControlledRangePicker
+        disabled
+        initialValue={{ from: FIXED_FROM, to: FIXED_TO }}
+        label="Locked period"
+      />
+    </div>
+  ),
+};
+
+/** Invalid state with inline recovery copy. */
+export const WithError: Story = {
+  render: () => (
+    <div className="w-80">
+      <ControlledRangePicker
+        error
+        errorMessage="Select both a start and end date."
+        label="Billing period"
+      />
+    </div>
+  ),
+};
+
+/** Localized range segments without a specialized component variant. */
+export const Localized: Story = {
+  render: () => (
+    <div className="w-80">
+      <ControlledRangePicker
+        initialValue={{ from: FIXED_FROM, to: FIXED_TO }}
+        label="Localized period"
+        locale="en-GB"
       />
     </div>
   ),

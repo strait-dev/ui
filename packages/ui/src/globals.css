@@ -62,6 +62,10 @@
   /* Modal scrim behind dialogs/sheets/drawers. Tokenized so it is themeable
      and can deepen in dark mode (a flat black/10 is nearly invisible there). */
   --overlay: oklch(0 0 0 / 0.1);
+  --surface-terminal: oklch(0.216 0.006 56.043);
+  --surface-terminal-foreground: oklch(0.985 0.001 106.423);
+  --surface-raised: oklch(1 0 0);
+  --surface-subtle: oklch(0.985 0.001 106.423);
   --chart-1: var(--brand);
   --chart-2: oklch(0.769 0.188 70.08);
   --chart-3: oklch(0.553 0.013 58.071);
@@ -124,6 +128,10 @@
   --ring: oklch(0.709 0.01 56.259);
   /* Deeper in dark mode so the scrim reads against dark surfaces. */
   --overlay: oklch(0 0 0 / 0.4);
+  --surface-terminal: oklch(0.182 0.004 49.25);
+  --surface-terminal-foreground: oklch(0.985 0.001 106.423);
+  --surface-raised: oklch(0.216 0.006 56.043);
+  --surface-subtle: oklch(0.268 0.007 34.298);
   --chart-1: var(--brand);
   --chart-2: oklch(0.769 0.188 70.08);
   --chart-3: oklch(0.709 0.01 56.259);
@@ -217,6 +225,10 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-overlay: var(--overlay);
+  --color-surface-terminal: var(--surface-terminal);
+  --color-surface-terminal-foreground: var(--surface-terminal-foreground);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-subtle: var(--surface-subtle);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);

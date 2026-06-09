@@ -199,8 +199,8 @@ predictable:
 ### Forms
 `autocomplete` · `calendar` · `checkbox` · `date-selector` · `field` · `file-upload` ·
 `form` · `input` · `input-group` · `label` · `multiselect` · `native-select` ·
-`radio-group` · `rating` · `secret-input` · `select` · `select-native` · `slider` ·
-`switch` · `textarea`
+`radio-group` · `rating` · `secret-input` · `select` · `slider` · `switch` ·
+`textarea`
 
 ### Layout
 `accordion` · `collapsible` · `direction` · `frame` · `resizable` · `scroll-area` ·
@@ -218,11 +218,11 @@ predictable:
 Higher-level, opinionated compositions built from the primitives above:
 
 `calendar-rac` · `calendar-with-presets` · `card-checkbox` · `checkbox-tree` · `credenza` ·
-`date-input` · `date-picker` · `date-picker-with-month-year` · `date-range-picker` ·
-`date-range-picker-with-presets` · `datefield-rac` · `id-cell` · `input-otp` ·
+`date-input` · `date-picker` · `date-range-picker` · `datefield-rac` · `id-cell` ·
+`input-otp` ·
 `input-password-with-strength-indicator` · `input-with-addons` ·
 `input-with-inline-button` · `input-with-inner-tags` · `input-with-loader` ·
-`input-with-show-hide-password` · `input-with-start-icon` ·
+`input-with-start-icon` ·
 `number-input-percentage-with-chevrons` · `number-input-with-buttons` ·
 `number-input-with-chevrons` · `password-input` · `phone-input` · `preview-card` ·
 `range-calendar-with-presets` · `select-with-search` · `select-with-search-and-button`

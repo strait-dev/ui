@@ -41,7 +41,8 @@ export type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
  *   prevent the type collapsing to `never`.
  * - Pair with a `<Label>` for accessible forms.
  * - For a fully custom-styled JS dropdown, use {@link Select} instead.
- *   For the alternative styled native wrapper, see {@link SelectNative}.
+ * - This is the canonical native select wrapper; the older `SelectNative`
+ *   export was removed during API consolidation.
  *
  * @example
  * ```tsx

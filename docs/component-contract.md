@@ -94,7 +94,7 @@ Use the design tokens, never raw Tailwind palette colors for component chrome.
 
 | Need | Use | Not |
 | --- | --- | --- |
-| Surface | `bg-background`, `bg-card`, `bg-muted` | `bg-white`, `bg-zinc-50` |
+| Surface | `bg-background`, `bg-card`, `bg-muted`, `bg-surface-raised`, `bg-surface-subtle`, `bg-surface-terminal` | `bg-white`, `bg-zinc-50`, `bg-neutral-950` |
 | Danger | `bg-destructive`, `text-destructive-accent`, `text-destructive-foreground` | `bg-red-500`, `text-red-600` |
 | Success | `bg-success`, `text-success-accent`, `text-success-foreground` | `bg-emerald-500`, `text-emerald-600` |
 | Warning | `bg-warning`, `text-warning-accent`, `text-warning-foreground` | `bg-amber-500`, `bg-orange-500` |
@@ -104,9 +104,9 @@ Banned in component source: `*-{red,orange,amber,yellow,lime,green,emerald,teal,
 plus `bg-white`/`text-white`/`bg-black` for chrome.
 
 The `-foreground` token is the on-color text for a solid fill; the `-accent`
-token is the readable colored text on a neutral/tinted surface. (`bg-black/40`
-for an overlay scrim is acceptable — it's not chrome — but prefer a token where
-one exists.)
+token is the readable colored text on a neutral/tinted surface. Overlay scrims
+use `bg-overlay`; terminal/code surfaces use `bg-surface-terminal` and
+`text-surface-terminal-foreground`.
 
 ✅ `bg-destructive text-destructive-foreground`
 ❌ `bg-red-500 text-white`

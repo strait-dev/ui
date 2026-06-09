@@ -64,6 +64,8 @@ export type DateRangePickerProps = {
    * @type boolean
    */
   disabled?: boolean;
+  /** Locale passed to React Aria's date range field. Defaults to `"en-US"`. */
+  locale?: string;
 };
 
 /**
@@ -80,10 +82,10 @@ export type DateRangePickerProps = {
  * - The segment inputs provide full keyboard date editing (spin, arrow keys)
  *   courtesy of RAC's `DateInput` / `DateSegment` primitives — no custom
  *   spinners needed.
- * - Unused props (`error`, `errorMessage`, `disabled`) are declared on the
- *   type but not yet wired to the JSX; they are available for future use.
- * - For a variant with quick-select presets use
- *   {@link DateRangePickerWithPresets}.
+ * - `error`, `errorMessage`, and `disabled` are wired to the field and inline
+ *   message so forms get consistent invalid and disabled styling.
+ * - Use surrounding buttons or menus for quick-select presets; the separate
+ *   preset wrapper was removed during API consolidation.
  *
  * @example
  * ```tsx
@@ -101,6 +103,10 @@ export function DateRangePicker({
   onChange,
   label,
   className,
+  error,
+  errorMessage,
+  disabled,
+  locale = "en-US",
 }: DateRangePickerProps) {
   // Convert DateRange to React Aria's RangeValue<DateValue>
   const dateValue: RangeValue<CalendarDate> | null = (() => {
@@ -138,9 +144,11 @@ export function DateRangePicker({
 
   return (
     <div data-slot="date-range-picker">
-      <I18nProvider locale="pt-BR">
+      <I18nProvider locale={locale}>
         <RACDateRangePicker
           className={cn("flex flex-col gap-2", className)}
+          isDisabled={disabled}
+          isInvalid={error}
           onChange={handleChange}
           value={dateValue}
         >
@@ -153,7 +161,8 @@ export function DateRangePicker({
             className={cn(
               "flex h-8 w-full items-center rounded-lg border border-input bg-background text-sm",
               "focus-within:border-ring focus-within:outline-hidden focus-within:ring-3 focus-within:ring-ring/50",
-              "disabled:cursor-not-allowed disabled:opacity-50"
+              "data-disabled:cursor-not-allowed data-disabled:opacity-50",
+              "data-invalid:border-destructive data-invalid:ring-3 data-invalid:ring-destructive/20 dark:data-invalid:ring-destructive/40"
             )}
           >
             <DateInput className="flex flex-1 px-2" slot="start">
@@ -181,7 +190,10 @@ export function DateRangePicker({
                 />
               )}
             </DateInput>
-            <Button className="mr-2 flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+            <Button
+              className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              isDisabled={disabled}
+            >
               <HugeiconsIcon className="size-4" icon={Calendar03Icon} />
             </Button>
           </Group>
@@ -209,6 +221,14 @@ export function DateRangePicker({
               />
             </Dialog>
           </Popover>
+          {errorMessage ? (
+            <p
+              className="text-destructive text-sm"
+              data-slot="date-range-picker-error"
+            >
+              {errorMessage}
+            </p>
+          ) : null}
         </RACDateRangePicker>
       </I18nProvider>
     </div>

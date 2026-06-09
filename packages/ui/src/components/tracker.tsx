@@ -132,13 +132,16 @@ const Tracker = ({
   defaultBackgroundColor,
   className,
   ref,
+  "aria-label": ariaLabel = "Status history",
   ...props
 }: TrackerProps) => (
   <TooltipProvider>
     <div
+      aria-label={ariaLabel}
       className={cn("group flex h-8 w-full items-stretch gap-0.5", className)}
       data-slot="tracker"
       ref={ref}
+      role="img"
       {...props}
     >
       {data.map((block, index) => (

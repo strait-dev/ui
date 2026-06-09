@@ -110,8 +110,8 @@ export type RangeCalendarWithPresetsProps = {
  *   to 365 days ahead. Pass a custom `presets` prop if the disabled logic
  *   must change as well.
  * - `showFooter=false` (default) is appropriate for uncontrolled inline
- *   usage; set `showFooter=true` when embedding inside
- *   {@link DateRangePickerWithPresets} where Apply controls popover close.
+ *   usage; set `showFooter=true` when embedding inside a composed
+ *   date-range popover where Apply controls popover close.
  * - `_defaultRange` is declared on the type but not used in the current
  *   implementation; it is reserved for a future reset-to-default behaviour.
  *

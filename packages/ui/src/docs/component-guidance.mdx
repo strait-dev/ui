@@ -1,0 +1,70 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Getting Started/Component Guidance" />
+
+# Component Guidance
+
+This page defines how to choose, document, and compose Strait UI components in
+product code. It complements the machine-enforced component contract with
+human-facing usage rules.
+
+## Choosing canonical components
+
+Prefer the canonical, highest-level primitive for the job:
+
+- Use `NativeSelect` for browser-native select controls. The old `SelectNative`
+  wrapper was removed during API consolidation.
+- Use `PasswordInput` for a password field with a visibility toggle. Use
+  `InputPasswordWithStrengthIndicator` when password quality feedback is part of
+  the flow. The smaller `InputWithShowHidePassword` wrapper was removed.
+- Use `DatePicker` and `DateRangePicker` directly. Specialized month/year and
+  preset wrapper exports were removed; localize with `formatDate`, `placeholder`,
+  and `locale`, and compose preset buttons beside the base range picker.
+- Use `Chart` / `ChartContainer` for low-level Recharts integration, and the
+  chart wrappers from `charts` for common area, bar, line, pie, and donut charts.
+
+## Do / don’t
+
+### Do
+
+- Pair every form control with a visible `Label` or an `aria-label`.
+- Keep user-facing states explicit: loading, empty, disabled, invalid, and long
+  content should all have a story.
+- Prefer semantic tokens (`bg-surface-subtle`, `text-muted-foreground`,
+  `bg-success/10`) over raw Tailwind palette classes.
+- Use `text-balance` / `text-pretty`, `min-w-0`, and `truncate` for dense
+  app-shell layouts that contain user-generated text.
+- Use Storybook blocks as copy-paste composition references, but import only
+  components from `@strait/ui/components/*` in applications.
+
+### Don’t
+
+- Don’t introduce one-off component variants when local composition works.
+- Don’t use icon-only actions without an accessible label.
+- Don’t hide validation errors in toasts only; render inline error text near the
+  field and focus the first invalid control on submit.
+- Don’t use `transition-all` or hard-coded overlay colors; these are enforced by
+  the convention checker.
+
+## Accessibility checklist
+
+Before shipping a component or block, verify:
+
+1. Keyboard users can reach every interactive element.
+2. Focus rings use the shared `ring-3` treatment.
+3. Disabled and invalid states are visually distinct and exposed to assistive
+   tech.
+4. Icon-only buttons have `aria-label`.
+5. Async status changes use a live region or are surfaced in nearby text.
+6. Tables and data grids expose semantic headers and meaningful empty states.
+
+## Story checklist
+
+Every component story set should include:
+
+- `Playground` with args controls.
+- Variants and sizes.
+- Disabled, invalid, loading, and empty states where applicable.
+- Long-content examples.
+- At least one keyboard or pointer `play` test for interactive behavior.
+- A matrix story for heavily variant-driven components.

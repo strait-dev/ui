@@ -289,8 +289,14 @@ const meta: Meta<typeof DataGrid> = {
     layout: "padded",
     docs: {
       description: {
-        component:
-          "`DataGrid` is a TanStack Table-powered grid with sorting, filtering, column visibility, pagination, row selection, expansion, pinning, column/row drag-and-drop, and virtual + infinite scroll. Compose `DataGrid` with `DataGridContainer`, `DataGridTable`, and the auxiliary parts to assemble the layout you need.",
+        component: [
+          "`DataGrid` is a TanStack Table-powered grid for dense application data:",
+          "sorting, filtering, column visibility, pagination, row selection, expansion, pinning, column/row drag-and-drop, and virtual + infinite scroll.",
+          "",
+          "Use it when users need to compare or act on many records. For static marketing tables, prefer the lighter `Table` primitive.",
+          "Always provide loading and empty states (`loadingMessage`, `emptyMessage`), keep row actions reachable by keyboard, and use virtualization for large result sets.",
+          "Compose `DataGrid` with `DataGridContainer`, `DataGridTable`, and auxiliary parts to assemble the exact layout you need.",
+        ].join("\n"),
       },
     },
   },
@@ -999,6 +1005,29 @@ export const LoadingSkeleton: Story = {
           <DataGridTable />
         </DataGridContainer>
         <DataGridSelectionBar actions={defaultBulkActions} />
+      </DataGrid>
+    );
+  },
+};
+
+/** Empty state row with specific recovery copy. */
+export const EmptyState: Story = {
+  render: () => {
+    const table = useReactTable({
+      data: [],
+      columns: defaultColumns,
+      enableRowSelection: true,
+      getCoreRowModel: getCoreRowModel(),
+    });
+    return (
+      <DataGrid
+        emptyMessage="No projects match the current filters. Clear filters or create a new project."
+        recordCount={0}
+        table={table}
+      >
+        <DataGridContainer>
+          <DataGridTable />
+        </DataGridContainer>
       </DataGrid>
     );
   },

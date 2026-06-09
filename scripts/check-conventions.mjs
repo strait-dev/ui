@@ -18,10 +18,7 @@ const files = readdirSync(DIR).filter(
 // a thin re-export shim over banner.tsx. Every other rule applies to every
 // component with no exceptions.
 const EXEMPT = {
-  // code-block.tsx intentionally forces a dark terminal surface
-  // (bg-neutral-950 text-neutral-50) regardless of the active colour scheme;
-  // there is no semantic token for an always-dark surface.
-  rawColor: new Set(["code-block.tsx"]),
+  rawColor: new Set([]),
   dataSlot: new Set([
     "direction.tsx",
     "checkbox-tree.tsx",

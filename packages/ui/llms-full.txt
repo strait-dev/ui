@@ -40,6 +40,13 @@ Dark mode is a `.dark` class on (or above) the themed element — typically
 `<html>`. Tokens cascade, so toggling the class re-themes every component;
 `next-themes` is the recommended wiring.
 
+### Surface tokens
+
+Reusable surfaces are tokenized too: `--surface-raised` for elevated/floating
+containers, `--surface-subtle` for nested panels and toolbar wells,
+`--surface-terminal` / `--surface-terminal-foreground` for forced terminal/code
+surfaces, and `--overlay` for modal scrims.
+
 ## Actions
 
 ### Button
@@ -528,19 +535,6 @@ Extends: `SelectPrimitive.Trigger.Props`
 | `size` | `SelectSize` |  |  | Height / border-radius scale of the trigger button. |
 
 Data slots: `select-content`, `select-group`, `select-item`, `select-label`, `select-scroll-down-button`, `select-scroll-up-button`, `select-separator`, `select-trigger`, `select-value`
-
-### Select Native
-
-Import: `import { ... } from "@strait/ui/components/select-native";`
-
-Styled wrapper around the browser's native `<select>` element.
-
-Exports: `SelectNative`, `SelectNativeProps`
-
-Props (`SelectNativeProps`):
-Extends: `React.ComponentProps<"select">`
-
-Data slots: `select-native`
 
 ### Slider
 
@@ -2476,34 +2470,11 @@ Props (`DatePickerProps`):
 | `label` | `string` |  |  | Optional `<label>` rendered above the trigger button; linked via `htmlFor` to the button's generated id. |
 | `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `<div>`. |
 | `error` | `boolean` |  |  | When `true`, applies a destructive border to the trigger button. |
+| `errorMessage` | `React.ReactNode` |  |  | Inline message rendered below the trigger when validation fails. |
+| `placeholder` | `React.ReactNode` |  | `"Select a date"` | Placeholder shown when no date is selected. Defaults to `"Select a date"`. |
+| `formatDate` | `(date: Date) => React.ReactNode` |  | `(date) => new Intl.DateTimeFormat().format(date)` | Formats the selected date. Defaults to `Intl.DateTimeFormat`. |
 
-Data slots: `date-picker`
-
-### Date Picker With Month Year
-
-Import: `import { ... } from "@strait/ui/components/date-picker-with-month-year";`
-
-A date picker with dropdown selectors for month and year navigation.
-
-Exports: `DatePickerWithMonthYear`, `DatePickerWithMonthYearProps`
-
-Props (`DatePickerWithMonthYearProps`):
-
-| Prop | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `value` | `Date` |  |  | The current value (controlled). |
-| `onChange` | `(value: Date \| undefined) => void` |  |  | Handler that is called when the value changes. |
-| `defaultValue` | `Date` |  |  | The default value (uncontrolled). |
-| `disabled` | `boolean` |  |  | Whether the date picker is disabled. |
-| `className` | `string` |  |  | Additional CSS class name for the container. |
-| `error` | `boolean` |  |  | Error state for validation styling. |
-| `minValue` | `Date` |  |  | Minimum selectable date. |
-| `maxValue` | `Date` |  |  | Maximum selectable date. |
-| `placeholder` | `string` |  | `"Selecione uma data"` | Placeholder text when no date is selected |
-
-Data slots: `calendar`, `date-picker-content`, `date-picker-trigger`, `date-picker-with-month-year`, `dropdown`, `dropdown-content`, `dropdown-item`, `dropdown-nav`, `dropdown-trigger`
-
-Heavy dependencies: `react-day-picker`
+Data slots: `date-picker`, `date-picker-error`
 
 ### Date Range Picker
 
@@ -2524,30 +2495,9 @@ Props (`DateRangePickerProps`):
 | `error` | `boolean` |  |  | Indicates if the input has an error. |
 | `errorMessage` | `string` |  |  | The error message to display when the input has an error. |
 | `disabled` | `boolean` |  |  | Indicates if the input is disabled. |
+| `locale` | `string` |  | `"en-US"` | Locale passed to React Aria's date range field. Defaults to `"en-US"`. |
 
-Data slots: `date-range-picker`
-
-Heavy dependencies: `react-day-picker`
-
-### Date Range Picker With Presets
-
-Import: `import { ... } from "@strait/ui/components/date-range-picker-with-presets";`
-
-A date-range picker with a preset sidebar and an explicit apply/reset flow.
-
-Exports: `DateRangePickerWithPresets`, `DateRangePickerWithPresetsProps`
-
-Props (`DateRangePickerWithPresetsProps`):
-
-| Prop | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `value` | `DateRange` |  |  | The current value of the date range picker. |
-| `defaultValue` | `DateRange` |  |  | The default date range. |
-| `onChange` | `(value: DateRange \| undefined) => void` |  |  | Handler that is called when the value changes. |
-| `label` | `string` |  |  | The label for the date range picker. |
-| `className` | `string` |  |  | Additional CSS class name for the container. |
-
-Data slots: `date-range-picker-with-presets`
+Data slots: `date-range-picker`, `date-range-picker-error`
 
 Heavy dependencies: `react-day-picker`
 
@@ -2694,19 +2644,6 @@ Extends: `InputProps`
 | `endIconAriaLabel` | `string` |  |  | Accessible label for the trailing-edge endIcon button; required by screen readers when using an icon-only affordance. |
 
 Data slots: `end-icon`, `input`, `input-with-loader`, `start-icon`
-
-### Input with Show/Hide Password
-
-Import: `import { ... } from "@strait/ui/components/input-with-show-hide-password";`
-
-A minimal password field with a trailing eye-icon toggle that switches the input between masked (`"password"`) and revealed (`"text"`) mode.
-
-Exports: `InputWithShowHidePassword`, `InputWithShowHidePasswordProps`
-
-Props (`InputWithShowHidePasswordProps`):
-Extends: `Omit<InputProps, "type">`
-
-Data slots: `input-with-show-hide-password`
 
 ### Input with Start Icon
 

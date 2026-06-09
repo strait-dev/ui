@@ -93,7 +93,14 @@ Note: \`--primary\` is warm ink (default buttons), distinct from \`--brand\`.
 
 Dark mode is a \`.dark\` class on (or above) the themed element — typically
 \`<html>\`. Tokens cascade, so toggling the class re-themes every component;
-\`next-themes\` is the recommended wiring.`;
+\`next-themes\` is the recommended wiring.
+
+### Surface tokens
+
+Reusable surfaces are tokenized too: \`--surface-raised\` for elevated/floating
+containers, \`--surface-subtle\` for nested panels and toolbar wells,
+\`--surface-terminal\` / \`--surface-terminal-foreground\` for forced terminal/code
+surfaces, and \`--overlay\` for modal scrims.`;
 
 // Category ordering for the generated index (most actionable first).
 const CATEGORY_ORDER = [

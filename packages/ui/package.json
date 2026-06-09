@@ -357,11 +357,6 @@
       "import": "./dist/components/date-picker.js",
       "default": "./dist/components/date-picker.js"
     },
-    "./components/date-picker-with-month-year": {
-      "types": "./dist/components/date-picker-with-month-year.d.ts",
-      "import": "./dist/components/date-picker-with-month-year.js",
-      "default": "./dist/components/date-picker-with-month-year.js"
-    },
     "./components/datefield-rac": {
       "types": "./dist/components/datefield-rac.d.ts",
       "import": "./dist/components/datefield-rac.js",
@@ -371,11 +366,6 @@
       "types": "./dist/components/date-range-picker.d.ts",
       "import": "./dist/components/date-range-picker.js",
       "default": "./dist/components/date-range-picker.js"
-    },
-    "./components/date-range-picker-with-presets": {
-      "types": "./dist/components/date-range-picker-with-presets.d.ts",
-      "import": "./dist/components/date-range-picker-with-presets.js",
-      "default": "./dist/components/date-range-picker-with-presets.js"
     },
     "./components/dialog": {
       "types": "./dist/components/dialog.d.ts",
@@ -441,11 +431,6 @@
       "types": "./dist/components/input-with-loader.d.ts",
       "import": "./dist/components/input-with-loader.js",
       "default": "./dist/components/input-with-loader.js"
-    },
-    "./components/input-with-show-hide-password": {
-      "types": "./dist/components/input-with-show-hide-password.d.ts",
-      "import": "./dist/components/input-with-show-hide-password.js",
-      "default": "./dist/components/input-with-show-hide-password.js"
     },
     "./components/input-with-start-icon": {
       "types": "./dist/components/input-with-start-icon.d.ts",
@@ -551,11 +536,6 @@
       "types": "./dist/components/select.d.ts",
       "import": "./dist/components/select.js",
       "default": "./dist/components/select.js"
-    },
-    "./components/select-native": {
-      "types": "./dist/components/select-native.d.ts",
-      "import": "./dist/components/select-native.js",
-      "default": "./dist/components/select-native.js"
     },
     "./components/select-with-search": {
       "types": "./dist/components/select-with-search.d.ts",

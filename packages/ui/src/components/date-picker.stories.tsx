@@ -17,8 +17,9 @@ const meta: Meta<typeof DatePicker> = {
           "A popover-based date picker built on **react-day-picker** v9 + our `Calendar` + `Popover`/`Button` primitives.",
           "",
           "- Trigger is a labelled outline button showing the selected date or a placeholder.",
-          "- Supports `label`, `required`, `disabled`, and `error` props.",
+          "- Supports `label`, `required`, `disabled`, `error`, inline `errorMessage`, localized `placeholder`, and `formatDate` props.",
           "- Fully controlled: pass `value` + `onChange`.",
+          "- Use this base component instead of specialized date-picker variants; compose presets or month/year shortcuts beside it when needed.",
         ].join("\n"),
       },
     },
@@ -57,8 +58,11 @@ function ControlledDatePicker(props: {
   label?: string;
   disabled?: boolean;
   error?: boolean;
+  errorMessage?: React.ReactNode;
   required?: boolean;
   initialValue?: Date;
+  placeholder?: React.ReactNode;
+  formatDate?: (date: Date) => React.ReactNode;
 }) {
   const [date, setDate] = useState<Date | undefined>(props.initialValue);
   return (
@@ -66,8 +70,11 @@ function ControlledDatePicker(props: {
       <DatePicker
         disabled={props.disabled}
         error={props.error}
+        errorMessage={props.errorMessage}
+        formatDate={props.formatDate}
         label={props.label}
         onChange={setDate}
+        placeholder={props.placeholder}
         required={props.required}
         value={date}
       />
@@ -91,7 +98,10 @@ export const Playground: Story = {
 export const Empty: Story = {
   render: () => (
     <div className="w-64">
-      <ControlledDatePicker label="Event date" />
+      <ControlledDatePicker
+        label="Event date"
+        placeholder="Choose an event date"
+      />
     </div>
   ),
 };
@@ -118,11 +128,35 @@ export const Disabled: Story = {
   ),
 };
 
-/** Error state — border turns destructive. */
+/** Error state — border turns destructive and shows inline recovery copy. */
 export const WithError: Story = {
   render: () => (
     <div className="w-64">
-      <ControlledDatePicker error label="Expiry date" />
+      <ControlledDatePicker
+        error
+        errorMessage="Choose an expiry date to continue."
+        label="Expiry date"
+      />
+    </div>
+  ),
+};
+
+/** Localized display without a specialized component variant. */
+export const CustomFormat: Story = {
+  render: () => (
+    <div className="w-64">
+      <ControlledDatePicker
+        formatDate={(date) =>
+          new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }).format(date)
+        }
+        initialValue={FIXED_DATE}
+        label="Localized date"
+        placeholder="Pick date"
+      />
     </div>
   ),
 };
