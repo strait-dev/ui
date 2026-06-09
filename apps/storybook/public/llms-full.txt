@@ -1,6 +1,6 @@
 # Strait UI — Full Reference
 
-> Strait UI (@strait/ui) is a React + Tailwind v4 design system of 120+ accessible components built on Base UI primitives. Every component ships as its own tree-shakeable subpath export, is styled with semantic design tokens and class-variance-authority recipes, and exposes a named `*Props` type. Components render a polymorphic root via the Base UI `render` prop and tag their parts with `data-slot` attributes for styling and testing.
+> Strait UI (@strait/ui) is a React + Tailwind v4 design system of 123+ accessible components built on Base UI primitives. Every component ships as its own tree-shakeable subpath export, is styled with semantic design tokens and class-variance-authority recipes, and exposes a named `*Props` type. Components render a polymorphic root via the Base UI `render` prop and tag their parts with `data-slot` attributes for styling and testing.
 
 ## Theming
 
@@ -218,6 +218,30 @@ Variants:
 - `variant`: `default`, `destructive` (default: `default`)
 
 Data slots: `checkbox`, `checkbox-indicator`
+
+### Copy Field
+
+Import: `import { ... } from "@strait/ui/components/copy-field";`
+
+Read-only field for tokens, IDs, commands, environment variables, and other exact values that users commonly need to copy.
+
+Exports: `CopyField`, `CopyFieldProps`, `copyFieldVariants`
+
+Props (`CopyFieldProps`):
+Extends: `Omit<React.ComponentProps<"div">, "children">`, `VariantProps<typeof copyFieldVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | String displayed in the field and copied by the button. |
+| `label` | `React.ReactNode` |  |  | Optional visible label above the copyable value. |
+| `description` | `React.ReactNode` |  |  | Optional helper text below the copyable value. |
+| `monospace` | `boolean` |  | `true` | Whether to use monospace styling for the displayed value. |
+| `copyable` | `boolean` |  | `true` | Whether to show the copy button. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `copy-field`, `copy-field-control`, `copy-field-description`, `copy-field-label`, `copy-field-value`
 
 ### Date Selector
 
@@ -869,6 +893,31 @@ Props (`CodeBlockCommandProps`):
 
 Data slots: `code-block-command`
 
+### Command Snippet
+
+Import: `import { ... } from "@strait/ui/components/command-snippet";`
+
+Terminal-style command snippet with optional package-manager switching.
+
+Exports: `CommandSnippet`, `CommandSnippetCommands`, `CommandSnippetManager`, `CommandSnippetProps`, `commandSnippetVariants`
+
+Props (`CommandSnippetProps`):
+Extends: `Omit<React.ComponentProps<"section">, "children">`, `VariantProps<typeof commandSnippetVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `command` | `string` |  |  | Single command to display when package-manager variants are unnecessary. |
+| `commands` | `CommandSnippetCommands` |  |  | Package-manager-specific commands, shown as selectable tabs. |
+| `defaultManager` | `CommandSnippetManager` |  | `"bun"` | Initially selected package manager when `commands` is provided. |
+| `title` | `string` |  |  | Optional title shown in the header. |
+| `prompt` | `string` |  | `"$"` | Prompt prefix shown before the command. |
+| `copyable` | `boolean` |  | `true` | Whether to show a clipboard button for the active command. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `command-snippet`, `command-snippet-body`, `command-snippet-command`, `command-snippet-header`, `command-snippet-manager`, `command-snippet-manager-list`, `command-snippet-prompt`, `command-snippet-title`
+
 ### Config Row
 
 Import: `import { ... } from "@strait/ui/components/config-row";`
@@ -1038,6 +1087,30 @@ Variants:
 - `size`: `sm`, `default`, `lg` (default: `default`)
 
 Data slots: `description-details`, `description-list`, `description-term`
+
+### Diff Snippet
+
+Import: `import { ... } from "@strait/ui/components/diff-snippet";`
+
+Compact, read-only code-diff display for release notes, examples, and docs.
+
+Exports: `DiffSnippet`, `DiffSnippetLine`, `DiffSnippetLineType`, `DiffSnippetProps`, `diffSnippetVariants`
+
+Props (`DiffSnippetProps`):
+Extends: `Omit<React.ComponentProps<"div">, "children">`, `VariantProps<typeof diffSnippetVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `lines` | `DiffSnippetLine[]` | yes |  | Ordered diff rows to render. |
+| `filename` | `string` |  |  | Optional filename shown in the header. |
+| `language` | `string` |  |  | Optional language label shown in the header. |
+| `copyable` | `boolean` |  | `true` | Whether to show a clipboard button for the diff text. |
+| `showLineNumbers` | `boolean` |  | `false` | Whether to render a numbered gutter beside each row. |
+
+Variants:
+- `size`: `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `diff-snippet`, `diff-snippet-body`, `diff-snippet-code`, `diff-snippet-content`, `diff-snippet-filename`, `diff-snippet-header`, `diff-snippet-language`, `diff-snippet-line`, `diff-snippet-line-number`, `diff-snippet-marker`
 
 ### Execution Trace Bar
 

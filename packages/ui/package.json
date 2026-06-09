@@ -1,7 +1,7 @@
 {
   "name": "@strait/ui",
   "version": "0.1.5",
-  "description": "Strait's design system — 120+ accessible, tree-shakeable React components built on Tailwind CSS v4 and Base UI.",
+  "description": "Strait's design system — 123+ accessible, tree-shakeable React components built on Tailwind CSS v4 and Base UI.",
   "license": "MIT",
   "homepage": "https://strait-dev.github.io/ui/",
   "repository": {
@@ -227,6 +227,11 @@
       "import": "./dist/components/command.js",
       "default": "./dist/components/command.js"
     },
+    "./components/command-snippet": {
+      "types": "./dist/components/command-snippet.d.ts",
+      "import": "./dist/components/command-snippet.js",
+      "default": "./dist/components/command-snippet.js"
+    },
     "./components/context-menu": {
       "types": "./dist/components/context-menu.d.ts",
       "import": "./dist/components/context-menu.js",
@@ -236,6 +241,11 @@
       "types": "./dist/components/copy-button.d.ts",
       "import": "./dist/components/copy-button.js",
       "default": "./dist/components/copy-button.js"
+    },
+    "./components/copy-field": {
+      "types": "./dist/components/copy-field.d.ts",
+      "import": "./dist/components/copy-field.js",
+      "default": "./dist/components/copy-field.js"
     },
     "./components/status-badge": {
       "types": "./dist/components/status-badge.d.ts",
@@ -271,6 +281,11 @@
       "types": "./dist/components/code-block-command.d.ts",
       "import": "./dist/components/code-block-command.js",
       "default": "./dist/components/code-block-command.js"
+    },
+    "./components/diff-snippet": {
+      "types": "./dist/components/diff-snippet.d.ts",
+      "import": "./dist/components/diff-snippet.js",
+      "default": "./dist/components/diff-snippet.js"
     },
     "./components/qr-code": {
       "types": "./dist/components/qr-code.d.ts",

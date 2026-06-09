@@ -14,6 +14,8 @@
 // Storybook docs site); props.json is written to apps/docs/.generated/.
 //
 // Run: `bun scripts/generate-llms.ts` (idempotent).
+/// <reference types="node" />
+
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -46,7 +48,7 @@ const HEAVY = [
 ];
 
 const LIBRARY_SUMMARY =
-  "Strait UI (@strait/ui) is a React + Tailwind v4 design system of 120+ " +
+  "Strait UI (@strait/ui) is a React + Tailwind v4 design system of 123+ " +
   "accessible components built on Base UI primitives. Every component ships " +
   "as its own tree-shakeable subpath export, is styled with semantic design " +
   "tokens and class-variance-authority recipes, and exposes a named `*Props` " +

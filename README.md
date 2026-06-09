@@ -7,7 +7,7 @@
 
 **`@strait/ui`** is Strait's design system — a custom React component library built on
 [Tailwind CSS v4](https://tailwindcss.com), [Base UI](https://base-ui.com), and a set of
-semantic design tokens. It ships **120+ accessible, composable components** spanning forms,
+semantic design tokens. It ships **123+ accessible, composable components** spanning forms,
 overlays, data display, navigation, and rich application patterns, all themeable through a
 single stylesheet.
 
@@ -178,7 +178,7 @@ predictable:
 
 ## Component catalog
 
-120+ components, grouped the same way they appear in Storybook. Import any of them from
+123+ components, grouped the same way they appear in Storybook. Import any of them from
 `@strait/ui/components/<name>`.
 
 ### Actions
@@ -187,7 +187,8 @@ predictable:
 ### Data Display
 `activity-feed` · `aspect-ratio` · `avatar` · `badge` · `bar-list` · `bulk-action-bar` ·
 `card` · `carousel` · `chart` · `charts` · `code-block` · `code-block-command` ·
-`config-row` · `data-grid` · `description-list` · `execution-trace-bar` · `filters` ·
+`command-snippet` · `config-row` · `data-grid` · `description-list` · `diff-snippet` ·
+`execution-trace-bar` · `filters` ·
 `item` · `json-viewer` · `leaderboard` · `metric-card` · `qr-code` ·
 `radial-gauge` · `relative-time-card` · `sortable` · `status-badge` · `table` ·
 `tag-group` · `timeline` · `tracker` · `tree`
@@ -200,7 +201,7 @@ predictable:
 `autocomplete` · `calendar` · `checkbox` · `date-selector` · `field` · `file-upload` ·
 `form` · `input` · `input-group` · `label` · `multiselect` · `native-select` ·
 `radio-group` · `rating` · `secret-input` · `select` · `slider` · `switch` ·
-`textarea`
+`textarea` · `copy-field`
 
 ### Layout
 `accordion` · `collapsible` · `direction` · `frame` · `resizable` · `scroll-area` ·

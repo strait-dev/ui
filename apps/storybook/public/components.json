@@ -1722,10 +1722,22 @@
             "description": "Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection."
           },
           {
+            "name": "selectionMode",
+            "type": "M",
+            "optional": true,
+            "description": "Whether single or multiple selection is enabled."
+          },
+          {
             "name": "visibleDuration",
             "type": "DateDuration",
             "optional": true,
             "description": "The amount of days that will be displayed at once. This affects how pagination works."
+          },
+          {
+            "name": "weeksInMonth",
+            "type": "number",
+            "optional": true,
+            "description": "The number of weeks in a month. This overrides the default set by the locale."
           }
         ],
         "extendsHtml": []
@@ -4515,6 +4527,101 @@
     "dependencies": []
   },
   {
+    "name": "Command Snippet",
+    "importPath": "@strait/ui/components/command-snippet",
+    "category": "Data Display",
+    "description": "Terminal-style command snippet with optional package-manager switching.",
+    "exports": [
+      "CommandSnippet",
+      "CommandSnippetCommands",
+      "CommandSnippetManager",
+      "CommandSnippetProps",
+      "commandSnippetVariants"
+    ],
+    "types": [
+      {
+        "name": "CommandSnippetProps",
+        "props": [
+          {
+            "name": "command",
+            "type": "string",
+            "optional": true,
+            "description": "Single command to display when package-manager variants are unnecessary."
+          },
+          {
+            "name": "commands",
+            "type": "CommandSnippetCommands",
+            "optional": true,
+            "description": "Package-manager-specific commands, shown as selectable tabs."
+          },
+          {
+            "name": "defaultManager",
+            "type": "CommandSnippetManager",
+            "optional": true,
+            "default": "\"bun\"",
+            "description": "Initially selected package manager when `commands` is provided."
+          },
+          {
+            "name": "title",
+            "type": "string",
+            "optional": true,
+            "description": "Optional title shown in the header."
+          },
+          {
+            "name": "prompt",
+            "type": "string",
+            "optional": true,
+            "default": "\"$\"",
+            "description": "Prompt prefix shown before the command."
+          },
+          {
+            "name": "copyable",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to show a clipboard button for the active command."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"section\">, \"children\">",
+          "VariantProps<typeof commandSnippetVariants>"
+        ],
+        "inheritedProps": [],
+        "extendsHtml": [
+          "section"
+        ]
+      }
+    ],
+    "variants": {
+      "size": [
+        "sm",
+        "default",
+        "lg"
+      ]
+    },
+    "defaultVariants": {
+      "size": "default"
+    },
+    "slots": [
+      "command-snippet",
+      "command-snippet-body",
+      "command-snippet-command",
+      "command-snippet-header",
+      "command-snippet-manager",
+      "command-snippet-manager-list",
+      "command-snippet-prompt",
+      "command-snippet-title"
+    ],
+    "parts": [
+      {
+        "name": "CommandSnippet",
+        "slot": "command-snippet",
+        "description": "Terminal-style command snippet with optional package-manager switching."
+      }
+    ],
+    "dependencies": []
+  },
+  {
     "name": "Command",
     "importPath": "@strait/ui/components/command",
     "category": "Navigation",
@@ -4994,6 +5101,89 @@
         "name": "CopyButton",
         "slot": "copy-button",
         "description": "Icon button that copies a string to the clipboard and shows a transient checkmark as confirmation."
+      }
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "Copy Field",
+    "importPath": "@strait/ui/components/copy-field",
+    "category": "Forms",
+    "description": "Read-only field for tokens, IDs, commands, environment variables, and other exact values that users commonly need to copy.",
+    "exports": [
+      "CopyField",
+      "CopyFieldProps",
+      "copyFieldVariants"
+    ],
+    "types": [
+      {
+        "name": "CopyFieldProps",
+        "props": [
+          {
+            "name": "value",
+            "type": "string",
+            "optional": false,
+            "description": "String displayed in the field and copied by the button."
+          },
+          {
+            "name": "label",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Optional visible label above the copyable value."
+          },
+          {
+            "name": "description",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Optional helper text below the copyable value."
+          },
+          {
+            "name": "monospace",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to use monospace styling for the displayed value."
+          },
+          {
+            "name": "copyable",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to show the copy button."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"div\">, \"children\">",
+          "VariantProps<typeof copyFieldVariants>"
+        ],
+        "inheritedProps": [],
+        "extendsHtml": [
+          "div"
+        ]
+      }
+    ],
+    "variants": {
+      "size": [
+        "sm",
+        "default",
+        "lg"
+      ]
+    },
+    "defaultVariants": {
+      "size": "default"
+    },
+    "slots": [
+      "copy-field",
+      "copy-field-control",
+      "copy-field-description",
+      "copy-field-label",
+      "copy-field-value"
+    ],
+    "parts": [
+      {
+        "name": "CopyField",
+        "slot": "copy-field",
+        "description": "Read-only field for tokens, IDs, commands, environment variables, and other exact values that users commonly need to copy."
       }
     ],
     "dependencies": []
@@ -6766,6 +6956,96 @@
     "dependencies": []
   },
   {
+    "name": "Diff Snippet",
+    "importPath": "@strait/ui/components/diff-snippet",
+    "category": "Data Display",
+    "description": "Compact, read-only code-diff display for release notes, examples, and docs.",
+    "exports": [
+      "DiffSnippet",
+      "DiffSnippetLine",
+      "DiffSnippetLineType",
+      "DiffSnippetProps",
+      "diffSnippetVariants"
+    ],
+    "types": [
+      {
+        "name": "DiffSnippetProps",
+        "props": [
+          {
+            "name": "lines",
+            "type": "DiffSnippetLine[]",
+            "optional": false,
+            "description": "Ordered diff rows to render."
+          },
+          {
+            "name": "filename",
+            "type": "string",
+            "optional": true,
+            "description": "Optional filename shown in the header."
+          },
+          {
+            "name": "language",
+            "type": "string",
+            "optional": true,
+            "description": "Optional language label shown in the header."
+          },
+          {
+            "name": "copyable",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to show a clipboard button for the diff text."
+          },
+          {
+            "name": "showLineNumbers",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether to render a numbered gutter beside each row."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"div\">, \"children\">",
+          "VariantProps<typeof diffSnippetVariants>"
+        ],
+        "inheritedProps": [],
+        "extendsHtml": [
+          "div"
+        ]
+      }
+    ],
+    "variants": {
+      "size": [
+        "sm",
+        "default",
+        "lg"
+      ]
+    },
+    "defaultVariants": {
+      "size": "default"
+    },
+    "slots": [
+      "diff-snippet",
+      "diff-snippet-body",
+      "diff-snippet-code",
+      "diff-snippet-content",
+      "diff-snippet-filename",
+      "diff-snippet-header",
+      "diff-snippet-language",
+      "diff-snippet-line",
+      "diff-snippet-line-number",
+      "diff-snippet-marker"
+    ],
+    "parts": [
+      {
+        "name": "DiffSnippet",
+        "slot": "diff-snippet",
+        "description": "Compact, read-only code-diff display for release notes, examples, and docs."
+      }
+    ],
+    "dependencies": []
+  },
+  {
     "name": "direction",
     "importPath": "@strait/ui/components/direction",
     "category": "Uncategorized",
@@ -8174,7 +8454,7 @@
           },
           {
             "name": "defaultMeta",
-            "type": "Partial<FieldMeta<TParentData, TName, TData, TOnMount, TOnChange, TOnChangeAsync, TOnBlur, TOnBlurAsync, TOnSubmit, TOnSubmitAsync, TOnDynamic, TOnDynamicAsync, any, any, any, any, any, any, any, any, any>>",
+            "type": "Partial<FieldLikeMeta<TParentData, TName, TData, TOnMount, TOnChange, TOnChangeAsync, TOnBlur, TOnBlurAsync, TOnSubmit, TOnSubmitAsync, TOnDynamic, TOnDynamicAsync, any, any, any, any, any, any, any, any, any>>",
             "optional": true,
             "description": "An optional object with default metadata for the field."
           },
