@@ -4530,10 +4530,11 @@
     "name": "Command Snippet",
     "importPath": "@strait/ui/components/command-snippet",
     "category": "Data Display",
-    "description": "Terminal-style command snippet with optional package-manager switching.",
+    "description": "Terminal-style command snippet with optional selectable commands.",
     "exports": [
       "CommandSnippet",
       "CommandSnippetCommands",
+      "CommandSnippetItem",
       "CommandSnippetManager",
       "CommandSnippetProps",
       "commandSnippetVariants"
@@ -4546,13 +4547,26 @@
             "name": "command",
             "type": "string",
             "optional": true,
-            "description": "Single command to display when package-manager variants are unnecessary."
+            "description": "Single command to display when selectable variants are unnecessary."
+          },
+          {
+            "name": "items",
+            "type": "CommandSnippetItem[]",
+            "optional": true,
+            "description": "Generic selectable commands, useful for Docker, curl, Homebrew, or CLIs."
           },
           {
             "name": "commands",
             "type": "CommandSnippetCommands",
             "optional": true,
-            "description": "Package-manager-specific commands, shown as selectable tabs."
+            "description": "Package-manager-specific commands, converted to selectable items."
+          },
+          {
+            "name": "managerOrder",
+            "type": "CommandSnippetManager[]",
+            "optional": true,
+            "default": "defaultManagerOrder",
+            "description": "Order used when converting `commands` to package-manager items."
           },
           {
             "name": "defaultManager",
@@ -4560,6 +4574,24 @@
             "optional": true,
             "default": "\"bun\"",
             "description": "Initially selected package manager when `commands` is provided."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "optional": true,
+            "description": "Controlled selected item value."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string",
+            "optional": true,
+            "description": "Initial selected item value for uncontrolled snippets."
+          },
+          {
+            "name": "onValueChange",
+            "type": "(value: string, item: CommandSnippetItem) => void",
+            "optional": true,
+            "description": "Called when a selectable command is chosen."
           },
           {
             "name": "title",
@@ -4575,11 +4607,50 @@
             "description": "Prompt prefix shown before the command."
           },
           {
+            "name": "showPrompt",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to show the prompt prefix."
+          },
+          {
+            "name": "showHeader",
+            "type": "boolean",
+            "optional": true,
+            "description": "Force the header on/off. Omit to derive from title, tabs, and copy."
+          },
+          {
+            "name": "wrap",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether long commands wrap instead of scrolling horizontally."
+          },
+          {
+            "name": "maxHeight",
+            "type": "number | string",
+            "optional": true,
+            "description": "Constrains the body height; numeric values are treated as pixels."
+          },
+          {
             "name": "copyable",
             "type": "boolean",
             "optional": true,
             "default": "true",
             "description": "Whether to show a clipboard button for the active command."
+          },
+          {
+            "name": "copyLabel",
+            "type": "string",
+            "optional": true,
+            "default": "\"Copy command\"",
+            "description": "Accessible label for the copy button."
+          },
+          {
+            "name": "onCopy",
+            "type": "(command: string) => void",
+            "optional": true,
+            "description": "Called after a command is copied."
           }
         ],
         "extends": [
@@ -4593,13 +4664,21 @@
       }
     ],
     "variants": {
+      "variant": [
+        "terminal",
+        "card",
+        "muted",
+        "minimal"
+      ],
       "size": [
+        "xs",
         "sm",
         "default",
         "lg"
       ]
     },
     "defaultVariants": {
+      "variant": "terminal",
       "size": "default"
     },
     "slots": [
@@ -4607,8 +4686,8 @@
       "command-snippet-body",
       "command-snippet-command",
       "command-snippet-header",
-      "command-snippet-manager",
-      "command-snippet-manager-list",
+      "command-snippet-item",
+      "command-snippet-item-list",
       "command-snippet-prompt",
       "command-snippet-title"
     ],
@@ -4616,7 +4695,7 @@
       {
         "name": "CommandSnippet",
         "slot": "command-snippet",
-        "description": "Terminal-style command snippet with optional package-manager switching."
+        "description": "Terminal-style command snippet with optional selectable commands."
       }
     ],
     "dependencies": []
@@ -5113,6 +5192,7 @@
     "exports": [
       "CopyField",
       "CopyFieldProps",
+      "copyFieldRootVariants",
       "copyFieldVariants"
     ],
     "types": [
@@ -5129,13 +5209,25 @@
             "name": "label",
             "type": "React.ReactNode",
             "optional": true,
-            "description": "Optional visible label above the copyable value."
+            "description": "Optional visible label above or beside the copyable value."
           },
           {
             "name": "description",
             "type": "React.ReactNode",
             "optional": true,
             "description": "Optional helper text below the copyable value."
+          },
+          {
+            "name": "prefix",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Content rendered before the value inside the control."
+          },
+          {
+            "name": "suffix",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Content rendered after the value and before actions inside the control."
           },
           {
             "name": "monospace",
@@ -5145,15 +5237,82 @@
             "description": "Whether to use monospace styling for the displayed value."
           },
           {
+            "name": "truncate",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to truncate the displayed value on one line."
+          },
+          {
+            "name": "sensitive",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether to treat the value as sensitive and mask it by default."
+          },
+          {
+            "name": "revealed",
+            "type": "boolean",
+            "optional": true,
+            "description": "Controlled reveal state for sensitive values."
+          },
+          {
+            "name": "defaultRevealed",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Initial reveal state for uncontrolled sensitive values."
+          },
+          {
+            "name": "onRevealChange",
+            "type": "(revealed: boolean) => void",
+            "optional": true,
+            "description": "Called when the reveal state changes."
+          },
+          {
+            "name": "maskCharacter",
+            "type": "string",
+            "optional": true,
+            "default": "\"•\"",
+            "description": "Character used when masking sensitive values."
+          },
+          {
+            "name": "revealLabel",
+            "type": "string",
+            "optional": true,
+            "default": "\"Show\"",
+            "description": "Accessible and visible label for the reveal action."
+          },
+          {
+            "name": "hideLabel",
+            "type": "string",
+            "optional": true,
+            "default": "\"Hide\"",
+            "description": "Accessible and visible label for the hide action."
+          },
+          {
             "name": "copyable",
             "type": "boolean",
             "optional": true,
             "default": "true",
             "description": "Whether to show the copy button."
+          },
+          {
+            "name": "copyLabel",
+            "type": "string",
+            "optional": true,
+            "description": "Accessible label for the copy button."
+          },
+          {
+            "name": "onCopy",
+            "type": "(value: string) => void",
+            "optional": true,
+            "description": "Called after the value is copied."
           }
         ],
         "extends": [
           "Omit<React.ComponentProps<\"div\">, \"children\">",
+          "VariantProps<typeof copyFieldRootVariants>",
           "VariantProps<typeof copyFieldVariants>"
         ],
         "inheritedProps": [],
@@ -5163,20 +5322,38 @@
       }
     ],
     "variants": {
+      "variant": [
+        "default",
+        "muted",
+        "ghost",
+        "terminal"
+      ],
       "size": [
+        "xs",
         "sm",
         "default",
         "lg"
+      ],
+      "status": [
+        "default",
+        "success",
+        "warning",
+        "destructive",
+        "info"
       ]
     },
     "defaultVariants": {
-      "size": "default"
+      "variant": "default",
+      "size": "default",
+      "status": "default"
     },
     "slots": [
       "copy-field",
       "copy-field-control",
       "copy-field-description",
       "copy-field-label",
+      "copy-field-main",
+      "copy-field-reveal",
       "copy-field-value"
     ],
     "parts": [
@@ -7002,26 +7179,75 @@
             "optional": true,
             "default": "false",
             "description": "Whether to render a numbered gutter beside each row."
+          },
+          {
+            "name": "lineNumberStart",
+            "type": "number",
+            "optional": true,
+            "default": "1",
+            "description": "First value used by the numbered gutter."
+          },
+          {
+            "name": "showMarkers",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to render generated diff markers."
+          },
+          {
+            "name": "highlightChanges",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether semantic rows receive tinted backgrounds and intent text."
+          },
+          {
+            "name": "wrap",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether long lines wrap instead of scrolling horizontally."
+          },
+          {
+            "name": "maxHeight",
+            "type": "number | string",
+            "optional": true,
+            "description": "Constrains the body height; numeric values are treated as pixels."
+          },
+          {
+            "name": "emptyMessage",
+            "type": "React.ReactNode",
+            "optional": true,
+            "default": "\"No changes\"",
+            "description": "Message rendered when `lines` is empty."
           }
         ],
         "extends": [
-          "Omit<React.ComponentProps<\"div\">, \"children\">",
+          "Omit<React.ComponentProps<\"section\">, \"children\">",
           "VariantProps<typeof diffSnippetVariants>"
         ],
         "inheritedProps": [],
         "extendsHtml": [
-          "div"
+          "section"
         ]
       }
     ],
     "variants": {
+      "variant": [
+        "default",
+        "muted",
+        "terminal",
+        "minimal"
+      ],
       "size": [
+        "xs",
         "sm",
         "default",
         "lg"
       ]
     },
     "defaultVariants": {
+      "variant": "default",
       "size": "default"
     },
     "slots": [
@@ -7029,6 +7255,7 @@
       "diff-snippet-body",
       "diff-snippet-code",
       "diff-snippet-content",
+      "diff-snippet-empty",
       "diff-snippet-filename",
       "diff-snippet-header",
       "diff-snippet-language",

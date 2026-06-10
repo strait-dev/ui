@@ -225,23 +225,37 @@ Import: `import { ... } from "@strait/ui/components/copy-field";`
 
 Read-only field for tokens, IDs, commands, environment variables, and other exact values that users commonly need to copy.
 
-Exports: `CopyField`, `CopyFieldProps`, `copyFieldVariants`
+Exports: `CopyField`, `CopyFieldProps`, `copyFieldRootVariants`, `copyFieldVariants`
 
 Props (`CopyFieldProps`):
-Extends: `Omit<React.ComponentProps<"div">, "children">`, `VariantProps<typeof copyFieldVariants>`
+Extends: `Omit<React.ComponentProps<"div">, "children">`, `VariantProps<typeof copyFieldRootVariants>`, `VariantProps<typeof copyFieldVariants>`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `value` | `string` | yes |  | String displayed in the field and copied by the button. |
-| `label` | `React.ReactNode` |  |  | Optional visible label above the copyable value. |
+| `label` | `React.ReactNode` |  |  | Optional visible label above or beside the copyable value. |
 | `description` | `React.ReactNode` |  |  | Optional helper text below the copyable value. |
+| `prefix` | `React.ReactNode` |  |  | Content rendered before the value inside the control. |
+| `suffix` | `React.ReactNode` |  |  | Content rendered after the value and before actions inside the control. |
 | `monospace` | `boolean` |  | `true` | Whether to use monospace styling for the displayed value. |
+| `truncate` | `boolean` |  | `true` | Whether to truncate the displayed value on one line. |
+| `sensitive` | `boolean` |  | `false` | Whether to treat the value as sensitive and mask it by default. |
+| `revealed` | `boolean` |  |  | Controlled reveal state for sensitive values. |
+| `defaultRevealed` | `boolean` |  | `false` | Initial reveal state for uncontrolled sensitive values. |
+| `onRevealChange` | `(revealed: boolean) => void` |  |  | Called when the reveal state changes. |
+| `maskCharacter` | `string` |  | `"•"` | Character used when masking sensitive values. |
+| `revealLabel` | `string` |  | `"Show"` | Accessible and visible label for the reveal action. |
+| `hideLabel` | `string` |  | `"Hide"` | Accessible and visible label for the hide action. |
 | `copyable` | `boolean` |  | `true` | Whether to show the copy button. |
+| `copyLabel` | `string` |  |  | Accessible label for the copy button. |
+| `onCopy` | `(value: string) => void` |  |  | Called after the value is copied. |
 
 Variants:
-- `size`: `sm`, `default`, `lg` (default: `default`)
+- `variant`: `default`, `muted`, `ghost`, `terminal` (default: `default`)
+- `size`: `xs`, `sm`, `default`, `lg` (default: `default`)
+- `status`: `default`, `success`, `warning`, `destructive`, `info` (default: `default`)
 
-Data slots: `copy-field`, `copy-field-control`, `copy-field-description`, `copy-field-label`, `copy-field-value`
+Data slots: `copy-field`, `copy-field-control`, `copy-field-description`, `copy-field-label`, `copy-field-main`, `copy-field-reveal`, `copy-field-value`
 
 ### Date Selector
 
@@ -897,26 +911,38 @@ Data slots: `code-block-command`
 
 Import: `import { ... } from "@strait/ui/components/command-snippet";`
 
-Terminal-style command snippet with optional package-manager switching.
+Terminal-style command snippet with optional selectable commands.
 
-Exports: `CommandSnippet`, `CommandSnippetCommands`, `CommandSnippetManager`, `CommandSnippetProps`, `commandSnippetVariants`
+Exports: `CommandSnippet`, `CommandSnippetCommands`, `CommandSnippetItem`, `CommandSnippetManager`, `CommandSnippetProps`, `commandSnippetVariants`
 
 Props (`CommandSnippetProps`):
 Extends: `Omit<React.ComponentProps<"section">, "children">`, `VariantProps<typeof commandSnippetVariants>`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `command` | `string` |  |  | Single command to display when package-manager variants are unnecessary. |
-| `commands` | `CommandSnippetCommands` |  |  | Package-manager-specific commands, shown as selectable tabs. |
+| `command` | `string` |  |  | Single command to display when selectable variants are unnecessary. |
+| `items` | `CommandSnippetItem[]` |  |  | Generic selectable commands, useful for Docker, curl, Homebrew, or CLIs. |
+| `commands` | `CommandSnippetCommands` |  |  | Package-manager-specific commands, converted to selectable items. |
+| `managerOrder` | `CommandSnippetManager[]` |  | `defaultManagerOrder` | Order used when converting `commands` to package-manager items. |
 | `defaultManager` | `CommandSnippetManager` |  | `"bun"` | Initially selected package manager when `commands` is provided. |
+| `value` | `string` |  |  | Controlled selected item value. |
+| `defaultValue` | `string` |  |  | Initial selected item value for uncontrolled snippets. |
+| `onValueChange` | `(value: string, item: CommandSnippetItem) => void` |  |  | Called when a selectable command is chosen. |
 | `title` | `string` |  |  | Optional title shown in the header. |
 | `prompt` | `string` |  | `"$"` | Prompt prefix shown before the command. |
+| `showPrompt` | `boolean` |  | `true` | Whether to show the prompt prefix. |
+| `showHeader` | `boolean` |  |  | Force the header on/off. Omit to derive from title, tabs, and copy. |
+| `wrap` | `boolean` |  | `false` | Whether long commands wrap instead of scrolling horizontally. |
+| `maxHeight` | `number \| string` |  |  | Constrains the body height; numeric values are treated as pixels. |
 | `copyable` | `boolean` |  | `true` | Whether to show a clipboard button for the active command. |
+| `copyLabel` | `string` |  | `"Copy command"` | Accessible label for the copy button. |
+| `onCopy` | `(command: string) => void` |  |  | Called after a command is copied. |
 
 Variants:
-- `size`: `sm`, `default`, `lg` (default: `default`)
+- `variant`: `terminal`, `card`, `muted`, `minimal` (default: `terminal`)
+- `size`: `xs`, `sm`, `default`, `lg` (default: `default`)
 
-Data slots: `command-snippet`, `command-snippet-body`, `command-snippet-command`, `command-snippet-header`, `command-snippet-manager`, `command-snippet-manager-list`, `command-snippet-prompt`, `command-snippet-title`
+Data slots: `command-snippet`, `command-snippet-body`, `command-snippet-command`, `command-snippet-header`, `command-snippet-item`, `command-snippet-item-list`, `command-snippet-prompt`, `command-snippet-title`
 
 ### Config Row
 
@@ -1097,7 +1123,7 @@ Compact, read-only code-diff display for release notes, examples, and docs.
 Exports: `DiffSnippet`, `DiffSnippetLine`, `DiffSnippetLineType`, `DiffSnippetProps`, `diffSnippetVariants`
 
 Props (`DiffSnippetProps`):
-Extends: `Omit<React.ComponentProps<"div">, "children">`, `VariantProps<typeof diffSnippetVariants>`
+Extends: `Omit<React.ComponentProps<"section">, "children">`, `VariantProps<typeof diffSnippetVariants>`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
@@ -1106,11 +1132,18 @@ Extends: `Omit<React.ComponentProps<"div">, "children">`, `VariantProps<typeof d
 | `language` | `string` |  |  | Optional language label shown in the header. |
 | `copyable` | `boolean` |  | `true` | Whether to show a clipboard button for the diff text. |
 | `showLineNumbers` | `boolean` |  | `false` | Whether to render a numbered gutter beside each row. |
+| `lineNumberStart` | `number` |  | `1` | First value used by the numbered gutter. |
+| `showMarkers` | `boolean` |  | `true` | Whether to render generated diff markers. |
+| `highlightChanges` | `boolean` |  | `true` | Whether semantic rows receive tinted backgrounds and intent text. |
+| `wrap` | `boolean` |  | `false` | Whether long lines wrap instead of scrolling horizontally. |
+| `maxHeight` | `number \| string` |  |  | Constrains the body height; numeric values are treated as pixels. |
+| `emptyMessage` | `React.ReactNode` |  | `"No changes"` | Message rendered when `lines` is empty. |
 
 Variants:
-- `size`: `sm`, `default`, `lg` (default: `default`)
+- `variant`: `default`, `muted`, `terminal`, `minimal` (default: `default`)
+- `size`: `xs`, `sm`, `default`, `lg` (default: `default`)
 
-Data slots: `diff-snippet`, `diff-snippet-body`, `diff-snippet-code`, `diff-snippet-content`, `diff-snippet-filename`, `diff-snippet-header`, `diff-snippet-language`, `diff-snippet-line`, `diff-snippet-line-number`, `diff-snippet-marker`
+Data slots: `diff-snippet`, `diff-snippet-body`, `diff-snippet-code`, `diff-snippet-content`, `diff-snippet-empty`, `diff-snippet-filename`, `diff-snippet-header`, `diff-snippet-language`, `diff-snippet-line`, `diff-snippet-line-number`, `diff-snippet-marker`
 
 ### Execution Trace Bar
 

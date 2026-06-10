@@ -30,6 +30,7 @@ describe("DiffSnippet", () => {
       <DiffSnippet
         filename="greet.ts"
         language="ts"
+        lineNumberStart={41}
         lines={lines}
         showLineNumbers
       />
@@ -37,12 +38,28 @@ describe("DiffSnippet", () => {
 
     expect(screen.getByText("greet.ts")).toBeInTheDocument();
     expect(screen.getByText("ts")).toBeInTheDocument();
-    expect(screen.getByText("2")).toBeInTheDocument();
+    expect(screen.getByText("42")).toBeInTheDocument();
     expect(
       screen.getByText("return 'Hi ' + name;").closest("span")
     ).toHaveAttribute("data-slot", "diff-snippet-content");
     expect(document.querySelector('[data-type="remove"]')).toBeInTheDocument();
     expect(document.querySelector('[data-type="add"]')).toBeInTheDocument();
+  });
+
+  it("renders annotation line types", () => {
+    render(
+      <DiffSnippet
+        lines={[
+          { type: "info", content: "note: new import" },
+          { type: "warning", content: "warning: review migration" },
+          { type: "error", content: "error: removed API" },
+        ]}
+      />
+    );
+
+    expect(document.querySelector('[data-type="info"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-type="warning"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-type="error"]')).toBeInTheDocument();
   });
 
   it("copies the diff with generated markers", async () => {
@@ -55,6 +72,19 @@ describe("DiffSnippet", () => {
     );
   });
 
+  it("copies plain lines when markers are hidden", async () => {
+    render(<DiffSnippet lines={lines} showMarkers={false} />);
+
+    await userEvent.click(screen.getByRole("button", { name: "Copy diff" }));
+
+    expect(copy).toHaveBeenCalledWith(
+      `function greet(name) {\n  return 'Hi ' + name;\n${addedLine}\n}`
+    );
+    expect(
+      document.querySelector('[data-slot="diff-snippet-marker"]')
+    ).not.toBeInTheDocument();
+  });
+
   it("can hide the copy button and header", () => {
     render(<DiffSnippet copyable={false} lines={lines} />);
 
@@ -64,5 +94,14 @@ describe("DiffSnippet", () => {
     expect(
       document.querySelector('[data-slot="diff-snippet-header"]')
     ).not.toBeInTheDocument();
+  });
+
+  it("renders an empty message", () => {
+    render(<DiffSnippet emptyMessage="Nothing changed" lines={[]} />);
+
+    expect(screen.getByText("Nothing changed")).toHaveAttribute(
+      "data-slot",
+      "diff-snippet-empty"
+    );
   });
 });

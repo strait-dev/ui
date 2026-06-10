@@ -13,287 +13,445 @@ type CommandSnippetManager = "bun" | "npm" | "pnpm" | "yarn";
 /** Command map accepted by {@link CommandSnippet}. */
 type CommandSnippetCommands = Partial<Record<CommandSnippetManager, string>>;
 
-const managerOrder: CommandSnippetManager[] = ["bun", "npm", "pnpm", "yarn"];
+/** One selectable command option in a {@link CommandSnippet}. */
+type CommandSnippetItem = {
+  /** Stable selection value. Defaults to `label` when omitted. */
+  value?: string;
+  /** Visible label for the selector button. */
+  label: string;
+  /** Command displayed and copied when this item is selected. */
+  command: string;
+};
+
+const defaultManagerOrder: CommandSnippetManager[] = [
+  "bun",
+  "npm",
+  "pnpm",
+  "yarn",
+];
 
 /** CVA recipe for the {@link CommandSnippet} root. */
-const commandSnippetVariants = cva(
-  "overflow-hidden rounded-lg bg-surface-terminal text-surface-terminal-foreground shadow-sm",
-  {
-    variants: {
-      /** Density preset for the snippet chrome and command line. */
-      size: {
-        sm: "text-xs",
-        default: "text-sm",
-        lg: "text-base",
-      },
+const commandSnippetVariants = cva("overflow-hidden rounded-lg", {
+  variants: {
+    /** Surface treatment for the snippet chrome. */
+    variant: {
+      terminal:
+        "bg-surface-terminal text-surface-terminal-foreground shadow-sm",
+      card: "border bg-card text-foreground shadow-sm",
+      muted: "border bg-muted/50 text-foreground shadow-sm",
+      minimal:
+        "border border-transparent bg-transparent text-foreground shadow-none",
     },
-    defaultVariants: {
-      size: "default",
+    /** Density preset for the snippet chrome and command line. */
+    size: {
+      xs: "text-xs",
+      sm: "text-xs",
+      default: "text-sm",
+      lg: "text-base",
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "terminal",
+    size: "default",
+  },
+});
 
 const commandPaddingClasses: Record<
   NonNullable<CommandSnippetProps["size"]>,
   string
 > = {
+  xs: "px-2.5 py-1.5",
   sm: "px-3 py-2",
   default: "px-4 py-3",
   lg: "px-4 py-3.5",
 };
 
+const headerPaddingClasses: Record<
+  NonNullable<CommandSnippetProps["size"]>,
+  string
+> = {
+  xs: "min-h-7 px-2 py-1",
+  sm: "min-h-8 px-2.5 py-1.5",
+  default: "min-h-9 px-3 py-1.5",
+  lg: "min-h-10 px-3.5 py-2",
+};
+
 /** Props for {@link CommandSnippet}. */
 type CommandSnippetProps = Omit<React.ComponentProps<"section">, "children"> &
   VariantProps<typeof commandSnippetVariants> & {
-    /** Single command to display when package-manager variants are unnecessary. */
+    /** Single command to display when selectable variants are unnecessary. */
     command?: string;
-    /** Package-manager-specific commands, shown as selectable tabs. */
+    /** Generic selectable commands, useful for Docker, curl, Homebrew, or CLIs. */
+    items?: CommandSnippetItem[];
+    /** Package-manager-specific commands, converted to selectable items. */
     commands?: CommandSnippetCommands;
+    /** Order used when converting `commands` to package-manager items. */
+    managerOrder?: CommandSnippetManager[];
     /** Initially selected package manager when `commands` is provided. */
     defaultManager?: CommandSnippetManager;
+    /** Controlled selected item value. */
+    value?: string;
+    /** Initial selected item value for uncontrolled snippets. */
+    defaultValue?: string;
+    /** Called when a selectable command is chosen. */
+    onValueChange?: (value: string, item: CommandSnippetItem) => void;
     /** Optional title shown in the header. */
     title?: string;
     /** Prompt prefix shown before the command. */
     prompt?: string;
+    /** Whether to show the prompt prefix. */
+    showPrompt?: boolean;
+    /** Force the header on/off. Omit to derive from title, tabs, and copy. */
+    showHeader?: boolean;
+    /** Whether long commands wrap instead of scrolling horizontally. */
+    wrap?: boolean;
+    /** Constrains the body height; numeric values are treated as pixels. */
+    maxHeight?: number | string;
     /** Whether to show a clipboard button for the active command. */
     copyable?: boolean;
+    /** Accessible label for the copy button. */
+    copyLabel?: string;
+    /** Called after a command is copied. */
+    onCopy?: (command: string) => void;
   };
 
 /**
- * Terminal-style command snippet with optional package-manager switching.
+ * Terminal-style command snippet with optional selectable commands.
  *
  * Use `CommandSnippet` for install commands, CLI setup steps, and docs examples
- * that need one-click copy. Pass a single `command` for static usage, or a
- * `commands` map to expose Bun/npm/pnpm/yarn choices while keeping one active
- * command visible and copyable.
+ * that need one-click copy. Pass a single `command` for static usage, a generic
+ * `items` array for arbitrary selectable commands, or a `commands` map for the
+ * Bun/npm/pnpm/yarn shorthand.
  *
  * @remarks
- * - The surface uses `bg-surface-terminal` and
+ * - `variant="terminal"` uses `bg-surface-terminal` and
  *   `text-surface-terminal-foreground`, so it stays themeable and consistent
  *   with terminal-style `CodeBlock` usage.
- * - Package-manager buttons are real buttons with `aria-pressed`, so keyboard
- *   and screen-reader users can switch the active command.
- * - If `defaultManager` is omitted or unavailable, the first manager in
- *   Bun → npm → pnpm → yarn order is selected.
+ * - Selector buttons are real buttons with `aria-pressed`, so keyboard and
+ *   screen-reader users can switch the active command.
+ * - `items` takes precedence over `commands`; keep using `commands` for simple
+ *   package-manager docs and switch to `items` for Docker, curl, or custom CLIs.
  *
  * @example
  * ```tsx
  * <CommandSnippet command="bun add @strait/ui" />
  *
  * <CommandSnippet
- *   commands={{
- *     bun: "bun add @strait/ui",
- *     npm: "npm install @strait/ui",
- *     pnpm: "pnpm add @strait/ui",
- *     yarn: "yarn add @strait/ui",
- *   }}
- *   defaultManager="bun"
- *   title="Install"
+ *   items={[
+ *     { label: "bun", command: "bun add @strait/ui" },
+ *     { label: "docker", command: "docker run strait/ui" },
+ *   ]}
  * />
  * ```
  */
 function CommandSnippet({
   command,
+  items,
   commands,
+  managerOrder = defaultManagerOrder,
   defaultManager = "bun",
+  value,
+  defaultValue,
+  onValueChange,
   title,
   prompt = "$",
+  showPrompt = true,
+  showHeader,
+  wrap = false,
+  maxHeight,
   copyable = true,
+  copyLabel = "Copy command",
+  onCopy,
+  variant = "terminal",
   size = "default",
   className,
   "aria-label": ariaLabel = "Command snippet",
   ...props
 }: CommandSnippetProps) {
-  const availableManagers = React.useMemo(
-    () => managerOrder.filter((manager) => commands?.[manager]),
-    [commands]
+  const resolvedItems = React.useMemo(
+    () => getCommandItems(items, commands, managerOrder),
+    [commands, items, managerOrder]
   );
-  const selectedManager = useSelectedManager(availableManagers, defaultManager);
-  const resolvedCommand = getResolvedCommand(
-    command,
-    commands,
-    selectedManager
-  );
-  const showTabs = availableManagers.length > 1;
-  const showHeader = Boolean(title || showTabs || copyable);
+  const selection = useCommandSelection({
+    defaultValue: defaultValue ?? defaultManager,
+    items: resolvedItems,
+    onValueChange,
+    value,
+  });
+  const activeCommand = selection.item?.command ?? command ?? "";
+  const showTabs = resolvedItems.length > 1;
+  const resolvedShowHeader =
+    showHeader ?? Boolean(title || showTabs || copyable);
   const commandPadding = commandPaddingClasses[size ?? "default"];
+  const bodyStyle = getMaxHeightStyle(maxHeight);
 
   return (
     <section
       aria-label={ariaLabel}
-      className={cn(commandSnippetVariants({ size }), className)}
+      className={cn(commandSnippetVariants({ variant, size }), className)}
       data-slot="command-snippet"
       {...props}
     >
-      {showHeader && (
+      {resolvedShowHeader && (
         <CommandSnippetHeader
-          availableManagers={availableManagers}
           copyable={copyable}
-          resolvedCommand={resolvedCommand}
-          selectedManager={selectedManager.value}
-          setSelectedManager={selectedManager.set}
+          copyLabel={copyLabel}
+          items={resolvedItems}
+          onCopy={onCopy}
+          selectedValue={selection.value}
+          setSelectedValue={selection.setValue}
           showTabs={showTabs}
+          size={size}
           title={title}
+          value={activeCommand}
+          variant={variant}
         />
       )}
 
       <pre
         className={cn(
-          "m-0 overflow-x-auto bg-transparent font-mono leading-relaxed",
+          "m-0 overflow-auto bg-transparent font-mono leading-relaxed",
           commandPadding
         )}
         data-slot="command-snippet-body"
+        style={bodyStyle}
       >
-        <code className="flex min-w-max items-start gap-3">
-          <span
-            aria-hidden="true"
-            className="select-none text-surface-terminal-foreground/50"
-            data-slot="command-snippet-prompt"
-          >
-            {prompt}
-          </span>
-          <span data-slot="command-snippet-command">{resolvedCommand}</span>
+        <code
+          className={cn(
+            "flex items-start gap-3",
+            wrap ? "min-w-0 whitespace-pre-wrap break-all" : "min-w-max"
+          )}
+        >
+          {showPrompt && (
+            <span
+              aria-hidden="true"
+              className={cn(
+                "select-none text-muted-foreground",
+                variant === "terminal" && "text-surface-terminal-foreground/50"
+              )}
+              data-slot="command-snippet-prompt"
+            >
+              {prompt}
+            </span>
+          )}
+          <span data-slot="command-snippet-command">{activeCommand}</span>
         </code>
       </pre>
     </section>
   );
 }
 
-type SelectedManagerState = {
-  value: CommandSnippetManager | undefined;
-  set: React.Dispatch<React.SetStateAction<CommandSnippetManager | undefined>>;
+type UseCommandSelectionInput = {
+  defaultValue: string | undefined;
+  items: CommandSnippetItem[];
+  onValueChange: CommandSnippetProps["onValueChange"];
+  value: string | undefined;
 };
 
-function useSelectedManager(
-  availableManagers: CommandSnippetManager[],
-  defaultManager: CommandSnippetManager
-): SelectedManagerState {
-  const initialManager = getInitialManager(availableManagers, defaultManager);
-  const [selectedManager, setSelectedManager] = React.useState<
-    CommandSnippetManager | undefined
-  >(initialManager);
+function useCommandSelection({
+  defaultValue,
+  items,
+  onValueChange,
+  value,
+}: UseCommandSelectionInput) {
+  const initialValue = getInitialValue(items, defaultValue);
+  const [uncontrolledValue, setUncontrolledValue] =
+    React.useState(initialValue);
+  const selectedValue = value ?? uncontrolledValue;
+  const selectedItem = getSelectedItem(items, selectedValue);
 
   React.useEffect(() => {
-    if (!(selectedManager && availableManagers.includes(selectedManager))) {
-      setSelectedManager(initialManager);
+    if (value === undefined && !(selectedItem || items.length === 0)) {
+      setUncontrolledValue(initialValue);
     }
-  }, [availableManagers, initialManager, selectedManager]);
+  }, [initialValue, items.length, selectedItem, value]);
 
-  return { value: selectedManager, set: setSelectedManager };
+  const setValue = React.useCallback(
+    (nextItem: CommandSnippetItem) => {
+      const nextValue = getRequiredItemValue(nextItem);
+      if (value === undefined) {
+        setUncontrolledValue(nextValue);
+      }
+      onValueChange?.(nextValue, nextItem);
+    },
+    [onValueChange, value]
+  );
+
+  return { item: selectedItem, setValue, value: getItemValue(selectedItem) };
 }
 
-function getInitialManager(
-  availableManagers: CommandSnippetManager[],
-  defaultManager: CommandSnippetManager
-) {
-  return availableManagers.includes(defaultManager)
-    ? defaultManager
-    : availableManagers[0];
-}
-
-function getResolvedCommand(
-  command: string | undefined,
+function getCommandItems(
+  items: CommandSnippetItem[] | undefined,
   commands: CommandSnippetCommands | undefined,
-  selectedManager: SelectedManagerState
+  managerOrder: CommandSnippetManager[]
 ) {
-  const managerCommand = selectedManager.value
-    ? commands?.[selectedManager.value]
-    : undefined;
+  if (items?.length) {
+    return items;
+  }
 
-  return managerCommand ?? command ?? "";
+  return managerOrder.flatMap((manager) => {
+    const command = commands?.[manager];
+    return command ? [{ command, label: manager, value: manager }] : [];
+  });
+}
+
+function getInitialValue(
+  items: CommandSnippetItem[],
+  defaultValue: string | undefined
+) {
+  if (
+    defaultValue &&
+    items.some((item) => getItemValue(item) === defaultValue)
+  ) {
+    return defaultValue;
+  }
+
+  return getItemValue(items[0]);
+}
+
+function getSelectedItem(
+  items: CommandSnippetItem[],
+  value: string | undefined
+) {
+  return items.find((item) => getItemValue(item) === value) ?? items[0];
+}
+
+function getItemValue(item: CommandSnippetItem | undefined) {
+  return item?.value ?? item?.label;
+}
+
+function getRequiredItemValue(item: CommandSnippetItem) {
+  return item.value ?? item.label;
+}
+
+function getMaxHeightStyle(maxHeight: CommandSnippetProps["maxHeight"]) {
+  if (maxHeight === undefined) {
+    return;
+  }
+
+  return {
+    maxHeight: typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight,
+  };
 }
 
 type CommandSnippetHeaderProps = {
-  availableManagers: CommandSnippetManager[];
   copyable: boolean;
-  resolvedCommand: string;
-  selectedManager: CommandSnippetManager | undefined;
-  setSelectedManager: React.Dispatch<
-    React.SetStateAction<CommandSnippetManager | undefined>
-  >;
+  copyLabel: string;
+  items: CommandSnippetItem[];
+  onCopy: CommandSnippetProps["onCopy"];
+  selectedValue: string | undefined;
+  setSelectedValue: (item: CommandSnippetItem) => void;
   showTabs: boolean;
+  size: CommandSnippetProps["size"];
   title: React.ReactNode;
+  value: string;
+  variant: CommandSnippetProps["variant"];
 };
 
 function CommandSnippetHeader({
-  availableManagers,
   copyable,
-  resolvedCommand,
-  selectedManager,
-  setSelectedManager,
+  copyLabel,
+  items,
+  onCopy,
+  selectedValue,
+  setSelectedValue,
   showTabs,
+  size,
   title,
+  value,
+  variant,
 }: CommandSnippetHeaderProps) {
+  const headerPadding = headerPaddingClasses[size ?? "default"];
+
   return (
     <div
-      className="flex min-h-9 items-center justify-between gap-3 border-surface-terminal-foreground/10 border-b px-3 py-1.5"
+      className={cn(
+        "flex items-center justify-between gap-3 border-b",
+        variant === "terminal" && "border-surface-terminal-foreground/10",
+        variant === "minimal" && "border-transparent",
+        headerPadding
+      )}
       data-slot="command-snippet-header"
     >
       <div className="flex min-w-0 items-center gap-2">
         {title && (
           <span
-            className="truncate font-medium text-surface-terminal-foreground"
+            className={cn(
+              "truncate font-medium text-foreground",
+              variant === "terminal" && "text-surface-terminal-foreground"
+            )}
             data-slot="command-snippet-title"
           >
             {title}
           </span>
         )}
         {showTabs && (
-          <CommandSnippetManagers
-            availableManagers={availableManagers}
-            selectedManager={selectedManager}
-            setSelectedManager={setSelectedManager}
+          <CommandSnippetItems
+            items={items}
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+            variant={variant}
           />
         )}
       </div>
       {copyable && (
         <CopyButton
-          aria-label="Copy command"
-          className="text-surface-terminal-foreground/75 hover:bg-surface-terminal-foreground/10 hover:text-surface-terminal-foreground"
-          text={resolvedCommand}
+          aria-label={copyLabel}
+          className={cn(
+            variant === "terminal" &&
+              "text-surface-terminal-foreground/75 hover:bg-surface-terminal-foreground/10 hover:text-surface-terminal-foreground"
+          )}
+          onCopied={onCopy}
+          text={value}
         />
       )}
     </div>
   );
 }
 
-type CommandSnippetManagersProps = {
-  availableManagers: CommandSnippetManager[];
-  selectedManager: CommandSnippetManager | undefined;
-  setSelectedManager: React.Dispatch<
-    React.SetStateAction<CommandSnippetManager | undefined>
-  >;
+type CommandSnippetItemsProps = {
+  items: CommandSnippetItem[];
+  selectedValue: string | undefined;
+  setSelectedValue: (item: CommandSnippetItem) => void;
+  variant: CommandSnippetProps["variant"];
 };
 
-function CommandSnippetManagers({
-  availableManagers,
-  selectedManager,
-  setSelectedManager,
-}: CommandSnippetManagersProps) {
+function CommandSnippetItems({
+  items,
+  selectedValue,
+  setSelectedValue,
+  variant,
+}: CommandSnippetItemsProps) {
   return (
     <fieldset
       className="flex items-center gap-1"
-      data-slot="command-snippet-manager-list"
+      data-slot="command-snippet-item-list"
     >
-      <legend className="sr-only">Package manager</legend>
-      {availableManagers.map((manager) => {
-        const selected = manager === selectedManager;
+      <legend className="sr-only">Command variant</legend>
+      {items.map((item) => {
+        const itemValue = getItemValue(item);
+        const selected = itemValue === selectedValue;
         return (
           <Button
             aria-pressed={selected}
             className={cn(
-              "h-6 px-2 text-surface-terminal-foreground/75 text-xs hover:bg-surface-terminal-foreground/10 hover:text-surface-terminal-foreground",
+              "h-6 px-2 text-xs",
+              variant === "terminal" &&
+                "text-surface-terminal-foreground/75 hover:bg-surface-terminal-foreground/10 hover:text-surface-terminal-foreground",
+              variant !== "terminal" && "text-muted-foreground",
               selected &&
-                "bg-surface-terminal-foreground/10 text-surface-terminal-foreground"
+                (variant === "terminal"
+                  ? "bg-surface-terminal-foreground/10 text-surface-terminal-foreground"
+                  : "bg-muted text-foreground")
             )}
-            data-slot="command-snippet-manager"
-            key={manager}
-            onClick={() => setSelectedManager(manager)}
+            data-slot="command-snippet-item"
+            key={itemValue}
+            onClick={() => setSelectedValue(item)}
             size="sm"
             type="button"
             variant="ghost"
           >
-            {manager}
+            {item.label}
           </Button>
         );
       })}
@@ -304,6 +462,7 @@ function CommandSnippetManagers({
 export {
   CommandSnippet,
   type CommandSnippetCommands,
+  type CommandSnippetItem,
   type CommandSnippetManager,
   type CommandSnippetProps,
   commandSnippetVariants,

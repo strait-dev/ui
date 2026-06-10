@@ -16,7 +16,22 @@ const configLines: DiffSnippetLine[] = [
   { type: "remove", content: "  radius: 'md'," },
   { type: "add", content: "  radius: 'lg'," },
   { type: "add", content: "  surface: 'raised'," },
+  { type: "info", content: "  // surface maps to semantic tokens" },
   { type: "context", content: "};" },
+];
+
+const longLines: DiffSnippetLine[] = [
+  { type: "context", content: "const config = createThemeConfig({" },
+  {
+    type: "add",
+    content:
+      "  description: 'This intentionally long line demonstrates wrapping inside constrained documentation columns and narrow side panels.',",
+  },
+  {
+    type: "warning",
+    content: "  migration: 'Check downstream imports before release',",
+  },
+  { type: "context", content: "});" },
 ];
 
 const meta: Meta<typeof DiffSnippet> = {
@@ -32,9 +47,10 @@ const meta: Meta<typeof DiffSnippet> = {
           "Use it when a change is small enough to explain inline without a full",
           "syntax-highlighted `CodeBlock`.",
           "",
-          "Rows are typed as `add`, `remove`, or `context`; markers and semantic",
-          "success/destructive styling are generated from that type. Optional",
-          "filename, language label, line numbers, and copy button are built in.",
+          "Rows are typed as `add`, `remove`, `context`, `info`, `warning`, or",
+          "`error`; markers and semantic success/destructive/info/warning styling",
+          "are generated from that type. Optional filename, language label, line",
+          "numbers, copy button, wrapping, and max-height scrolling are built in.",
           "",
           "Accessibility: the root is a named region, line-number gutters and diff",
           "markers are hidden where appropriate, and the copy action exposes a clear",
@@ -57,9 +73,15 @@ const meta: Meta<typeof DiffSnippet> = {
       control: "text",
       description: "Optional language label shown in the header.",
     },
+    variant: {
+      control: "select",
+      options: ["default", "muted", "terminal", "minimal"],
+      description: "Surface treatment for the snippet chrome.",
+      table: { defaultValue: { summary: "default" } },
+    },
     size: {
       control: "select",
-      options: ["sm", "default", "lg"],
+      options: ["xs", "sm", "default", "lg"],
       description: "Density preset for snippet rows and chrome.",
       table: { defaultValue: { summary: "default" } },
     },
@@ -67,6 +89,30 @@ const meta: Meta<typeof DiffSnippet> = {
       control: "boolean",
       description: "Render a numbered gutter.",
       table: { defaultValue: { summary: "false" } },
+    },
+    lineNumberStart: {
+      control: "number",
+      description: "First value used by the numbered gutter.",
+      table: { defaultValue: { summary: "1" } },
+    },
+    showMarkers: {
+      control: "boolean",
+      description: "Render generated diff markers.",
+      table: { defaultValue: { summary: "true" } },
+    },
+    highlightChanges: {
+      control: "boolean",
+      description: "Apply semantic tinted rows for changed/annotated lines.",
+      table: { defaultValue: { summary: "true" } },
+    },
+    wrap: {
+      control: "boolean",
+      description: "Wrap long lines instead of scrolling horizontally.",
+      table: { defaultValue: { summary: "false" } },
+    },
+    maxHeight: {
+      control: "text",
+      description: "CSS max-height value or pixel number for the scroll body.",
     },
     copyable: {
       control: "boolean",
@@ -80,7 +126,11 @@ const meta: Meta<typeof DiffSnippet> = {
     language: "ts",
     copyable: true,
     showLineNumbers: true,
+    showMarkers: true,
+    highlightChanges: true,
+    lineNumberStart: 1,
     size: "default",
+    variant: "default",
   },
 };
 
@@ -98,6 +148,7 @@ export const Minimal: Story = {
     language: undefined,
     showLineNumbers: false,
     lines: sampleLines.slice(1, 3),
+    variant: "minimal",
   },
 };
 
@@ -106,15 +157,32 @@ export const WithHeader: Story = {
   args: {
     filename: "theme.config.ts",
     language: "ts",
+    lineNumberStart: 12,
     lines: configLines,
   },
 };
 
-/** Compare the compact/default/large density presets. */
+/** Compare all surface variants. */
+export const Variants: Story = {
+  render: (args) => (
+    <div className="grid w-[34rem] gap-4">
+      {(["default", "muted", "terminal", "minimal"] as const).map((variant) => (
+        <div className="grid gap-2" key={variant}>
+          <span className="font-medium text-muted-foreground text-xs">
+            variant="{variant}"
+          </span>
+          <DiffSnippet {...args} variant={variant} />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/** Compare the density presets. */
 export const Sizes: Story = {
   render: (args) => (
     <div className="grid w-[34rem] gap-4">
-      {(["sm", "default", "lg"] as const).map((size) => (
+      {(["xs", "sm", "default", "lg"] as const).map((size) => (
         <div className="grid gap-2" key={size}>
           <span className="font-medium text-muted-foreground text-xs">
             size="{size}"
@@ -126,7 +194,7 @@ export const Sizes: Story = {
   ),
 };
 
-/** State matrix for added, removed, and context rows. */
+/** State matrix for every row type. */
 export const StateMatrix: Story = {
   render: () => (
     <DiffSnippet
@@ -138,8 +206,39 @@ export const StateMatrix: Story = {
         { type: "context", content: "unchanged context line" },
         { type: "add", content: "added line using success tokens" },
         { type: "remove", content: "removed line using destructive tokens" },
+        { type: "info", content: "informational annotation" },
+        { type: "warning", content: "migration warning annotation" },
+        { type: "error", content: "blocking error annotation" },
       ]}
       showLineNumbers
     />
   ),
+};
+
+/** Wrapping and max-height keep dense diffs usable in narrow containers. */
+export const WrappedScrollable: Story = {
+  args: {
+    filename: "long-config.ts",
+    language: "ts",
+    lines: longLines,
+    maxHeight: 120,
+    showLineNumbers: true,
+    wrap: true,
+  },
+  render: (args) => (
+    <div className="w-80">
+      <DiffSnippet {...args} />
+    </div>
+  ),
+};
+
+/** Empty state for generated diffs that have no changes. */
+export const Empty: Story = {
+  args: {
+    copyable: false,
+    emptyMessage: "No diff generated",
+    filename: "empty.diff",
+    language: "diff",
+    lines: [],
+  },
 };

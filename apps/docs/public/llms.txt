@@ -92,7 +92,7 @@ surfaces, and `--overlay` for modal scrims.
 - [Charts](@strait/ui/components/charts): Config-driven multi-series area chart.
 - [Code Block](@strait/ui/components/code-block): Read-only code display surface with Shiki-powered syntax highlighting, an optional language label, line numbers, and a clipboard copy button.
 - [Code Block Command](@strait/ui/components/code-block-command): A package-manager command block with tabs for npm, pnpm, yarn, and bun, a copy button that copies the active manager's command, and persistent manager selection via `localStorage`.
-- [Command Snippet](@strait/ui/components/command-snippet): Terminal-style command snippet with optional package-manager switching.
+- [Command Snippet](@strait/ui/components/command-snippet): Terminal-style command snippet with optional selectable commands.
 - [Config Row](@strait/ui/components/config-row): A single label/value row for settings panels, detail drawers, and info grids.
 - [DataGrid](@strait/ui/components/data-grid): Root component for the DataGrid system.
 - [Description List](@strait/ui/components/description-list): Semantic description list root (`<dl>`). Compose with DescriptionTerm and DescriptionDetails to build accessible key–value displays.

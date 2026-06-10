@@ -9,6 +9,12 @@ const installCommands = {
   yarn: "yarn add @strait/ui",
 };
 
+const cliItems = [
+  { label: "curl", command: "curl https://api.strait.dev/health" },
+  { label: "docker", command: "docker run --rm strait/ui:latest" },
+  { label: "brew", command: "brew install strait-dev/tap/strait" },
+];
+
 const meta: Meta<typeof CommandSnippet> = {
   title: "Data Display/Command Snippet",
   component: CommandSnippet,
@@ -18,17 +24,17 @@ const meta: Meta<typeof CommandSnippet> = {
     docs: {
       description: {
         component: [
-          "Terminal-style command snippet for install commands, setup steps,",
-          "and CLI examples. Use it when the code is a command to run rather",
-          "than source code to read.",
+          "Command snippet for install commands, setup steps, and CLI examples.",
+          "Use it when the code is a command to run rather than source code to",
+          "read.",
           "",
-          "Pass a single `command` for static snippets, or a `commands` map for",
-          "package-manager tabs. The active command is the one copied by the",
-          "clipboard button. The surface uses semantic terminal tokens, so it stays",
-          'themeable alongside `CodeBlock variant="dark"`.',
+          "Pass a single `command` for static snippets, a generic `items` array",
+          "for arbitrary selectable commands, or a `commands` map for the",
+          "Bun/npm/pnpm/yarn shorthand. The active command is the one copied by the",
+          "clipboard button.",
           "",
-          "Keyboard behavior: package managers are buttons with `aria-pressed`; Tab",
-          "moves through managers and copy, Enter/Space switches the active command.",
+          "Keyboard behavior: command choices are buttons with `aria-pressed`; Tab",
+          "moves through choices and copy, Enter/Space switches the active command.",
         ].join("\n"),
       },
     },
@@ -38,15 +44,37 @@ const meta: Meta<typeof CommandSnippet> = {
       control: "text",
       description: "Single command to display.",
     },
+    items: {
+      control: "object",
+      description: "Generic selectable commands.",
+    },
     commands: {
       control: "object",
-      description: "Package-manager-specific commands.",
+      description: "Package-manager-specific command shorthand.",
+    },
+    managerOrder: {
+      control: "object",
+      description: "Order used for package-manager shorthand.",
     },
     defaultManager: {
       control: "select",
       options: ["bun", "npm", "pnpm", "yarn"],
-      description: "Initially selected package manager.",
+      description: "Initially selected package manager for `commands`.",
       table: { defaultValue: { summary: "bun" } },
+    },
+    defaultValue: {
+      control: "text",
+      description: "Initial selected value for generic `items`.",
+    },
+    value: {
+      control: "text",
+      description: "Controlled selected item value.",
+    },
+    variant: {
+      control: "select",
+      options: ["terminal", "card", "muted", "minimal"],
+      description: "Surface treatment for the snippet chrome.",
+      table: { defaultValue: { summary: "terminal" } },
     },
     title: {
       control: "text",
@@ -57,9 +85,27 @@ const meta: Meta<typeof CommandSnippet> = {
       description: "Prompt prefix shown before the command.",
       table: { defaultValue: { summary: "$" } },
     },
+    showPrompt: {
+      control: "boolean",
+      description: "Show the prompt prefix.",
+      table: { defaultValue: { summary: "true" } },
+    },
+    showHeader: {
+      control: "boolean",
+      description: "Force the header on/off instead of deriving it.",
+    },
+    wrap: {
+      control: "boolean",
+      description: "Wrap long commands instead of scrolling horizontally.",
+      table: { defaultValue: { summary: "false" } },
+    },
+    maxHeight: {
+      control: "text",
+      description: "CSS max-height value or pixel number for the scroll body.",
+    },
     size: {
       control: "select",
-      options: ["sm", "default", "lg"],
+      options: ["xs", "sm", "default", "lg"],
       description: "Density preset for the snippet chrome and command line.",
       table: { defaultValue: { summary: "default" } },
     },
@@ -74,7 +120,9 @@ const meta: Meta<typeof CommandSnippet> = {
     defaultManager: "bun",
     title: "Install",
     copyable: true,
+    showPrompt: true,
     size: "default",
+    variant: "terminal",
   },
 };
 
@@ -85,7 +133,7 @@ type Story = StoryObj<typeof meta>;
 /** Interactive playground — switch package managers and copy the active command. */
 export const Playground: Story = {};
 
-/** Single command, no package-manager controls. */
+/** Single command, no selector controls. */
 export const SingleCommand: Story = {
   args: {
     command: "bun run verify",
@@ -103,6 +151,16 @@ export const PackageManagers: Story = {
   },
 };
 
+/** Generic command items support Docker, curl, Homebrew, or project CLIs. */
+export const GenericItems: Story = {
+  args: {
+    commands: undefined,
+    defaultValue: "docker",
+    items: cliItems,
+    title: "Run with",
+  },
+};
+
 /** Multiline commands remain copyable as one payload. */
 export const Multiline: Story = {
   args: {
@@ -113,11 +171,27 @@ export const Multiline: Story = {
   },
 };
 
-/** Compare the compact/default/large density presets. */
+/** Compare all surface variants. */
+export const Variants: Story = {
+  render: (args) => (
+    <div className="grid w-[34rem] gap-4">
+      {(["terminal", "card", "muted", "minimal"] as const).map((variant) => (
+        <div className="grid gap-2" key={variant}>
+          <span className="font-medium text-muted-foreground text-xs">
+            variant="{variant}"
+          </span>
+          <CommandSnippet {...args} variant={variant} />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/** Compare the density presets. */
 export const Sizes: Story = {
   render: (args) => (
     <div className="grid w-[34rem] gap-4">
-      {(["sm", "default", "lg"] as const).map((size) => (
+      {(["xs", "sm", "default", "lg"] as const).map((size) => (
         <div className="grid gap-2" key={size}>
           <span className="font-medium text-muted-foreground text-xs">
             size="{size}"
@@ -125,6 +199,24 @@ export const Sizes: Story = {
           <CommandSnippet {...args} size={size} />
         </div>
       ))}
+    </div>
+  ),
+};
+
+/** Wrapping keeps long commands readable in narrow docs columns. */
+export const Wrapped: Story = {
+  args: {
+    command:
+      "curl --request POST https://api.strait.dev/v1/events --header 'Authorization: Bearer $STRAIT_TOKEN' --data '{\"type\":\"deploy\"}'",
+    commands: undefined,
+    showPrompt: false,
+    title: "HTTP request",
+    variant: "card",
+    wrap: true,
+  },
+  render: (args) => (
+    <div className="w-80">
+      <CommandSnippet {...args} />
     </div>
   ),
 };

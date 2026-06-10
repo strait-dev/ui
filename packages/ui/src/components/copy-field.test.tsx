@@ -33,6 +33,19 @@ describe("CopyField", () => {
     );
   });
 
+  it("renders prefix and suffix slots", () => {
+    render(<CopyField prefix="env" suffix="required" value="API_URL" />);
+
+    expect(screen.getByText("env")).toHaveAttribute(
+      "data-slot",
+      "copy-field-prefix"
+    );
+    expect(screen.getByText("required")).toHaveAttribute(
+      "data-slot",
+      "copy-field-suffix"
+    );
+  });
+
   it("copies the field value", async () => {
     render(<CopyField label="Run ID" value="run_8f3a91c2e7" />);
 
@@ -41,11 +54,30 @@ describe("CopyField", () => {
     expect(copy).toHaveBeenCalledWith("run_8f3a91c2e7");
   });
 
+  it("calls onCopy with the field value", async () => {
+    const onCopy = vi.fn();
+    render(<CopyField onCopy={onCopy} value="token" />);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Copy field value" })
+    );
+
+    expect(onCopy).toHaveBeenCalledWith("token");
+  });
+
   it("uses a generic copy label without a visible label", () => {
     render(<CopyField value="token" />);
 
     expect(
       screen.getByRole("button", { name: "Copy field value" })
+    ).toBeInTheDocument();
+  });
+
+  it("honors a custom copy label", () => {
+    render(<CopyField copyLabel="Copy API key" value="token" />);
+
+    expect(
+      screen.getByRole("button", { name: "Copy API key" })
     ).toBeInTheDocument();
   });
 
@@ -61,5 +93,42 @@ describe("CopyField", () => {
     expect(screen.getByText("Plain language value")).not.toHaveClass(
       "font-mono"
     );
+  });
+
+  it("masks and reveals sensitive values", async () => {
+    render(<CopyField sensitive value="sk_live_secret" />);
+
+    expect(screen.queryByText("sk_live_secret")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Show" }));
+
+    expect(screen.getByText("sk_live_secret")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Hide" })).toBeInTheDocument();
+  });
+
+  it("supports controlled reveal state", async () => {
+    const onRevealChange = vi.fn();
+    render(
+      <CopyField
+        onRevealChange={onRevealChange}
+        revealed={false}
+        sensitive
+        value="secret"
+      />
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Show" }));
+
+    expect(onRevealChange).toHaveBeenCalledWith(true);
+    expect(screen.queryByText("secret")).not.toBeInTheDocument();
+  });
+
+  it("copies sensitive values without requiring reveal", async () => {
+    render(<CopyField sensitive value="sk_live_secret" />);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Copy field value" })
+    );
+
+    expect(copy).toHaveBeenCalledWith("sk_live_secret");
   });
 });
