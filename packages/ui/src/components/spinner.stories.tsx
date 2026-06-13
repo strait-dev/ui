@@ -73,9 +73,9 @@ export const Colors: Story = {
         [
           { label: "default", cls: "text-foreground" },
           { label: "muted", cls: "text-muted-foreground" },
-          { label: "brand", cls: "text-blue-500" },
-          { label: "success", cls: "text-emerald-500" },
-          { label: "warning", cls: "text-amber-500" },
+          { label: "brand", cls: "text-brand" },
+          { label: "success", cls: "text-success" },
+          { label: "warning", cls: "text-warning" },
           { label: "destructive", cls: "text-destructive" },
         ] as const
       ).map(({ label, cls }) => (

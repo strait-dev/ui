@@ -44,20 +44,23 @@ const progressTrackVariants = cva(
  * Exported so consumers can derive the same look on standalone
  * {@link ProgressIndicator} elements without re-implementing the class list.
  */
-const progressIndicatorVariants = cva("h-full transition-all", {
-  variants: {
-    variant: {
-      default: "bg-primary",
-      success: "bg-success",
-      warning: "bg-warning",
-      info: "bg-info",
-      destructive: "bg-destructive",
+const progressIndicatorVariants = cva(
+  "h-full transition-[width,background-color]",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary",
+        success: "bg-success",
+        warning: "bg-warning",
+        info: "bg-info",
+        destructive: "bg-destructive",
+      },
     },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
 
 /** Props for {@link Progress}. */
 export type ProgressProps = ProgressPrimitive.Root.Props &

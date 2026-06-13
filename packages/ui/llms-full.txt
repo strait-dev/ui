@@ -1,6 +1,6 @@
 # Strait UI — Full Reference
 
-> Strait UI (@strait/ui) is a React + Tailwind v4 design system of 120+ accessible components built on Base UI primitives. Every component ships as its own tree-shakeable subpath export, is styled with semantic design tokens and class-variance-authority recipes, and exposes a named `*Props` type. Components render a polymorphic root via the Base UI `render` prop and tag their parts with `data-slot` attributes for styling and testing.
+> Strait UI (@strait/ui) is a React + Tailwind v4 design system of 123+ accessible components built on Base UI primitives. Every component ships as its own tree-shakeable subpath export, is styled with semantic design tokens and class-variance-authority recipes, and exposes a named `*Props` type. Components render a polymorphic root via the Base UI `render` prop and tag their parts with `data-slot` attributes for styling and testing.
 
 ## Theming
 
@@ -39,6 +39,13 @@ Note: `--primary` is warm ink (default buttons), distinct from `--brand`.
 Dark mode is a `.dark` class on (or above) the themed element — typically
 `<html>`. Tokens cascade, so toggling the class re-themes every component;
 `next-themes` is the recommended wiring.
+
+### Surface tokens
+
+Reusable surfaces are tokenized too: `--surface-raised` for elevated/floating
+containers, `--surface-subtle` for nested panels and toolbar wells,
+`--surface-terminal` / `--surface-terminal-foreground` for forced terminal/code
+surfaces, and `--overlay` for modal scrims.
 
 ## Actions
 
@@ -211,6 +218,44 @@ Variants:
 - `variant`: `default`, `destructive` (default: `default`)
 
 Data slots: `checkbox`, `checkbox-indicator`
+
+### Copy Field
+
+Import: `import { ... } from "@strait/ui/components/copy-field";`
+
+Read-only field for tokens, IDs, commands, environment variables, and other exact values that users commonly need to copy.
+
+Exports: `CopyField`, `CopyFieldProps`, `copyFieldRootVariants`, `copyFieldVariants`
+
+Props (`CopyFieldProps`):
+Extends: `Omit<React.ComponentProps<"div">, "children">`, `VariantProps<typeof copyFieldRootVariants>`, `VariantProps<typeof copyFieldVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | `string` | yes |  | String displayed in the field and copied by the button. |
+| `label` | `React.ReactNode` |  |  | Optional visible label above or beside the copyable value. |
+| `description` | `React.ReactNode` |  |  | Optional helper text below the copyable value. |
+| `prefix` | `React.ReactNode` |  |  | Content rendered before the value inside the control. |
+| `suffix` | `React.ReactNode` |  |  | Content rendered after the value and before actions inside the control. |
+| `monospace` | `boolean` |  | `true` | Whether to use monospace styling for the displayed value. |
+| `truncate` | `boolean` |  | `true` | Whether to truncate the displayed value on one line. |
+| `sensitive` | `boolean` |  | `false` | Whether to treat the value as sensitive and mask it by default. |
+| `revealed` | `boolean` |  |  | Controlled reveal state for sensitive values. |
+| `defaultRevealed` | `boolean` |  | `false` | Initial reveal state for uncontrolled sensitive values. |
+| `onRevealChange` | `(revealed: boolean) => void` |  |  | Called when the reveal state changes. |
+| `maskCharacter` | `string` |  | `"•"` | Character used when masking sensitive values. |
+| `revealLabel` | `string` |  | `"Show"` | Accessible and visible label for the reveal action. |
+| `hideLabel` | `string` |  | `"Hide"` | Accessible and visible label for the hide action. |
+| `copyable` | `boolean` |  | `true` | Whether to show the copy button. |
+| `copyLabel` | `string` |  |  | Accessible label for the copy button. |
+| `onCopy` | `(value: string) => void` |  |  | Called after the value is copied. |
+
+Variants:
+- `variant`: `default`, `muted`, `ghost`, `terminal` (default: `default`)
+- `size`: `xs`, `sm`, `default`, `lg` (default: `default`)
+- `status`: `default`, `success`, `warning`, `destructive`, `info` (default: `default`)
+
+Data slots: `copy-field`, `copy-field-control`, `copy-field-description`, `copy-field-label`, `copy-field-main`, `copy-field-reveal`, `copy-field-value`
 
 ### Date Selector
 
@@ -528,19 +573,6 @@ Extends: `SelectPrimitive.Trigger.Props`
 | `size` | `SelectSize` |  |  | Height / border-radius scale of the trigger button. |
 
 Data slots: `select-content`, `select-group`, `select-item`, `select-label`, `select-scroll-down-button`, `select-scroll-up-button`, `select-separator`, `select-trigger`, `select-value`
-
-### Select Native
-
-Import: `import { ... } from "@strait/ui/components/select-native";`
-
-Styled wrapper around the browser's native `<select>` element.
-
-Exports: `SelectNative`, `SelectNativeProps`
-
-Props (`SelectNativeProps`):
-Extends: `React.ComponentProps<"select">`
-
-Data slots: `select-native`
 
 ### Slider
 
@@ -875,6 +907,43 @@ Props (`CodeBlockCommandProps`):
 
 Data slots: `code-block-command`
 
+### Command Snippet
+
+Import: `import { ... } from "@strait/ui/components/command-snippet";`
+
+Terminal-style command snippet with optional selectable commands.
+
+Exports: `CommandSnippet`, `CommandSnippetCommands`, `CommandSnippetItem`, `CommandSnippetManager`, `CommandSnippetProps`, `commandSnippetVariants`
+
+Props (`CommandSnippetProps`):
+Extends: `Omit<React.ComponentProps<"section">, "children">`, `VariantProps<typeof commandSnippetVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `command` | `string` |  |  | Single command to display when selectable variants are unnecessary. |
+| `items` | `CommandSnippetItem[]` |  |  | Generic selectable commands, useful for Docker, curl, Homebrew, or CLIs. |
+| `commands` | `CommandSnippetCommands` |  |  | Package-manager-specific commands, converted to selectable items. |
+| `managerOrder` | `CommandSnippetManager[]` |  | `defaultManagerOrder` | Order used when converting `commands` to package-manager items. |
+| `defaultManager` | `CommandSnippetManager` |  | `"bun"` | Initially selected package manager when `commands` is provided. |
+| `value` | `string` |  |  | Controlled selected item value. |
+| `defaultValue` | `string` |  |  | Initial selected item value for uncontrolled snippets. |
+| `onValueChange` | `(value: string, item: CommandSnippetItem) => void` |  |  | Called when a selectable command is chosen. |
+| `title` | `string` |  |  | Optional title shown in the header. |
+| `prompt` | `string` |  | `"$"` | Prompt prefix shown before the command. |
+| `showPrompt` | `boolean` |  | `true` | Whether to show the prompt prefix. |
+| `showHeader` | `boolean` |  |  | Force the header on/off. Omit to derive from title, tabs, and copy. |
+| `wrap` | `boolean` |  | `false` | Whether long commands wrap instead of scrolling horizontally. |
+| `maxHeight` | `number \| string` |  |  | Constrains the body height; numeric values are treated as pixels. |
+| `copyable` | `boolean` |  | `true` | Whether to show a clipboard button for the active command. |
+| `copyLabel` | `string` |  | `"Copy command"` | Accessible label for the copy button. |
+| `onCopy` | `(command: string) => void` |  |  | Called after a command is copied. |
+
+Variants:
+- `variant`: `terminal`, `card`, `muted`, `minimal` (default: `terminal`)
+- `size`: `xs`, `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `command-snippet`, `command-snippet-body`, `command-snippet-command`, `command-snippet-header`, `command-snippet-item`, `command-snippet-item-list`, `command-snippet-prompt`, `command-snippet-title`
+
 ### Config Row
 
 Import: `import { ... } from "@strait/ui/components/config-row";`
@@ -1044,6 +1113,37 @@ Variants:
 - `size`: `sm`, `default`, `lg` (default: `default`)
 
 Data slots: `description-details`, `description-list`, `description-term`
+
+### Diff Snippet
+
+Import: `import { ... } from "@strait/ui/components/diff-snippet";`
+
+Compact, read-only code-diff display for release notes, examples, and docs.
+
+Exports: `DiffSnippet`, `DiffSnippetLine`, `DiffSnippetLineType`, `DiffSnippetProps`, `diffSnippetVariants`
+
+Props (`DiffSnippetProps`):
+Extends: `Omit<React.ComponentProps<"section">, "children">`, `VariantProps<typeof diffSnippetVariants>`
+
+| Prop | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `lines` | `DiffSnippetLine[]` | yes |  | Ordered diff rows to render. |
+| `filename` | `string` |  |  | Optional filename shown in the header. |
+| `language` | `string` |  |  | Optional language label shown in the header. |
+| `copyable` | `boolean` |  | `true` | Whether to show a clipboard button for the diff text. |
+| `showLineNumbers` | `boolean` |  | `false` | Whether to render a numbered gutter beside each row. |
+| `lineNumberStart` | `number` |  | `1` | First value used by the numbered gutter. |
+| `showMarkers` | `boolean` |  | `true` | Whether to render generated diff markers. |
+| `highlightChanges` | `boolean` |  | `true` | Whether semantic rows receive tinted backgrounds and intent text. |
+| `wrap` | `boolean` |  | `false` | Whether long lines wrap instead of scrolling horizontally. |
+| `maxHeight` | `number \| string` |  |  | Constrains the body height; numeric values are treated as pixels. |
+| `emptyMessage` | `React.ReactNode` |  | `"No changes"` | Message rendered when `lines` is empty. |
+
+Variants:
+- `variant`: `default`, `muted`, `terminal`, `minimal` (default: `default`)
+- `size`: `xs`, `sm`, `default`, `lg` (default: `default`)
+
+Data slots: `diff-snippet`, `diff-snippet-body`, `diff-snippet-code`, `diff-snippet-content`, `diff-snippet-empty`, `diff-snippet-filename`, `diff-snippet-header`, `diff-snippet-language`, `diff-snippet-line`, `diff-snippet-line-number`, `diff-snippet-marker`
 
 ### Execution Trace Bar
 
@@ -1458,16 +1558,18 @@ Import: `import { ... } from "@strait/ui/components/tracker";`
 
 A compact status timeline — a row of small colored blocks, each with an optional hover tooltip. Ideal for uptime, build history, or any per-period status strip (à la a status-page incident bar).
 
-Exports: `Tracker`, `TrackerBlockProps`, `TrackerProps`
+Exports: `Tracker`, `TrackerBlockProps`, `TrackerProps`, `TrackerStatus`
 
 Props (`TrackerBlockProps`):
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `color` | `string` |  |  | Tailwind background class for this block (e.g. `"bg-success"`). |
-| `defaultBackgroundColor` | `string` |  |  | Background class used when `color` is omitted. |
+| `color` | `string` |  |  | Custom Tailwind background class escape hatch for this block. |
+| `defaultBackgroundColor` | `string` |  |  | Background class used when `status`, `color`, and `defaultStatus` are omitted. |
+| `defaultStatus` | `TrackerStatus` |  |  | Semantic background used when `status` and `color` are omitted. |
 | `disabledTooltip` | `boolean` |  |  | Skip the tooltip entirely for this block. |
 | `key` | `string \| number` |  |  | Stable React key when the data has no natural id. |
+| `status` | `TrackerStatus` |  |  | Semantic colour for this block. Prefer this over `color`. |
 | `tooltip` | `string` |  |  | Tooltip label shown on hover/focus. |
 
 Props (`TrackerProps`):
@@ -1476,7 +1578,8 @@ Extends: `React.ComponentProps<"div">`, `Pick<TrackerBlockProps, "disabledToolti
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `data` | `TrackerBlockProps[]` | yes | `[]` | Ordered list of blocks to render left-to-right. |
-| `defaultBackgroundColor` | `string` |  |  | Background class for blocks that omit their own `color`. |
+| `defaultBackgroundColor` | `string` |  |  | Background class escape hatch for blocks that omit `status`, `color`, and `defaultStatus`. |
+| `defaultStatus` | `TrackerStatus` |  | `"muted"` | Semantic background used when a block omits `status` and `color`. |
 
 Data slots: `tracker`, `tracker-block`
 
@@ -2473,34 +2576,11 @@ Props (`DatePickerProps`):
 | `label` | `string` |  |  | Optional `<label>` rendered above the trigger button; linked via `htmlFor` to the button's generated id. |
 | `className` | `string` |  |  | Additional classes merged onto the outermost wrapper `<div>`. |
 | `error` | `boolean` |  |  | When `true`, applies a destructive border to the trigger button. |
+| `errorMessage` | `React.ReactNode` |  |  | Inline message rendered below the trigger when validation fails. |
+| `placeholder` | `React.ReactNode` |  | `"Select a date"` | Placeholder shown when no date is selected. Defaults to `"Select a date"`. |
+| `formatDate` | `(date: Date) => React.ReactNode` |  | `(date) => new Intl.DateTimeFormat().format(date)` | Formats the selected date. Defaults to `Intl.DateTimeFormat`. |
 
-Data slots: `date-picker`
-
-### Date Picker With Month Year
-
-Import: `import { ... } from "@strait/ui/components/date-picker-with-month-year";`
-
-A date picker with dropdown selectors for month and year navigation.
-
-Exports: `DatePickerWithMonthYear`, `DatePickerWithMonthYearProps`
-
-Props (`DatePickerWithMonthYearProps`):
-
-| Prop | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `value` | `Date` |  |  | The current value (controlled). |
-| `onChange` | `(value: Date \| undefined) => void` |  |  | Handler that is called when the value changes. |
-| `defaultValue` | `Date` |  |  | The default value (uncontrolled). |
-| `disabled` | `boolean` |  |  | Whether the date picker is disabled. |
-| `className` | `string` |  |  | Additional CSS class name for the container. |
-| `error` | `boolean` |  |  | Error state for validation styling. |
-| `minValue` | `Date` |  |  | Minimum selectable date. |
-| `maxValue` | `Date` |  |  | Maximum selectable date. |
-| `placeholder` | `string` |  | `"Selecione uma data"` | Placeholder text when no date is selected |
-
-Data slots: `calendar`, `date-picker-content`, `date-picker-trigger`, `date-picker-with-month-year`, `dropdown`, `dropdown-content`, `dropdown-item`, `dropdown-nav`, `dropdown-trigger`
-
-Heavy dependencies: `react-day-picker`
+Data slots: `date-picker`, `date-picker-error`
 
 ### Date Range Picker
 
@@ -2521,30 +2601,9 @@ Props (`DateRangePickerProps`):
 | `error` | `boolean` |  |  | Indicates if the input has an error. |
 | `errorMessage` | `string` |  |  | The error message to display when the input has an error. |
 | `disabled` | `boolean` |  |  | Indicates if the input is disabled. |
+| `locale` | `string` |  | `"en-US"` | Locale passed to React Aria's date range field. Defaults to `"en-US"`. |
 
-Data slots: `date-range-picker`
-
-Heavy dependencies: `react-day-picker`
-
-### Date Range Picker With Presets
-
-Import: `import { ... } from "@strait/ui/components/date-range-picker-with-presets";`
-
-A date-range picker with a preset sidebar and an explicit apply/reset flow.
-
-Exports: `DateRangePickerWithPresets`, `DateRangePickerWithPresetsProps`
-
-Props (`DateRangePickerWithPresetsProps`):
-
-| Prop | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `value` | `DateRange` |  |  | The current value of the date range picker. |
-| `defaultValue` | `DateRange` |  |  | The default date range. |
-| `onChange` | `(value: DateRange \| undefined) => void` |  |  | Handler that is called when the value changes. |
-| `label` | `string` |  |  | The label for the date range picker. |
-| `className` | `string` |  |  | Additional CSS class name for the container. |
-
-Data slots: `date-range-picker-with-presets`
+Data slots: `date-range-picker`, `date-range-picker-error`
 
 Heavy dependencies: `react-day-picker`
 
@@ -2691,19 +2750,6 @@ Extends: `InputProps`
 | `endIconAriaLabel` | `string` |  |  | Accessible label for the trailing-edge endIcon button; required by screen readers when using an icon-only affordance. |
 
 Data slots: `end-icon`, `input`, `input-with-loader`, `start-icon`
-
-### Input with Show/Hide Password
-
-Import: `import { ... } from "@strait/ui/components/input-with-show-hide-password";`
-
-A minimal password field with a trailing eye-icon toggle that switches the input between masked (`"password"`) and revealed (`"text"`) mode.
-
-Exports: `InputWithShowHidePassword`, `InputWithShowHidePasswordProps`
-
-Props (`InputWithShowHidePasswordProps`):
-Extends: `Omit<InputProps, "type">`
-
-Data slots: `input-with-show-hide-password`
 
 ### Input with Start Icon
 

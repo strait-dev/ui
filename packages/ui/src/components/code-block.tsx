@@ -238,7 +238,7 @@ async function highlightToHtml(
  * Exposes one axis:
  * - `variant` — surface treatment.
  *   - `default` — the original muted surface (`bg-muted` with a `border`).
- *   - `dark` — forces a dark surface (`bg-neutral-950 text-neutral-50`)
+ *   - `dark` — forces the terminal surface tokens regardless of theme
  *     regardless of the active colour scheme, useful for terminal-style
  *     snippets or when the surrounding UI is already light.
  *   - `transparent` — removes the background and border entirely, letting
@@ -257,7 +257,7 @@ const codeBlockVariants = cva("overflow-hidden rounded-lg", {
      */
     variant: {
       default: "border bg-muted",
-      dark: "bg-neutral-950 text-neutral-50",
+      dark: "bg-surface-terminal text-surface-terminal-foreground",
       transparent: "bg-transparent",
     },
   },

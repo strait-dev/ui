@@ -18,8 +18,26 @@ describe("DatePicker", () => {
 
   it("displays a formatted date when value is provided", () => {
     const date = new Date(2025, 0, 15);
+    const formatted = new Intl.DateTimeFormat().format(date);
     render(<DatePicker value={date} />);
-    expect(screen.getByText(date.toLocaleDateString())).toBeInTheDocument();
+    expect(screen.getByText(formatted)).toBeInTheDocument();
+  });
+
+  it("supports custom placeholder and date formatting", () => {
+    const date = new Date(2025, 0, 15);
+    render(
+      <DatePicker
+        formatDate={() => "15 Jan 2025"}
+        placeholder="Pick a due date"
+        value={date}
+      />
+    );
+    expect(screen.getByText("15 Jan 2025")).toBeInTheDocument();
+  });
+
+  it("renders a custom placeholder when no value is provided", () => {
+    render(<DatePicker placeholder="Pick a due date" />);
+    expect(screen.getByText("Pick a due date")).toBeInTheDocument();
   });
 
   it("renders a label when label prop is provided", () => {
@@ -30,6 +48,11 @@ describe("DatePicker", () => {
   it("renders a required asterisk when required is true", () => {
     render(<DatePicker label="Due date" required />);
     expect(screen.getByText("*")).toBeInTheDocument();
+  });
+
+  it("renders inline validation copy", () => {
+    render(<DatePicker error errorMessage="Choose a date." />);
+    expect(screen.getByText("Choose a date.")).toBeInTheDocument();
   });
 
   it("trigger button is disabled when disabled prop is true", () => {

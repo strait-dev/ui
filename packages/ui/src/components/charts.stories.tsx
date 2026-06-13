@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
+import { expect, within } from "storybook/test";
 
 import {
   Card,
@@ -92,6 +93,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // #region Area -------------------------------------------------------------
+
+export const Playground: Story = {
+  render: (args) => (
+    <Frame>
+      <AreaChart {...args} />
+    </Frame>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvasElement.querySelector('[data-slot="chart"]')
+    ).toBeInTheDocument();
+    expect(canvas.getAllByText("Revenue").length).toBeGreaterThan(0);
+  },
+};
 
 export const Area: Story = {
   render: (args) => (

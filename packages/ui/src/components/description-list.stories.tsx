@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, within } from "storybook/test";
 
 import {
   DescriptionDetails,
@@ -67,6 +68,28 @@ type Story = StoryObj<typeof meta>;
 /* ------------------------------------------------------------------ */
 /* Vertical (default)                                                  */
 /* ------------------------------------------------------------------ */
+
+export const Playground: Story = {
+  render: (args) => (
+    <div className="max-w-sm">
+      <DescriptionList {...args}>
+        <DescriptionTerm>Full name</DescriptionTerm>
+        <DescriptionDetails>Alice Martin</DescriptionDetails>
+        <DescriptionTerm>Email</DescriptionTerm>
+        <DescriptionDetails>alice@example.com</DescriptionDetails>
+        <DescriptionTerm>Department</DescriptionTerm>
+        <DescriptionDetails>Engineering — Platform</DescriptionDetails>
+        <DescriptionTerm>Location</DescriptionTerm>
+        <DescriptionDetails>San Francisco, CA</DescriptionDetails>
+      </DescriptionList>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText("Full name")).toBeInTheDocument();
+    await expect(canvas.getByText("Alice Martin")).toBeInTheDocument();
+  },
+};
 
 /** Default stacked layout — each term/details pair sits above the next. */
 export const Vertical: Story = {

@@ -45,4 +45,14 @@ describe("DateRangePicker", () => {
       render(<DateRangePicker onChange={vi.fn()} value={{ from, to }} />)
     ).not.toThrow();
   });
+
+  it("renders inline validation copy", () => {
+    render(<DateRangePicker error errorMessage="Select an end date." />);
+    expect(screen.getByText("Select an end date.")).toBeInTheDocument();
+  });
+
+  it("disables the calendar trigger", () => {
+    render(<DateRangePicker disabled />);
+    expect(screen.getAllByRole("button").at(-1)).toBeDisabled();
+  });
 });

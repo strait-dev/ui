@@ -5,7 +5,7 @@
 [![CI](https://github.com/strait-dev/ui/actions/workflows/ci.yml/badge.svg)](https://github.com/strait-dev/ui/actions/workflows/ci.yml)
 [![published with provenance](https://img.shields.io/badge/provenance-npm-3b82f6?logo=npm)](https://docs.npmjs.com/generating-provenance-statements)
 
-Strait's design system — **120+ accessible, composable React components** built on
+Strait's design system — **123+ accessible, composable React components** built on
 [Tailwind CSS v4](https://tailwindcss.com) and [Base UI](https://base-ui.com), themeable
 through a single stylesheet and shipped as one tree-shakeable module per component.
 

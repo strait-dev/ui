@@ -46,7 +46,7 @@ const meta: Meta<typeof CodeBlock> = {
           "",
           "The `variant` prop controls the surface treatment:",
           "- `default` — muted background with border (original).",
-          "- `dark` — forced dark surface (`bg-neutral-950`) for terminal-style snippets.",
+          "- `dark` — forced terminal surface tokens for terminal-style snippets.",
           "- `transparent` — no background or border; blends into any container.",
         ].join("\n"),
       },
@@ -241,7 +241,7 @@ export const Dark: Story = {
     docs: {
       description: {
         story:
-          "Forces a dark surface (`bg-neutral-950 text-neutral-50`) regardless of the active colour scheme. Perfect for terminal-style install commands or shell snippets where a dark canvas is always expected.",
+          "Forces the terminal surface tokens regardless of the active colour scheme. Perfect for terminal-style install commands or shell snippets where a dark canvas is always expected.",
       },
     },
   },

@@ -1,6 +1,6 @@
 # Strait UI
 
-> Strait UI (@strait/ui) is a React + Tailwind v4 design system of 120+ accessible components built on Base UI primitives. Every component ships as its own tree-shakeable subpath export, is styled with semantic design tokens and class-variance-authority recipes, and exposes a named `*Props` type. Components render a polymorphic root via the Base UI `render` prop and tag their parts with `data-slot` attributes for styling and testing.
+> Strait UI (@strait/ui) is a React + Tailwind v4 design system of 123+ accessible components built on Base UI primitives. Every component ships as its own tree-shakeable subpath export, is styled with semantic design tokens and class-variance-authority recipes, and exposes a named `*Props` type. Components render a polymorphic root via the Base UI `render` prop and tag their parts with `data-slot` attributes for styling and testing.
 
 ## Theming
 
@@ -40,6 +40,13 @@ Dark mode is a `.dark` class on (or above) the themed element — typically
 `<html>`. Tokens cascade, so toggling the class re-themes every component;
 `next-themes` is the recommended wiring.
 
+### Surface tokens
+
+Reusable surfaces are tokenized too: `--surface-raised` for elevated/floating
+containers, `--surface-subtle` for nested panels and toolbar wells,
+`--surface-terminal` / `--surface-terminal-foreground` for forced terminal/code
+surfaces, and `--overlay` for modal scrims.
+
 ## Actions
 
 - [Button](@strait/ui/components/button): The primary interactive control for actions and navigation.
@@ -54,6 +61,7 @@ Dark mode is a `.dark` class on (or above) the themed element — typically
 - [Autocomplete](@strait/ui/components/autocomplete): Optional arrow that visually connects the popup to its anchor.
 - [Calendar](@strait/ui/components/calendar): A styled date-picker calendar built on top of `react-day-picker`'s `DayPicker`.
 - [Checkbox](@strait/ui/components/checkbox): A binary toggle control that indicates a checked or unchecked state.
+- [Copy Field](@strait/ui/components/copy-field): Read-only field for tokens, IDs, commands, environment variables, and other exact values that users commonly need to copy.
 - [Date Selector](@strait/ui/components/date-selector): A compact date filter that selects by day, month, quarter, half-year, or year with `is` / `before` / `after` / `between` operators. Reorders into a popover or dialog by wrapping it; the day view reuses Calendar and the coarser periods render their own grids.
 - [Field](@strait/ui/components/field): Single form field: associates a label, control, description, and error.
 - [FileUpload](@strait/ui/components/file-upload): A drag-and-drop file upload zone with a browse button and a file list, built on the headless useFileUpload hook and native File APIs.
@@ -67,7 +75,6 @@ Dark mode is a `.dark` class on (or above) the themed element — typically
 - [Rating](@strait/ui/components/rating): A star rating input that supports controlled, uncontrolled, read-only, and disabled modes.
 - [Secret Input](@strait/ui/components/secret-input): A controlled text input purpose-built for secrets and API keys.
 - [Select](@strait/ui/components/select): Accessible single-value dropdown built on Base UI's `Select` primitive.
-- [Select Native](@strait/ui/components/select-native): Styled wrapper around the browser's native `<select>` element.
 - [Slider](@strait/ui/components/slider): A range-input control for selecting a numeric value (or range of values) by dragging one or more thumbs along a track.
 - [Switch](@strait/ui/components/switch): A toggle control that switches between on and off states.
 - [Textarea](@strait/ui/components/textarea): A multi-line text control for longer user input.
@@ -85,9 +92,11 @@ Dark mode is a `.dark` class on (or above) the themed element — typically
 - [Charts](@strait/ui/components/charts): Config-driven multi-series area chart.
 - [Code Block](@strait/ui/components/code-block): Read-only code display surface with Shiki-powered syntax highlighting, an optional language label, line numbers, and a clipboard copy button.
 - [Code Block Command](@strait/ui/components/code-block-command): A package-manager command block with tabs for npm, pnpm, yarn, and bun, a copy button that copies the active manager's command, and persistent manager selection via `localStorage`.
+- [Command Snippet](@strait/ui/components/command-snippet): Terminal-style command snippet with optional selectable commands.
 - [Config Row](@strait/ui/components/config-row): A single label/value row for settings panels, detail drawers, and info grids.
 - [DataGrid](@strait/ui/components/data-grid): Root component for the DataGrid system.
 - [Description List](@strait/ui/components/description-list): Semantic description list root (`<dl>`). Compose with DescriptionTerm and DescriptionDetails to build accessible key–value displays.
+- [Diff Snippet](@strait/ui/components/diff-snippet): Compact, read-only code-diff display for release notes, examples, and docs.
 - [Execution Trace Bar](@strait/ui/components/execution-trace-bar): Horizontal stacked proportional bar that visualises time or value breakdown across labelled segments, with per-segment tooltips and an optional legend.
 - [Filters](@strait/ui/components/filters): A faceted filter builder modelled on corr.sh's Filters.
 - [Item](@strait/ui/components/item): Flexible row-level container for list entries, menu rows, or card-like tiles in an ItemGroup.
@@ -164,9 +173,7 @@ Dark mode is a `.dark` class on (or above) the themed element — typically
 - [Date Field RAC](@strait/ui/components/datefield-rac): An accessible date field that renders each date part (year, month, day) as individually focusable, spinnable segments.
 - [Date Input](@strait/ui/components/date-input): A three-segment MM/DD/YYYY inline date editor with keyboard navigation.
 - [Date Picker](@strait/ui/components/date-picker): A single-date picker that reveals a calendar in a popover.
-- [Date Picker With Month Year](@strait/ui/components/date-picker-with-month-year): A date picker with dropdown selectors for month and year navigation.
 - [Date Range Picker](@strait/ui/components/date-range-picker): An inline date-range picker composed from React Aria Components primitives.
-- [Date Range Picker With Presets](@strait/ui/components/date-range-picker-with-presets): A date-range picker with a preset sidebar and an explicit apply/reset flow.
 - [ID Cell](@strait/ui/components/id-cell): Table cell that displays a truncated identifier with a copy-to-clipboard button, intended for use inside a data table column definition.
 - [Input OTP](@strait/ui/components/input-otp): One-time-password input that renders a fixed-length sequence of digit slots driven by the `input-otp` library.
 - [Input Password with Strength Indicator](@strait/ui/components/input-password-with-strength-indicator): A password field that reveals a live strength meter and per-requirement checklist after the user first focuses the input.
@@ -174,7 +181,6 @@ Dark mode is a `.dark` class on (or above) the themed element — typically
 - [Input with Inline Button](@strait/ui/components/input-with-inline-button): A text input with an attached button fused to its trailing edge, suitable for search bars, coupon fields, and newsletter sign-ups.
 - [Input with Inner Tags](@strait/ui/components/input-with-inner-tags): A tag-input field that renders inline Tag badges inside the input area, letting users build a list of values within a single control.
 - [Input with Loader](@strait/ui/components/input-with-loader): A text input that swaps its leading icon for an animated loading spinner while an async operation is in progress.
-- [Input with Show/Hide Password](@strait/ui/components/input-with-show-hide-password): A minimal password field with a trailing eye-icon toggle that switches the input between masked (`"password"`) and revealed (`"text"`) mode.
 - [Input with Start Icon](@strait/ui/components/input-with-start-icon): A text input with a decorative, non-interactive icon pinned to the leading edge — the standard pattern for search bars and filtered inputs.
 - [Number Input Percentage with Chevrons](@strait/ui/components/number-input-percentage-with-chevrons): A percentage number input (0–100 %) with stacked up/down chevron buttons, formatted with React Aria's `NumberField`.
 - [Number Input with Buttons](@strait/ui/components/number-input-with-buttons): A stepper-style number input with flanking decrement (−) and increment (+) buttons rendered on the left and right edges.

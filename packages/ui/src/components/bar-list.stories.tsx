@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
+import { expect, userEvent, within } from "storybook/test";
 
 import { BarList } from "./bar-list";
 
@@ -39,6 +40,14 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+export const Playground: Story = {
+  render: (args) => (
+    <div className="max-w-md">
+      <BarList {...args} />
+    </div>
+  ),
+};
+
 export const Default: Story = {
   render: (args) => (
     <div className="max-w-md">
@@ -69,7 +78,7 @@ export const Clickable: Story = {
     return (
       <div className="max-w-md space-y-3">
         <BarList
-          data={referrers}
+          data={referrers.map(({ name, value }) => ({ name, value }))}
           onValueChange={(row) => setSelected(row.name)}
           valueFormatter={numberFormatter}
         />
@@ -78,5 +87,14 @@ export const Clickable: Story = {
         </p>
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: /google\.com/i }));
+    await expect(
+      canvas.getByText(
+        (_, element) => element?.textContent === "Selected: google.com"
+      )
+    ).toBeInTheDocument();
   },
 };

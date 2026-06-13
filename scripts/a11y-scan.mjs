@@ -59,20 +59,35 @@ const browser = await chromium.launch();
 const ALLOWLIST = [
   {
     rule: "color-contrast",
-    // The brand-solid Button renders white text on the #FF4F00 brand colour
-    // (3.16:1, below WCAG AA). This is a deliberate brand-identity decision;
-    // see packages/ui/src/globals.css (--brand-foreground note). Matched on the
-    // computed selector because axe truncates the class list in node.html.
-    targetIncludes: ".bg-brand",
-    reason: "brand-solid: white-on-#FF4F00 is a deliberate brand exception",
+    // The brand-solid Button renders warm-white text on the #FF4F00 brand
+    // colour (3.16:1, below WCAG AA). This is a deliberate brand-identity
+    // decision; see packages/ui/src/globals.css (--brand-foreground note).
+    // Axe sometimes truncates class names in both target and node HTML, so also
+    // match the computed foreground/background pair reported by color-contrast.
+    targetIncludes: "bg-brand",
+    fgColor: "#fafaf9",
+    bgColor: "#ff4f00",
+    reason:
+      "brand-solid: warm-white-on-#FF4F00 is a deliberate brand exception",
   },
 ];
 
 function allowlistMatch(rule, node) {
   const target = (node?.target ?? []).join(" ");
-  return ALLOWLIST.find(
-    (a) => a.rule === rule && target.includes(a.targetIncludes)
-  );
+  const html = node?.html ?? "";
+  return ALLOWLIST.find((a) => {
+    if (a.rule !== rule) {
+      return false;
+    }
+    if (target.includes(a.targetIncludes) || html.includes(a.targetIncludes)) {
+      return true;
+    }
+    const contrast = node?.any?.find((check) => check.id === "color-contrast");
+    return (
+      contrast?.data?.fgColor === a.fgColor &&
+      contrast?.data?.bgColor === a.bgColor
+    );
+  });
 }
 
 const allowlisted = []; // {id, title, rule, reason, count}

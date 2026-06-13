@@ -1,0 +1,42 @@
+---
+title: Copy Field
+description: Read-only copyable value field with variants, statuses, affixes, and sensitive reveal support.
+---
+
+<ComponentPreview name="copy-field/demo" />
+
+## Playground
+
+Adjust value, label, surface, status, layout, and sensitive options live.
+
+<Playground name="copy-field" />
+
+## Examples
+
+### Sensitive values
+
+Set `sensitive` for secrets. The field masks the visible value until reveal, while copy still writes the original value.
+
+<ComponentPreview name="copy-field/sensitive" />
+
+### Variants
+
+Use `default`, `muted`, `ghost`, or `terminal` depending on the surrounding surface.
+
+<ComponentPreview name="copy-field/variants" />
+
+### Statuses
+
+Use `status` to communicate verified, warning, destructive, or info context without changing the copied value.
+
+<ComponentPreview name="copy-field/statuses" />
+
+### Inline layout
+
+Use `layout="inline"` for settings panels and metadata lists.
+
+<ComponentPreview name="copy-field/inline-layout" />
+
+## Reference
+
+<PropsTable name="copy-field" />

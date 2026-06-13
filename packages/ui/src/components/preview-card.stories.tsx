@@ -73,7 +73,7 @@ export const WithImage: Story = {
         <PreviewCardPositioner>
           <PreviewCardPopup>
             <div className="flex gap-3">
-              <div className="h-16 w-16 shrink-0 rounded-md bg-blue-100" />
+              <div className="h-16 w-16 shrink-0 rounded-md bg-brand/10" />
               <div className="flex flex-col gap-1">
                 <p className="font-semibold text-sm">React</p>
                 <p className="text-muted-foreground text-xs">

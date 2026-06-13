@@ -14,6 +14,8 @@
 // Storybook docs site); props.json is written to apps/docs/.generated/.
 //
 // Run: `bun scripts/generate-llms.ts` (idempotent).
+/// <reference types="node" />
+
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -46,7 +48,7 @@ const HEAVY = [
 ];
 
 const LIBRARY_SUMMARY =
-  "Strait UI (@strait/ui) is a React + Tailwind v4 design system of 120+ " +
+  "Strait UI (@strait/ui) is a React + Tailwind v4 design system of 123+ " +
   "accessible components built on Base UI primitives. Every component ships " +
   "as its own tree-shakeable subpath export, is styled with semantic design " +
   "tokens and class-variance-authority recipes, and exposes a named `*Props` " +
@@ -93,7 +95,14 @@ Note: \`--primary\` is warm ink (default buttons), distinct from \`--brand\`.
 
 Dark mode is a \`.dark\` class on (or above) the themed element — typically
 \`<html>\`. Tokens cascade, so toggling the class re-themes every component;
-\`next-themes\` is the recommended wiring.`;
+\`next-themes\` is the recommended wiring.
+
+### Surface tokens
+
+Reusable surfaces are tokenized too: \`--surface-raised\` for elevated/floating
+containers, \`--surface-subtle\` for nested panels and toolbar wells,
+\`--surface-terminal\` / \`--surface-terminal-foreground\` for forced terminal/code
+surfaces, and \`--overlay\` for modal scrims.`;
 
 // Category ordering for the generated index (most actionable first).
 const CATEGORY_ORDER = [

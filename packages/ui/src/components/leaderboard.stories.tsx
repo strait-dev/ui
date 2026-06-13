@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
+import { expect, userEvent, within } from "storybook/test";
 
 import { Badge } from "./badge";
 import {
@@ -13,7 +14,7 @@ import {
   LeaderboardTitle,
 } from "./leaderboard";
 
-type Row = { name: string; value: number; flag?: string };
+type Row = { name: string; value: number; code?: string };
 
 const pages: Row[] = [
   { name: "/home", value: 4200 },
@@ -24,11 +25,11 @@ const pages: Row[] = [
 ];
 
 const countries: Row[] = [
-  { name: "United States", value: 5230, flag: "🇺🇸" },
-  { name: "Germany", value: 3110, flag: "🇩🇪" },
-  { name: "Japan", value: 2480, flag: "🇯🇵" },
-  { name: "Brazil", value: 1870, flag: "🇧🇷" },
-  { name: "France", value: 1240, flag: "🇫🇷" },
+  { name: "United States", value: 5230, code: "US" },
+  { name: "Germany", value: 3110, code: "DE" },
+  { name: "Japan", value: 2480, code: "JP" },
+  { name: "Brazil", value: 1870, code: "BR" },
+  { name: "France", value: 1240, code: "FR" },
 ];
 
 const numberFormatter = (v: number) => v.toLocaleString();
@@ -55,6 +56,33 @@ const meta: Meta<typeof Leaderboard> = {
 export default meta;
 
 type Story = StoryObj<typeof meta>;
+
+export const Playground: Story = {
+  render: () => {
+    const max = Math.max(...pages.map((p) => p.value));
+    return (
+      <div className="max-w-md">
+        <Leaderboard>
+          <LeaderboardHeader>
+            <LeaderboardTitle>Top pages</LeaderboardTitle>
+          </LeaderboardHeader>
+          <LeaderboardContent>
+            {pages.map((page) => (
+              <LeaderboardItem
+                key={page.name}
+                maxValue={max}
+                value={page.value}
+              >
+                <LeaderboardStart>{page.name}</LeaderboardStart>
+                <LeaderboardEnd>{numberFormatter(page.value)}</LeaderboardEnd>
+              </LeaderboardItem>
+            ))}
+          </LeaderboardContent>
+        </Leaderboard>
+      </div>
+    );
+  },
+};
 
 export const TopPages: Story = {
   render: () => {
@@ -103,7 +131,12 @@ export const WithHeaderAction: Story = {
                 value={country.value}
               >
                 <LeaderboardStart>
-                  <span aria-hidden>{country.flag}</span>
+                  <span
+                    aria-hidden
+                    className="min-w-7 rounded bg-muted px-1.5 py-0.5 text-center text-muted-foreground text-xs"
+                  >
+                    {country.code}
+                  </span>
                   {country.name}
                 </LeaderboardStart>
                 <LeaderboardEnd>
@@ -147,6 +180,15 @@ export const Interactive: Story = {
         </p>
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: /\/home/i }));
+    await expect(
+      canvas.getByText(
+        (_, element) => element?.textContent === "Selected: /home"
+      )
+    ).toBeInTheDocument();
   },
 };
 

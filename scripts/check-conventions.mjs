@@ -18,10 +18,7 @@ const files = readdirSync(DIR).filter(
 // a thin re-export shim over banner.tsx. Every other rule applies to every
 // component with no exceptions.
 const EXEMPT = {
-  // code-block.tsx intentionally forces a dark terminal surface
-  // (bg-neutral-950 text-neutral-50) regardless of the active colour scheme;
-  // there is no semantic token for an always-dark surface.
-  rawColor: new Set(["code-block.tsx"]),
+  rawColor: new Set([]),
   dataSlot: new Set([
     "direction.tsx",
     "checkbox-tree.tsx",
@@ -144,6 +141,32 @@ for (const file of files) {
       }
     });
   }
+
+  // Rule: broad transitions are too easy to over-animate. Components should
+  // transition the specific properties they visually change.
+  lines.forEach((ln, i) => {
+    if (/\btransition-all\b/.test(ln)) {
+      add(
+        file,
+        "transitionAll",
+        `:${i + 1} transition-all (use explicit transition-* utilities)`
+      );
+    }
+  });
+
+  // Rule: overlay scrims use the themeable overlay token, not hard-coded black.
+  lines.forEach((ln, i) => {
+    if (
+      /data-slot="[\w-]*overlay"|[\w-]*overlay/.test(src) &&
+      /\bbg-black\//.test(ln)
+    ) {
+      add(
+        file,
+        "overlayToken",
+        `:${i + 1} overlay scrim uses bg-black/* (use bg-overlay)`
+      );
+    }
+  });
 
   // Rule: focus ring must be ring-3 (not ring-1, ring-2, ring-4+).
   // Only flags *focus* rings: focus-visible:ring-N, data-[focus-visible]:ring-N,

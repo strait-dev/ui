@@ -1,20 +1,24 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect } from "storybook/test";
 
 import { Tracker, type TrackerBlockProps } from "./tracker";
 
-function dayStatus(index: number): { color: string; label: string } {
+function dayStatus(index: number): {
+  status: TrackerBlockProps["status"];
+  label: string;
+} {
   if (index % 13 === 0) {
-    return { color: "bg-destructive", label: "Outage" };
+    return { status: "destructive", label: "Outage" };
   }
   if (index % 7 === 0) {
-    return { color: "bg-warning", label: "Degraded" };
+    return { status: "warning", label: "Degraded" };
   }
-  return { color: "bg-success", label: "Operational" };
+  return { status: "success", label: "Operational" };
 }
 
 const uptime: TrackerBlockProps[] = Array.from({ length: 40 }, (_, i) => {
-  const { color, label } = dayStatus(i);
-  return { color, tooltip: `Day ${i + 1}: ${label}` };
+  const { status, label } = dayStatus(i);
+  return { status, tooltip: `Day ${i + 1}: ${label}` };
 });
 
 const meta: Meta<typeof Tracker> = {
@@ -41,6 +45,19 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+export const Playground: Story = {
+  render: (args) => (
+    <div className="max-w-2xl">
+      <Tracker {...args} />
+    </div>
+  ),
+  play: ({ canvasElement }) => {
+    expect(
+      canvasElement.querySelectorAll('[data-slot="tracker-block"]').length
+    ).toBe(40);
+  },
+};
+
 export const Uptime: Story = {
   render: (args) => (
     <div className="max-w-2xl">
@@ -62,11 +79,11 @@ export const FewBlocks: Story = {
     <div className="max-w-md">
       <Tracker
         data={[
-          { color: "bg-success", tooltip: "Operational" },
-          { color: "bg-success", tooltip: "Operational" },
-          { color: "bg-warning", tooltip: "Degraded performance" },
-          { color: "bg-success", tooltip: "Operational" },
-          { color: "bg-destructive", tooltip: "Major outage" },
+          { status: "success", tooltip: "Operational" },
+          { status: "success", tooltip: "Operational" },
+          { status: "warning", tooltip: "Degraded performance" },
+          { status: "success", tooltip: "Operational" },
+          { status: "destructive", tooltip: "Major outage" },
         ]}
       />
     </div>
@@ -78,7 +95,7 @@ export const AllOperational: Story = {
     <div className="max-w-2xl">
       <Tracker
         data={Array.from({ length: 30 }, () => ({
-          color: "bg-success",
+          status: "success",
           tooltip: "Operational",
         }))}
       />

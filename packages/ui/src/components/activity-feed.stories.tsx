@@ -114,7 +114,9 @@ export const CustomEmptyState: Story = {
     items: [],
     emptyState: (
       <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
-        <span className="text-2xl">🕐</span>
+        <span className="rounded-lg bg-muted px-2 py-1 font-medium text-xs">
+          No events
+        </span>
         <p className="text-sm">Nothing has happened yet.</p>
       </div>
     ),

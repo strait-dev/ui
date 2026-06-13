@@ -4527,6 +4527,180 @@
     "dependencies": []
   },
   {
+    "name": "Command Snippet",
+    "importPath": "@strait/ui/components/command-snippet",
+    "category": "Data Display",
+    "description": "Terminal-style command snippet with optional selectable commands.",
+    "exports": [
+      "CommandSnippet",
+      "CommandSnippetCommands",
+      "CommandSnippetItem",
+      "CommandSnippetManager",
+      "CommandSnippetProps",
+      "commandSnippetVariants"
+    ],
+    "types": [
+      {
+        "name": "CommandSnippetProps",
+        "props": [
+          {
+            "name": "command",
+            "type": "string",
+            "optional": true,
+            "description": "Single command to display when selectable variants are unnecessary."
+          },
+          {
+            "name": "items",
+            "type": "CommandSnippetItem[]",
+            "optional": true,
+            "description": "Generic selectable commands, useful for Docker, curl, Homebrew, or CLIs."
+          },
+          {
+            "name": "commands",
+            "type": "CommandSnippetCommands",
+            "optional": true,
+            "description": "Package-manager-specific commands, converted to selectable items."
+          },
+          {
+            "name": "managerOrder",
+            "type": "CommandSnippetManager[]",
+            "optional": true,
+            "default": "defaultManagerOrder",
+            "description": "Order used when converting `commands` to package-manager items."
+          },
+          {
+            "name": "defaultManager",
+            "type": "CommandSnippetManager",
+            "optional": true,
+            "default": "\"bun\"",
+            "description": "Initially selected package manager when `commands` is provided."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "optional": true,
+            "description": "Controlled selected item value."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string",
+            "optional": true,
+            "description": "Initial selected item value for uncontrolled snippets."
+          },
+          {
+            "name": "onValueChange",
+            "type": "(value: string, item: CommandSnippetItem) => void",
+            "optional": true,
+            "description": "Called when a selectable command is chosen."
+          },
+          {
+            "name": "title",
+            "type": "string",
+            "optional": true,
+            "description": "Optional title shown in the header."
+          },
+          {
+            "name": "prompt",
+            "type": "string",
+            "optional": true,
+            "default": "\"$\"",
+            "description": "Prompt prefix shown before the command."
+          },
+          {
+            "name": "showPrompt",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to show the prompt prefix."
+          },
+          {
+            "name": "showHeader",
+            "type": "boolean",
+            "optional": true,
+            "description": "Force the header on/off. Omit to derive from title, tabs, and copy."
+          },
+          {
+            "name": "wrap",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether long commands wrap instead of scrolling horizontally."
+          },
+          {
+            "name": "maxHeight",
+            "type": "number | string",
+            "optional": true,
+            "description": "Constrains the body height; numeric values are treated as pixels."
+          },
+          {
+            "name": "copyable",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to show a clipboard button for the active command."
+          },
+          {
+            "name": "copyLabel",
+            "type": "string",
+            "optional": true,
+            "default": "\"Copy command\"",
+            "description": "Accessible label for the copy button."
+          },
+          {
+            "name": "onCopy",
+            "type": "(command: string) => void",
+            "optional": true,
+            "description": "Called after a command is copied."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"section\">, \"children\">",
+          "VariantProps<typeof commandSnippetVariants>"
+        ],
+        "inheritedProps": [],
+        "extendsHtml": [
+          "section"
+        ]
+      }
+    ],
+    "variants": {
+      "variant": [
+        "terminal",
+        "card",
+        "muted",
+        "minimal"
+      ],
+      "size": [
+        "xs",
+        "sm",
+        "default",
+        "lg"
+      ]
+    },
+    "defaultVariants": {
+      "variant": "terminal",
+      "size": "default"
+    },
+    "slots": [
+      "command-snippet",
+      "command-snippet-body",
+      "command-snippet-command",
+      "command-snippet-header",
+      "command-snippet-item",
+      "command-snippet-item-list",
+      "command-snippet-prompt",
+      "command-snippet-title"
+    ],
+    "parts": [
+      {
+        "name": "CommandSnippet",
+        "slot": "command-snippet",
+        "description": "Terminal-style command snippet with optional selectable commands."
+      }
+    ],
+    "dependencies": []
+  },
+  {
     "name": "Command",
     "importPath": "@strait/ui/components/command",
     "category": "Navigation",
@@ -5006,6 +5180,187 @@
         "name": "CopyButton",
         "slot": "copy-button",
         "description": "Icon button that copies a string to the clipboard and shows a transient checkmark as confirmation."
+      }
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "Copy Field",
+    "importPath": "@strait/ui/components/copy-field",
+    "category": "Forms",
+    "description": "Read-only field for tokens, IDs, commands, environment variables, and other exact values that users commonly need to copy.",
+    "exports": [
+      "CopyField",
+      "CopyFieldProps",
+      "copyFieldRootVariants",
+      "copyFieldVariants"
+    ],
+    "types": [
+      {
+        "name": "CopyFieldProps",
+        "props": [
+          {
+            "name": "value",
+            "type": "string",
+            "optional": false,
+            "description": "String displayed in the field and copied by the button."
+          },
+          {
+            "name": "label",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Optional visible label above or beside the copyable value."
+          },
+          {
+            "name": "description",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Optional helper text below the copyable value."
+          },
+          {
+            "name": "prefix",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Content rendered before the value inside the control."
+          },
+          {
+            "name": "suffix",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Content rendered after the value and before actions inside the control."
+          },
+          {
+            "name": "monospace",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to use monospace styling for the displayed value."
+          },
+          {
+            "name": "truncate",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to truncate the displayed value on one line."
+          },
+          {
+            "name": "sensitive",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether to treat the value as sensitive and mask it by default."
+          },
+          {
+            "name": "revealed",
+            "type": "boolean",
+            "optional": true,
+            "description": "Controlled reveal state for sensitive values."
+          },
+          {
+            "name": "defaultRevealed",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Initial reveal state for uncontrolled sensitive values."
+          },
+          {
+            "name": "onRevealChange",
+            "type": "(revealed: boolean) => void",
+            "optional": true,
+            "description": "Called when the reveal state changes."
+          },
+          {
+            "name": "maskCharacter",
+            "type": "string",
+            "optional": true,
+            "default": "\"•\"",
+            "description": "Character used when masking sensitive values."
+          },
+          {
+            "name": "revealLabel",
+            "type": "string",
+            "optional": true,
+            "default": "\"Show\"",
+            "description": "Accessible and visible label for the reveal action."
+          },
+          {
+            "name": "hideLabel",
+            "type": "string",
+            "optional": true,
+            "default": "\"Hide\"",
+            "description": "Accessible and visible label for the hide action."
+          },
+          {
+            "name": "copyable",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to show the copy button."
+          },
+          {
+            "name": "copyLabel",
+            "type": "string",
+            "optional": true,
+            "description": "Accessible label for the copy button."
+          },
+          {
+            "name": "onCopy",
+            "type": "(value: string) => void",
+            "optional": true,
+            "description": "Called after the value is copied."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"div\">, \"children\">",
+          "VariantProps<typeof copyFieldRootVariants>",
+          "VariantProps<typeof copyFieldVariants>"
+        ],
+        "inheritedProps": [],
+        "extendsHtml": [
+          "div"
+        ]
+      }
+    ],
+    "variants": {
+      "variant": [
+        "default",
+        "muted",
+        "ghost",
+        "terminal"
+      ],
+      "size": [
+        "xs",
+        "sm",
+        "default",
+        "lg"
+      ],
+      "status": [
+        "default",
+        "success",
+        "warning",
+        "destructive",
+        "info"
+      ]
+    },
+    "defaultVariants": {
+      "variant": "default",
+      "size": "default",
+      "status": "default"
+    },
+    "slots": [
+      "copy-field",
+      "copy-field-control",
+      "copy-field-description",
+      "copy-field-label",
+      "copy-field-main",
+      "copy-field-reveal",
+      "copy-field-value"
+    ],
+    "parts": [
+      {
+        "name": "CopyField",
+        "slot": "copy-field",
+        "description": "Read-only field for tokens, IDs, commands, environment variables, and other exact values that users commonly need to copy."
       }
     ],
     "dependencies": []
@@ -5819,104 +6174,6 @@
     "dependencies": []
   },
   {
-    "name": "Date Picker With Month Year",
-    "importPath": "@strait/ui/components/date-picker-with-month-year",
-    "category": "Patterns",
-    "description": "A date picker with dropdown selectors for month and year navigation.",
-    "exports": [
-      "DatePickerWithMonthYear",
-      "DatePickerWithMonthYearProps"
-    ],
-    "types": [
-      {
-        "name": "DatePickerWithMonthYearProps",
-        "props": [
-          {
-            "name": "value",
-            "type": "Date",
-            "optional": true,
-            "description": "The current value (controlled)."
-          },
-          {
-            "name": "onChange",
-            "type": "(value: Date | undefined) => void",
-            "optional": true,
-            "description": "Handler that is called when the value changes."
-          },
-          {
-            "name": "defaultValue",
-            "type": "Date",
-            "optional": true,
-            "description": "The default value (uncontrolled)."
-          },
-          {
-            "name": "disabled",
-            "type": "boolean",
-            "optional": true,
-            "description": "Whether the date picker is disabled."
-          },
-          {
-            "name": "className",
-            "type": "string",
-            "optional": true,
-            "description": "Additional CSS class name for the container."
-          },
-          {
-            "name": "error",
-            "type": "boolean",
-            "optional": true,
-            "description": "Error state for validation styling."
-          },
-          {
-            "name": "minValue",
-            "type": "Date",
-            "optional": true,
-            "description": "Minimum selectable date."
-          },
-          {
-            "name": "maxValue",
-            "type": "Date",
-            "optional": true,
-            "description": "Maximum selectable date."
-          },
-          {
-            "name": "placeholder",
-            "type": "string",
-            "optional": true,
-            "default": "\"Selecione uma data\"",
-            "description": "Placeholder text when no date is selected"
-          }
-        ],
-        "extends": [],
-        "inheritedProps": [],
-        "extendsHtml": []
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "calendar",
-      "date-picker-content",
-      "date-picker-trigger",
-      "date-picker-with-month-year",
-      "dropdown",
-      "dropdown-content",
-      "dropdown-item",
-      "dropdown-nav",
-      "dropdown-trigger"
-    ],
-    "parts": [
-      {
-        "name": "DatePickerWithMonthYear",
-        "slot": "date-picker-with-month-year",
-        "description": "A date picker with dropdown selectors for month and year navigation."
-      }
-    ],
-    "dependencies": [
-      "react-day-picker"
-    ]
-  },
-  {
     "name": "Date Picker",
     "importPath": "@strait/ui/components/date-picker",
     "category": "Patterns",
@@ -5970,6 +6227,26 @@
             "type": "boolean",
             "optional": true,
             "description": "When `true`, applies a destructive border to the trigger button."
+          },
+          {
+            "name": "errorMessage",
+            "type": "React.ReactNode",
+            "optional": true,
+            "description": "Inline message rendered below the trigger when validation fails."
+          },
+          {
+            "name": "placeholder",
+            "type": "React.ReactNode",
+            "optional": true,
+            "default": "\"Select a date\"",
+            "description": "Placeholder shown when no date is selected. Defaults to `\"Select a date\"`."
+          },
+          {
+            "name": "formatDate",
+            "type": "(date: Date) => React.ReactNode",
+            "optional": true,
+            "default": "(date) => new Intl.DateTimeFormat().format(date)",
+            "description": "Formats the selected date. Defaults to `Intl.DateTimeFormat`."
           }
         ],
         "extends": [],
@@ -5980,7 +6257,8 @@
     "variants": {},
     "defaultVariants": {},
     "slots": [
-      "date-picker"
+      "date-picker",
+      "date-picker-error"
     ],
     "parts": [
       {
@@ -5990,71 +6268,6 @@
       }
     ],
     "dependencies": []
-  },
-  {
-    "name": "Date Range Picker With Presets",
-    "importPath": "@strait/ui/components/date-range-picker-with-presets",
-    "category": "Patterns",
-    "description": "A date-range picker with a preset sidebar and an explicit apply/reset flow.",
-    "exports": [
-      "DateRangePickerWithPresets",
-      "DateRangePickerWithPresetsProps"
-    ],
-    "types": [
-      {
-        "name": "DateRangePickerWithPresetsProps",
-        "props": [
-          {
-            "name": "value",
-            "type": "DateRange",
-            "optional": true,
-            "description": "The current value of the date range picker."
-          },
-          {
-            "name": "defaultValue",
-            "type": "DateRange",
-            "optional": true,
-            "description": "The default date range."
-          },
-          {
-            "name": "onChange",
-            "type": "(value: DateRange | undefined) => void",
-            "optional": true,
-            "description": "Handler that is called when the value changes."
-          },
-          {
-            "name": "label",
-            "type": "string",
-            "optional": true,
-            "description": "The label for the date range picker."
-          },
-          {
-            "name": "className",
-            "type": "string",
-            "optional": true,
-            "description": "Additional CSS class name for the container."
-          }
-        ],
-        "extends": [],
-        "inheritedProps": [],
-        "extendsHtml": []
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "date-range-picker-with-presets"
-    ],
-    "parts": [
-      {
-        "name": "DateRangePickerWithPresets",
-        "slot": "date-range-picker-with-presets",
-        "description": "A date-range picker with a preset sidebar and an explicit apply/reset flow."
-      }
-    ],
-    "dependencies": [
-      "react-day-picker"
-    ]
   },
   {
     "name": "Date Range Picker",
@@ -6110,6 +6323,13 @@
             "type": "boolean",
             "optional": true,
             "description": "Indicates if the input is disabled."
+          },
+          {
+            "name": "locale",
+            "type": "string",
+            "optional": true,
+            "default": "\"en-US\"",
+            "description": "Locale passed to React Aria's date range field. Defaults to `\"en-US\"`."
           }
         ],
         "extends": [],
@@ -6120,7 +6340,8 @@
     "variants": {},
     "defaultVariants": {},
     "slots": [
-      "date-range-picker"
+      "date-range-picker",
+      "date-range-picker-error"
     ],
     "parts": [
       {
@@ -6907,6 +7128,146 @@
         "name": "DialogTrigger",
         "slot": "dialog-trigger",
         "description": "Button or element that opens the Dialog when activated."
+      }
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "Diff Snippet",
+    "importPath": "@strait/ui/components/diff-snippet",
+    "category": "Data Display",
+    "description": "Compact, read-only code-diff display for release notes, examples, and docs.",
+    "exports": [
+      "DiffSnippet",
+      "DiffSnippetLine",
+      "DiffSnippetLineType",
+      "DiffSnippetProps",
+      "diffSnippetVariants"
+    ],
+    "types": [
+      {
+        "name": "DiffSnippetProps",
+        "props": [
+          {
+            "name": "lines",
+            "type": "DiffSnippetLine[]",
+            "optional": false,
+            "description": "Ordered diff rows to render."
+          },
+          {
+            "name": "filename",
+            "type": "string",
+            "optional": true,
+            "description": "Optional filename shown in the header."
+          },
+          {
+            "name": "language",
+            "type": "string",
+            "optional": true,
+            "description": "Optional language label shown in the header."
+          },
+          {
+            "name": "copyable",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to show a clipboard button for the diff text."
+          },
+          {
+            "name": "showLineNumbers",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether to render a numbered gutter beside each row."
+          },
+          {
+            "name": "lineNumberStart",
+            "type": "number",
+            "optional": true,
+            "default": "1",
+            "description": "First value used by the numbered gutter."
+          },
+          {
+            "name": "showMarkers",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether to render generated diff markers."
+          },
+          {
+            "name": "highlightChanges",
+            "type": "boolean",
+            "optional": true,
+            "default": "true",
+            "description": "Whether semantic rows receive tinted backgrounds and intent text."
+          },
+          {
+            "name": "wrap",
+            "type": "boolean",
+            "optional": true,
+            "default": "false",
+            "description": "Whether long lines wrap instead of scrolling horizontally."
+          },
+          {
+            "name": "maxHeight",
+            "type": "number | string",
+            "optional": true,
+            "description": "Constrains the body height; numeric values are treated as pixels."
+          },
+          {
+            "name": "emptyMessage",
+            "type": "React.ReactNode",
+            "optional": true,
+            "default": "\"No changes\"",
+            "description": "Message rendered when `lines` is empty."
+          }
+        ],
+        "extends": [
+          "Omit<React.ComponentProps<\"section\">, \"children\">",
+          "VariantProps<typeof diffSnippetVariants>"
+        ],
+        "inheritedProps": [],
+        "extendsHtml": [
+          "section"
+        ]
+      }
+    ],
+    "variants": {
+      "variant": [
+        "default",
+        "muted",
+        "terminal",
+        "minimal"
+      ],
+      "size": [
+        "xs",
+        "sm",
+        "default",
+        "lg"
+      ]
+    },
+    "defaultVariants": {
+      "variant": "default",
+      "size": "default"
+    },
+    "slots": [
+      "diff-snippet",
+      "diff-snippet-body",
+      "diff-snippet-code",
+      "diff-snippet-content",
+      "diff-snippet-empty",
+      "diff-snippet-filename",
+      "diff-snippet-header",
+      "diff-snippet-language",
+      "diff-snippet-line",
+      "diff-snippet-line-number",
+      "diff-snippet-marker"
+    ],
+    "parts": [
+      {
+        "name": "DiffSnippet",
+        "slot": "diff-snippet",
+        "description": "Compact, read-only code-diff display for release notes, examples, and docs."
       }
     ],
     "dependencies": []
@@ -9187,40 +9548,6 @@
         "name": "InputWithLoader",
         "slot": "input-with-loader",
         "description": "A text input that swaps its leading icon for an animated loading spinner while an async operation is in progress."
-      }
-    ],
-    "dependencies": []
-  },
-  {
-    "name": "Input with Show/Hide Password",
-    "importPath": "@strait/ui/components/input-with-show-hide-password",
-    "category": "Patterns",
-    "description": "A minimal password field with a trailing eye-icon toggle that switches the input between masked (`\"password\"`) and revealed (`\"text\"`) mode.",
-    "exports": [
-      "InputWithShowHidePassword",
-      "InputWithShowHidePasswordProps"
-    ],
-    "types": [
-      {
-        "name": "InputWithShowHidePasswordProps",
-        "props": [],
-        "extends": [
-          "Omit<InputProps, \"type\">"
-        ],
-        "inheritedProps": [],
-        "extendsHtml": []
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "input-with-show-hide-password"
-    ],
-    "parts": [
-      {
-        "name": "InputWithShowHidePassword",
-        "slot": "input-with-show-hide-password",
-        "description": "A minimal password field with a trailing eye-icon toggle that switches the input between masked (`\"password\"`) and revealed (`\"text\"`) mode."
       }
     ],
     "dependencies": []
@@ -12554,42 +12881,6 @@
     "dependencies": []
   },
   {
-    "name": "Select Native",
-    "importPath": "@strait/ui/components/select-native",
-    "category": "Forms",
-    "description": "Styled wrapper around the browser's native `<select>` element.",
-    "exports": [
-      "SelectNative",
-      "SelectNativeProps"
-    ],
-    "types": [
-      {
-        "name": "SelectNativeProps",
-        "props": [],
-        "extends": [
-          "React.ComponentProps<\"select\">"
-        ],
-        "inheritedProps": [],
-        "extendsHtml": [
-          "select"
-        ]
-      }
-    ],
-    "variants": {},
-    "defaultVariants": {},
-    "slots": [
-      "select-native"
-    ],
-    "parts": [
-      {
-        "name": "SelectNative",
-        "slot": "select-native",
-        "description": "Styled wrapper around the browser's native `<select>` element."
-      }
-    ],
-    "dependencies": []
-  },
-  {
     "name": "Select With Search And Button",
     "importPath": "@strait/ui/components/select-with-search-and-button",
     "category": "Patterns",
@@ -15780,7 +16071,8 @@
     "exports": [
       "Tracker",
       "TrackerBlockProps",
-      "TrackerProps"
+      "TrackerProps",
+      "TrackerStatus"
     ],
     "types": [
       {
@@ -15790,13 +16082,19 @@
             "name": "color",
             "type": "string",
             "optional": true,
-            "description": "Tailwind background class for this block (e.g. `\"bg-success\"`)."
+            "description": "Custom Tailwind background class escape hatch for this block."
           },
           {
             "name": "defaultBackgroundColor",
             "type": "string",
             "optional": true,
-            "description": "Background class used when `color` is omitted."
+            "description": "Background class used when `status`, `color`, and `defaultStatus` are omitted."
+          },
+          {
+            "name": "defaultStatus",
+            "type": "TrackerStatus",
+            "optional": true,
+            "description": "Semantic background used when `status` and `color` are omitted."
           },
           {
             "name": "disabledTooltip",
@@ -15809,6 +16107,12 @@
             "type": "string | number",
             "optional": true,
             "description": "Stable React key when the data has no natural id."
+          },
+          {
+            "name": "status",
+            "type": "TrackerStatus",
+            "optional": true,
+            "description": "Semantic colour for this block. Prefer this over `color`."
           },
           {
             "name": "tooltip",
@@ -15835,7 +16139,14 @@
             "name": "defaultBackgroundColor",
             "type": "string",
             "optional": true,
-            "description": "Background class for blocks that omit their own `color`."
+            "description": "Background class escape hatch for blocks that omit `status`, `color`, and `defaultStatus`."
+          },
+          {
+            "name": "defaultStatus",
+            "type": "TrackerStatus",
+            "optional": true,
+            "default": "\"muted\"",
+            "description": "Semantic background used when a block omits `status` and `color`."
           }
         ],
         "extends": [

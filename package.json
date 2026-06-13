@@ -38,18 +38,19 @@
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.15",
+    "@biomejs/biome": "2.4.16",
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
-    "@commitlint/cli": "^21.0.1",
-    "@commitlint/config-conventional": "^21.0.1",
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
+    "@types/node": "^25.9.2",
     "http-server": "^14.1.1",
-    "lefthook": "^2.1.8",
+    "lefthook": "^2.1.9",
     "playwright-core": "^1.60.0",
     "ts-morph": "^28.0.0",
-    "turbo": "^2.9.14",
+    "turbo": "^2.9.17",
     "typescript": "^6.0.3",
-    "ultracite": "^7.7.0",
+    "ultracite": "^7.8.2",
     "wait-on": "^9.0.10"
   }
 }

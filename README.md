@@ -7,7 +7,7 @@
 
 **`@strait/ui`** is Strait's design system — a custom React component library built on
 [Tailwind CSS v4](https://tailwindcss.com), [Base UI](https://base-ui.com), and a set of
-semantic design tokens. It ships **120+ accessible, composable components** spanning forms,
+semantic design tokens. It ships **123+ accessible, composable components** spanning forms,
 overlays, data display, navigation, and rich application patterns, all themeable through a
 single stylesheet.
 
@@ -178,7 +178,7 @@ predictable:
 
 ## Component catalog
 
-120+ components, grouped the same way they appear in Storybook. Import any of them from
+123+ components, grouped the same way they appear in Storybook. Import any of them from
 `@strait/ui/components/<name>`.
 
 ### Actions
@@ -187,27 +187,29 @@ predictable:
 ### Data Display
 `activity-feed` · `aspect-ratio` · `avatar` · `badge` · `bar-list` · `bulk-action-bar` ·
 `card` · `carousel` · `chart` · `charts` · `code-block` · `code-block-command` ·
-`config-row` · `data-table` · `description-list` · `execution-trace-bar` · `filter` ·
+`command-snippet` · `config-row` · `data-grid` · `description-list` · `diff-snippet` ·
+`execution-trace-bar` · `filters` ·
 `item` · `json-viewer` · `leaderboard` · `metric-card` · `qr-code` ·
-`radial-gauge` · `relative-time-card` · `status-badge` · `table` · `tag-group` ·
-`timeline` · `tracker` · `tree`
+`radial-gauge` · `relative-time-card` · `sortable` · `status-badge` · `table` ·
+`tag-group` · `timeline` · `tracker` · `tree`
 
 ### Feedback
 `alert` · `banner` · `chart-empty-state` · `empty` · `feature-lock` · `notice-banner` ·
 `progress` · `skeleton` · `spinner` · `toast`
 
 ### Forms
-`calendar` · `checkbox` · `combobox` · `field` · `file-upload` · `form` · `input` ·
-`input-group` · `label` · `multiselect` · `native-select` · `radio-group` · `rating` ·
-`secret-input` · `select` · `select-native` · `slider` · `switch` · `textarea`
+`autocomplete` · `calendar` · `checkbox` · `date-selector` · `field` · `file-upload` ·
+`form` · `input` · `input-group` · `label` · `multiselect` · `native-select` ·
+`radio-group` · `rating` · `secret-input` · `select` · `slider` · `switch` ·
+`textarea` · `copy-field`
 
 ### Layout
-`accordion` · `collapsible` · `direction` · `resizable` · `scroll-area` · `separator` ·
-`shell`
+`accordion` · `collapsible` · `direction` · `frame` · `resizable` · `scroll-area` ·
+`separator` · `shell`
 
 ### Navigation
 `breadcrumb` · `command` · `command-menu` · `menubar` · `navigation-menu` ·
-`navigation-rail` · `pagination` · `sidebar` · `stepper` · `tabs`
+`navigation-rail` · `pagination` · `scrollspy` · `sidebar` · `stepper` · `tabs`
 
 ### Overlays
 `alert-dialog` · `context-menu` · `detail-sheet` · `dialog` · `drawer` · `dropdown-menu` ·
@@ -217,11 +219,11 @@ predictable:
 Higher-level, opinionated compositions built from the primitives above:
 
 `calendar-rac` · `calendar-with-presets` · `card-checkbox` · `checkbox-tree` · `credenza` ·
-`date-input` · `date-picker` · `date-picker-with-month-year` · `date-range-picker` ·
-`date-range-picker-with-presets` · `datefield-rac` · `id-cell` · `input-otp` ·
+`date-input` · `date-picker` · `date-range-picker` · `datefield-rac` · `id-cell` ·
+`input-otp` ·
 `input-password-with-strength-indicator` · `input-with-addons` ·
 `input-with-inline-button` · `input-with-inner-tags` · `input-with-loader` ·
-`input-with-show-hide-password` · `input-with-start-icon` ·
+`input-with-start-icon` ·
 `number-input-percentage-with-chevrons` · `number-input-with-buttons` ·
 `number-input-with-chevrons` · `password-input` · `phone-input` · `preview-card` ·
 `range-calendar-with-presets` · `select-with-search` · `select-with-search-and-button`
