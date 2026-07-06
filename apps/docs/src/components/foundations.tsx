@@ -89,24 +89,169 @@ export function RadiusScale() {
   );
 }
 
-const SHADOWS = [
-  "shadow-2xs",
-  "shadow-xs",
-  "shadow-sm",
-  "shadow-md",
-  "shadow-lg",
-  "shadow-xl",
-  "shadow-2xl",
-];
+const SHADOW_NOTES: Record<string, string> = {
+  sm: "cards at rest",
+  md: "floating surfaces",
+  lg: "hover-lift, modals",
+};
 
-/** The elevation (shadow) scale. */
+/** The tokenized elevation scale (light and dark values live in the CSS). */
 export function ShadowScale() {
   return (
-    <div className="flex flex-wrap gap-6">
-      {SHADOWS.map((s) => (
-        <div className="flex flex-col items-center gap-2" key={s}>
-          <div className={`size-16 rounded-lg bg-card ${s}`} />
-          <code className="text-fd-muted-foreground text-xs">{s}</code>
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      {tokens.shadows.map((s) => (
+        <div className="flex flex-col gap-2" key={s.name}>
+          <div
+            className="h-24 rounded-lg bg-card ring-1 ring-foreground/10"
+            style={{ boxShadow: `var(--shadow-${s.name})` }}
+          />
+          <code className="text-fd-muted-foreground text-xs">
+            shadow-{s.name}
+          </code>
+          <span className="text-fd-muted-foreground text-xs">
+            {SHADOW_NOTES[s.name]}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const DURATION_NOTES: Record<string, string> = {
+  instant: "color & opacity feedback — hover fills, active states",
+  fast: "focus rings, toggles, switches, tooltips",
+  base: "popovers, dropdowns, accordions, hover-lift",
+  slow: "dialogs, sheets, drawers, list-item entrances",
+  deliberate: "scroll reveals, staggered sections, page transitions",
+};
+
+const EASING_NOTES: Record<string, string> = {
+  out: "everything entering",
+  in: "everything exiting",
+  "in-out": "moves & resizes within the screen",
+};
+
+/**
+ * The motion duration ladder and easing curves. Hover a row to see its
+ * duration and the ease-out curve applied to a real transform.
+ */
+export function MotionScale() {
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col">
+        {tokens.durations.map((d) => (
+          <div
+            className="group flex items-center gap-4 border-fd-border border-b py-3"
+            key={d.name}
+          >
+            <div className="w-44 shrink-0">
+              <code className="text-xs">duration-(--duration-{d.name})</code>
+              <div className="text-fd-muted-foreground text-xs">
+                {d.value} · {DURATION_NOTES[d.name]}
+              </div>
+            </div>
+            <div
+              className="relative h-4 flex-1 overflow-hidden rounded-sm bg-primary/10"
+              style={{ containerType: "size" }}
+            >
+              <div
+                className="h-full w-4 rounded-sm bg-primary/60 transition-transform group-hover:translate-x-[calc(100cqw-1rem)]"
+                style={{
+                  transitionDuration: `var(--duration-${d.name})`,
+                  transitionTimingFunction: "var(--ease-out)",
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {tokens.easings.map((e) => (
+          <div
+            className="flex flex-col gap-1 rounded-lg border border-fd-border p-4"
+            key={e.name}
+          >
+            <code className="text-xs">ease-{e.name}</code>
+            <span className="text-fd-muted-foreground text-xs">{e.value}</span>
+            <span className="text-fd-muted-foreground text-xs">
+              {EASING_NOTES[e.name]}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const LAYER_NOTES: Record<string, string> = {
+  base: "page content",
+  sticky: "sticky headers, bulk-action bar",
+  overlay: "the modal scrim",
+  modal: "dialogs, sheets, drawers",
+  popover: "popovers, dropdowns, command",
+  toast: "sonner toasts, banners",
+  tooltip: "tooltips — always on top",
+};
+
+/** The z-index layer ladder, rendered as a stack from content to tooltip. */
+export function LayerStack() {
+  const layers = [...tokens.layers].reverse();
+  return (
+    <div className="flex flex-col gap-2">
+      {layers.map((l, i) => (
+        <div
+          className="flex items-center gap-4 rounded-lg border border-fd-border bg-card px-4 py-2"
+          key={l.name}
+          style={{
+            marginLeft: `${(layers.length - 1 - i) * 1.25}rem`,
+            boxShadow: "var(--shadow-sm)",
+          }}
+        >
+          <code className="w-36 shrink-0 text-xs">z-(--z-{l.name})</code>
+          <span className="w-10 shrink-0 text-right font-mono text-fd-muted-foreground text-xs">
+            {l.value}
+          </span>
+          <span className="truncate text-fd-muted-foreground text-xs">
+            {LAYER_NOTES[l.name]}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const ICON_SIZE_NOTES: Record<string, { tw: string; use: string }> = {
+  xs: { tw: "size-3", use: "badges, xs buttons" },
+  sm: { tw: "size-3.5", use: "sm buttons" },
+  md: { tw: "size-4", use: "default+ controls, menus" },
+  lg: { tw: "size-5", use: "empty states, callouts" },
+};
+
+/** The icon-size ladder rendered with a live Hugeicons specimen. */
+export function IconSizes() {
+  return (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {tokens.iconSizes.map((s) => (
+        <div
+          className="flex items-center gap-3 rounded-lg border border-fd-border p-4"
+          key={s.name}
+        >
+          <HugeiconsIcon
+            className="shrink-0 text-foreground"
+            icon={Settings01Icon}
+            style={{
+              width: `var(--icon-${s.name})`,
+              height: `var(--icon-${s.name})`,
+            }}
+          />
+          <div className="min-w-0">
+            <code className="text-xs">
+              --icon-{s.name} · {ICON_SIZE_NOTES[s.name]?.tw}
+            </code>
+            <div className="truncate text-fd-muted-foreground text-xs">
+              {ICON_SIZE_NOTES[s.name]?.use}
+            </div>
+          </div>
         </div>
       ))}
     </div>
@@ -157,7 +302,7 @@ export function IconGallery() {
           key={name}
         >
           <HugeiconsIcon className="text-foreground" icon={icon} />
-          <code className="truncate text-[10px] text-fd-muted-foreground">
+          <code className="truncate text-fd-muted-foreground text-micro">
             {name}
           </code>
         </div>

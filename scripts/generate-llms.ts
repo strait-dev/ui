@@ -102,7 +102,30 @@ Dark mode is a \`.dark\` class on (or above) the themed element — typically
 Reusable surfaces are tokenized too: \`--surface-raised\` for elevated/floating
 containers, \`--surface-subtle\` for nested panels and toolbar wells,
 \`--surface-terminal\` / \`--surface-terminal-foreground\` for forced terminal/code
-surfaces, and \`--overlay\` for modal scrims.`;
+surfaces, and \`--overlay\` for modal scrims.
+
+### Elevation, motion, and layering tokens
+
+Beyond colour, the system tokenizes elevation, motion, and stacking:
+
+- **Shadows** — \`--shadow-sm\` (cards at rest), \`--shadow-md\` (floating
+  surfaces, paired with \`ring-1 ring-foreground/10\`), \`--shadow-lg\`
+  (hover-lift, modals). Dark mode deepens the alpha; elevation there is
+  primarily the \`--surface-raised\` step plus the hairline ring.
+- **Motion durations** — \`--duration-instant\` (100ms) · \`--duration-fast\`
+  (150ms) · \`--duration-base\` (250ms) · \`--duration-slow\` (400ms) ·
+  \`--duration-deliberate\` (600ms), consumed as \`duration-(--duration-*)\`.
+  Exits run one step faster than enters. Easings: \`--ease-out\` for enters,
+  \`--ease-in\` for exits, \`--ease-in-out\` for moves/resizes.
+- **Z-index layers** — \`--z-base\` (0) · \`--z-sticky\` (100) · \`--z-overlay\`
+  (500) · \`--z-modal\` (510) · \`--z-popover\` (600) · \`--z-toast\` (700) ·
+  \`--z-tooltip\` (800), consumed as \`z-(--z-*)\`.
+- **Icon sizes** — \`--icon-xs\` (12px) · \`--icon-sm\` (14px) · \`--icon-md\`
+  (16px) · \`--icon-lg\` (20px), applied through each control's
+  \`[&_svg]:size-*\` selector.
+
+All are ordinary custom properties on \`:root\`, overridable the same way as
+colours.`;
 
 // Category ordering for the generated index (most actionable first).
 const CATEGORY_ORDER = [

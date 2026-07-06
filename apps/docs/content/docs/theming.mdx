@@ -4,9 +4,9 @@ description: Rebrand the entire system with a single token, and switch dark mode
 ---
 
 Strait's appearance is driven entirely by CSS custom properties. Every colour,
-radius, and surface is a semantic token; components reference the token, never a
-raw value. Theming — including dark mode — is therefore a matter of redefining a
-handful of variables.
+radius, surface, shadow, duration, and stacking layer is a semantic token;
+components reference the token, never a raw value. Theming — including dark
+mode — is therefore a matter of redefining a handful of variables.
 
 ## Rebrand with one colour
 
@@ -73,6 +73,12 @@ Tokens live in two layers in `globals.css`:
 A Tailwind `@theme inline` block then maps each token to a utility, so
 `--primary` becomes `bg-primary`, `--muted-foreground` becomes
 `text-muted-foreground`, and so on.
+
+Beyond colour, the same architecture covers
+[shadows](/docs/foundations/shadows), [motion durations and
+easings](/docs/foundations/motion), [z-index layers](/docs/foundations/layering),
+and [icon sizes](/docs/foundations/icons) — all ordinary custom properties on
+`:root`, overridable the same way as colours.
 
 ## Status & brand triads
 

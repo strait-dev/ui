@@ -16,6 +16,18 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 Icons inherit `currentColor` and size from their context. Inside controls like
 `Button`, mark a leading/trailing icon with `data-icon="inline-start"` /
-`data-icon="inline-end"` so spacing adjusts automatically. A sample of the set:
+`data-icon="inline-end"` so spacing adjusts automatically.
+
+## Sizes
+
+Icons sit on a four-step ladder. Each control's `[&_svg]:size-*` selector
+applies the right step automatically — never size an icon with an arbitrary
+value, only with another step:
+
+<IconSizes />
+
+## Gallery
+
+A sample of the set:
 
 <IconGallery />

@@ -1,0 +1,21 @@
+---
+title: Layering
+description: The z-index layer tokens that keep stacking predictable.
+---
+
+Every stacking context takes a layer token via `z-(--z-*)` — raw `z-50` and
+arbitrary `z-[N]` values are banned in component code (the `zIndexToken`
+contract rule enforces it). The ladder, from page content to tooltips:
+
+<LayerStack />
+
+The ordering is deliberate:
+
+- **Scrim and modal are adjacent** (500/510) so nothing wedges between a dialog
+  and its backdrop.
+- **Popovers sit above modals** because they open inside them.
+- **Toasts beat modals** so feedback is never hidden.
+- **Tooltips top everything.**
+- Hundred-steps leave room for app-level layers between tokens — `z-10` /
+  `z-20` remain available for local overlap inside a component's own stacking
+  context.

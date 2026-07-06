@@ -1,0 +1,20 @@
+---
+title: Motion
+description: The duration ladder and easing curves behind every animation.
+---
+
+Motion runs on five tokenized durations and three easing curves, consumed as
+`duration-(--duration-*)` and the `ease-*` utilities. Raw millisecond values
+are banned in component code — the `motionToken` contract rule enforces it.
+
+Three rules govern usage:
+
+- Animate **transform and opacity only**.
+- **Exits run one duration step faster than enters** — a popover that enters at
+  `base` exits at `fast` (`duration-(--duration-base)
+  data-closed:duration-(--duration-fast)`).
+- Everything respects the global `prefers-reduced-motion` kill-switch.
+
+Hover a row to preview its duration with the `ease-out` curve:
+
+<MotionScale />
