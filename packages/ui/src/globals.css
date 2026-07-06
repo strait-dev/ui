@@ -9,6 +9,12 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Font stacks (DESIGN.md §1): Instrument Sans for interface text, JetBrains
+     Mono for code. Defined here so the @theme inline mappings below resolve
+     and apps can rebrand by overriding these two variables. */
+  --font-sans:
+    "Instrument Sans Variable", "Instrument Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", monospace;
   /* Radius scale: 10px base → 8px medium, ~18px cards */
   --radius: 0.625rem;
   /* Warm-stone neutrals + orange accent */
@@ -156,6 +162,7 @@
      by default headings share the sans family. */
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 
   /* Typography scale — size bundles its own line-height / tracking / weight
      (Tailwind v4 modifier syntax), so `text-h1` etc. set all four at once.
@@ -259,7 +266,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    font-family: "Inter Variable", "Inter", system-ui, sans-serif;
+    font-family: var(--font-sans);
     @apply bg-background text-foreground;
   }
   html {
