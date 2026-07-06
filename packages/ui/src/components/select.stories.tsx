@@ -43,7 +43,7 @@ const meta = {
           "|-------|---------------|-------------------|",
           "| `sm` | `h-7` | `py-0.5 text-xs` |",
           "| `default` | `h-8` | `py-1 text-sm` |",
-          "| `lg` | `h-10` | `py-1.5 text-base` |",
+          "| `lg` | `h-9` | `py-1.5 text-sm` |",
           "",
           "Items are grouped with `SelectGroup` + `SelectLabel`.",
           "Separate groups visually with `SelectSeparator`.",
@@ -132,7 +132,7 @@ export const Sizes: Story = {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label>Large (lg) — h-10, text-base items</Label>
+        <Label>Large (lg) — h-9, text-sm items</Label>
         <Select size="lg">
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Select…" />

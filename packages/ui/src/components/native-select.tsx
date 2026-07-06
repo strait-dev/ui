@@ -15,7 +15,7 @@ export type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
    * Height preset for the select control.
    * - `sm`      — 28 px tall, tighter border radius.
    * - `default` — 32 px tall (unchanged default).
-   * - `lg`      — 36 px tall, slightly larger text.
+   * - `lg`      — 36 px tall.
    *
    * This does NOT map to the native HTML `size` attribute.
    * @defaultValue "default"
@@ -80,7 +80,7 @@ function NativeSelect({
           // Size axis — height and border-radius
           "data-[size=sm]:h-7 data-[size=sm]:rounded-lg data-[size=sm]:py-0.5",
           "data-[size=default]:h-8",
-          "data-[size=lg]:h-9 data-[size=lg]:rounded-lg data-[size=lg]:py-2 data-[size=lg]:text-base"
+          "data-[size=lg]:h-9 data-[size=lg]:rounded-lg data-[size=lg]:py-2 data-[size=lg]:text-sm"
         )}
         data-size={size}
         data-slot="native-select"

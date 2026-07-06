@@ -85,7 +85,7 @@ describe("Banner layout axis", () => {
 describe("Banner size axis", () => {
   it("applies default size padding", () => {
     render(<Banner>Default</Banner>);
-    expect(screen.getByRole("status")).toHaveClass("px-3", "py-2");
+    expect(screen.getByRole("status")).toHaveClass("px-3", "py-2.5");
   });
 
   it("applies sm size padding", () => {

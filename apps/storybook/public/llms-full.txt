@@ -490,7 +490,7 @@ Extends: `Omit<React.ComponentProps<"select">, "size">`
 
 | Prop | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 36 px tall, slightly larger text. |
+| `size` | `"sm" \| "default" \| "lg"` |  | `"default"` | Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 36 px tall. |
 
 Data slots: `native-select`, `native-select-icon`, `native-select-optgroup`, `native-select-option`, `native-select-wrapper`
 

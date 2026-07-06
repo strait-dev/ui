@@ -22,7 +22,7 @@ import { cn } from "../utils/index";
  * |-------|---------------|-------------------|
  * | `sm` | `h-7` | `py-0.5 text-xs` |
  * | `default` | `h-8` | `py-1 text-sm` |
- * | `lg` | `h-9` | `py-1.5 text-base` |
+ * | `lg` | `h-9` | `py-1.5 text-sm` |
  */
 export type SelectSize = "sm" | "default" | "lg";
 
@@ -258,7 +258,7 @@ function SelectTrigger({
         // size-specific overrides
         "data-[size=sm]:h-7 data-[size=sm]:rounded-lg",
         "data-[size=default]:h-8",
-        "data-[size=lg]:h-9 data-[size=lg]:text-base",
+        "data-[size=lg]:h-9 data-[size=lg]:text-sm",
         className
       )}
       data-size={size}
@@ -397,7 +397,7 @@ function SelectLabel({
  * |------|---------|-----------|
  * | `sm` | `py-0.5` | `text-xs` |
  * | `default` | `py-1` | `text-sm` |
- * | `lg` | `py-1.5` | `text-base` |
+ * | `lg` | `py-1.5` | `text-sm` |
  */
 function SelectItem({
   className,
@@ -427,7 +427,7 @@ function SelectItem({
         // size cascade from SelectContent group (default: py-1 text-sm)
         "py-1 text-sm",
         "group-data-[size=sm]/select-content:py-0.5 group-data-[size=sm]/select-content:text-xs",
-        "group-data-[size=lg]/select-content:py-1.5 group-data-[size=lg]/select-content:text-base",
+        "group-data-[size=lg]/select-content:py-1.5 group-data-[size=lg]/select-content:text-sm",
         className
       )}
       data-slot="select-item"
