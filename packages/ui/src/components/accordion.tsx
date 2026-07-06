@@ -233,7 +233,7 @@ function AccordionContent({
 }: AccordionPrimitive.Panel.Props) {
   return (
     <AccordionPrimitive.Panel
-      className="h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none"
+      className="h-(--accordion-panel-height) overflow-hidden text-sm transition-[height] duration-(--duration-base) ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none"
       data-slot="accordion-content"
       {...props}
     >

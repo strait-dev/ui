@@ -99,7 +99,7 @@ function PreviewCardPositioner({
 }: React.ComponentProps<typeof PreviewCardPrimitive.Positioner>) {
   return (
     <PreviewCardPrimitive.Positioner
-      className={cn("z-50", className)}
+      className={cn("z-(--z-popover)", className)}
       data-slot="preview-card-positioner"
       sideOffset={sideOffset}
       {...props}
@@ -158,7 +158,7 @@ function PreviewCardBackdrop({
 }: React.ComponentProps<typeof PreviewCardPrimitive.Backdrop>) {
   return (
     <PreviewCardPrimitive.Backdrop
-      className={cn("fixed inset-0 z-40", className)}
+      className={cn("fixed inset-0 z-(--z-overlay)", className)}
       data-slot="preview-card-backdrop"
       {...props}
     />

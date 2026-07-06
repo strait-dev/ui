@@ -294,7 +294,7 @@ function InputPasswordWithStrengthIndicator({
 
       {shouldShowIndicator ? (
         <div
-          className="overflow-hidden transition-[height,opacity] duration-200 ease-in-out"
+          className="overflow-hidden transition-[height,opacity] duration-(--duration-base) ease-in-out"
           data-slot="strength-indicator"
         >
           <div
@@ -308,7 +308,7 @@ function InputPasswordWithStrengthIndicator({
           >
             <div
               className={cn(
-                "h-full transition-[width,background-color] duration-500 ease-out",
+                "h-full transition-[width,background-color] duration-(--duration-slow) ease-out",
                 strengthColor
               )}
               data-slot="strength-progress-bar"
