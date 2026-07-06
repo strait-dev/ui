@@ -13,28 +13,28 @@
   },
   "dependencies": {
     "@strait/ui": "workspace:*",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
-    "@storybook/addon-a11y": "^10.4.1",
-    "@storybook/addon-docs": "^10.4.1",
-    "@storybook/addon-themes": "^10.4.1",
-    "@storybook/addon-vitest": "^10.4.1",
-    "@storybook/react-vite": "^10.4.1",
-    "@tailwindcss/vite": "^4.3.0",
-    "@types/react": "^19.2.15",
+    "@storybook/addon-a11y": "^10.4.6",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-themes": "^10.4.6",
+    "@storybook/addon-vitest": "^10.4.6",
+    "@storybook/react-vite": "^10.4.6",
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "^7.0.0-dev.20260524.1",
-    "@vitejs/plugin-react": "^6.0.2",
-    "@vitest/browser": "^4.1.7",
-    "@vitest/browser-playwright": "^4.1.7",
-    "chromatic": "^17.0.0",
-    "playwright": "^1.60.0",
-    "storybook": "^10.4.1",
-    "vite": "^8.0.14",
-    "vitest": "^4.1.7"
+    "@typescript/native-preview": "^7.0.0-dev.20260703.1",
+    "@vitejs/plugin-react": "^6.0.3",
+    "@vitest/browser": "^4.1.9",
+    "@vitest/browser-playwright": "^4.1.9",
+    "chromatic": "^18.0.1",
+    "playwright": "^1.61.1",
+    "storybook": "^10.4.6",
+    "vite": "^8.1.3",
+    "vitest": "^4.1.9"
   }
 }

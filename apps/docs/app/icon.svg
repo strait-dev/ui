@@ -1,4 +1,21 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="32" rx="7" fill="#1c1917" />
-  <text x="16" y="22" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">S</text>
+<svg
+  fill="none"
+  height="32"
+  viewBox="0 0 32 32"
+  width="32"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title>Strait</title>
+  <rect fill="#1c1917" height="32" rx="7" width="32" />
+  <text
+    fill="#ffffff"
+    font-family="Inter, system-ui, sans-serif"
+    font-size="18"
+    font-weight="700"
+    text-anchor="middle"
+    x="16"
+    y="22"
+  >
+    S
+  </text>
 </svg>
