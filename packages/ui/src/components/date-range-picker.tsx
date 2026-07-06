@@ -199,7 +199,7 @@ export function DateRangePicker({
           </Group>
           <Popover
             className={cn(
-              "z-50 w-auto rounded-lg border border-border bg-background p-2 shadow-md outline-hidden",
+              "z-(--z-popover) w-auto rounded-lg border border-border bg-background p-2 shadow-md outline-hidden",
               "data-entering:animate-in data-exiting:animate-out",
               "data-entering:fade-in-0 data-exiting:fade-out-0",
               "data-entering:zoom-in-95 data-exiting:zoom-out-95",

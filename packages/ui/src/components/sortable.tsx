@@ -209,7 +209,7 @@ function Sortable<T>({
 
   const itemIds = useMemo(() => value.map(getItemValue), [value, getItemValue]);
 
-  // The lifted clone shown in the overlay: the active child with z-50 layered on.
+  // The lifted clone shown in the overlay: the active child with z-(--z-popover) layered on.
   const overlayContent = useMemo(() => {
     if (activeId == null) {
       return null;
@@ -221,7 +221,7 @@ function Sortable<T>({
         child.props.value === activeId
       ) {
         result = cloneElement(child, {
-          className: cn(child.props.className, "z-50"),
+          className: cn(child.props.className, "z-(--z-popover)"),
         });
       }
     });
@@ -250,7 +250,7 @@ function Sortable<T>({
       {mounted &&
         createPortal(
           <DragOverlay
-            className={cn("z-50", activeId && "cursor-grabbing")}
+            className={cn("z-(--z-popover)", activeId && "cursor-grabbing")}
             dropAnimation={dropAnimationConfig}
             modifiers={modifiers}
           >
@@ -335,7 +335,7 @@ function SortableItem({
       <div
         className={cn(
           "outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
-          isDragging && "z-50 opacity-50",
+          isDragging && "z-(--z-popover) opacity-50",
           disabled && "opacity-50",
           className
         )}

@@ -36,7 +36,7 @@ const diffSnippetVariants = cva("overflow-hidden rounded-lg font-mono", {
     },
     /** Density preset for the snippet chrome and rows. */
     size: {
-      xs: "text-[0.6875rem]",
+      xs: "text-micro",
       sm: "text-xs",
       default: "text-xs",
       lg: "text-sm",

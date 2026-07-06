@@ -46,7 +46,7 @@ export type PopoverProps = PopoverPrimitive.Root.Props;
  *   control placement without nesting extra components.
  * - The content panel animates in/out with a slide + scale + fade keyed
  *   off `data-[side=*]` for the correct direction.
- * - The positioner carries `isolate z-50` to avoid stacking-context bleed.
+ * - The positioner carries `isolate z-(--z-popover)` to avoid stacking-context bleed.
  *
  * @example
  * ```tsx
@@ -125,7 +125,7 @@ function PopoverContent({
       <PopoverPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
-        className="isolate z-50"
+        className="isolate z-(--z-popover)"
         side={side}
         sideOffset={sideOffset}
       >
@@ -134,7 +134,7 @@ function PopoverContent({
             // Positioning / animation (keep verbatim)
             "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 data-closed:animate-out data-open:animate-in",
             // Shape / colour / layout (keep verbatim)
-            "z-50 flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-lg bg-popover text-popover-foreground shadow-md outline-hidden ring-1 ring-foreground/10 duration-100",
+            "z-(--z-popover) flex w-72 origin-(--transform-origin) flex-col gap-2.5 rounded-lg bg-popover text-popover-foreground shadow-md outline-hidden ring-1 ring-foreground/10 duration-(--duration-base) data-closed:duration-(--duration-fast)",
             // Size variants — padding + text
             size === "sm" && "p-2 text-xs",
             size === "default" && "p-2.5 text-sm",

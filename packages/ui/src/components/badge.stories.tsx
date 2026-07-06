@@ -30,6 +30,7 @@ const variantOptions: BadgeVariant[] = [
   "destructive",
   "invert",
   "primary-light",
+  "brand-light",
   "warning-light",
   "success-light",
   "info-light",
@@ -37,6 +38,7 @@ const variantOptions: BadgeVariant[] = [
   "invert-light",
   "secondary-light",
   "primary-outline",
+  "brand-outline",
   "warning-outline",
   "success-outline",
   "info-outline",
@@ -126,6 +128,7 @@ const solidVariants: BadgeVariant[] = [
 ];
 const lightVariants: BadgeVariant[] = [
   "primary-light",
+  "brand-light",
   "info-light",
   "success-light",
   "warning-light",
@@ -136,6 +139,7 @@ const lightVariants: BadgeVariant[] = [
 const outlineVariants: BadgeVariant[] = [
   "outline",
   "primary-outline",
+  "brand-outline",
   "info-outline",
   "success-outline",
   "warning-outline",

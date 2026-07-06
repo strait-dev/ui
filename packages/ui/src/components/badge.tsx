@@ -14,8 +14,10 @@ import { cn } from "../utils/index";
  * Exposes three axes:
  * - `variant` — colour and emphasis. Solid fills (`default`, `info`,
  *   `success`, `warning`, `destructive`, `invert`, `secondary`), tinted
- *   light fills (`*-light`), bordered outlines (`*-outline`), plus the
- *   low-emphasis `ghost` and `link` options.
+ *   light fills (`*-light`, including `brand-light`), and bordered outlines
+ *   (`*-outline`, including `brand-outline`) whose borders are tinted with
+ *   the intent colour at `/30` to match {@link Button}'s outline weights,
+ *   plus the low-emphasis `ghost` and `link` options.
  * - `size` — height/padding presets from `xs` through `xl`.
  * - `radius` — `lg` (default, rounded-lg square), `pill` (full-pill opt-in),
  *   `md` (rounded-md), or `sm` (subtle 4 px). Use `md` for tag chips inside
@@ -45,6 +47,8 @@ const badgeVariants = cva(
         invert: "bg-invert text-invert-foreground",
         "primary-light":
           "border-none bg-primary/10 text-primary dark:bg-primary/20",
+        "brand-light":
+          "border-none bg-brand/10 text-brand-accent dark:bg-brand/20",
         "warning-light":
           "border-none bg-warning/10 text-warning-accent dark:bg-warning/20",
         "success-light":
@@ -57,19 +61,21 @@ const badgeVariants = cva(
         "secondary-light":
           "border-none bg-secondary/50 text-secondary-foreground dark:bg-secondary/30",
         "primary-outline":
-          "border-border bg-background text-primary dark:bg-input/30",
+          "border-primary/30 bg-background text-primary dark:bg-input/30",
+        "brand-outline":
+          "border-brand/30 bg-background text-brand-accent dark:bg-input/30",
         "warning-outline":
-          "border-border bg-background text-warning-accent dark:bg-input/30",
+          "border-warning/30 bg-background text-warning-accent dark:bg-input/30",
         "success-outline":
-          "border-border bg-background text-success-accent dark:bg-input/30",
+          "border-success/30 bg-background text-success-accent dark:bg-input/30",
         "info-outline":
-          "border-border bg-background text-info-accent dark:bg-input/30",
+          "border-info/30 bg-background text-info-accent dark:bg-input/30",
         "destructive-outline":
-          "border-border bg-background text-destructive-accent dark:bg-input/30",
+          "border-destructive/30 bg-background text-destructive-accent dark:bg-input/30",
         "invert-outline":
-          "border-border bg-background text-foreground dark:bg-input/30",
+          "border-invert/30 bg-background text-foreground dark:bg-input/30",
         "secondary-outline":
-          "border-border bg-background text-secondary-foreground dark:bg-input/30",
+          "border-secondary bg-background text-secondary-foreground dark:border-secondary/60 dark:bg-input/30",
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",

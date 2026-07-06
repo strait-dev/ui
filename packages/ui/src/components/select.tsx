@@ -22,7 +22,7 @@ import { cn } from "../utils/index";
  * |-------|---------------|-------------------|
  * | `sm` | `h-7` | `py-0.5 text-xs` |
  * | `default` | `h-8` | `py-1 text-sm` |
- * | `lg` | `h-9` | `py-1.5 text-base` |
+ * | `lg` | `h-9` | `py-1.5 text-sm` |
  */
 export type SelectSize = "sm" | "default" | "lg";
 
@@ -258,7 +258,7 @@ function SelectTrigger({
         // size-specific overrides
         "data-[size=sm]:h-7 data-[size=sm]:rounded-lg",
         "data-[size=default]:h-8",
-        "data-[size=lg]:h-9 data-[size=lg]:text-base",
+        "data-[size=lg]:h-9 data-[size=lg]:text-sm",
         className
       )}
       data-size={size}
@@ -329,14 +329,14 @@ function SelectContent({
         align={align}
         alignItemWithTrigger={alignItemWithTrigger}
         alignOffset={alignOffset}
-        className="isolate z-50"
+        className="isolate z-(--z-popover)"
         side={side}
         sideOffset={sideOffset}
       >
         <SelectPrimitive.Popup
           className={cn(
             "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95",
-            "relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100",
+            "relative isolate z-(--z-popover) max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-(--duration-base) data-closed:duration-(--duration-fast)",
             "data-[align-trigger=true]:animate-none data-closed:animate-out data-open:animate-in",
             // group class enables cascade to SelectItem via group-data-[size=…]
             "group/select-content",
@@ -397,7 +397,7 @@ function SelectLabel({
  * |------|---------|-----------|
  * | `sm` | `py-0.5` | `text-xs` |
  * | `default` | `py-1` | `text-sm` |
- * | `lg` | `py-1.5` | `text-base` |
+ * | `lg` | `py-1.5` | `text-sm` |
  */
 function SelectItem({
   className,
@@ -427,7 +427,7 @@ function SelectItem({
         // size cascade from SelectContent group (default: py-1 text-sm)
         "py-1 text-sm",
         "group-data-[size=sm]/select-content:py-0.5 group-data-[size=sm]/select-content:text-xs",
-        "group-data-[size=lg]/select-content:py-1.5 group-data-[size=lg]/select-content:text-base",
+        "group-data-[size=lg]/select-content:py-1.5 group-data-[size=lg]/select-content:text-sm",
         className
       )}
       data-slot="select-item"

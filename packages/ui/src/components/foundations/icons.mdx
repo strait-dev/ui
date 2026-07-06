@@ -87,6 +87,44 @@ import { HugeiconsIcon } from "@hugeicons/react";
 <HugeiconsIcon icon={Search01Icon} className="size-4" />;
 ```
 
+## Sizes
+
+Icons sit on a four-step ladder (DESIGN.md §4). Each control's `[&_svg]:size-*`
+selector applies the right step automatically — never size an icon with an
+arbitrary value, only with another step.
+
+<div style={{ display: "flex", flexWrap: "wrap", gap: 16, margin: "16px 0" }}>
+  {[
+    ["--icon-xs", "size-3", "badges, xs buttons"],
+    ["--icon-sm", "size-3.5", "sm buttons"],
+    ["--icon-md", "size-4", "default+ controls, menus"],
+    ["--icon-lg", "size-5", "empty states, callouts"],
+  ].map(([token, tw, use]) => (
+    <div
+      key={token}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: 16,
+        borderRadius: "var(--radius-lg)",
+        border: "1px solid var(--border)",
+      }}
+    >
+      <HugeiconsIcon
+        icon={Settings01Icon}
+        style={{ width: `var(${token})`, height: `var(${token})` }}
+      />
+      <div>
+        <code style={{ fontSize: 12 }}>{token} · {tw}</code>
+        <div style={{ fontSize: 12, opacity: 0.7 }}>{use}</div>
+      </div>
+    </div>
+  ))}
+</div>
+
+## Gallery
+
 A representative selection of the icons used across the system is shown below —
 the full free library has thousands more.
 

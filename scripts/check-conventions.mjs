@@ -118,6 +118,39 @@ const EXEMPT = {
   ]),
 };
 
+// Files subject to the §18 control-height ladder (DESIGN.md §4): interactive
+// controls whose size axis must sit on h-6 / h-7 / h-8 / h-9 / h-10
+// (xs / sm / default / lg / xl). Inner elements are unconstrained — the rule
+// only inspects size-variant definitions and data-[size=…] height utilities.
+const CONTROL_FILES = new Set([
+  "autocomplete.tsx",
+  "button.tsx",
+  "date-input.tsx",
+  "input-otp.tsx",
+  "input-with-inline-button.tsx",
+  "input.tsx",
+  "multiselect.tsx",
+  "native-select.tsx",
+  "number-input-percentage-with-chevrons.tsx",
+  "number-input-with-buttons.tsx",
+  "number-input-with-chevrons.tsx",
+  "password-input.tsx",
+  "phone-input.tsx",
+  "secret-input.tsx",
+  "select-with-search-and-button.tsx",
+  "select-with-search.tsx",
+  "select.tsx",
+]);
+
+// The canonical control-height ladder: size step → required h-* value.
+const CONTROL_LADDER = {
+  xs: "6",
+  sm: "7",
+  default: "8",
+  lg: "9",
+  xl: "10",
+};
+
 const RAW_COLOR =
   /\b(?:bg|text|border|ring|fill|stroke|from|to|via)-(?:red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone)-\d{2,3}\b/;
 
@@ -251,6 +284,96 @@ for (const file of files) {
           `:${i + 1} bg-warning/25 retired resting fill (use /10 light, /15 dark only)`
         );
       }
+    }
+  });
+
+  // Rule §16 (fontSize): no arbitrary text-[…] values — the type scale plus
+  // text-micro are the only sanctioned steps (DESIGN.md §1).
+  lines.forEach((ln, i) => {
+    if (/\btext-\[[^\]]+\]/.test(ln)) {
+      add(
+        file,
+        "fontSize",
+        `:${i + 1} arbitrary text-[…] (use the type scale; text-micro is the smallest step)`
+      );
+    }
+  });
+
+  // Rule §17 (shadowToken): arbitrary shadow values may not embed raw colors.
+  // Token-colored arbitrary shadows (var(--border) hairlines etc.) stay legal;
+  // literal rgb/hsl/oklch/hex colors must move to a token (DESIGN.md §6).
+  lines.forEach((ln, i) => {
+    const shadows = ln.match(/(?:drop-|inset-)?shadow-\[[^\]]*\]/g) || [];
+    for (const s of shadows) {
+      if (/#[0-9a-fA-F]|(?:rgba?|hsla?|oklch|oklab)\(\s*(?!var\()/.test(s)) {
+        add(
+          file,
+          "shadowToken",
+          `:${i + 1} raw color in ${s.slice(0, 60)} (use shadow-sm/md/lg or a var(--token) color)`
+        );
+      }
+    }
+  });
+
+  // Rule §18 (controlHeight): control size variants sit on the h-6…h-10
+  // ladder. Checks the data-[size=…]:h-N form and single-line cva size
+  // entries (`lg: "h-9 …"`); inner-element heights are not inspected.
+  if (CONTROL_FILES.has(file)) {
+    lines.forEach((ln, i) => {
+      for (const m of ln.matchAll(
+        /data-\[size=(xs|sm|default|lg|xl)\]:h-([\d.]+)/g
+      )) {
+        if (m[2] !== CONTROL_LADDER[m[1]]) {
+          add(
+            file,
+            "controlHeight",
+            `:${i + 1} data-[size=${m[1]}]:h-${m[2]} (ladder requires h-${CONTROL_LADDER[m[1]]})`
+          );
+        }
+      }
+      const variantLine = ln.match(
+        /^\s*"?(xs|sm|default|lg|xl)"?:\s*"([^"]*)"/
+      );
+      if (variantLine) {
+        const [, step, classes] = variantLine;
+        for (const h of classes.matchAll(/(?<![\w-])h-([\d.]+)\b/g)) {
+          if (h[1] !== CONTROL_LADDER[step]) {
+            add(
+              file,
+              "controlHeight",
+              `:${i + 1} size ${step} uses h-${h[1]} (ladder requires h-${CONTROL_LADDER[step]})`
+            );
+          }
+        }
+      }
+    });
+  }
+
+  // Rule §19 (zIndexToken): stacking contexts take a layer token via
+  // z-(--z-*) — no raw z-30/z-40/z-50 or arbitrary z-[N] (DESIGN.md §8).
+  // z-10 / z-20 remain legal for local overlap inside a component's own
+  // stacking context (pinned cells, inset icons), which the layer ladder
+  // does not govern.
+  lines.forEach((ln, i) => {
+    if (/\bz-(?:30|40|50)\b|\bz-\[/.test(ln)) {
+      add(
+        file,
+        "zIndexToken",
+        `:${i + 1} raw z-index (use z-(--z-sticky|overlay|modal|popover|toast|tooltip))`
+      );
+    }
+  });
+
+  // Rule §5 (motionToken): no raw durations in transitions/animations — use
+  // duration-(--duration-*) so motion stays on the token ladder and exits can
+  // run one step faster than enters (DESIGN.md §7).
+  lines.forEach((ln, i) => {
+    if (/\bduration-\d|\bduration-\[/.test(ln)) {
+      add(
+        file,
+        "motionToken",
+        `:${i + 1} raw duration (use duration-(--duration-instant|fast|base|slow|deliberate))`
+      );
     }
   });
 

@@ -5,9 +5,9 @@ import { Meta } from "@storybook/addon-docs/blocks";
 # Theming
 
 Strait's appearance is driven entirely by CSS custom properties. Every colour,
-radius, and surface is a semantic token; components reference the token, never a
-raw value. Theming — including dark mode — is therefore a matter of redefining a
-handful of variables.
+radius, surface, shadow, duration, and stacking layer is a semantic token;
+components reference the token, never a raw value. Theming — including dark
+mode — is therefore a matter of redefining a handful of variables.
 
 ## Token architecture
 
@@ -110,6 +110,28 @@ terminal/code surfaces can be re-themed without chasing component classes:
 
 Override these alongside your brand when your product needs a flatter, higher
 contrast, or more dimensional visual language.
+
+## Elevation, motion & layering tokens
+
+Beyond colour, the system tokenizes elevation, motion, and stacking — all
+ordinary custom properties on `:root`, overridable the same way as colours:
+
+- **Shadows** — `--shadow-sm` (cards at rest), `--shadow-md` (floating
+  surfaces, paired with `ring-1 ring-foreground/10`), and `--shadow-lg`
+  (hover-lift, modals). Dark mode deepens the alpha; elevation there is
+  primarily the `--surface-raised` step plus the hairline ring. See
+  **Foundations → Shadows**.
+- **Motion durations** — `--duration-instant` (100ms), `--duration-fast`
+  (150ms), `--duration-base` (250ms), `--duration-slow` (400ms), and
+  `--duration-deliberate` (600ms), consumed as `duration-(--duration-*)`.
+  Exits run one step faster than enters. The `ease-out` / `ease-in` /
+  `ease-in-out` utilities map to the system curves. See
+  **Foundations → Motion**.
+- **Z-index layers** — `--z-base` through `--z-tooltip`, consumed as
+  `z-(--z-*)`, so tooltips always beat toasts, toasts beat modals, and nothing
+  wedges between a dialog and its scrim. See **Foundations → Layers**.
+- **Icon sizes** — `--icon-xs` through `--icon-lg`, applied through each
+  control's `[&_svg]:size-*` selector. See **Foundations → Icons**.
 
 ## Status & brand triads
 

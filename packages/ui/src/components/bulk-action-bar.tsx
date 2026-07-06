@@ -45,7 +45,7 @@ type BulkActionBarProps = {
    * Positioning strategy.
    *
    * - `"static"` — no position utility applied; the consumer controls placement.
-   * - `"fixed"` — `fixed bottom-6 left-1/2 -translate-x-1/2 z-50`.
+   * - `"fixed"` — `fixed bottom-6 left-1/2 -translate-x-1/2 z-(--z-sticky)`.
    *
    * Defaults to `"static"`.
    */
@@ -116,7 +116,7 @@ function BulkActionBar({
       <div
         className={cn(
           "flex items-center gap-2 rounded-lg border bg-background px-3 py-1.5 shadow-lg",
-          isFixed && "fixed bottom-6 left-1/2 z-50 -translate-x-1/2",
+          isFixed && "fixed bottom-6 left-1/2 z-(--z-sticky) -translate-x-1/2",
           className
         )}
         data-slot="bulk-action-bar"

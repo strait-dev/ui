@@ -38,7 +38,7 @@ const tooltipContentVariants = cva(
     "data-closed:fade-out-0",
     "data-closed:zoom-out-95",
     // Layout & shape — preserved across all variants
-    "z-50 inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md",
+    "z-(--z-tooltip) inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md",
     // Kbd child styling — preserved across all variants
     "has-data-[slot=kbd]:pr-1.5",
     "data-[state=delayed-open]:animate-in",
@@ -46,7 +46,7 @@ const tooltipContentVariants = cva(
     "data-open:animate-in",
     "**:data-[slot=kbd]:relative",
     "**:data-[slot=kbd]:isolate",
-    "**:data-[slot=kbd]:z-50",
+    "**:data-[slot=kbd]:z-(--z-tooltip)",
     "**:data-[slot=kbd]:rounded-sm",
   ].join(" "),
   {
@@ -214,7 +214,7 @@ function TooltipContent({
       <TooltipPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
-        className="isolate z-50"
+        className="isolate z-(--z-tooltip)"
         side={side}
         sideOffset={sideOffset}
       >
@@ -227,7 +227,7 @@ function TooltipContent({
           {/* Arrow rotated 45° to form a diamond tip pointing at the trigger */}
           <TooltipPrimitive.Arrow
             className={cn(
-              "z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px]",
+              "z-(--z-tooltip) size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px]",
               "data-[side=bottom]:top-1",
               "data-[side=inline-end]:top-1/2! data-[side=inline-start]:top-1/2! data-[side=left]:top-1/2! data-[side=right]:top-1/2!",
               "data-[side=inline-start]:-right-1 data-[side=left]:-right-1",

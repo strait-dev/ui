@@ -1,8 +1,8 @@
 import { withThemeByClassName } from "@storybook/addon-themes";
 import type { Preview } from "@storybook/react-vite";
 
-// Fonts referenced by the Tailwind theme (Inter + JetBrains Mono).
-import "@fontsource-variable/inter";
+// Fonts referenced by the Tailwind theme (Instrument Sans + JetBrains Mono).
+import "@fontsource-variable/instrument-sans";
 import "@fontsource-variable/jetbrains-mono";
 // The library's global stylesheet (Tailwind v4 + design tokens + keyframes).
 import "@strait/ui/css";
@@ -22,7 +22,16 @@ const preview: Preview = {
           "Getting Started",
           ["Introduction", "Installation", "Theming", "Contributing"],
           "Foundations",
-          ["Colors", "Typography", "Spacing", "Radius", "Shadows", "Icons"],
+          [
+            "Colors",
+            "Typography",
+            "Spacing",
+            "Radius",
+            "Shadows",
+            "Motion",
+            "Layers",
+            "Icons",
+          ],
           "*",
         ],
       },
@@ -40,7 +49,7 @@ const preview: Preview = {
           padding: "2rem",
           background: "var(--background)",
           color: "var(--foreground)",
-          fontFamily: "'Inter Variable', system-ui, sans-serif",
+          fontFamily: "'Instrument Sans Variable', system-ui, sans-serif",
         }}
       >
         <Story />

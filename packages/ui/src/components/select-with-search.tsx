@@ -398,9 +398,7 @@ export function SelectWithSearch({
               placeholder={searchPlaceholder}
               value={searchInputValue}
             />
-            <div className="max-h-[300px] overflow-hidden">
-              {renderContent()}
-            </div>
+            <div className="max-h-72 overflow-hidden">{renderContent()}</div>
           </Command>
         </PopoverContent>
       </Popover>

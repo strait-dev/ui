@@ -1,0 +1,58 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Layers" />
+
+export const LAYERS = [
+  ["tooltip", 800, "tooltips — always on top"],
+  ["toast", 700, "sonner toasts, banners"],
+  ["popover", 600, "popovers, dropdowns, command"],
+  ["modal", 510, "dialogs, sheets, drawers"],
+  ["overlay", 500, "the modal scrim"],
+  ["sticky", 100, "sticky headers, bulk-action bar"],
+  ["base", 0, "page content"],
+];
+
+# Layers
+
+Every stacking context takes a layer token via `z-(--z-*)` (DESIGN.md §8) —
+raw `z-50` and arbitrary `z-[N]` values are banned in component code (the
+`zIndexToken` contract rule enforces it). The ladder, from tooltips down to
+page content:
+
+<div style={{ display: "flex", flexDirection: "column", gap: 8, margin: "16px 0" }}>
+  {LAYERS.map(([name, value, use], i) => (
+    <div
+      key={name}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
+        marginLeft: (LAYERS.length - 1 - i) * 20,
+        padding: "8px 16px",
+        borderRadius: "var(--radius-lg)",
+        border: "1px solid var(--border)",
+        background: "var(--card)",
+        boxShadow: "var(--shadow-sm)",
+      }}
+    >
+      <code style={{ width: 150, flexShrink: 0, fontSize: 12 }}>
+        z-(--z-{name})
+      </code>
+      <span style={{ width: 36, flexShrink: 0, textAlign: "right", fontSize: 12, opacity: 0.7 }}>
+        {value}
+      </span>
+      <span style={{ fontSize: 12, opacity: 0.7 }}>{use}</span>
+    </div>
+  ))}
+</div>
+
+The ordering is deliberate:
+
+- **Scrim and modal are adjacent** (500/510) so nothing wedges between a dialog
+  and its backdrop.
+- **Popovers sit above modals** because they open inside them.
+- **Toasts beat modals** so feedback is never hidden.
+- **Tooltips top everything.**
+- Hundred-steps leave room for app-level layers between tokens — `z-10` /
+  `z-20` remain available for local overlap inside a component's own stacking
+  context.

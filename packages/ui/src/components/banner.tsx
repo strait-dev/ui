@@ -56,7 +56,7 @@ const bannerVariants = cva("flex items-center justify-between gap-3 text-sm", {
     },
     size: {
       sm: "px-2.5 py-1.5",
-      default: "px-3 py-2",
+      default: "px-3 py-2.5",
     },
   },
   defaultVariants: {

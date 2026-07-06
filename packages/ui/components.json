@@ -77,7 +77,7 @@
             "name": "loopFocus",
             "type": "boolean | undefined",
             "optional": true,
-            "description": "Whether to loop keyboard focus back to the first item when the end of the list is reached while using the arrow keys."
+            "description": "Deprecated following the [APG guidance update](https://github.com/w3c/aria-practices/pull/3434) to remove roving focus."
           },
           {
             "name": "onValueChange",
@@ -265,7 +265,7 @@
             "name": "actionsRef",
             "type": "React.RefObject<AlertDialogRoot.Actions | null> | undefined",
             "optional": true,
-            "description": "A ref to imperative actions. - `unmount`: When specified, the alert dialog will not be unmounted when closed. Instead, the `unmount` function must be called to unmount the alert dialog manually. Useful when the alert dialog's animation is controlled by an external library. - `close`: Closes the alert dialog imperatively when called."
+            "description": "A ref to imperative actions. - `unmount`: Manually unmounts the alert dialog. Call this after any externally controlled closing animation finishes. - `close`: Closes the alert dialog imperatively when called."
           },
           {
             "name": "defaultOpen",
@@ -625,7 +625,7 @@
             "name": "actionsRef",
             "type": "React.RefObject<AutocompleteRootActions | null> | undefined",
             "optional": true,
-            "description": "A ref to imperative actions. - `unmount`: When specified, the autocomplete will not be unmounted when closed. Instead, the `unmount` function must be called to unmount the autocomplete manually. Useful when the autocomplete's animation is controlled by an external library."
+            "description": "A ref to imperative actions. - `unmount`: Manually unmounts the autocomplete. Call this after any externally controlled closing animation finishes."
           },
           {
             "name": "autoHighlight",
@@ -661,7 +661,7 @@
             "name": "inline",
             "type": "boolean | undefined",
             "optional": true,
-            "description": "Whether the list is rendered inline without using the popup."
+            "description": "Whether the list is rendered inline without using the component's own popup."
           },
           {
             "name": "inputRef",
@@ -1086,6 +1086,7 @@
         "destructive",
         "invert",
         "primary-light",
+        "brand-light",
         "warning-light",
         "success-light",
         "info-light",
@@ -1093,6 +1094,7 @@
         "invert-light",
         "secondary-light",
         "primary-outline",
+        "brand-outline",
         "warning-outline",
         "success-outline",
         "info-outline",
@@ -2993,7 +2995,7 @@
           },
           {
             "name": "animationEasing",
-            "type": "AnimationTiming",
+            "type": "EasingInput",
             "optional": true,
             "description": "The type of easing function."
           },
@@ -4942,7 +4944,7 @@
             "name": "actionsRef",
             "type": "React.RefObject<MenuRoot.Actions | null> | undefined",
             "optional": true,
-            "description": "A ref to imperative actions. - `unmount`: When specified, the menu will not be unmounted when closed. Instead, the `unmount` function must be called to unmount the menu manually. Useful when the menu's animation is controlled by an external library. - `close`: When specified, the menu can be closed imperatively."
+            "description": "A ref to imperative actions. - `unmount`: Manually unmounts the menu. Call this after any externally controlled closing animation finishes. - `close`: When specified, the menu can be closed imperatively."
           },
           {
             "name": "closeParentOnEsc",
@@ -6994,7 +6996,7 @@
             "name": "actionsRef",
             "type": "React.RefObject<DialogRoot.Actions | null> | undefined",
             "optional": true,
-            "description": "A ref to imperative actions. - `unmount`: When specified, the dialog will not be unmounted when closed. Instead, the `unmount` function must be called to unmount the dialog manually. Useful when the dialog's animation is controlled by an external library. - `close`: Closes the dialog imperatively when called."
+            "description": "A ref to imperative actions. - `unmount`: Manually unmounts the dialog. Call this after any externally controlled closing animation finishes. - `close`: Closes the dialog imperatively when called."
           },
           {
             "name": "defaultOpen",
@@ -7012,7 +7014,7 @@
             "name": "disablePointerDismissal",
             "type": "boolean | undefined",
             "optional": true,
-            "description": "Determines whether the dialog should close on outside clicks."
+            "description": "Whether to prevent the dialog from closing on outside presses. For non-modal dialogs, this also prevents the dialog from closing when focus moves outside of it."
           },
           {
             "name": "handle",
@@ -7557,7 +7559,7 @@
             "name": "actionsRef",
             "type": "React.RefObject<MenuRoot.Actions | null> | undefined",
             "optional": true,
-            "description": "A ref to imperative actions. - `unmount`: When specified, the menu will not be unmounted when closed. Instead, the `unmount` function must be called to unmount the menu manually. Useful when the menu's animation is controlled by an external library. - `close`: When specified, the menu can be closed imperatively."
+            "description": "A ref to imperative actions. - `unmount`: Manually unmounts the menu. Call this after any externally controlled closing animation finishes. - `close`: When specified, the menu can be closed imperatively."
           },
           {
             "name": "closeParentOnEsc",
@@ -10578,7 +10580,7 @@
             "type": "\"sm\" | \"default\" | \"lg\"",
             "optional": true,
             "default": "\"default\"",
-            "description": "Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 36 px tall, slightly larger text."
+            "description": "Height preset for the select control. - `sm` — 28 px tall, tighter border radius. - `default` — 32 px tall (unchanged default). - `lg` — 36 px tall."
           }
         ],
         "extends": [
@@ -11592,7 +11594,7 @@
             "name": "actionsRef",
             "type": "React.RefObject<PopoverRoot.Actions | null> | undefined",
             "optional": true,
-            "description": "A ref to imperative actions. - `unmount`: When specified, the popover will not be unmounted when closed. Instead, the `unmount` function must be called to unmount the popover manually. Useful when the popover's animation is controlled by an external library. - `close`: Closes the popover imperatively when called."
+            "description": "A ref to imperative actions. - `unmount`: Manually unmounts the popover. Call this after any externally controlled closing animation finishes. - `close`: Closes the popover imperatively when called."
           },
           {
             "name": "defaultOpen",
@@ -12646,7 +12648,7 @@
           },
           {
             "name": "onLayoutChanged",
-            "type": "(layout: Layout) => void | undefined",
+            "type": "(layout: Layout, meta: LayoutChangedMeta) => void",
             "optional": true,
             "description": "Called after the Group's layout has been changed."
           },
@@ -13378,7 +13380,7 @@
             "name": "actionsRef",
             "type": "React.RefObject<DialogRoot.Actions | null> | undefined",
             "optional": true,
-            "description": "A ref to imperative actions. - `unmount`: When specified, the dialog will not be unmounted when closed. Instead, the `unmount` function must be called to unmount the dialog manually. Useful when the dialog's animation is controlled by an external library. - `close`: Closes the dialog imperatively when called."
+            "description": "A ref to imperative actions. - `unmount`: Manually unmounts the dialog. Call this after any externally controlled closing animation finishes. - `close`: Closes the dialog imperatively when called."
           },
           {
             "name": "defaultOpen",
@@ -13396,7 +13398,7 @@
             "name": "disablePointerDismissal",
             "type": "boolean | undefined",
             "optional": true,
-            "description": "Determines whether the dialog should close on outside clicks."
+            "description": "Whether to prevent the dialog from closing on outside presses. For non-modal dialogs, this also prevents the dialog from closing when focus moves outside of it."
           },
           {
             "name": "handle",
@@ -14388,7 +14390,7 @@
             "name": "onValueCommitted",
             "type": "((value: Value extends number ? number : Value, eventDetails: SliderRoot.CommitEventDetails) => void) | undefined",
             "optional": true,
-            "description": "Callback function that is fired when the `pointerup` is triggered. **Warning**: This is a generic event not a change event."
+            "description": "Callback function that is fired when a value change is committed. Does not fire if the value did not change, or if the change was canceled. **Warning**: This is a generic event, not a change event."
           },
           {
             "name": "render",

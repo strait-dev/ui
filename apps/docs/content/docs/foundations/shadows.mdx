@@ -1,10 +1,22 @@
 ---
 title: Shadows
-description: The elevation scale for raising surfaces off the page.
+description: The tokenized elevation scale for raising surfaces off the page.
 ---
 
-Shadows convey elevation. Use the smaller steps for resting surfaces (cards,
-inputs) and the larger steps for transient overlays (popovers, dialogs). The
-scale runs from `shadow-2xs` to `shadow-2xl`.
+Elevation uses three tokenized steps — `--shadow-sm`, `--shadow-md`, and
+`--shadow-lg` — applied with the `shadow-sm` / `shadow-md` / `shadow-lg`
+utilities. Resting cards use the smallest step; floating surfaces (popovers,
+dropdowns) pair `shadow-md` with the standard `ring-1 ring-foreground/10`
+hairline; hover-lift and modals use `shadow-lg`.
 
 <ShadowScale />
+
+## Dark-mode elevation
+
+Shadows barely read on dark surfaces, so in dark mode elevation is expressed as
+a lighter surface step — `--surface-raised` over `--background` — plus the
+hairline ring. The shadow tokens stay applied with a deepened alpha (toggle the
+theme to compare), but they are the secondary cue, never the only one.
+
+Prefer the smallest shadow that still communicates the layer. If everything
+floats, nothing does.

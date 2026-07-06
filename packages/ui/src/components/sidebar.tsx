@@ -396,7 +396,7 @@ function Sidebar({
     );
     const panelWrap = (
       <div
-        className="h-svh w-(--sidebar-panel-width) overflow-hidden border-sidebar-border border-r bg-sidebar transition-[width] duration-200 ease-out data-[active=none]:w-0 motion-reduce:transition-none"
+        className="h-svh w-(--sidebar-panel-width) overflow-hidden border-sidebar-border border-r bg-sidebar transition-[width] duration-(--duration-base) ease-out data-[active=none]:w-0 motion-reduce:transition-none"
         data-active={activeRailItem ?? "none"}
         data-slot="sidebar-rail-panel-wrap"
       >
@@ -505,7 +505,7 @@ function Sidebar({
       {/* This is what handles the sidebar gap on desktop */}
       <div
         className={cn(
-          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-out motion-reduce:transition-none",
+          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-(--duration-base) ease-out motion-reduce:transition-none",
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-[side=right]:rotate-180",
           variant === "floating" || variant === "inset"
@@ -516,7 +516,7 @@ function Sidebar({
       />
       <div
         className={cn(
-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-out data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] motion-reduce:transition-none md:flex",
+          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-(--duration-base) ease-out data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] motion-reduce:transition-none md:flex",
           // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
@@ -731,7 +731,7 @@ function SidebarToggleRail({
       {...props}
     >
       <HugeiconsIcon
-        className="pointer-events-none absolute top-1/2 left-1/2 size-3 shrink-0 -translate-x-1/2 -translate-y-1/2 text-sidebar-foreground opacity-0 transition-opacity duration-150 ease-out group-hover/toggle-rail:opacity-60 motion-reduce:transition-none"
+        className="pointer-events-none absolute top-1/2 left-1/2 size-3 shrink-0 -translate-x-1/2 -translate-y-1/2 text-sidebar-foreground opacity-0 transition-opacity duration-(--duration-fast) ease-out group-hover/toggle-rail:opacity-60 motion-reduce:transition-none"
         data-slot="sidebar-toggle-rail-glyph"
         icon={SidebarLeftIcon}
         strokeWidth={2}
@@ -1058,7 +1058,7 @@ function SidebarGroupLabel({
       {children}
       {collapsible ? (
         <HugeiconsIcon
-          className="ml-auto size-3 transition-transform duration-200 ease-out group-aria-[expanded=false]/group-label:-rotate-90 motion-reduce:transition-none"
+          className="ml-auto size-3 transition-transform duration-(--duration-base) ease-out group-aria-[expanded=false]/group-label:-rotate-90 motion-reduce:transition-none"
           data-slot="sidebar-group-label-chevron"
           icon={ArrowDown01Icon}
           strokeWidth={2}
@@ -1072,7 +1072,7 @@ function SidebarGroupLabel({
     props: mergeProps<"div">(
       {
         className: cn(
-          "group/group-label flex h-8 shrink-0 items-center rounded-md px-2 font-medium text-sidebar-foreground/70 text-xs outline-hidden ring-sidebar-ring transition-[margin,opacity] duration-200 ease-out focus-visible:ring-3 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 motion-reduce:transition-none [&>svg]:size-4 [&>svg]:shrink-0",
+          "group/group-label flex h-8 shrink-0 items-center rounded-md px-2 font-medium text-sidebar-foreground/70 text-xs outline-hidden ring-sidebar-ring transition-[margin,opacity] duration-(--duration-base) ease-out focus-visible:ring-3 group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 motion-reduce:transition-none [&>svg]:size-4 [&>svg]:shrink-0",
           collapsible &&
             "w-full cursor-pointer text-left hover:text-sidebar-foreground",
           className
@@ -1153,7 +1153,7 @@ function SidebarGroupContent({
 
   return (
     <CollapsiblePrimitive.Panel
-      className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none"
+      className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-(--duration-base) ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none"
       data-sidebar="group-content"
       data-slot="sidebar-group-content"
     >
@@ -1435,7 +1435,7 @@ function SidebarMenuDragHandle({
   return (
     <SortableItemHandle
       className={cn(
-        "absolute top-1.5 left-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground/60 opacity-0 transition-opacity duration-150 ease-out hover:text-sidebar-foreground group-hover/menu-item:opacity-100 group-data-[collapsible=icon]:hidden motion-reduce:transition-none [&>svg]:size-3",
+        "absolute top-1.5 left-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground/60 opacity-0 transition-opacity duration-(--duration-fast) ease-out hover:text-sidebar-foreground group-hover/menu-item:opacity-100 group-data-[collapsible=icon]:hidden motion-reduce:transition-none [&>svg]:size-3",
         className
       )}
       data-sidebar="menu-drag-handle"
@@ -1547,7 +1547,7 @@ function SidebarMenuButton({
       {children}
       {subMenu ? (
         <HugeiconsIcon
-          className="ml-auto size-4 transition-transform duration-200 ease-out group-aria-expanded/menu-button:rotate-180 group-data-[collapsible=icon]:hidden motion-reduce:transition-none"
+          className="ml-auto size-4 transition-transform duration-(--duration-base) ease-out group-aria-expanded/menu-button:rotate-180 group-data-[collapsible=icon]:hidden motion-reduce:transition-none"
           data-slot="sidebar-menu-button-chevron"
           icon={ArrowDown01Icon}
           strokeWidth={2}
@@ -1760,7 +1760,7 @@ function SidebarMenuSub({
 }: SidebarMenuSubProps) {
   return (
     <CollapsiblePrimitive.Panel
-      className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 group-data-[collapsible=icon]:hidden motion-reduce:transition-none"
+      className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-(--duration-base) ease-out data-ending-style:h-0 data-starting-style:h-0 group-data-[collapsible=icon]:hidden motion-reduce:transition-none"
       data-sidebar="menu-sub-panel"
       data-slot="sidebar-menu-sub-panel"
     >
@@ -1941,12 +1941,12 @@ function SidebarUserButton({
         {/* isolate prevents z-index bleed from ancestor stacking contexts */}
         <MenuPrimitive.Positioner
           align="end"
-          className="isolate z-50 outline-none"
+          className="isolate z-(--z-popover) outline-none"
           side="right"
           sideOffset={4}
         >
           <MenuPrimitive.Popup
-            className="data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 max-h-(--available-height) min-w-48 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md outline-none ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in data-closed:overflow-hidden motion-reduce:animate-none motion-reduce:transition-none"
+            className="data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-(--z-popover) max-h-(--available-height) min-w-48 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md outline-none ring-1 ring-foreground/10 duration-(--duration-base) data-closed:animate-out data-open:animate-in data-closed:overflow-hidden data-closed:duration-(--duration-fast) motion-reduce:animate-none motion-reduce:transition-none"
             data-slot="sidebar-user-button-menu"
           >
             {menu}
@@ -2061,12 +2061,12 @@ function SidebarSwitcher({
         {/* isolate prevents z-index bleed from ancestor stacking contexts */}
         <PopoverPrimitive.Positioner
           align="start"
-          className="isolate z-50"
+          className="isolate z-(--z-popover)"
           side="right"
           sideOffset={8}
         >
           <PopoverPrimitive.Popup
-            className="data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 max-h-(--available-height) min-w-64 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md outline-hidden ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in data-closed:overflow-hidden motion-reduce:animate-none motion-reduce:transition-none"
+            className="data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-(--z-popover) max-h-(--available-height) min-w-64 origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg bg-popover p-1 text-popover-foreground shadow-md outline-hidden ring-1 ring-foreground/10 duration-(--duration-base) data-closed:animate-out data-open:animate-in data-closed:overflow-hidden data-closed:duration-(--duration-fast) motion-reduce:animate-none motion-reduce:transition-none"
             data-slot="sidebar-switcher-popover"
           >
             {children}
@@ -2281,7 +2281,7 @@ function SidebarMenuFlyout({ children }: { children: React.ReactElement }) {
       <MenuPrimitive.Portal>
         <MenuPrimitive.Positioner align="start" side="right" sideOffset={4}>
           <MenuPrimitive.Popup
-            className="z-50 min-w-40 origin-(--transform-origin) overflow-hidden rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-150 ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
+            className="z-(--z-popover) min-w-40 origin-(--transform-origin) overflow-hidden rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none transition-[transform,opacity] duration-(--duration-fast) ease-out data-ending-style:scale-95 data-starting-style:scale-95 data-ending-style:opacity-0 data-starting-style:opacity-0 motion-reduce:transition-none"
             data-slot="sidebar-menu-flyout"
           >
             {subItems.map((item) => (

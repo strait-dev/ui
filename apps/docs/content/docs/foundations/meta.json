@@ -1,4 +1,13 @@
 {
   "title": "Foundations",
-  "pages": ["colors", "typography", "spacing", "radius", "shadows", "icons"]
+  "pages": [
+    "colors",
+    "typography",
+    "spacing",
+    "radius",
+    "shadows",
+    "motion",
+    "layering",
+    "icons"
+  ]
 }

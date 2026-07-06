@@ -4,7 +4,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter Variable", "Inter", "system-ui", "sans-serif"],
+        sans: [
+          "Instrument Sans Variable",
+          "Instrument Sans",
+          "system-ui",
+          "sans-serif",
+        ],
         mono: ["JetBrains Mono Variable", "JetBrains Mono", "monospace"],
       },
       keyframes: {
