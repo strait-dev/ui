@@ -792,7 +792,7 @@ const ChartTooltipContent = <TValue extends ValueType, TName extends NameType>({
   return (
     <div
       className={cn(
-        "grid min-w-48 items-start rounded-lg bg-popover/70 p-3 py-2 text-popover-foreground text-xs ring ring-border/60 backdrop-blur-lg",
+        "grid min-w-48 items-start rounded-lg bg-popover/70 p-3 py-2 text-popover-foreground text-xs shadow-md ring-1 ring-foreground/10 backdrop-blur-lg",
         className
       )}
       ref={ref}

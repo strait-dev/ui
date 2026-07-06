@@ -17,6 +17,41 @@
   --font-mono: "JetBrains Mono Variable", "JetBrains Mono", monospace;
   /* Radius scale: 10px base → 8px medium, ~18px cards */
   --radius: 0.625rem;
+  /* Elevation (DESIGN.md §6): the three shadow steps behind the shadow-sm/md/
+     lg utilities (mapped in @theme inline below). Dark mode deepens the alpha,
+     but elevation there is primarily the --surface-raised step plus the
+     ring-1 ring-foreground/10 hairline — never the shadow alone. */
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.05);
+  --shadow-md:
+    0 4px 6px -1px oklch(0 0 0 / 0.06), 0 2px 4px -2px oklch(0 0 0 / 0.06);
+  --shadow-lg:
+    0 10px 40px -10px oklch(0 0 0 / 0.1), 0 4px 6px -4px oklch(0 0 0 / 0.05);
+  /* Motion (DESIGN.md §7): the only sanctioned durations. Consume with
+     duration-(--duration-*); exits run one step faster than their enter. */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --duration-deliberate: 600ms;
+  /* Layering (DESIGN.md §8): every stacking context takes a token via
+     z-(--z-*). Scrim and modal are adjacent so nothing wedges between a
+     dialog and its backdrop; popovers beat modals because they open inside
+     them; toasts beat modals so feedback is never hidden; tooltips top all.
+     Hundred-steps leave room for app-level layers between tokens. */
+  --z-base: 0;
+  --z-sticky: 100;
+  --z-overlay: 500;
+  --z-modal: 510;
+  --z-popover: 600;
+  --z-toast: 700;
+  --z-tooltip: 800;
+  /* Icon sizes (DESIGN.md §4): reference values behind the size-3/3.5/4/5
+     icon selectors — override an icon only with another step, never an
+     arbitrary value. */
+  --icon-xs: 0.75rem;
+  --icon-sm: 0.875rem;
+  --icon-md: 1rem;
+  --icon-lg: 1.25rem;
   /* Warm-stone neutrals + orange accent */
   --background: oklch(1 0 0);
   --foreground: oklch(0.216 0.006 56.043);
@@ -93,6 +128,13 @@
 }
 
 .dark {
+  /* Deepened shadow alpha — the secondary elevation cue behind the
+     surface-step + hairline-ring rule (see the :root elevation note). */
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.16);
+  --shadow-md:
+    0 4px 6px -1px oklch(0 0 0 / 0.2), 0 2px 4px -2px oklch(0 0 0 / 0.2);
+  --shadow-lg:
+    0 10px 40px -10px oklch(0 0 0 / 0.3), 0 4px 6px -4px oklch(0 0 0 / 0.16);
   --background: oklch(0.182 0.004 49.25);
   --foreground: oklch(0.985 0.001 106.423);
   --card: oklch(0.216 0.006 56.043);
@@ -248,6 +290,17 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /* Shadow utilities resolve the :root/.dark tokens at runtime so dark mode
+     can deepen the alpha without new class names. */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  /* Motion easings (DESIGN.md §7): ease-out for everything entering, ease-in
+     for everything exiting, ease-in-out for moves/resizes within the screen.
+     These override Tailwind's defaults for the ease-* utilities. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -396,7 +449,8 @@
 .select-virtuoso {
   width: 100%;
   height: 100%;
-  transition: height 0.2s ease-in-out; /* Smooth height transition */
+  /* Smooth height transition — a resize within the screen, so ease-in-out. */
+  transition: height var(--duration-base) var(--ease-in-out);
 }
 
 /* Ensure no double scrollbars */
@@ -561,11 +615,11 @@
 }
 
 .animate-slide-up {
-  animation: slide-up 0.5s ease-out forwards;
+  animation: slide-up var(--duration-slow) var(--ease-out) forwards;
 }
 
 .animate-scale-in {
-  animation: scale-in 0.3s ease-out forwards;
+  animation: scale-in var(--duration-base) var(--ease-out) forwards;
 }
 
 /* ============================================
@@ -636,14 +690,12 @@
 
 .hover-lift {
   transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
 }
 
 .hover-lift:hover {
-  box-shadow:
-    0 10px 40px -10px oklch(0 0 0 / 0.1),
-    0 4px 6px -4px oklch(0 0 0 / 0.05);
+  box-shadow: var(--shadow-lg);
   transform: translateY(-4px);
 }
 
@@ -663,7 +715,7 @@
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out forwards;
+  animation: fade-in-up var(--duration-deliberate) var(--ease-out) forwards;
 }
 
 /* Staggered animation delays */
@@ -685,11 +737,7 @@
    ============================================ */
 
 .section-muted {
-  background-color: oklch(0.98 0 0);
-}
-
-.dark .section-muted {
-  background-color: oklch(0.18 0 0);
+  background-color: var(--surface-subtle);
 }
 
 /* ============================================
@@ -700,8 +748,8 @@
   opacity: 0.6;
   filter: grayscale(100%);
   transition:
-    filter 0.3s ease,
-    opacity 0.3s ease;
+    filter var(--duration-base) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out);
 }
 
 .logo-grayscale:hover {
@@ -806,16 +854,19 @@
 }
 
 .grid-blueprint-subtle {
+  /* Foreground-derived hairlines flip with the theme automatically. */
   background-image:
-    linear-gradient(to right, oklch(0 0 0 / 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, oklch(0 0 0 / 0.03) 1px, transparent 1px);
+    linear-gradient(
+      to right,
+      color-mix(in oklch, var(--foreground) 3%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--foreground) 3%, transparent) 1px,
+      transparent 1px
+    );
   background-size: 2rem 2rem;
-}
-
-.dark .grid-blueprint-subtle {
-  background-image:
-    linear-gradient(to right, oklch(1 0 0 / 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, oklch(1 0 0 / 0.03) 1px, transparent 1px);
 }
 
 /* ============================================
@@ -823,23 +874,29 @@
    ============================================ */
 
 .paper-texture {
+  /* Foreground-derived speckle flips with the theme automatically. */
   background-image:
-    radial-gradient(oklch(0 0 0 / 0.025) 0.6px, transparent 0.6px),
-    radial-gradient(oklch(0 0 0 / 0.02) 0.6px, transparent 0.6px);
+    radial-gradient(
+      color-mix(in oklch, var(--foreground) 2.5%, transparent) 0.6px,
+      transparent 0.6px
+    ),
+    radial-gradient(
+      color-mix(in oklch, var(--foreground) 2%, transparent) 0.6px,
+      transparent 0.6px
+    );
   background-position:
     0 0,
     10px 10px;
   background-size: 20px 20px;
 }
 
-.dark .paper-texture {
-  background-image:
-    radial-gradient(oklch(1 0 0 / 0.03) 0.6px, transparent 0.6px),
-    radial-gradient(oklch(1 0 0 / 0.02) 0.6px, transparent 0.6px);
-}
-
 .showcase-dots {
-  background-image: radial-gradient(oklch(1 0 0 / 0.18) 1px, transparent 1px);
+  /* Dot grid on the forced-dark showcase surface, so it derives from the
+     terminal foreground rather than the theme foreground. */
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--surface-terminal-foreground) 18%, transparent) 1px,
+    transparent 1px
+  );
   background-size: 10px 10px;
   -webkit-mask-image: linear-gradient(to bottom, black, transparent 75%);
   mask-image: linear-gradient(to bottom, black, transparent 75%);
@@ -865,7 +922,8 @@
 }
 
 [data-visible] .demo-line {
-  animation: fade-in-up 500ms ease-out var(--line-delay, 0ms) forwards;
+  animation: fade-in-up var(--duration-slow) var(--ease-out)
+    var(--line-delay, 0ms) forwards;
 }
 
 .demo-chat-msg {
@@ -874,7 +932,8 @@
 }
 
 [data-visible] .demo-chat-msg {
-  animation: fade-in-up 420ms ease-out var(--msg-delay, 0ms) forwards;
+  animation: fade-in-up var(--duration-slow) var(--ease-out)
+    var(--msg-delay, 0ms) forwards;
 }
 
 @keyframes cursor-blink {
@@ -944,7 +1003,8 @@
 }
 
 [data-visible] .hero-draft-card {
-  animation: scale-in 420ms ease-out var(--card-delay, 0ms) forwards;
+  animation: scale-in var(--duration-slow) var(--ease-out)
+    var(--card-delay, 0ms) forwards;
 }
 
 /* Why Strait card element animations */
@@ -954,7 +1014,8 @@
 }
 
 [data-visible] .why-card-el {
-  animation: fade-in-up 500ms ease-out var(--el-delay, 0ms) forwards;
+  animation: fade-in-up var(--duration-slow) var(--ease-out)
+    var(--el-delay, 0ms) forwards;
 }
 
 .why-cursor {
