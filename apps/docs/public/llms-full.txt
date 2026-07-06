@@ -714,7 +714,7 @@ Extends: `useRender.ComponentProps<"span">`
 
 Variants:
 - `radius`: `lg`, `pill`, `md`, `sm` (default: `lg`)
-- `variant`: `default`, `outline`, `secondary`, `info`, `success`, `warning`, `destructive`, `invert`, `primary-light`, `warning-light`, `success-light`, `info-light`, `destructive-light`, `invert-light`, `secondary-light`, `primary-outline`, `warning-outline`, `success-outline`, `info-outline`, `destructive-outline`, `invert-outline`, `secondary-outline`, `ghost`, `link` (default: `default`)
+- `variant`: `default`, `outline`, `secondary`, `info`, `success`, `warning`, `destructive`, `invert`, `primary-light`, `brand-light`, `warning-light`, `success-light`, `info-light`, `destructive-light`, `invert-light`, `secondary-light`, `primary-outline`, `brand-outline`, `warning-outline`, `success-outline`, `info-outline`, `destructive-outline`, `invert-outline`, `secondary-outline`, `ghost`, `link` (default: `default`)
 - `size`: `xs`, `sm`, `default`, `lg`, `xl` (default: `default`)
 
 Data slots: `badge`, `badge-dismiss`, `badge-dot`

@@ -45,9 +45,36 @@ describe("Badge", () => {
   it("applies secondary-outline variant classes", () => {
     render(<Badge variant="secondary-outline">Label</Badge>);
     const badge = screen.getByText("Label");
-    expect(badge).toHaveClass("border-border");
+    expect(badge).toHaveClass("border-secondary");
     expect(badge).toHaveClass("bg-background");
     expect(badge).toHaveClass("text-secondary-foreground");
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* brand variants and intent-tinted outline borders                    */
+  /* ------------------------------------------------------------------ */
+
+  it("applies brand-light variant classes", () => {
+    render(<Badge variant="brand-light">Beta</Badge>);
+    const badge = screen.getByText("Beta");
+    expect(badge).toHaveClass("bg-brand/10");
+    expect(badge).toHaveClass("text-brand-accent");
+  });
+
+  it("applies brand-outline variant classes", () => {
+    render(<Badge variant="brand-outline">Beta</Badge>);
+    const badge = screen.getByText("Beta");
+    expect(badge).toHaveClass("border-brand/30");
+    expect(badge).toHaveClass("text-brand-accent");
+  });
+
+  it("tints outline borders with the intent colour", () => {
+    expect(badgeVariants({ variant: "destructive-outline" })).toContain(
+      "border-destructive/30"
+    );
+    expect(badgeVariants({ variant: "warning-outline" })).toContain(
+      "border-warning/30"
+    );
   });
 
   /* ------------------------------------------------------------------ */
