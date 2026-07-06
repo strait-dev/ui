@@ -124,8 +124,15 @@ Overlay scrims use the themeable `--overlay` token via `bg-overlay`, never a
 hard-coded `bg-black/*` value. This lets the scrim deepen in dark mode and stay
 rebrandable.
 
-✅ `bg-overlay transition-opacity`
-❌ `bg-black/10 transition-all`
+Durations come from the motion ladder (DESIGN.md §7) — `--duration-instant`
+(100ms) · `--duration-fast` (150ms) · `--duration-base` (250ms) ·
+`--duration-slow` (400ms) · `--duration-deliberate` (600ms) — consumed as
+`duration-(--duration-*)`. Raw `duration-200` / `duration-[0.35s]` values are
+banned. Exits run one duration step faster than their enter (e.g.
+`duration-(--duration-base) data-closed:duration-(--duration-fast)`).
+
+✅ `bg-overlay transition-opacity duration-(--duration-fast)`
+❌ `bg-black/10 transition-all duration-200`
 
 ### 6. `className` merging via `cn()`
 
@@ -287,12 +294,70 @@ never Radix-style `asChild`.
 
 ---
 
+### 16. Font sizes — the type scale only
+
+No arbitrary `text-[…]` sizes. The type scale (`text-display` … `text-caption`,
+plus Tailwind's standard steps) covers every tier; `text-micro` (10px) is the
+only sanctioned sub-caption size, used for dense chrome like badge `xs`/`sm`
+and `kbd`.
+
+✅ `text-xs`, `text-micro`
+❌ `text-[0.6875rem]`, `text-[11px]`
+
+---
+
+### 17. Shadows — tokens only
+
+Elevation uses the tokenized `shadow-sm` / `shadow-md` / `shadow-lg` steps
+(DESIGN.md §6). Arbitrary shadow values may not embed raw colors — a
+token-colored hairline like `shadow-[0_0_0_1px_var(--sidebar-border)]` is
+legal, a literal `rgb()`/`oklch()`/hex color is not. In dark mode, elevation is
+primarily the `--surface-raised` step plus the `ring-1 ring-foreground/10`
+hairline; the deepened shadow is the secondary cue.
+
+✅ `shadow-md ring-1 ring-foreground/10` on a floating surface
+✅ `shadow-[0_2px_0_var(--border)]` for a pinned-column hairline
+❌ `shadow-[0_1px_2px_rgb(0_0_0/0.4)]`
+
+---
+
+### 18. Control-height ladder
+
+Every interactive control's `size` axis sits on the shared ladder
+(DESIGN.md §4): `xs` = `h-6`, `sm` = `h-7`, `default` = `h-8`, `lg` = `h-9`,
+`xl` = `h-10`. The machine check inspects the control files' size-variant
+definitions and `data-[size=…]:h-*` utilities; inner elements are
+unconstrained.
+
+✅ `lg: "h-9 px-4"` / `data-[size=lg]:h-9`
+❌ `lg: "h-10 …"` (the old select drift)
+
+---
+
+### 19. Layering — z-index tokens
+
+Every stacking context takes a layer token via `z-(--z-*)`
+(DESIGN.md §8): `--z-sticky` (100) · `--z-overlay` (500) · `--z-modal` (510) ·
+`--z-popover` (600) · `--z-toast` (700) · `--z-tooltip` (800). Raw `z-30` /
+`z-40` / `z-50` and arbitrary `z-[N]` are banned. `z-10` / `z-20` remain legal
+for local overlap inside a component's own stacking context (pinned cells,
+inset icons), which the ladder does not govern.
+
+✅ `z-(--z-popover)` on a dropdown positioner
+❌ `z-50` on a tooltip
+
+---
+
 ## Enforcement
 
 | Rule | Check id in `check-conventions.mjs` |
 | --- | --- |
 | Raw colors (§4) | `rawColor` |
-| Motion and overlay tokens (§5) | `transitionAll`, `overlayToken` |
+| Motion and overlay tokens (§5) | `transitionAll`, `overlayToken`, `motionToken` |
+| Font sizes (§16) | `fontSize` |
+| Shadows (§17) | `shadowToken` |
+| Control-height ladder (§18) | `controlHeight` |
+| Layering (§19) | `zIndexToken` |
 | Focus ring (§1) | `focusRing` |
 | Invalid ring width (§3) | `ariaInvalid` |
 | `cn()` usage (§6) | `cn` |
